@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapping rows into C structs — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2" open><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li class="active"><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW data</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span><span class="badge badge-demo">demo/fetch_struct.c</span></div>
+    <h1 id="mapping-rows-into-c-structs">Mapping rows into C structs</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>fetch a whole row into a C <code>struct</code> in one call with <code>OCI_GetStruct</code></li>
+<li>write the companion <em>indicator struct</em> that captures NULLs</li>
+<li>control how NUMBER columns map to C numeric types</li>
+</ul>
+<h2 id="concepts">Concepts</h2>
+<p>Struct mapping is a <strong>C-only</strong> convenience (the C++ side has <code>Get&lt;T&gt;</code> instead): one
+call copies the whole current row into <em>your</em> <code>struct</code>. Two companion structs do
+the work:</p>
+<ol>
+<li><strong>Row struct</strong> — one member per result-set column; <strong>member names must match the
+   column names</strong> (as Oracle returns them — usually upper case… keep reading for the
+   practical trick). Member types:
+   - character columns → <code>otext*</code> (a borrowed pointer — copy if you keep it)
+   - numeric columns → the C type you declare via <code>OCI_SetStructNumericType</code>
+   - DATE/TIMESTAMP/LOB/OBJECT… → the matching <code>OCI_*</code> handle pointer</li>
+<li><strong>Indicator struct</strong> — one <code>OCI_Boolean</code> member per column, same order;
+   <code>TRUE</code> = the value is NOT NULL. Mandatory — this is how NULLs are reported.</li>
+</ol>
+<h2 id="example-employee-row-struct">Example — employee row → struct</h2>
+<div class="highlight"><pre><span></span><code><span class="k">typedef</span><span class="w"> </span><span class="k">struct</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Int32</span><span class="w">  </span><span class="n">empno</span><span class="p">;</span>
+<span class="w">    </span><span class="n">otext</span><span class="w">     </span><span class="o">*</span><span class="n">ename</span><span class="p">;</span><span class="w">          </span><span class="cm">/* char* on ANSI builds — a borrowed pointer */</span>
+<span class="w">    </span><span class="n">OCI_Float</span><span class="w">  </span><span class="n">sal</span><span class="p">;</span>
+<span class="w">    </span><span class="n">OCI_Float</span><span class="w">  </span><span class="n">comm</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">employee_t</span><span class="p">;</span>
+
+<span class="k">typedef</span><span class="w"> </span><span class="k">struct</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Boolean</span><span class="w"> </span><span class="n">empno</span><span class="p">;</span>
+<span class="w">    </span><span class="n">OCI_Boolean</span><span class="w"> </span><span class="n">ename</span><span class="p">;</span>
+<span class="w">    </span><span class="n">OCI_Boolean</span><span class="w"> </span><span class="n">sal</span><span class="p">;</span>
+<span class="w">    </span><span class="n">OCI_Boolean</span><span class="w"> </span><span class="n">comm</span><span class="p">;</span>
+<span class="p">}</span><span class="w"> </span><span class="n">employee_ind_t</span><span class="p">;</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="n">OCI_ExecuteStmt</span><span class="p">(</span><span class="n">st</span><span class="p">,</span>
+<span class="w">    </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"select empno, ename, sal, comm from employees order by empno"</span><span class="p">));</span>
+<span class="n">OCI_Resultset</span><span class="w"> </span><span class="o">*</span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_GetResultset</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+
+<span class="cm">/* tell OCILIB how NUMBER maps to the C members */</span>
+<span class="n">OCI_SetStructNumericType</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_INT</span><span class="p">);</span>
+<span class="n">OCI_SetStructNumericType</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_FLOAT</span><span class="p">);</span>
+<span class="n">OCI_SetStructNumericType</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_FLOAT</span><span class="p">);</span>
+<span class="cm">/* …or by name: OCI_SetStructNumericTypeByName(rs, OTEXT("SAL"), OCI_NUM_FLOAT); */</span>
+
+<span class="n">employee_t</span><span class="w">     </span><span class="n">e</span><span class="p">;</span>
+<span class="n">employee_ind_t</span><span class="w"> </span><span class="n">ind</span><span class="p">;</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_FetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_GetStruct</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ind</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%d %-10s %8.2f"</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">empno</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">ename</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">sal</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">ind</span><span class="p">.</span><span class="n">comm</span><span class="p">)</span><span class="w">            </span><span class="cm">/* indicator FALSE → column was NULL */</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"  (no comm)"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="the-oci_num_-mapping-flags">The <code>OCI_NUM_*</code> mapping flags</h2>
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>struct member should be</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_NUM_SHORT</code> / <code>OCI_NUM_USHORT</code></td>
+<td><code>OCI_Int16</code> / <code>OCI_UInt16</code></td>
+</tr>
+<tr>
+<td><code>OCI_NUM_INT</code> / <code>OCI_NUM_UINT</code></td>
+<td><code>OCI_Int32</code> / <code>OCI_UInt32</code></td>
+</tr>
+<tr>
+<td><code>OCI_NUM_BIGINT</code> / <code>OCI_NUM_BIGUINT</code></td>
+<td><code>OCI_Int64</code> / <code>OCI_UInt64</code></td>
+</tr>
+<tr>
+<td><code>OCI_NUM_FLOAT</code> / <code>OCI_NUM_DOUBLE</code></td>
+<td><code>OCI_Float</code> / <code>OCI_Double</code></td>
+</tr>
+<tr>
+<td><code>OCI_NUM_NUMBER</code></td>
+<td><code>OCI_Number*</code> (exact decimal — see Part 5)</td>
+</tr>
+</tbody>
+</table>
+<p>Call <code>OCI_SetStructNumericType</code> once per numeric column <strong>before</strong> the fetch loop.</p>
+<div class="admonition tip">
+<p class="admonition-title">Member names vs column names</p>
+<p>OCILIB matches struct members to columns <strong>by name</strong>. Since Oracle upper-cases
+unquoted identifiers, either name your members <code>EMPNO</code>-style or alias the columns
+to match (<code>select empno "empno" …</code>).</p>
+</div>
+<h2 id="when-to-use-it">When to use it</h2>
+<ul>
+<li>Fixed, known column shapes — one call per row instead of N getters.</li>
+<li>Not for dynamic SQL — the layout is compile-time.</li>
+<li>No direct C++ equivalent: <code>Row</code>/<code>Get&lt;T&gt;</code> is the idiomatic C++ way.</li>
+</ul>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Add <code>hiredate</code> (<code>OCI_Date*</code>) and <code>job</code> (<code>otext*</code>) to the struct and re-run.</li>
+<li>Drop the <code>OCI_SetStructNumericType</code> call for <code>sal</code> and watch the mismatch error —
+   that's the API telling you it needs the hint.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Dangling <code>ename</code> pointers</strong> — string members point into the row buffer; copy with
+  your string function if you store them.</li>
+<li><strong>Forgetting the indicator struct</strong> — it is mandatory; NULL members are only
+  reported there.</li>
+<li><strong>Wrong member count</strong> — every column needs a struct member, in any order but by name.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>OCI_GetStruct(rs, &amp;row, &amp;ind)</code> + <code>OCI_SetStructNumericType</code> = row → struct.</li>
+<li>Indicator struct reports NULLs; string members are borrowed pointers.</li>
+</ul>
+<p><strong>Next:</strong> column metadata — <code>OCI_Column</code> attributes for building generic tools.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="getter-type-map.html"><span class="pn-dir">← Previous</span>Getter type map</a><a class="pn-link pn-next" href="column-metadata.html"><span class="pn-dir">Next →</span>Column metadata</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

@@ -38,6 +38,7 @@ AC_CONFIG_FILES([
    Makefile
    src/Makefile
    doc/html/Makefile
+   doc/tutorials/Makefile
    demo/Makefile
    demo/Makefile_demo
    demo/Makefile_demo_cpp

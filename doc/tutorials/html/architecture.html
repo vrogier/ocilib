@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Anatomy of an OCILIB program — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0" open><summary class="nav-part">Getting started</summary><ul class="nav-group"><li class="active"><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW data</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-beginner">Beginner</span></div>
+    <h1 id="anatomy-of-an-ocilib-program">Anatomy of an OCILIB program</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>recognize the handle types OCILIB exposes and how they relate</li>
+<li>predict the lifecycle (Create → use → Free) of any OCILIB object</li>
+<li>tell owned handles from borrowed (transient) handles</li>
+<li>map a C API call to its C++ equivalent at a glance</li>
+</ul>
+<h2 id="the-handle-model">The handle model</h2>
+<p>OCILIB exposes every Oracle resource as an <strong>opaque handle</strong>: a <code>struct</code> you cannot see inside, always used through a pointer.</p>
+<p>The naming convention is uniform — once you know it, you can guess most of the API:</p>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Meaning</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_&lt;Type&gt;</code></td>
+<td>handle type</td>
+<td><code>OCI_Connection</code>, <code>OCI_Statement</code></td>
+</tr>
+<tr>
+<td><code>OCI_&lt;Type&gt;Create…()</code></td>
+<td>constructor</td>
+<td><code>OCI_ConnectionCreate()</code></td>
+</tr>
+<tr>
+<td><code>OCI_&lt;Type&gt;Free()</code></td>
+<td>destructor</td>
+<td><code>OCI_ConnectionFree()</code></td>
+</tr>
+<tr>
+<td><code>OCI_&lt;Type&gt;&lt;Action&gt;()</code></td>
+<td>method</td>
+<td><code>OCI_StatementSetFetchSize()</code></td>
+</tr>
+<tr>
+<td><code>OCI_&lt;Type&gt;Get/Set&lt;Prop&gt;()</code></td>
+<td>property</td>
+<td><code>OCI_LobGetLength()</code></td>
+</tr>
+<tr>
+<td><code>OCI_&lt;PREFIX&gt;_*</code></td>
+<td>constant</td>
+<td><code>OCI_SESSION_DEFAULT</code>, <code>OCI_CLOB</code></td>
+</tr>
+</tbody>
+</table>
+<p>The C++ API mirrors this 1:1 — <code>OCI_ConnectionCreate</code> becomes
+<code>ocilib::Connection(env, db, usr, pwd)</code>, <code>OCI_FetchNext</code> becomes <code>rs.Next()</code>, and so on.</p>
+<h2 id="the-ownership-tree">The ownership tree</h2>
+<p>Handles are not independent — they form a tree rooted at the <strong>environment</strong>:</p>
+<div class="highlight"><pre><span></span><code>OCI_Environment                    ← OCI_EnvironmentCreate / OCI_EnvironmentFree
+└── OCI_Connection                 ← OCI_ConnectionCreate / OCI_ConnectionFree
+    ├── OCI_Statement              ← OCI_StatementCreate / OCI_StatementFree
+    │   ├── OCI_Resultset          ← OCI_GetResultset      (borrowed — never freed)
+    │   └── OCI_Bind               ← OCI_BindXxx           (owned by statement)
+    ├── OCI_Transaction            ← OCI_TransactionCreate / Free
+    └── …
+└── OCI_Pool                       ← OCI_PoolCreate / OCI_PoolFree
+    └── OCI_Connection             ← OCI_PoolGetConnection  (borrowed — released, not freed)
+</code></pre></div>
+
+<p>Three rules cover every case:</p>
+<ol>
+<li><strong>Create/Free pairs.</strong> Anything you <code>Create</code>, you must <code>Free</code> — before freeing its
+   parent. Children die with their parent anyway, so the safe order is always
+   <em>leaf → root</em>.</li>
+<li><strong>Borrowed handles are never freed.</strong> <code>OCI_GetResultset()</code>, <code>OCI_GetColumn()</code>,
+   <code>OCI_PoolGetConnection()</code> hand you objects owned by someone else. Use them, don't
+   free them. In C++ these are acquired <em>transiently</em> and release their parent
+   automatically.</li>
+<li><strong>The C++ layer removes rule 1 entirely.</strong> <code>ocilib::Connection con(env, …)</code> frees
+   itself when it goes out of scope — and exceptions unwind everything correctly.</li>
+</ol>
+<h2 id="errors-the-fourth-leg">Errors: the fourth leg</h2>
+<p>Every call that can fail either returns <code>FALSE</code>/NULL (C) or throws
+<code>ocilib::Exception</code> (C++). In C, two channels deliver the details:</p>
+<ul>
+<li>your <strong>error handler callback</strong> (installed at <code>OCI_EnvironmentCreate</code>), invoked
+  immediately with a filled <code>OCI_Error</code>;</li>
+<li><code>OCI_GetLastError()</code> — poll the last error of the calling thread any time.</li>
+</ul>
+<h2 id="the-two-build-flavors">The two build flavors</h2>
+<table>
+<thead>
+<tr>
+<th>Flavor</th>
+<th>Compile define</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ANSI</td>
+<td><code>OCI_CHARSET_ANSI</code></td>
+<td><code>otext</code> = <code>char</code>, strings are bytes</td>
+</tr>
+<tr>
+<td>Unicode</td>
+<td><code>OCI_CHARSET_WIDE</code></td>
+<td><code>otext</code> = <code>unsigned short</code> (UTF-16)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Import</th>
+<th>Compile define</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linkage</td>
+<td><code>OCI_IMPORT_LINKAGE</code></td>
+<td>link against <code>oci.lib</code>/<code>libclntsh</code> at build time</td>
+</tr>
+<tr>
+<td>Runtime</td>
+<td><code>OCI_IMPORT_RUNTIME</code></td>
+<td>OCILIB <code>dlopen</code>s the Oracle client itself — no Oracle SDK needed to build</td>
+</tr>
+</tbody>
+</table>
+<p>Both pairs are chosen when <strong>OCILIB</strong> is built; your application code stays identical
+thanks to the <code>otext</code>/<code>OTEXT()</code> abstraction you will see in every sample.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Open <code>include/ocilibc/api.h</code> and pick any type (e.g. <code>OCI_Date</code>). Count how many
+   of its functions you can <em>predict</em> from the naming rules above.</li>
+<li>In <code>include/ocilibcpp/types.hpp</code>, find the C++ class matching your chosen type.</li>
+</ol>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>Handles are opaque, named <code>OCI_&lt;Type&gt;</code>, with uniform Create/Free/Get/Set naming.</li>
+<li>Ownership is a tree rooted at <code>OCI_Environment</code>; borrowed handles are never freed.</li>
+<li>C returns <code>FALSE</code>/NULL + error callback; C++ throws <code>ocilib::Exception</code>.</li>
+<li>ANSI/Unicode and linkage/runtime import are build-time choices; your code does not change.</li>
+</ul>
+<p><strong>Next:</strong> get the two things every sample needs — an Oracle database and the Instant Client.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="index.html"><span class="pn-dir">← Previous</span>Welcome</a><a class="pn-link pn-next" href="prerequisites.html"><span class="pn-dir">Next →</span>Prerequisites</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

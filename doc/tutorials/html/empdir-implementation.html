@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>empdir — the capstone source code — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW data</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9" open><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li class="active"><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-advanced">Advanced</span><a class="badge badge-demo" href="assets/sql/empdir-schema.sql">empdir-schema.sql</a></div>
+    <h1 id="empdir-the-capstone-source-code">empdir — the capstone source code</h1>
+<p>This page is the source companion to the <a href="capstone.html">capstone</a>: a complete,
+single-file implementation of the <code>empdir</code> CLI in both languages.</p>
+<p><strong>Objectives</strong></p>
+<ul>
+<li>see the full running-project architecture in one listing</li>
+<li>connect every piece you learned — pool, statements, binds, array DML,
+  subscriptions, AQ, JSON DOM — in a real program</li>
+</ul>
+<h2 id="schema-setup">Schema setup</h2>
+<p>On top of <a href="assets/sql/tutorial-schema.sql"><code>assets/sql/tutorial-schema.sql</code></a>, the app needs two extra objects —
+a JSON profile column and an AQ queue for jobs. Both live in
+<a href="assets/sql/empdir-schema.sql"><code>assets/sql/empdir-schema.sql</code></a> — run it once as the connecting user:</p>
+<div class="highlight"><pre><span></span><code><span class="k">alter</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">employees</span><span class="w"> </span><span class="k">add</span><span class="w"> </span><span class="p">(</span><span class="n">profile</span><span class="w"> </span><span class="n">json</span><span class="p">);</span>
+
+<span class="k">create</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">replace</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="n">job_t</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">object</span><span class="w"> </span><span class="p">(</span><span class="n">title</span><span class="w"> </span><span class="n">varchar2</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span><span class="w"> </span><span class="n">content</span><span class="w"> </span><span class="n">varchar2</span><span class="p">(</span><span class="mi">200</span><span class="p">));</span>
+<span class="k">begin</span>
+<span class="w">    </span><span class="n">dbms_aqadm</span><span class="p">.</span><span class="n">create_queue_table</span><span class="p">(</span><span class="s1">'job_queue_table'</span><span class="p">,</span><span class="w"> </span><span class="s1">'job_t'</span><span class="p">);</span>
+<span class="w">    </span><span class="n">dbms_aqadm</span><span class="p">.</span><span class="n">create_queue</span><span class="p">(</span><span class="s1">'job_queue'</span><span class="p">,</span><span class="w"> </span><span class="s1">'job_queue_table'</span><span class="p">);</span>
+<span class="w">    </span><span class="n">dbms_aqadm</span><span class="p">.</span><span class="n">start_queue</span><span class="p">(</span><span class="s1">'job_queue'</span><span class="p">);</span>
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</code></pre></div>
+
+<h2 id="the-c-implementation">The C implementation</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"ocilib.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string.h&gt;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">OCI_Environment</span><span class="w"> </span><span class="o">*</span><span class="n">g_env</span><span class="p">;</span>
+<span class="k">static</span><span class="w"> </span><span class="n">OCI_Pool</span><span class="w">        </span><span class="o">*</span><span class="n">g_pool</span><span class="p">;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">err_handler</span><span class="p">(</span><span class="n">OCI_Error</span><span class="w"> </span><span class="o">*</span><span class="n">err</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ErrorGetString</span><span class="p">(</span><span class="n">err</span><span class="p">));</span><span class="w"> </span><span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="nf">checkout</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">OCI_PoolGetConnection</span><span class="p">(</span><span class="n">g_pool</span><span class="p">);</span><span class="w">   </span><span class="cm">/* free() releases back to the pool */</span>
+<span class="p">}</span>
+
+<span class="cm">/* ------------------------------------------------------------------ list */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_list</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">dept</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">OCI_Statement</span><span class="w">  </span><span class="o">*</span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dept</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">OCI_Prepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">"select empno, ename, job, sal from employees "</span>
+<span class="w">                        </span><span class="s">"where deptno = :d order by empno"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">OCI_BindInt</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":d"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dept</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">OCI_Prepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">"select empno, ename, job, sal from employees order by empno"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">OCI_Execute</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Resultset</span><span class="w"> </span><span class="o">*</span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_GetResultset</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_FetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"%5i  %-10s  %-9s  %8.2f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">               </span><span class="n">OCI_GetInt</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_GetString</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span>
+<span class="w">               </span><span class="n">OCI_GetString</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_GetDouble</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">OCI_StatementFree</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* -------------------------------------------------------------------- get */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_get</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">empno</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">OCI_Statement</span><span class="w">  </span><span class="o">*</span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_Prepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">"select ename, job, sal, hiredate from employees where empno = :e"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindInt</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">empno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Execute</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_Resultset</span><span class="w"> </span><span class="o">*</span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_GetResultset</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_FetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">OCI_Date</span><span class="w"> </span><span class="o">*</span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_GetDate</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">);</span>
+<span class="w">        </span><span class="n">otext</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+<span class="w">        </span><span class="n">OCI_DateToText</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"YYYY-MM-DD"</span><span class="p">),</span><span class="w"> </span><span class="mi">63</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">);</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"%s  %s  %.2f  %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">               </span><span class="n">OCI_GetString</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_GetString</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span>
+<span class="w">               </span><span class="n">OCI_GetDouble</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">),</span><span class="w"> </span><span class="n">buf</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"empno %d not found</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">empno</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">OCI_StatementFree</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* -------------------------------------------------------------------- add */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_add</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">empno</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="n">job</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">double</span><span class="w"> </span><span class="n">sal</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">deptno</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">OCI_Statement</span><span class="w">  </span><span class="o">*</span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_Prepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">"insert into employees (empno, ename, job, sal, deptno) "</span>
+<span class="w">                    </span><span class="s">"values (:e, :n, :j, :s, :d)"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindInt</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">empno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindString</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":n"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="mi">30</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindString</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":j"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">job</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindDouble</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":s"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sal</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindInt</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":d"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">deptno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Execute</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%u row(s) inserted</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_GetAffectedRows</span><span class="p">(</span><span class="n">st</span><span class="p">));</span>
+<span class="w">    </span><span class="n">OCI_Commit</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_StatementFree</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ------------------------------------------------------------------ raise */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_raise</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">deptno</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">pct</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">OCI_Statement</span><span class="w">  </span><span class="o">*</span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_Prepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">"update employees set sal = sal * (1 + :p / 100) "</span>
+<span class="w">                    </span><span class="s">"where deptno = :d returning empno into :e"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_BindDouble</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":p"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pct</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindInt</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":d"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">deptno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_RegisterInt</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":e"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Execute</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%u salary update(s)</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_GetAffectedRows</span><span class="p">(</span><span class="n">st</span><span class="p">));</span>
+<span class="w">    </span><span class="n">OCI_Commit</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_StatementFree</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ----------------------------------------------------------------- import */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_import</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">csv</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="kt">FILE</span><span class="w"> </span><span class="o">*</span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">fopen</span><span class="p">(</span><span class="n">csv</span><span class="p">,</span><span class="w"> </span><span class="s">"r"</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"cannot open %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">csv</span><span class="p">);</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">OCI_Statement</span><span class="w">  </span><span class="o">*</span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_Prepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">"insert into employees (empno, ename, sal) values (:e, :n, :s)"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">BATCH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">      </span><span class="n">empno</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+<span class="w">    </span><span class="n">otext</span><span class="w">    </span><span class="n">ename</span><span class="p">[</span><span class="mi">64</span><span class="p">][</span><span class="mi">31</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">double</span><span class="w">   </span><span class="n">sal</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+<span class="w">    </span><span class="kt">int</span><span class="w">      </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">OCI_BindArraySetSize</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">BATCH</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindArrayOfInts</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="n">empno</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindArrayOfStrings</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":n"</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">ename</span><span class="p">,</span><span class="w"> </span><span class="mi">30</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindArrayOfDoubles</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":s"</span><span class="p">,</span><span class="w"> </span><span class="n">sal</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="n">line</span><span class="p">[</span><span class="mi">256</span><span class="p">];</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">fgets</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">line</span><span class="p">),</span><span class="w"> </span><span class="n">f</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">sscanf</span><span class="p">(</span><span class="n">line</span><span class="p">,</span><span class="w"> </span><span class="s">"%d,%30[^,],%lf"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">empno</span><span class="p">[</span><span class="n">count</span><span class="p">],</span><span class="w"> </span><span class="n">ename</span><span class="p">[</span><span class="n">count</span><span class="p">],</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sal</span><span class="p">[</span><span class="n">count</span><span class="p">]);</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">++</span><span class="n">count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BATCH</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">OCI_BindArraySetSize</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">count</span><span class="p">);</span>
+<span class="w">            </span><span class="n">OCI_Execute</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">            </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">OCI_BindArraySetSize</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">count</span><span class="p">);</span>
+<span class="w">        </span><span class="n">OCI_Execute</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%u row(s) imported</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_GetAffectedRows</span><span class="p">(</span><span class="n">st</span><span class="p">));</span>
+<span class="w">    </span><span class="n">OCI_Commit</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_StatementFree</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="n">fclose</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ------------------------------------------------------------------ watch */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_change</span><span class="p">(</span><span class="n">OCI_Event</span><span class="w"> </span><span class="o">*</span><span class="n">event</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"[cqn] type=%u object=%s rowid=%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">           </span><span class="n">OCI_EventGetType</span><span class="p">(</span><span class="n">event</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_EventGetObject</span><span class="p">(</span><span class="n">event</span><span class="p">),</span>
+<span class="w">           </span><span class="n">OCI_EventGetRowid</span><span class="p">(</span><span class="n">event</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_watch</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">OCI_Statement</span><span class="w">  </span><span class="o">*</span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Subscription</span><span class="w"> </span><span class="o">*</span><span class="n">sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_SubscriptionRegister</span><span class="p">(</span>
+<span class="w">        </span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"empdir-watch"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_CNT_ALL</span><span class="p">,</span><span class="w"> </span><span class="n">on_change</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_SRM_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_Prepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">"select empno from employees"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_SubscriptionAddStatement</span><span class="p">(</span><span class="n">sub</span><span class="p">,</span><span class="w"> </span><span class="n">st</span><span class="p">);</span><span class="w">     </span><span class="cm">/* watch objects this stmt touches */</span>
+<span class="w">    </span><span class="n">OCI_Execute</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"watching employees — run DML in another session, Ctrl+C to stop</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">getchar</span><span class="p">();</span><span class="w">   </span><span class="cm">/* stay subscribed until the user stops the program */</span>
+
+<span class="w">    </span><span class="n">OCI_SubscriptionUnregister</span><span class="p">(</span><span class="n">sub</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_StatementFree</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ------------------------------------------------------------------- jobs */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_jobs_submit</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="n">content</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">OCI_TypeInfo</span><span class="w"> </span><span class="o">*</span><span class="n">inf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGet</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"job_t"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_TIF_TYPE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Enqueue</span><span class="w">  </span><span class="o">*</span><span class="n">enq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_EnqueueCreate</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"job_queue"</span><span class="p">));</span>
+<span class="w">    </span><span class="n">OCI_Msg</span><span class="w">      </span><span class="o">*</span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_MsgCreate</span><span class="p">(</span><span class="n">inf</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Object</span><span class="w">   </span><span class="o">*</span><span class="n">job</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ObjectCreate</span><span class="p">(</span><span class="n">inf</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_ObjectSetString</span><span class="p">(</span><span class="n">job</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"title"</span><span class="p">),</span><span class="w">   </span><span class="p">(</span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">title</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ObjectSetString</span><span class="p">(</span><span class="n">job</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"content"</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="w"> </span><span class="n">content</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_MsgSetObject</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span><span class="w"> </span><span class="n">job</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_EnqueuePut</span><span class="p">(</span><span class="n">enq</span><span class="p">,</span><span class="w"> </span><span class="n">msg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Commit</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_ObjectFree</span><span class="p">(</span><span class="n">job</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_MsgFree</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_EnqueueFree</span><span class="p">(</span><span class="n">enq</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_TypeInfoFree</span><span class="p">(</span><span class="n">inf</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_jobs_work</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">OCI_TypeInfo</span><span class="w"> </span><span class="o">*</span><span class="n">inf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGet</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"job_t"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_TIF_TYPE</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Dequeue</span><span class="w">  </span><span class="o">*</span><span class="n">deq</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_DequeueCreate</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"job_queue"</span><span class="p">));</span>
+<span class="w">    </span><span class="n">OCI_Msg</span><span class="w">      </span><span class="o">*</span><span class="n">msg</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">((</span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_DequeueGet</span><span class="p">(</span><span class="n">deq</span><span class="p">))</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="nb">NULL</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">OCI_Object</span><span class="w"> </span><span class="o">*</span><span class="n">job</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_MsgGetObject</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"job: %s — %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">               </span><span class="n">OCI_ObjectGetString</span><span class="p">(</span><span class="n">job</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"title"</span><span class="p">)),</span>
+<span class="w">               </span><span class="n">OCI_ObjectGetString</span><span class="p">(</span><span class="n">job</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"content"</span><span class="p">)));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">OCI_Commit</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_DequeueFree</span><span class="p">(</span><span class="n">deq</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_TypeInfoFree</span><span class="p">(</span><span class="n">inf</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ---------------------------------------------------------------- profile */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_profile</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">empno</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">OCI_Statement</span><span class="w">  </span><span class="o">*</span><span class="n">st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_Prepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">"select profile from employees where empno = :e"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_BindInt</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">empno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Execute</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_Resultset</span><span class="w"> </span><span class="o">*</span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_GetResultset</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_FetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">OCI_IsNull</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">OCI_Json</span><span class="w"> </span><span class="o">*</span><span class="n">doc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_GetJson</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">OCI_JsonNode</span><span class="w"> </span><span class="o">*</span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_JsonGetRoot</span><span class="p">(</span><span class="n">doc</span><span class="p">);</span>
+
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="n">skill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"&lt;none&gt;"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">OCI_JsonNode</span><span class="w"> </span><span class="o">*</span><span class="n">skills</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_JsonNodeGetField</span><span class="p">(</span><span class="n">root</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"skills"</span><span class="p">));</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">skills</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">OCI_JsonNodeGetItemCount</span><span class="p">(</span><span class="n">skills</span><span class="p">))</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">skill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_JsonNodeGetString</span><span class="p">(</span><span class="n">OCI_JsonNodeGetItem</span><span class="p">(</span><span class="n">skills</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="nb">NULL</span><span class="p">);</span>
+<span class="w">        </span><span class="p">}</span>
+
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"emp %d — %u field(s), first skill: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">               </span><span class="n">empno</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_JsonNodeGetFieldCount</span><span class="p">(</span><span class="n">root</span><span class="p">),</span><span class="w"> </span><span class="n">skill</span><span class="p">);</span>
+<span class="w">        </span><span class="n">OCI_JsonFree</span><span class="p">(</span><span class="n">doc</span><span class="p">);</span><span class="w">          </span><span class="cm">/* frees root &amp; children with it */</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"no profile for empno %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">empno</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">OCI_StatementFree</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* -------------------------------------------------------------------- main */</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">g_env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_EnvironmentCreate</span><span class="p">(</span><span class="n">err_handler</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">                                  </span><span class="n">OCI_ENV_THREADED</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">OCI_ENV_EVENTS</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_SetSubscriptionPort</span><span class="p">(</span><span class="n">g_env</span><span class="p">,</span><span class="w"> </span><span class="mi">5468</span><span class="p">);</span>
+<span class="w">    </span><span class="n">g_pool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_PoolCreate</span><span class="p">(</span><span class="n">g_env</span><span class="p">,</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_DB"</span><span class="p">),</span>
+<span class="w">                          </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_USR"</span><span class="p">),</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_PWD"</span><span class="p">),</span>
+<span class="w">                          </span><span class="n">OCI_POOL_CONNECTION</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_SESSION_DEFAULT</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"list"</span><span class="p">))</span>
+<span class="w">        </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_list</span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="s">"--dept"</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"get"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_get</span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"add"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span>
+<span class="w">        </span><span class="cm">/* ANSI build: argv strings are already otext */</span>
+<span class="w">        </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_add</span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span>
+<span class="w">                     </span><span class="n">atof</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span><span class="w"> </span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]));</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"raise"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
+<span class="w">        </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_raise</span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="w"> </span><span class="n">atof</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]));</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"import"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_import</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"watch"</span><span class="p">))</span>
+<span class="w">        </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_watch</span><span class="p">();</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"jobs"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="s">"work"</span><span class="p">))</span>
+<span class="w">        </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_jobs_work</span><span class="p">();</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"jobs"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="s">"submit"</span><span class="p">))</span>
+<span class="w">        </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_jobs_submit</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"profile"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">        </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_profile</span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">        </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"usage: empdir list|get|add|raise|import|watch|jobs|profile ...</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_PoolFree</span><span class="p">(</span><span class="n">g_env</span><span class="p">,</span><span class="w"> </span><span class="n">g_pool</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_EnvironmentFree</span><span class="p">(</span><span class="n">g_env</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">rc</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"ocilib.hpp"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cstdlib&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cstring&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;fstream&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;array&gt;</span>
+
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">ocilib</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">Pool</span><span class="w"> </span><span class="o">*</span><span class="n">g_pool</span><span class="p">;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="n">Connection</span><span class="w"> </span><span class="nf">checkout</span><span class="p">()</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="n">g_pool</span><span class="o">-&gt;</span><span class="n">GetConnection</span><span class="p">();</span><span class="w"> </span><span class="p">}</span>
+
+<span class="cm">/* ------------------------------------------------------------------ list */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_list</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">dept</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Statement</span><span class="w">  </span><span class="n">st</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">dept</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"select empno, ename, job, sal from employees "</span>
+<span class="w">                   </span><span class="s">"where deptno = :d order by empno"</span><span class="p">);</span>
+<span class="w">        </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":d"</span><span class="p">,</span><span class="w"> </span><span class="n">dept</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"select empno, ename, job, sal from employees order by empno"</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">();</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">row</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Rows</span><span class="p">())</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  "</span>
+<span class="w">                  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* -------------------------------------------------------------------- get */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_get</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">empno</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Statement</span><span class="w">  </span><span class="n">st</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"select ename, job, sal, hiredate from employees where empno = :e"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="n">empno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">Resultset</span><span class="w"> </span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">FetchNext</span><span class="p">())</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  "</span>
+<span class="w">                  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Date</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">4</span><span class="p">).</span><span class="n">ToString</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"empno "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">empno</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" not found</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* -------------------------------------------------------------------- add */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_add</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">empno</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="o">&amp;</span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="o">&amp;</span><span class="n">job</span><span class="p">,</span>
+<span class="w">                   </span><span class="kt">double</span><span class="w"> </span><span class="n">sal</span><span class="p">,</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="n">deptno</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Statement</span><span class="w">  </span><span class="n">st</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"insert into employees (empno, ename, job, sal, deptno) "</span>
+<span class="w">               </span><span class="s">"values (:e, :n, :j, :s, :d)"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="n">empno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":n"</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="mi">30</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":j"</span><span class="p">,</span><span class="w"> </span><span class="n">job</span><span class="p">,</span><span class="w"> </span><span class="mi">20</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":s"</span><span class="p">,</span><span class="w"> </span><span class="n">sal</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":d"</span><span class="p">,</span><span class="w"> </span><span class="n">deptno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetAffectedRows</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" row(s) inserted</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="n">con</span><span class="p">.</span><span class="n">Commit</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ------------------------------------------------------------------ raise */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_raise</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">deptno</span><span class="p">,</span><span class="w"> </span><span class="kt">double</span><span class="w"> </span><span class="n">pct</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Statement</span><span class="w">  </span><span class="n">st</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"update employees set sal = sal * (1 + :p / 100) "</span>
+<span class="w">               </span><span class="s">"where deptno = :d returning empno into :e"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":p"</span><span class="p">,</span><span class="w"> </span><span class="n">pct</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":d"</span><span class="p">,</span><span class="w"> </span><span class="n">deptno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Register</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="s">":e"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetAffectedRows</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" salary update(s)</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="n">con</span><span class="p">.</span><span class="n">Commit</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ----------------------------------------------------------------- import */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_import</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">csv</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">ifstream</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">csv</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">f</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"cannot open "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">csv</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span><span class="w"> </span><span class="k">return</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Statement</span><span class="w">  </span><span class="n">st</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"insert into employees (empno, ename, sal) values (:e, :n, :s)"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="kt">size_t</span><span class="w"> </span><span class="n">BATCH</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">64</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="o">&gt;</span><span class="w">    </span><span class="n">empno</span><span class="p">{};</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="n">String</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ename</span><span class="p">;</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">array</span><span class="o">&lt;</span><span class="kt">double</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="o">&gt;</span><span class="w"> </span><span class="n">sal</span><span class="p">{};</span>
+<span class="w">    </span><span class="kt">size_t</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">SetBindArraySize</span><span class="p">(</span><span class="n">BATCH</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="n">empno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":n"</span><span class="p">,</span><span class="w"> </span><span class="n">ename</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":s"</span><span class="p">,</span><span class="w"> </span><span class="n">sal</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">line</span><span class="p">;</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">getline</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">line</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="n">name</span><span class="p">[</span><span class="mi">31</span><span class="p">];</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">sscanf</span><span class="p">(</span><span class="n">line</span><span class="p">.</span><span class="n">c_str</span><span class="p">(),</span><span class="w"> </span><span class="s">"%d,%30[^,],%lf"</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">empno</span><span class="p">[</span><span class="n">count</span><span class="p">],</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">sal</span><span class="p">[</span><span class="n">count</span><span class="p">])</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">ename</span><span class="p">[</span><span class="n">count</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">name</span><span class="p">;</span>
+<span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">++</span><span class="n">count</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">BATCH</span><span class="p">)</span>
+<span class="w">            </span><span class="p">{</span>
+<span class="w">                </span><span class="n">st</span><span class="p">.</span><span class="n">SetBindArraySize</span><span class="p">(</span><span class="n">count</span><span class="p">);</span>
+<span class="w">                </span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">();</span>
+<span class="w">                </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="w">            </span><span class="p">}</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">st</span><span class="p">.</span><span class="n">SetBindArraySize</span><span class="p">(</span><span class="n">count</span><span class="p">);</span>
+<span class="w">        </span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetAffectedRows</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" row(s) imported</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="n">con</span><span class="p">.</span><span class="n">Commit</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ------------------------------------------------------------------ watch */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">on_change</span><span class="p">(</span><span class="n">Event</span><span class="w"> </span><span class="o">&amp;</span><span class="n">event</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"[cqn] type="</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">GetType</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" object="</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">GetObject</span><span class="p">()</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" rowid="</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">event</span><span class="p">.</span><span class="n">GetRowid</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_watch</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Statement</span><span class="w">  </span><span class="n">st</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">Subscription</span><span class="w"> </span><span class="n">sub</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">con</span><span class="p">.</span><span class="n">Subscribe</span><span class="p">(</span><span class="s">"empdir-watch"</span><span class="p">,</span><span class="w"> </span><span class="n">Subscription</span><span class="o">::</span><span class="n">NotifyAll</span><span class="p">,</span>
+<span class="w">                                     </span><span class="n">on_change</span><span class="p">,</span><span class="w"> </span><span class="n">Subscription</span><span class="o">::</span><span class="n">SecureNone</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"select empno from employees"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">sub</span><span class="p">.</span><span class="n">Register</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">();</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"watching employees — Ctrl+C to stop</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cin</span><span class="p">.</span><span class="n">get</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">sub</span><span class="p">.</span><span class="n">Unregister</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ------------------------------------------------------------------- jobs */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_jobs_submit</span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="o">&amp;</span><span class="n">title</span><span class="p">,</span><span class="w"> </span><span class="k">const</span><span class="w"> </span><span class="n">String</span><span class="w"> </span><span class="o">&amp;</span><span class="n">content</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">TypeInfo</span><span class="w">  </span><span class="n">inf</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="s">"job_t"</span><span class="p">,</span><span class="w"> </span><span class="n">TypeInfo</span><span class="o">::</span><span class="n">Type</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Enqueue</span><span class="w">   </span><span class="n">enq</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span><span class="w"> </span><span class="s">"job_queue"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Message</span><span class="w">   </span><span class="n">msg</span><span class="p">(</span><span class="n">inf</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Object</span><span class="w">    </span><span class="n">job</span><span class="p">(</span><span class="n">inf</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">job</span><span class="p">.</span><span class="n">Set</span><span class="p">(</span><span class="s">"title"</span><span class="p">,</span><span class="w">   </span><span class="n">title</span><span class="p">);</span>
+<span class="w">    </span><span class="n">job</span><span class="p">.</span><span class="n">Set</span><span class="p">(</span><span class="s">"content"</span><span class="p">,</span><span class="w"> </span><span class="n">content</span><span class="p">);</span>
+<span class="w">    </span><span class="n">msg</span><span class="p">.</span><span class="n">SetObject</span><span class="p">(</span><span class="n">job</span><span class="p">);</span>
+<span class="w">    </span><span class="n">enq</span><span class="p">.</span><span class="n">Put</span><span class="p">(</span><span class="n">msg</span><span class="p">);</span>
+<span class="w">    </span><span class="n">con</span><span class="p">.</span><span class="n">Commit</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_jobs_work</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">TypeInfo</span><span class="w">  </span><span class="n">inf</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="s">"job_t"</span><span class="p">,</span><span class="w"> </span><span class="n">TypeInfo</span><span class="o">::</span><span class="n">Type</span><span class="p">);</span>
+<span class="w">    </span><span class="n">Dequeue</span><span class="w">   </span><span class="n">deq</span><span class="p">(</span><span class="n">inf</span><span class="p">,</span><span class="w"> </span><span class="s">"job_queue"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">Message</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">deq</span><span class="p">.</span><span class="n">Get</span><span class="p">())</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Object</span><span class="w"> </span><span class="n">job</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">msg</span><span class="p">.</span><span class="n">GetObject</span><span class="p">();</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"job: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">job</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"title"</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" — "</span>
+<span class="w">                  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">job</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"content"</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="n">con</span><span class="p">.</span><span class="n">Commit</span><span class="p">();</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* ---------------------------------------------------------------- profile */</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">cmd_profile</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">empno</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Connection</span><span class="w"> </span><span class="n">con</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">checkout</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Statement</span><span class="w">  </span><span class="n">st</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"select profile from employees where empno = :e"</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="n">empno</span><span class="p">);</span>
+<span class="w">    </span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">();</span>
+
+<span class="w">    </span><span class="n">Resultset</span><span class="w"> </span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">();</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">FetchNext</span><span class="p">()</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">rs</span><span class="p">.</span><span class="n">IsNull</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Json</span><span class="w"> </span><span class="n">doc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Json</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">JsonNode</span><span class="w"> </span><span class="n">root</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">doc</span><span class="p">.</span><span class="n">GetRoot</span><span class="p">();</span>
+
+<span class="w">        </span><span class="n">String</span><span class="w"> </span><span class="n">skill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">"&lt;none&gt;"</span><span class="p">;</span>
+<span class="w">        </span><span class="n">JsonNode</span><span class="w"> </span><span class="n">skills</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">root</span><span class="p">[</span><span class="s">"skills"</span><span class="p">];</span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">skills</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">skills</span><span class="p">.</span><span class="n">GetItemCount</span><span class="p">())</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="n">skill</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">skills</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">GetString</span><span class="p">();</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"emp "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">empno</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" — "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">root</span><span class="p">.</span><span class="n">GetFieldCount</span><span class="p">()</span>
+<span class="w">                  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" field(s), first skill: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">skill</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">else</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"no profile for empno "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">empno</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* -------------------------------------------------------------------- main */</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">try</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Environment</span><span class="w"> </span><span class="n">env</span><span class="p">(</span><span class="n">Environment</span><span class="o">::</span><span class="n">Threaded</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">Environment</span><span class="o">::</span><span class="n">Events</span><span class="p">);</span>
+<span class="w">        </span><span class="n">env</span><span class="p">.</span><span class="n">SetSubscriptionPort</span><span class="p">(</span><span class="mi">5468</span><span class="p">);</span>
+
+<span class="w">        </span><span class="n">Pool</span><span class="w"> </span><span class="n">pool</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_DB"</span><span class="p">),</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_USR"</span><span class="p">),</span>
+<span class="w">                  </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_PWD"</span><span class="p">),</span><span class="w"> </span><span class="n">Pool</span><span class="o">::</span><span class="n">ConnectionPool</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">8</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">g_pool</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">&amp;</span><span class="n">pool</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kt">int</span><span class="w"> </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span>
+<span class="w">        </span><span class="k">const</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">cmd</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"list"</span><span class="p">))</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_list</span><span class="p">(</span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">3</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="s">"--dept"</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">])</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"get"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_get</span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"add"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">6</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_add</span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">],</span><span class="w"> </span><span class="n">atof</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">5</span><span class="p">]),</span><span class="w"> </span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">6</span><span class="p">]));</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"raise"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_raise</span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="w"> </span><span class="n">atof</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">]));</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"import"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_import</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"watch"</span><span class="p">))</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_watch</span><span class="p">();</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"jobs"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="s">"work"</span><span class="p">))</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_jobs_work</span><span class="p">();</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"jobs"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="w"> </span><span class="s">"submit"</span><span class="p">))</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_jobs_submit</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="w"> </span><span class="n">argv</span><span class="p">[</span><span class="mi">4</span><span class="p">]);</span>
+<span class="w">        </span><span class="k">else</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">strcmp</span><span class="p">(</span><span class="n">cmd</span><span class="p">,</span><span class="w"> </span><span class="s">"profile"</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">argc</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span>
+<span class="w">            </span><span class="n">rc</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">cmd_profile</span><span class="p">(</span><span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">2</span><span class="p">]));</span>
+<span class="w">        </span><span class="k">else</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"usage: empdir list|get|add|raise|import|watch|jobs|profile ...</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">rc</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ex</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ex</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_FAILURE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="what-to-notice-in-the-code">What to notice in the code</h2>
+<ul>
+<li><strong>Pool checkout is scoped</strong> — every <code>cmd_*</code> takes a connection at the top and
+  releases it at the bottom (<code>OCI_ConnectionFree</code> in C, destructor in C++).</li>
+<li><strong>No exception handling in C++ handlers</strong> — <code>ocilib::Exception</code> propagates to
+  the single <code>catch</code> in <code>main</code>; the C version relies on the error handler instead.</li>
+<li><strong>Same objects, two grammars</strong> — statement → resultset → row getters, bind by
+  name, commit on the connection. The C++ version is shorter only because RAII
+  removes the <code>Free</code> calls and <code>Get&lt;T&gt;</code> removes the getter table.</li>
+<li><strong><code>OCI_ENV_EVENTS</code> + port</strong> are required before any subscription works — that's
+  why they live next to <code>OCI_PoolCreate</code> in <code>main</code>.</li>
+</ul>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Compile the C version (<code>cl /std:c11</code> or <code>gcc -std=c11 -locilib</code>) and run
+   <code>list</code>, <code>get</code>, <code>add</code> against <code>tutorial-schema.sql</code>.</li>
+<li>Extend <code>import</code> with a <code>--mode=dirpath</code> switch using <code>OCI_DirPath</code> (page 815).</li>
+<li>Change <code>watch</code> to <code>OCI_CNT_ROWS</code> and observe rowids instead of objects.</li>
+<li>Add <code>empdir export &lt;empno&gt;</code> writing the employee as a JSON document.</li>
+</ol>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>empdir</code> is one file, one pool, eight commands — every part of the API you
+  learned shows up in a real role.</li>
+<li>C and C++ share the architecture; only the plumbing differs.</li>
+</ul>
+<p><strong>Done.</strong> The appendices are your quick-reference shelf from here.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="capstone.html"><span class="pn-dir">← Previous</span>Capstone</a><a class="pn-link pn-next" href="appendix-api-map.html"><span class="pn-dir">Next →</span>API map</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

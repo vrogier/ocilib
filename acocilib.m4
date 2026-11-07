@@ -48,6 +48,15 @@ AC_DEFUN([OCILIB_PATH],
   doc_files=`(cd ${srcdir:-.}/doc/html && ls -1 *.html *.css *.png)`
   OCILIB_DOCS=`echo $doc_files | sed 's,$, ,g'`
 
+  tut_files=`(cd ${srcdir:-.}/doc/tutorials/html && ls -1 *.html 2>/dev/null | sed 's,^,html/,')`
+  OCILIB_TUTORIALS=`echo $tut_files | sed 's,$, ,g'`
+
+  tut_asset_files=`(cd ${srcdir:-.}/doc/tutorials/html/assets && ls -1 *.css *.js 2>/dev/null | sed 's,^,html/assets/,')`
+  OCILIB_TUTORIALS_ASSETS=`echo $tut_asset_files | sed 's,$, ,g'`
+
+  tut_sql_files=`(cd ${srcdir:-.}/doc/tutorials/html/assets/sql && ls -1 *.sql 2>/dev/null | sed 's,^,html/assets/sql/,')`
+  OCILIB_TUTORIALS_SQL=`echo $tut_sql_files | sed 's,$, ,g'`
+
   demo_sources_files=`(cd ${srcdir:-.}/demo && ls -1 *.c *.h *.cpp *.sql)`
   OCILIB_DEMO_SOURCES=`echo $demo_sources_files | sed 's,$, ,g'`
 
@@ -56,6 +65,9 @@ AC_DEFUN([OCILIB_PATH],
 
   AC_SUBST(OCILIB_PREFIX)
   AC_SUBST(OCILIB_DOCS)
+  AC_SUBST(OCILIB_TUTORIALS)
+  AC_SUBST(OCILIB_TUTORIALS_ASSETS)
+  AC_SUBST(OCILIB_TUTORIALS_SQL)
   AC_SUBST(OCILIB_DEMO_SOURCES)
   AC_SUBST(OCILIB_TESTS)
 ])

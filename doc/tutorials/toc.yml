@@ -1,0 +1,19 @@
+# OCILIB tutorials — table of contents manifest
+#
+# Pages are discovered automatically from pages/NNN-slug.md files.
+# Ordering = the numeric NNN prefix; grouping = the `part:` front-matter key.
+# This file only names the parts, in display order. To insert a page,
+# pick a free number inside its part's range — no renumbering needed.
+
+parts:
+  0: Getting started
+  1: Connections & environments
+  2: SQL, fetching & binding
+  3: PL/SQL
+  4: Transactions, pooling & threads
+  5: Oracle data types
+  6: Object-relational API
+  7: Messaging & notifications
+  8: Bulk & administration
+  9: Modern Oracle features
+  10: Appendices

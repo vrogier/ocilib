@@ -10,7 +10,7 @@
 
 ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = doc/html reconf configure VERSION acocilib.m4 README.md CHANGELOG.md LICENSE
-SUBDIRS = doc/html src demo tests
+SUBDIRS = doc/html doc/tutorials src demo tests
 DISTCLEANFILES = *~ \#*\#
 MAINTAINERCLEANFILES = \
 Makefile Makefile.in config.cache config.log config.h.in \

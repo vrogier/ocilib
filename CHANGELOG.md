@@ -81,6 +81,7 @@
 - Added `ocilib::SodaDb`, `ocilib::SodaColl`, `ocilib::SodaDoc`, `ocilib::SodaOptions`, `ocilib::SodaCollCursor`, and `ocilib::SodaDocCursor` wrapper classes
 - Added iterator capabilities across the C++ API
   - `ocilib::Resultset` exposes `begin()`/`end()` input iterators yielding `ocilib::Row` proxies (typed `Get<T>(index)`/`Get<T>(name)`), usable in range-for loops and `std::ranges` algorithms; scrollable resultsets additionally support `operator--`, `operator+=`, `operator-=` and `operator[]` (seek) navigation
+  - `Resultset::Rows()`/`Resultset::Columns()`/`TypeInfo::Columns()` return view objects for range-for access; `ocilib::ColumnView` proxies expose column attributes (name, type, size, nullability)
   - `ocilib::JsonNode` exposes `begin()`/`end()` input iterators over array items and object fields
   - SODA cursors (`SodaCollCursor`/`SodaDocCursor`) expose `begin()`/`end()` for range-for
 - C++17 API modernization
@@ -132,6 +133,9 @@
   - `Column::HasJsonSchema()` — JSON schema constraint check
   - New `JsonNode` operations: `RemoveItems()` (range delete), `RenameField()`, `Equals()` (deep compare), `Assign()` (deep copy into a node), `Clone()` (same-doc copy), `GetJson()` (owning document)
 
+- All index parameters and index-returning functions are now 0-based (resultset columns, binds, collection elements, JSON items/fields, type-info columns, direct-path rows/columns, bind array positions, absolute fetch seeks). Lookups and positions that can miss now return `OCI_Int32` with **`-1`** as the "not found / no position" sentinel: `OCI_GetColumnIndex`, `OCI_GetBindIndex`, `OCI_GetCurrentRow`, `OCI_ErrorGetRow`.
+- `OCI_GetBindIndex` no longer reports registered binds — `OCI_RegisterXxx` names return `-1` (in v4 they leaked an internal register position that could not be used with `OCI_GetBind`).
+
 ### Changes (C++ API)
 
 - `Environment::Initialize()`, `Environment::Cleanup()`, and `Environment::Initialized()` are removed; construct an `Environment` object.
@@ -143,6 +147,7 @@
 - `Subscription::Register()` no longer takes a `port` argument; use `Environment::SetSubscriptionPort()`.
 - `Dequeue::Subscribe()` is now a static batch call.
 - `Environment::SessionXA` is removed.
+- All index parameters are now 0-based; `coll[i]`/`node[i]` and `Collection`/`JsonNode` iterators iterate positions `0..count-1` (`end()` is `count`); `GetColumnIndex`/`GetBindIndex`/`GetCurrentRow`/`Exception::GetRow` return `Int32` with **`-1`** as the miss/no-position sentinel.
 - C++17 is now required.
 
 - `SodaColl::ReplaceOne()`, `SodaColl::ReplaceOneByKey()`, `SodaColl::InsertMany()` and `SodaColl::Save()` take a trailing `bool refresh = false` that refreshes the caller's document in place with server-assigned attributes. The `*AndGet` methods are removed; `ReplaceOne(key, ...)` is renamed `ReplaceOneByKey(key, ...)`.
@@ -173,7 +178,7 @@
   - MSVC C sources compiled with `/std:c11`
   - GNU autotools and MSVC project files updated for the new source files (`log.c`, `json.c`, `jsonnode.c`, `sodadb.c`, `sodacoll.c`, `sodadoc.c`, `sodaoptions.c`, `sodacollcursor.c`, `sodadoccursor.c`) and removed `mutex.c` / `thread.c` / `threadkey.c`
 - Added GitHub Actions CI workflow (`.github/workflows/ci.yml`)
-- Expanded the gtest-based test suite from 219 to 822 test cases (855 registered gtest instances), with new modules covering JSON, SODA, bind, statement, resultset, memory, logging, and many other areas
+- Expanded the gtest-based test suite to 1,212 tests across 190 test cases, with new modules covering JSON, SODA, bind, statement, resultset, memory, logging, and many other areas; the suite was restructured into focused one-concern `TEST_F`/`TEST_P` tests (Arrange-Act-Assert, descriptive `Method_Scenario_Expectation` names, `TestWithParam` for per-datatype coverage)
 - Line coverage of `src\*.c` is ~93% under OpenCppCoverage (see `doc/test-coverage.md`), measured on the ANSI build since some SODA index and secure-notification paths cannot run under UNICODE builds (Oracle client bug); most of the remaining ~7% is legacy-Oracle-version error handling that cannot be exercised against a modern server
 - Updated all demo applications to use `OCI_EnvironmentCreate()` and standard threading primitives where applicable
 - Updated compilers for MS Windows prebuilt binaries to VS2026 18.10.0, with statically linked VC runtime updated from vc143 to vc145

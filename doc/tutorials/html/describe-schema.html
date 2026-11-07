@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Describing schema objects — OCI_TypeInfo — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW data</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="6" open><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li class="active"><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span><span class="badge badge-demo">demo/desc.c</span><span class="badge badge-demo">demo/meta.c</span></div>
+    <h1 id="describing-schema-objects-the-typeinfo-descriptor">Describing schema objects — the <code>TypeInfo</code> descriptor</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>describe tables, views and object types server-side</li>
+<li>walk <code>TypeInfo</code> metadata: name, kind, columns, super type</li>
+<li>use it as the factory key for objects, collections and REFs</li>
+</ul>
+<h2 id="meet-the-typeinfo">Meet the TypeInfo</h2>
+<p>A <code>TypeInfo</code> is a <strong>server-side description</strong> of a schema object — the same info <code>describe</code> gives you in SQL*Plus.</p>
+<p>It does double duty: pure introspection, and as the <em>type descriptor</em> every object-API constructor needs — objects, collections, REFs and collection elements are all created <em>from</em> a TypeInfo, not from a connection directly.</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_TypeInfo</span><span class="w"> </span><span class="o">*</span><span class="n">ti</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGet</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"employees"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_TIF_TABLE</span><span class="p">);</span>
+<span class="cm">/* … use it … */</span>
+<span class="n">OCI_TypeInfoFree</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">TypeInfo</span><span class="w"> </span><span class="n">ti</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="s">"employees"</span><span class="p">,</span><span class="w"> </span><span class="n">TypeInfo</span><span class="o">::</span><span class="n">Table</span><span class="p">);</span>
+</pre></div>
+</div></div>
+<h2 id="kinds-what-to-describe">Kinds — what to describe</h2>
+<table>
+<thead>
+<tr>
+<th>C enum</th>
+<th>C++ enum</th>
+<th>Describes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_TIF_TABLE</code></td>
+<td><code>TypeInfo::Table</code></td>
+<td>a table — columns via <code>GetColumn{,Count}</code></td>
+</tr>
+<tr>
+<td><code>OCI_TIF_VIEW</code></td>
+<td><code>TypeInfo::View</code></td>
+<td>a view</td>
+</tr>
+<tr>
+<td><code>OCI_TIF_TYPE</code></td>
+<td><code>TypeInfo::Type</code></td>
+<td>an object/collection type — attributes become column descriptors</td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-metadata-surface">The metadata surface</h2>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>Returns</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_TypeInfoGetName</code></td>
+<td><code>GetName()</code></td>
+<td>object/type name</td>
+</tr>
+<tr>
+<td><code>OCI_TypeInfoGetType</code></td>
+<td><code>GetType()</code></td>
+<td>kind detail (varies by kind flag)</td>
+</tr>
+<tr>
+<td><code>OCI_TypeInfoGetColumnCount</code></td>
+<td><code>GetColumnCount()</code></td>
+<td>number of columns/attributes</td>
+</tr>
+<tr>
+<td><code>OCI_TypeInfoGetColumn</code></td>
+<td><code>GetColumn(i)</code></td>
+<td>column descriptor (page 240)</td>
+</tr>
+<tr>
+<td><code>OCI_TypeInfoGetSuperType</code></td>
+<td><code>GetSuperType()</code></td>
+<td>parent type for inherited types</td>
+</tr>
+<tr>
+<td><code>OCI_TypeInfoIsFinalType</code></td>
+<td><code>IsFinalType()</code></td>
+<td>whether the type can be extended</td>
+</tr>
+<tr>
+<td><code>OCI_TypeInfoGetConnection</code></td>
+<td><code>GetConnection()</code></td>
+<td>owning connection</td>
+</tr>
+</tbody>
+</table>
+<h2 id="describe-a-table">Describe a table</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_TypeInfo</span><span class="w"> </span><span class="o">*</span><span class="n">ti</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGet</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"employees"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_TIF_TABLE</span><span class="p">);</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%s has %u columns</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">       </span><span class="n">OCI_TypeInfoGetName</span><span class="p">(</span><span class="n">ti</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_TypeInfoGetColumnCount</span><span class="p">(</span><span class="n">ti</span><span class="p">));</span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">OCI_TypeInfoGetColumnCount</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Column</span><span class="w"> </span><span class="o">*</span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGetColumn</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"  %-12s %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ColumnGetName</span><span class="p">(</span><span class="n">col</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_ColumnGetSQLType</span><span class="p">(</span><span class="n">col</span><span class="p">));</span>
+<span class="p">}</span>
+<span class="n">OCI_TypeInfoFree</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">TypeInfo</span><span class="w"> </span><span class="n">ti</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="s">"employees"</span><span class="p">,</span><span class="w"> </span><span class="n">TypeInfo</span><span class="o">::</span><span class="n">Table</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ti</span><span class="p">.</span><span class="n">GetName</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" has "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ti</span><span class="p">.</span><span class="n">GetColumnCount</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" columns</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">UInt32</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;=</span><span class="w"> </span><span class="n">ti</span><span class="p">.</span><span class="n">GetColumnCount</span><span class="p">();</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Column</span><span class="w"> </span><span class="n">col</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ti</span><span class="p">.</span><span class="n">GetColumn</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">col</span><span class="p">.</span><span class="n">GetName</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">col</span><span class="p">.</span><span class="n">GetSQLType</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="typeinfo-as-factory-input">TypeInfo as factory input</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_TypeInfo</span><span class="w"> </span><span class="o">*</span><span class="n">tt</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGet</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"t_vendor"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_TIF_TYPE</span><span class="p">);</span>
+<span class="n">OCI_Object</span><span class="w"> </span><span class="o">*</span><span class="n">obj</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ObjectCreate</span><span class="p">(</span><span class="n">tt</span><span class="p">);</span><span class="w">      </span><span class="cm">/* new t_vendor instance */</span>
+<span class="n">OCI_TypeInfoFree</span><span class="p">(</span><span class="n">tt</span><span class="p">);</span><span class="w">                        </span><span class="cm">/* obj keeps what it needs */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">TypeInfo</span><span class="w"> </span><span class="n">tt</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="s">"t_vendor"</span><span class="p">,</span><span class="w"> </span><span class="n">TypeInfo</span><span class="o">::</span><span class="n">Type</span><span class="p">);</span>
+<span class="n">Object</span><span class="w"> </span><span class="nf">obj</span><span class="p">(</span><span class="n">tt</span><span class="p">);</span><span class="w">                              </span><span class="cm">/* new t_vendor instance */</span>
+</pre></div>
+</div></div>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Describe <code>employees</code> and <code>departments</code> — compare with <code>describe</code> in SQL*Plus.</li>
+<li>Describe an object type (<code>create type t_point as object(x number, y number)</code>)
+   and print its attribute list.</li>
+<li>Walk <code>GetSuperType</code> on a type created <code>under</code> another.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong><code>Type</code> kind on a table</strong> — returns NULL; match the kind flag to the object.</li>
+<li><strong>Forgetting to free the handle</strong> — owned, not borrowed (C++ RAII covers it).</li>
+<li><strong>Assuming attribute order matches declaration</strong> — use <code>GetColumn</code> indexes 1..N.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>TypeInfo = schema describe + the key that creates objects, collections, REFs and
+  elements.</li>
+</ul>
+<p><strong>Next:</strong> objects — create them from a TypeInfo and fill their attributes.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="checkpoint-4.html"><span class="pn-dir">← Previous</span>Checkpoint 4 profiles</a><a class="pn-link pn-next" href="objects-basics.html"><span class="pn-dir">Next →</span>Objects basics</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>
