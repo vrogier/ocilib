@@ -169,6 +169,12 @@
 - Updated C and C++ API documentation for `OCI_Environment`, JSON, SODA, logging, and the new lifecycle.
 - Added v4 to v5 migration guidance covering the breaking API changes.
 - Updated Doxygen data files, README, and VERSION for v5.0.0.
+- Added a complete tutorial series under `doc/tutorials/`
+  - ~90 lessons covering the entire C and C++ API, from first connection to sharding and SODA
+  - every code sample is offered in both C and C++ with a clickable language toggle
+  - Markdown sources rendered to a static, committed HTML site (`doc/tutorials/html/`) that works offline
+  - includes a running "employee directory" project, checkpoints, a capstone app (`empdir`), and appendices (API map, type map, version matrix, FAQ)
+  - shipped in the release archive and installed by autotools to `share/doc/ocilib/tutorials/`
 
 ### Miscellaneous
 
