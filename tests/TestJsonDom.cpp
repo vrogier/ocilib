@@ -498,6 +498,58 @@ namespace TestCApi
         EXPECT_EQ(nullptr, OCI_GetLastError());
     }
 
+    TEST_F(TestJsonDomOps, SetStringOnAttachedField_UpdatesDocument)
+    {
+        OCI_JsonNode* name = OCI_JsonNodeGetFieldByName(obj, OTEXT("name"));
+
+        ASSERT_NE(nullptr, name);
+        ASSERT_TRUE(OCI_JsonNodeSetString(name, OTEXT("changed"), 0));
+
+        otext      buffer[512];
+        OCI_UInt32 length = (OCI_UInt32) sizeof(buffer) - 1;
+
+        ASSERT_TRUE(OCI_JsonToText(json, buffer, &length, 0));
+        EXPECT_NE(String::npos, String(buffer).find(OTEXT("\"name\":\"changed\"")));
+
+        OCI_JsonNodeFree(name);
+    }
+
+    TEST_F(TestJsonDomOps, SetStringOnAttachedArrayItem_ReplacesElement)
+    {
+        OCI_JsonNode* arr  = GetArr();
+        OCI_JsonNode* item = OCI_JsonNodeGetItem(arr, 0);
+
+        ASSERT_NE(nullptr, arr);
+        ASSERT_NE(nullptr, item);
+        ASSERT_TRUE(OCI_JsonNodeSetString(item, OTEXT("REPL"), 0));
+
+        otext      buffer[512];
+        OCI_UInt32 length = (OCI_UInt32) sizeof(buffer) - 1;
+
+        ASSERT_TRUE(OCI_JsonToText(json, buffer, &length, 0));
+        EXPECT_NE(String::npos, String(buffer).find(OTEXT("\"arr\":[\"REPL\",\"two\"]")));
+
+        OCI_JsonNodeFree(item);
+        OCI_JsonNodeFree(arr);
+    }
+
+    TEST_F(TestJsonDomOps, SetStringOnDetachedNode_StillWorks)
+    {
+        OCI_JsonNode* node = OCI_JsonNodeCreateString(json, OTEXT("before"), 0);
+
+        ASSERT_NE(nullptr, node);
+        ASSERT_TRUE(OCI_JsonNodeSetString(node, OTEXT("after"), 0));
+
+        OCI_UInt32   length = 0;
+        const otext *str   = OCI_JsonNodeGetString(node, &length);
+
+        ASSERT_NE(nullptr, str);
+        EXPECT_EQ(5u, length);
+        EXPECT_EQ(0, memcmp(str, OTEXT("after"), 5 * sizeof(otext)));
+
+        OCI_JsonNodeFree(node);
+    }
+
     TEST_F(TestJsonDomOps, GetByPathOnUnknownField_ReturnsNull)
     {
         EXPECT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.missing")));
@@ -756,9 +808,16 @@ namespace TestCApi
         EXPECT_FALSE(OCI_JsonValidate(bad, schema, &errors));
         ASSERT_TRUE(NULL != errors);
         {
-            OCI_UInt32 errlen = 0;
-            ASSERT_TRUE(OCI_JsonToText(errors, NULL, &errlen, 0));
-            ASSERT_TRUE(errlen > 0); /* error doc populated */
+            /* error doc is populated — verify via the DOM (portable: the
+               server-generated error text may not be serializable to the
+               client charset — JZN-00010 on localized messages) */
+
+            OCI_JsonNode* errroot = OCI_JsonGetRoot(errors);
+
+            ASSERT_TRUE(NULL != errroot);
+            EXPECT_TRUE(OCI_JsonNodeGetFieldCount(errroot) > 0);
+
+            OCI_JsonNodeFree(errroot);
         }
         OCI_JsonFree(errors);
         errors = NULL;

@@ -795,27 +795,6 @@ typedef void (*POCI_HA_HANDLER)
     OCI_Timestamp   * time
 );
 
-/**
- * @var POCI_LOG_HANDLER
- *
- * @brief
- * Logging callback prototype.
- *
- * @param env      - Environment handle
- * @param level    - Log level
- * @param category - Log category
- * @param message  - Formatted log line as an ANSI/UTF-8 string
- *
- */
-
-typedef void (*POCI_LOG_HANDLER)
-(
-    OCI_Environment *env,
-    OCI_LogLevel     level,
-    OCI_LogCategory  category,
-    const char      *message
-);
-
 /* public structures */
 
 /**

@@ -300,6 +300,14 @@ namespace ocilib
         /**
         * @brief Internal usage.
         * Smart pointer class with shared ownership for managing OCILIB object handles
+        *
+        * @note
+        * Wrapping a raw C API handle (OCI_*) in a C++ object requires the owning
+        * OCI_Environment to have been created through the C++ API
+        * (ocilib::Environment). Handles belonging to environments created via
+        * the pure C API (OCI_EnvironmentCreate) cannot be deduplicated by the
+        * handle store and are not supported — assigning such a C handle to a
+        * C++ object is unsupported usage.
         */
         template<class T>
         class HandleHolder

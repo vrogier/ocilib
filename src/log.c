@@ -455,7 +455,6 @@ static OCI_Boolean OcilibLogInitializeUnlocked(void)
     OcilibLogger.file           = NULL;
     OcilibLogger.file_owned     = FALSE;
     OcilibLogger.initialized    = FALSE;
-    OcilibLogger.handler        = NULL;
     OcilibLogger.output_path[0] = 0;
     OcilibLogger.ref_count      = 0;
 
@@ -550,22 +549,6 @@ OCI_Boolean OcilibLogInitialize(void)
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibLogSetHandler
- * --------------------------------------------------------------------------------------------- */
-
-void OcilibLogSetHandler
-(
-    POCI_LOG_HANDLER handler
-)
-{
-    OcilibLogLock();
-
-    OcilibLogger.handler = handler;
-
-    OcilibLogUnlock();
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OcilibLogCleanup
  * --------------------------------------------------------------------------------------------- */
 
@@ -587,7 +570,6 @@ OCI_Boolean OcilibLogCleanup(void)
 
         OcilibLogger.file       = NULL;
         OcilibLogger.file_owned = FALSE;
-        OcilibLogger.handler    = NULL;
 
         /* logger_mutex is intentionally not destroyed: see its declaration */
 
@@ -605,7 +587,6 @@ OCI_Boolean OcilibLogCleanup(void)
 
 void OcilibLogWrite
 (
-    OCI_Environment *env,
     OCI_LogCategory  category,
     OCI_LogLevel     level,
     const char      *step,
@@ -628,8 +609,6 @@ void OcilibLogWrite
     OCI_Int32 year = 0, month = 0, day = 0;
     OCI_Int32 hour = 0, min = 0, sec = 0, msec = 0;
     OCI_Int32 chars;
-
-    POCI_LOG_HANDLER handler = NULL;
 
     /* Unlocked fast-path gate.
        Everything that touches the sink below is done under the lock. */
@@ -687,29 +666,5 @@ void OcilibLogWrite
         fflush(file);
     }
 
-    /* Snapshot the handler under the lock, then invoke it *outside* the lock.
-       logger_mutex is mtx_plain (non-recursive), so calling back into user code
-       while holding it would deadlock the moment that code calls any OCILIB
-       function that logs. The trade-off is that concurrent handler invocations
-       are no longer serialised: a user handler must be thread safe. */
-
-    handler = OcilibLogger.handler;
-
     OcilibLogUnlock();
-
-    if (handler)
-    {
-#ifdef OCI_CHARSET_ANSI
-
-        handler(env, level, category, line);
-
-#else
-
-        char utf8[OCILIB_LOG_UTF8_SIZE];
-
-        OcilibLogNativeToUTF8(line, utf8, (OCI_Int32) sizeof(utf8) - 1);
-        handler(env, level, category, utf8);
-
-#endif
-    }
 }

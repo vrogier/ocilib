@@ -513,6 +513,12 @@ namespace ocilib
      * @brief
      * Static class in charge of library initialization / cleanup
      *
+     * @note
+     * The C++ layer stores its per-environment bookkeeping in the environment
+     * handle's user-data slot (OCI_SetUserData/OCI_GetUserData). Calling
+     * OCI_SetUserData on an OCI_Environment from a C++ program overwrites that
+     * bookkeeping and is unsupported — do not use the environment user-data
+     * slot when the C++ layer is in use.
      */
     class Environment
     {

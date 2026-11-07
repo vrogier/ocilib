@@ -81,30 +81,34 @@ static void JsonNodeCacheStr
     OCI_Size       src_len
 )
 {
-    if (NULL != node->str && OCI_CHAR_WIDE == node->json->env->charset)
+    if (NULL != node->str)
     {
         OcilibMemoryFree(node->json->env, node->str);
     }
     node->str = NULL;
 
-#if defined(OCI_CHARSET_WIDE)
-
     node->str = (otext *) OcilibMemoryAlloc(node->json->env, OCI_IPC_VOID,
-                                            src_len + 1, sizeof(otext), FALSE);
+                                            src_len + 1, sizeof(otext), TRUE);
     if (NULL != node->str)
     {
+#if defined(OCI_CHARSET_WIDE)
         OcilibStringAnsiToNative(src, node->str, (OCI_Int32) src_len);
-        node->str[src_len] = 0;
-    }
-
 #else
-
-    OCI_NOT_USED(src_len);
-
-    /* ANSI: oratext is already otext — borrow the DOM pointer directly */
-    node->str = (otext *) src;
-
+        memcpy(node->str, src, src_len);
 #endif
+    }
+}
+
+static void JsonNodeDropCachedStr
+(
+    OCI_JsonNode *node
+)
+{
+    if (NULL != node->str)
+    {
+        OcilibMemoryFree(node->json->env, node->str);
+        node->str = NULL;
+    }
 }
 
 static oratext * JsonNodeGetAnsiString
@@ -124,6 +128,105 @@ static oratext * JsonNodeGetAnsiString
     }
 
     return (oratext *) dbstr;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibJsonNodeSplice
+ * --------------------------------------------------------------------------------------------- */
+
+static OCI_Boolean OcilibJsonNodeSplice
+(
+    OCI_JsonNode *node,
+    jznDomNode   *hnd
+)
+{
+
+/* Repoint an attached node at a new DOM node: the parent (object field, array
+   slot or document root) is updated so the document actually references the
+   new content. Detached nodes have nothing to splice.*/
+
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    jznDomDoc   *jdoc = node->json ? node->json->jdoc : NULL;
+    OCI_Boolean  ok   = TRUE;
+
+    if (NULL != node->domparent && NULL != node->domkey)      /* object field */
+    {
+        ok = (0 == JsonDomPutFieldValue(jdoc, (jznDomObject *) node->domparent,
+                                      node->domkey, node->domkeylen, hnd));
+    }
+    else if (NULL != node->domparent)                         /* array element */
+    {
+        /* jznDomPutItem inserts at pos — delete first for replace semantics */
+
+        ok = (0 != JsonDomDeleteItem(jdoc, (jznDomArray *) node->domparent, node->domidx)) &&
+             (0 != JsonDomPutItem(jdoc, (jznDomArray *) node->domparent, node->domidx, hnd));
+    }
+    else if (NULL != jdoc && NULL != node->handle &&
+             node->handle == JsonDomGetRoot(jdoc))            /* document root */
+    {
+        ok = (0 == JsonDomSetRoot(jdoc, hnd));
+    }
+
+    if (!ok)
+    {
+        return FALSE;
+    }
+
+    JsonNodeDropCachedStr(node);
+
+    return TRUE;
+
+#else
+
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(hnd);
+    return FALSE;
+
+#endif
+}
+
+
+static OCI_Boolean OcilibJsonNodeSetTemporal
+(
+    OCI_JsonNode *node,
+    jznvaltype    vtype,
+    void         *hnd
+)
+{
+#if OCI_VERSION_COMPILE >= OCI_21_1
+
+    jznDomScalar *tmp = NULL;
+
+    if (NULL == node || NULL == node->json || NULL == node->json->jdoc || NULL == hnd)
+    {
+        return FALSE;
+    }
+
+    tmp = JsonDomNewScalarVal(node->json->jdoc, vtype, hnd);
+
+    if (NULL == tmp)
+    {
+        return FALSE;
+    }
+
+    if (!OcilibJsonNodeSplice(node, (jznDomNode *) tmp))
+    {
+        return FALSE;
+    }
+
+    node->handle = (jznDomNode *) tmp;
+
+    return TRUE;
+
+#else
+
+    OCI_NOT_USED(node);
+    OCI_NOT_USED(vtype);
+    OCI_NOT_USED(hnd);
+    return FALSE;
+
+#endif
 }
 
 static OCI_JsonType OcilibJsonNodeGetScalarType
@@ -154,10 +257,14 @@ OCI_JsonNode * OcilibJsonNodeInitialize
 
     ALLOC_HANDLE(OCI_IPC_JSON_NODE, node);
 
-    node->json   = json;
-    node->handle = handle;
-    node->type   = type;
-    node->str    = NULL;
+    node->json      = json;
+    node->handle    = handle;
+    node->type      = type;
+    node->str       = NULL;
+    node->domparent = NULL;
+    node->domkey    = NULL;
+    node->domkeylen = 0;
+    node->domidx    = 0;
 
     if (NULL != json->jdoc && NULL != handle)
     {
@@ -221,11 +328,9 @@ OCI_Boolean OcilibJsonNodeFree
 
     OcilibErrorResetSource(NULL, node);
 
-    if (NULL != node->str && OCI_CHAR_WIDE == node->json->env->charset)
-    {
-        OcilibMemoryFree(node->json->env, node->str);
-    }
-    node->str = NULL;
+    JsonNodeDropCachedStr(node);
+
+    FREE(node->domkey);
 
     FREE(node);
 
@@ -592,6 +697,14 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByName
 
     CHECK_NULL(field);
 
+    field->domparent = node->handle;
+
+    ALLOC_BUFFER(OCI_IPC_VOID, field->domkey, ora_len + 1, 1);
+
+    memcpy(field->domkey, orakey, ora_len);
+
+    field->domkeylen = (ub2) ora_len;
+
     SET_RETVAL(field);
 
 #else
@@ -656,6 +769,15 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByIndex
     field = OcilibJsonNodeInitialize(node->json, nvp.node_jznDomNameValuePair, OCI_JNT_NULL);
 
     CHECK_NULL(field);
+
+    field->domparent = node->handle;
+
+    ALLOC_BUFFER(OCI_IPC_VOID, field->domkey, nvp.name_jznDomNameValuePair.len_jznDomObjFieldName + 1, 1);
+
+    memcpy(field->domkey, nvp.name_jznDomNameValuePair.fnm_jznDomObjFieldName,
+           nvp.name_jznDomNameValuePair.len_jznDomObjFieldName);
+
+    field->domkeylen = (ub2) nvp.name_jznDomNameValuePair.len_jznDomObjFieldName;
 
     SET_RETVAL(field);
 
@@ -751,6 +873,9 @@ OCI_JsonNode * OcilibJsonNodeGetItem
     item = OcilibJsonNodeInitialize(node->json, hnd, OCI_JNT_NULL);
 
     CHECK_NULL(item);
+
+    item->domparent = node->handle;
+    item->domidx    = index;
 
     SET_RETVAL(item);
 
@@ -1525,8 +1650,6 @@ OCI_JsonNode * OcilibJsonNodeCreateNumber
 
     OCI_JsonNode *node = NULL;
     jznDomNode   *hnd  = NULL;
-    jznScalarVal  sval;
-    ub1          *numbuf = NULL;
 
     CHECK_PTR(OCI_IPC_JSON, json);
     CHECK_PTR(OCI_IPC_NUMBER, value);
@@ -1534,18 +1657,8 @@ OCI_JsonNode * OcilibJsonNodeCreateNumber
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
     CHECK_JSON_DOC(json);
 
-    numbuf = (ub1 *) malloc(OCI_NUMBER_SIZE);
-
-    CHECK_NULL(numbuf);
-
-    memcpy(numbuf, value->handle, (OCI_Size) OCI_NUMBER_SIZE);
-
-    memset(&sval, 0, sizeof(sval));
-    sval.type_jznScalarVal      = JZNVAL_ORA_NUMBER;
-    sval.oranumval_jznScalarVal = numbuf;
-    sval.oranumlen_jznScalarVal = (ub4) OCI_NUMBER_SIZE;
-
-    hnd = (jznDomNode *) JsonDomNewScalar(json->jdoc, &sval);
+    hnd = (jznDomNode *) JsonDomNewScalarVal(json->jdoc, JZNVAL_OCI_NUMBER,
+                                            value->handle);
 
     CHECK_JSON(json->jdoc, NULL != hnd);
 
@@ -1563,10 +1676,8 @@ OCI_JsonNode * OcilibJsonNodeCreateNumber
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != node)
         {
-            free(numbuf);
-            numbuf = NULL;
             OcilibJsonNodeFree(node);
             node = NULL;
         }
@@ -1690,6 +1801,7 @@ OCI_JsonNode * OcilibJsonNodeCreateBinary
     );
 }
 
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibJsonNodeSetString
  * --------------------------------------------------------------------------------------------- */
@@ -1734,6 +1846,8 @@ OCI_Boolean OcilibJsonNodeSetString
     hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
     CHECK_JSON(node->json->jdoc, NULL != hnd);
 
+    CHECK_JSON(node->json->jdoc, OcilibJsonNodeSplice(node, hnd));
+
     node->handle = hnd;
 
     SET_SUCCESS();
@@ -1770,9 +1884,7 @@ OCI_Boolean OcilibJsonNodeSetNumber
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    jznScalarVal sval;
     jznDomNode  *hnd    = NULL;
-    ub1         *numbuf = NULL;
 
     CHECK_PTR(OCI_IPC_JSON_NODE, node);
     CHECK_PTR(OCI_IPC_NUMBER, value);
@@ -1782,19 +1894,11 @@ OCI_Boolean OcilibJsonNodeSetNumber
     CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_NUMBER) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    numbuf = (ub1 *) malloc((OCI_Size) OCI_NUMBER_SIZE);
-
-    CHECK_NULL(numbuf);
-
-    memcpy(numbuf, value->handle, (OCI_Size) OCI_NUMBER_SIZE);
-
-    memset(&sval, 0, sizeof(sval));
-    sval.type_jznScalarVal      = JZNVAL_ORA_NUMBER;
-    sval.oranumval_jznScalarVal = numbuf;
-    sval.oranumlen_jznScalarVal = (ub4) OCI_NUMBER_SIZE;
-
-    hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
+    hnd = (jznDomNode *) JsonDomNewScalarVal(node->json->jdoc, JZNVAL_OCI_NUMBER,
+                                            value->handle);
     CHECK_JSON(node->json->jdoc, NULL != hnd);
+
+    CHECK_JSON(node->json->jdoc, OcilibJsonNodeSplice(node, hnd));
 
     node->handle = hnd;
 
@@ -1806,14 +1910,7 @@ OCI_Boolean OcilibJsonNodeSetNumber
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        if (FAILURE)
-        {
-            free(numbuf);
-            numbuf = NULL;
-        }
-    );
+    CLEANUP_AND_EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1849,6 +1946,8 @@ OCI_Boolean OcilibJsonNodeSetBoolean
 
     hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
     CHECK_JSON(node->json->jdoc, NULL != hnd);
+
+    CHECK_JSON(node->json->jdoc, OcilibJsonNodeSplice(node, hnd));
 
     node->handle = hnd;
 
@@ -1901,6 +2000,8 @@ OCI_Boolean OcilibJsonNodeSetBinary
     hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
     CHECK_JSON(node->json->jdoc, NULL != hnd);
 
+    CHECK_JSON(node->json->jdoc, OcilibJsonNodeSplice(node, hnd));
+
     node->handle = hnd;
 
     SET_SUCCESS();
@@ -1946,6 +2047,8 @@ OCI_Boolean OcilibJsonNodeSetNull
 
     hnd = (jznDomNode *) JsonDomNewScalar(node->json->jdoc, &sval);
     CHECK_JSON(node->json->jdoc, NULL != hnd);
+
+    CHECK_JSON(node->json->jdoc, OcilibJsonNodeSplice(node, hnd));
 
     node->handle = hnd;
     node->type   = OCI_JNT_NULL;
@@ -2263,44 +2366,6 @@ OCI_JsonNode * OcilibJsonNodeCreateInterval
 /* --------------------------------------------------------------------------------------------- *
  * OcilibJsonNodeSetDate
  * --------------------------------------------------------------------------------------------- */
-
-static OCI_Boolean OcilibJsonNodeSetTemporal
-(
-    OCI_JsonNode *node,
-    jznvaltype    vtype,
-    void         *hnd
-)
-{
-#if OCI_VERSION_COMPILE >= OCI_21_1
-
-    jznDomScalar *tmp = NULL;
-
-    if (NULL == node || NULL == node->json || NULL == node->json->jdoc || NULL == hnd)
-    {
-        return FALSE;
-    }
-
-    tmp = JsonDomNewScalarVal(node->json->jdoc, vtype, hnd);
-
-    if (NULL == tmp)
-    {
-        return FALSE;
-    }
-
-    node->handle = (jznDomNode *) tmp;
-
-    return TRUE;
-
-#else
-
-    OCI_NOT_USED(node);
-    OCI_NOT_USED(vtype);
-    OCI_NOT_USED(hnd);
-    return FALSE;
-
-#endif
-}
-
 OCI_Boolean OcilibJsonNodeSetDate
 (
     OCI_JsonNode *node,
@@ -3522,16 +3587,12 @@ OCI_Boolean OcilibJsonNodeAssign
 
     CHECK_JSON(node->json->jdoc, NULL != copied);
 
+    CHECK_JSON(node->json->jdoc, OcilibJsonNodeSplice(node, (jznDomNode *) copied));
+
     node->handle = (void *) copied;
     node->type   = src->type;
 
-    /* drop the cached otext conversion — the node now points at new content */
-
-    if (NULL != node->str && OCI_CHAR_WIDE == node->json->env->charset)
-    {
-        OcilibMemoryFree(node->json->env, node->str);
-    }
-    node->str = NULL;
+    JsonNodeDropCachedStr(node);
 
     SET_SUCCESS();
 #else

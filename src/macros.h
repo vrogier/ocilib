@@ -209,7 +209,7 @@ ocilib_exit_label:                  \
         OcilibLogIsEnabled((cat), (lvl))
 
 #define OCILIB_LOG_STEP_WITH_ENV(env, cat, lvl, step, func, ...) \
-        do { if (LOG_ENABLED(cat, lvl)) { OcilibLogWrite((env), (cat), (lvl), (step), (func), __VA_ARGS__); } } while(0)
+        do { if (LOG_ENABLED(cat, lvl)) { OcilibLogWrite((cat), (lvl), (step), (func), __VA_ARGS__); } } while(0)
 
 #define OCILIB_LOG_WITH_ENV(env, cat, lvl, func, ...) \
         OCILIB_LOG_STEP_WITH_ENV((env), (cat), (lvl), NULL, (func), __VA_ARGS__)

@@ -59,7 +59,6 @@ struct OCI_Logger
     OCI_Int32       ref_count;                            /* number of environments using the logger
                                                           */
     otext            output_path[OCI_SIZE_BUFFER + 1]; /* cached path as otext */
-    POCI_LOG_HANDLER handler;                       /* user supplied log callback */
 
     /* The logger lock is a file-static mtx_t in log.c rather than a member:
        it must outlive every OCI_Environment and is created once via
@@ -702,6 +701,10 @@ struct OCI_JsonNode
     OCI_Json    *json;       /* parent document; keeps the DOM alive */
     OCI_JsonType type;        /* cached node type */
     otext       *str;         /* cached otext conversion of DOM string/field name */
+    void        *domparent;   /* DOM parent (object/array) when attached, else NULL */
+    oratext     *domkey;      /* ANSI field name when parent is an object, else NULL */
+    ub2          domkeylen;   /* length of domkey (without terminator) */
+    ub4          domidx;      /* element index when parent is an array */
 };
 
 /*

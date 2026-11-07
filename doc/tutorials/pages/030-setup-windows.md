@@ -61,10 +61,10 @@ You only need this to patch/debug the library itself: open
 from a developer prompt with `VsDevCmd.bat` + `msbuild`:
 
 ```powershell
-# Visual Studio 2026 (v143 toolset)
+# Visual Studio 2026 (v145 toolset)
 cmd /c '"c:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=amd64 && msbuild proj\dll\ocilib_dll.sln /p:Configuration="Release - ANSI" /p:Platform=x64'
 
-# Visual Studio 2022 — same command, VS17 path
+# Visual Studio 2022  (v143 toolset) — same command, VS17 path 
 cmd /c '"c:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64 && msbuild proj\dll\ocilib_dll.sln /p:Configuration="Release - ANSI" /p:Platform=x64'
 ```
 

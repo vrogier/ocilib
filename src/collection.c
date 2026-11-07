@@ -199,7 +199,7 @@ OCI_Boolean OcilibCollectionFreeArray
     ENTER_FUNC
     (
         /* returns */ OCI_Boolean, FALSE,
-        /* context */ OCI_IPC_VOID, colls
+        /* context */ OCI_IPC_VOID, NULL
     );
 
     CHECK_PTR(OCI_IPC_ARRAY, colls);

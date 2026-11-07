@@ -34,6 +34,8 @@ static tss_t     error_tss;
 static once_flag error_tss_once      = ONCE_FLAG_INIT;
 static OCI_Int32 error_tss_status    = thrd_error;
 static OCI_Int32 error_tss_ref_count = 0;
+static mtx_t     error_ref_mtx;
+static once_flag error_ref_mtx_once  = ONCE_FLAG_INIT;
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibErrorTssDtor
@@ -62,6 +64,14 @@ static void OcilibErrorTssCreate
     error_tss_status = tss_create(&error_tss, OcilibErrorTssDtor);
 }
 
+static void OcilibErrorRefMutexCreate
+(
+    void
+)
+{
+    mtx_init(&error_ref_mtx, mtx_plain);
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibErrorInitialize
  * --------------------------------------------------------------------------------------------- */
@@ -72,8 +82,11 @@ OCI_Boolean OcilibErrorInitialize
 )
 {
     call_once(&error_tss_once, OcilibErrorTssCreate);
+    call_once(&error_ref_mtx_once, OcilibErrorRefMutexCreate);
 
+    mtx_lock(&error_ref_mtx);
     error_tss_ref_count++;
+    mtx_unlock(&error_ref_mtx);
 
     return error_tss_status == thrd_success;
 }
@@ -87,7 +100,15 @@ OCI_Boolean OcilibErrorCleanup
     void
 )
 {
-    if (--error_tss_ref_count == 0)
+    OCI_Boolean last = FALSE;
+
+    call_once(&error_ref_mtx_once, OcilibErrorRefMutexCreate);
+
+    mtx_lock(&error_ref_mtx);
+    last = (--error_tss_ref_count == 0);
+    mtx_unlock(&error_ref_mtx);
+
+    if (last)
     {
         OCI_Error* err = (OCI_Error*)tss_get(error_tss);
 
@@ -341,7 +362,10 @@ OCI_Error* OcilibErrorGet
 
     call_once(&error_tss_once, OcilibErrorTssCreate);
 
-    err = (OCI_Error*)tss_get(error_tss);
+    if (error_tss_status == thrd_success)
+    {
+        err = (OCI_Error*)tss_get(error_tss);
+    }
 
     if (err == NULL)
     {
@@ -563,6 +587,24 @@ OCI_Connection* OcilibErrorGetConnection
             return ((OCI_XmlType*)err->source_ptr)->con;
         case OCI_IPC_VECTOR:
             return ((OCI_Vector*)err->source_ptr)->con;
+        case OCI_IPC_EVENT:
+            return ((OCI_Event*)err->source_ptr)->sub->con;
+        case OCI_IPC_SODA_DB:
+            return ((OCI_SodaDb*)err->source_ptr)->con;
+        case OCI_IPC_SODA_COLL:
+            return ((OCI_SodaColl*)err->source_ptr)->sdb->con;
+        case OCI_IPC_SODA_DOC:
+            return ((OCI_SodaDoc*)err->source_ptr)->sdb->con;
+        case OCI_IPC_SODA_OPTIONS:
+            return ((OCI_SodaOptions*)err->source_ptr)->sdb->con;
+        case OCI_IPC_SODA_COLL_CURSOR:
+            return ((OCI_SodaCollCursor*)err->source_ptr)->sdb->con;
+        case OCI_IPC_SODA_DOC_CURSOR:
+            return ((OCI_SodaDocCursor*)err->source_ptr)->coll->sdb->con;
+        case OCI_IPC_JSON:
+            return ((OCI_Json*)err->source_ptr)->con;
+        case OCI_IPC_JSON_NODE:
+            return ((OCI_JsonNode*)err->source_ptr)->json->con;
     }
 
     return NULL;

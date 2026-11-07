@@ -34,7 +34,7 @@ OCI_Boolean OcilibEventReset
     ENTER_FUNC
     (
         /* returns */ OCI_Boolean, FALSE,
-        /* context */ OCI_IPC_EVENT, event
+        /* context */ OCI_IPC_EVENT, NULL
     );
 
     CHECK_PTR(OCI_IPC_EVENT, event);

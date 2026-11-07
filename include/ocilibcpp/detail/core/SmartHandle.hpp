@@ -134,6 +134,11 @@ namespace ocilib
             {
                 store->Remove(h, this);
             }
+
+            if (auto p = _parent.lock())
+            {
+                p->RemoveChild(this);
+            }
         }
 
         template<class T>

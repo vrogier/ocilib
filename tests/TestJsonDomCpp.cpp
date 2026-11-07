@@ -445,6 +445,6 @@ namespace TestCppApi
 
         ASSERT_FALSE(bad.Validate(schema));
         ASSERT_FALSE(bad.Validate(schema, errors));
-        ASSERT_FALSE(errors.ToString().empty());
+        ASSERT_TRUE(errors.GetRoot().GetFieldCount() > 0);
     }
 }

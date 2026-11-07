@@ -122,20 +122,31 @@ namespace ocilib
 
             Release();
 
-            if (handle)
+            if (!handle)
+            {
+                return;
+            }
+
+            if (store)
             {
                 _control = store->Find<T>(handle);
+            }
 
-                if (!_control)
-                {
-                    _control = std::make_shared<HandleControl<T>>(handle, allocated, std::weak_ptr<HandleStore>(store), freeNotify, extraInfo);
-                    store->Register(handle, _control);
+            if (_control)
+            {
+                return;
+            }
 
-                    if (parent)
-                    {
-                        parent->AddChild(_control);
-                    }
-                }
+            _control = std::make_shared<HandleControl<T>>(handle, allocated, std::weak_ptr<HandleStore>(store), freeNotify, extraInfo);
+
+            if (store)
+            {
+                store->Register(handle, _control);
+            }
+
+            if (parent)
+            {
+                parent->AddChild(_control);
             }
         }
 

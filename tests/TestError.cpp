@@ -72,8 +72,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_ErrorGetString(err));
         ASSERT_EQ(con, OCI_ErrorGetConnection(err));
         ASSERT_EQ(stmt, OCI_ErrorGetStatement(err));
-        ASSERT_GE(OCI_ErrorGetRow(err), 0u);
-
+        ASSERT_EQ(-1, OCI_ErrorGetRow(err)); 
+        
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
 

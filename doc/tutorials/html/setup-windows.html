@@ -87,10 +87,10 @@ Pick <strong>ANSI</strong> unless you specifically want wide strings — samples
 <p>You only need this to patch/debug the library itself: open
 <code>proj\dll\ocilib_dll.sln</code> and build <code>Release - ANSI|UNICODE</code> × <code>Win32|x64</code>, or build
 from a developer prompt with <code>VsDevCmd.bat</code> + <code>msbuild</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="c"># Visual Studio 2026 (v143 toolset)</span>
+<div class="highlight"><pre><span></span><code><span class="c"># Visual Studio 2026 (v145 toolset)</span>
 <span class="n">cmd</span> <span class="p">/</span><span class="n">c</span> <span class="s1">'"c:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=amd64 &amp;&amp; msbuild proj\dll\ocilib_dll.sln /p:Configuration="Release - ANSI" /p:Platform=x64'</span>
 
-<span class="c"># Visual Studio 2022 — same command, VS17 path</span>
+<span class="c"># Visual Studio 2022  (v143 toolset) — same command, VS17 path </span>
 <span class="n">cmd</span> <span class="p">/</span><span class="n">c</span> <span class="s1">'"c:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64 &amp;&amp; msbuild proj\dll\ocilib_dll.sln /p:Configuration="Release - ANSI" /p:Platform=x64'</span>
 </code></pre></div>
 
