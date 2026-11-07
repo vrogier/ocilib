@@ -1682,7 +1682,7 @@ OCI_Boolean OcilibEnvironmentFree
     OcilibLogCleanup();
     OcilibErrorCleanup();
 
-    memset(env, 0, sizeof(*env));
+    free(env);
 
     CHECK(TRUE);
 
