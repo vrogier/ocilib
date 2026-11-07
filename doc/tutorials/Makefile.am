@@ -21,4 +21,4 @@ tutassets_DATA = @OCILIB_TUTORIALS_ASSETS@
 tutsqldir = $(tutassetsdir)/sql
 tutsql_DATA = @OCILIB_TUTORIALS_SQL@
 
-EXTRA_DIST = build.py requirements.txt toc.yml pages assets html
+EXTRA_DIST = html assets

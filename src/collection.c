@@ -305,11 +305,11 @@ OCI_UInt32 OcilibCollectionGetMax
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll);
 
-    OCI_UInt32 coll_max = 0;
+    sb4 coll_max = 0;
 
     OCI_CALL(coll_max, OCICollMax, coll->con->env->handle, coll->handle);
 
-    SET_RETVAL(coll_max);
+    SET_RETVAL((OCI_UInt32) coll_max);
 
     EXIT_FUNC();
 }
