@@ -510,7 +510,7 @@ namespace TestCApi
         OCI_Statement*  stmt{ nullptr };
     };
 
-    TEST_F(TestResultsetLong, ImplicitModeMapsToText)
+    TEST_F(TestResultsetLong, ImplicitLongMode_FetchesAsText)
     {
         // implicit mode: LONG mapped to text with lens-based termination
         ASSERT_TRUE(OCI_SetLongMode(stmt, OCI_LONG_IMPLICIT));
@@ -523,7 +523,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_FetchNext(rs) == FALSE);
     }
 
-    TEST_F(TestResultsetLong, ExplicitModeFetchesLongHandle)
+    TEST_F(TestResultsetLong, ExplicitLongMode_FetchesLongHandle)
     {
         // explicit mode: LONG fetched as OCI_Long
         ASSERT_TRUE(OCI_SetLongMode(stmt, OCI_LONG_EXPLICIT));
@@ -536,7 +536,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_GetLongByName(rs, OTEXT("L")));
     }
 
-    TEST_F(TestResultsetLong, LongRawConvertsToHexString)
+    TEST_F(TestResultsetLong, LongRawInImplicitMode_FetchesHexString)
     {
         // LONG RAW -> hex conversion through GetString
         ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select l from TestRsLongRaw")));
@@ -606,67 +606,67 @@ namespace TestCApi
         OCI_Resultset*  rs{ nullptr };
     };
 
-    TEST_F(TestResultsetByName, GetUnsignedBigInt)
+    TEST_F(TestResultsetByName, GetUnsignedBigIntByIndex_ReturnsValue)
     {
         ASSERT_EQ(42u, OCI_GetUnsignedBigInt(rs, 0));
     }
 
-    TEST_F(TestResultsetByName, GetUnsignedBigIntByName)
+    TEST_F(TestResultsetByName, GetUnsignedBigIntByName_ReturnsValue)
     {
         ASSERT_EQ(42u, OCI_GetUnsignedBigIntByName(rs, OTEXT("NUM_COL")));
     }
 
-    TEST_F(TestResultsetByName, GetObjectByName)
+    TEST_F(TestResultsetByName, GetObjectByName_ReturnsObject)
     {
         ASSERT_NE(nullptr, OCI_GetObjectByName(rs, OTEXT("OBJ_COL")));
     }
 
-    TEST_F(TestResultsetByName, GetCollByName)
+    TEST_F(TestResultsetByName, GetCollByName_ReturnsColl)
     {
         ASSERT_NE(nullptr, OCI_GetCollByName(rs, OTEXT("COLL_COL")));
     }
 
-    TEST_F(TestResultsetByName, GetRefByName)
+    TEST_F(TestResultsetByName, GetRefByName_ReturnsRef)
     {
         ASSERT_NE(nullptr, OCI_GetRefByName(rs, OTEXT("REF_COL")));
     }
 
-    TEST_F(TestResultsetByName, GetXmlTypeByName)
+    TEST_F(TestResultsetByName, GetXmlTypeByName_ReturnsXml)
     {
         ASSERT_NE(nullptr, OCI_GetXmlTypeByName(rs, OTEXT("XML_COL")));
     }
 
-    TEST_F(TestResultsetByName, GetVectorByName)
+    TEST_F(TestResultsetByName, GetVectorByName_ReturnsVector)
     {
         ASSERT_NE(nullptr, OCI_GetVectorByName(rs, OTEXT("VEC_COL")));
     }
 
-    TEST_F(TestResultsetByName, GetStatementByName)
+    TEST_F(TestResultsetByName, GetStatementByName_ReturnsStmt)
     {
         ASSERT_NE(nullptr, OCI_GetStatementByName(rs, OTEXT("CUR_COL")));
     }
 
-    TEST_F(TestResultsetByName, GetFile)
+    TEST_F(TestResultsetByName, GetFileByIndex_ReturnsFile)
     {
         ASSERT_NE(nullptr, OCI_GetFile(rs, 8));
     }
 
-    TEST_F(TestResultsetByName, GetFileByName)
+    TEST_F(TestResultsetByName, GetFileByName_ReturnsFile)
     {
         ASSERT_NE(nullptr, OCI_GetFileByName(rs, OTEXT("FILE_COL")));
     }
 
-    TEST_F(TestResultsetByName, GetDataSize)
+    TEST_F(TestResultsetByName, GetDataSizeByIndex_ReturnsSize)
     {
         ASSERT_EQ(5u, OCI_GetDataSize(rs, 1));
     }
 
-    TEST_F(TestResultsetByName, GetDataSizeByName)
+    TEST_F(TestResultsetByName, GetDataSizeByName_ReturnsSize)
     {
         ASSERT_EQ(5u, OCI_GetDataSizeByName(rs, OTEXT("TXT_COL")));
     }
 
-    TEST_F(TestResultsetByName, GetColumnIndex)
+    TEST_F(TestResultsetByName, GetColumnIndexByName_ReturnsIndex)
     {
         ASSERT_EQ(1, OCI_GetColumnIndex(rs, OTEXT("TXT_COL")));
     }
@@ -709,14 +709,14 @@ namespace TestCApi
         OCI_Resultset*  rs{ nullptr };
     };
 
-    TEST_F(TestResultsetScroll, FetchNextThroughCursorColumn)
+    TEST_F(TestResultsetScroll, FetchNextOnCursorColumn_FetchesRows)
     {
         ASSERT_TRUE(OCI_FetchNext(rs));
         ASSERT_TRUE(OCI_FetchNext(rs));
         ASSERT_EQ(1, OCI_GetCurrentRow(rs));
     }
 
-    TEST_F(TestResultsetScroll, RelativeSeekPastBeginning)
+    TEST_F(TestResultsetScroll, RelativeSeekBeforeFirst_ClampsAtStart)
     {
         // relative seek past the beginning -> fails and sets bof
         ASSERT_TRUE(OCI_FetchNext(rs));

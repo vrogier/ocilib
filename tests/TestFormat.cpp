@@ -17,7 +17,7 @@ namespace TestCApi
 
     class TestFormatSetGet : public ::testing::TestWithParam<FormatSetGetCase> {};
 
-    TEST_P(TestFormatSetGet, SetAndGet)
+    TEST_P(TestFormatSetGet, SetAttrThenGet_ReturnsSetValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -108,7 +108,7 @@ namespace TestCApi
 
     /* --- numeric tokens --- */
 
-    TEST_F(TestFormatTokens, TokenSignedInt)
+    TEST_F(TestFormatTokens, FormatSignedIntTokens_ProduceSignedValues)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %i, %hi from dual"), -5, -7));
 
@@ -119,7 +119,7 @@ namespace TestCApi
         ASSERT_EQ(-7, OCI_GetInt(rs, 1));
     }
 
-    TEST_F(TestFormatTokens, TokenUnsignedInt)
+    TEST_F(TestFormatTokens, FormatUnsignedIntTokens_ProduceUnsignedValues)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %u, %hu from dual"), 42u, 8u));
 
@@ -130,7 +130,7 @@ namespace TestCApi
         ASSERT_EQ(8, OCI_GetInt(rs, 1));
     }
 
-    TEST_F(TestFormatTokens, TokenBigInt)
+    TEST_F(TestFormatTokens, FormatBigIntTokens_ProduceBigIntValues)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %li, %lu from dual"),
             static_cast<OCI_Int64>(-1234567890123), static_cast<OCI_UInt64>(1234567890123)));
@@ -142,7 +142,7 @@ namespace TestCApi
         ASSERT_EQ((OCI_UInt64)1234567890123, OCI_GetUnsignedBigInt(rs, 1));
     }
 
-    TEST_F(TestFormatTokens, TokenDouble)
+    TEST_F(TestFormatTokens, FormatDoubleToken_ProducesDoubleValue)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %g from dual"), 1.5));
 
@@ -154,7 +154,7 @@ namespace TestCApi
 
     /* --- string / null / literal tokens --- */
 
-    TEST_F(TestFormatTokens, TokenStringAddsQuotes)
+    TEST_F(TestFormatTokens, FormatStringToken_ProducesQuotedString)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %s from dual"), OTEXT("hello")));
 
@@ -164,7 +164,7 @@ namespace TestCApi
         ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rs, 0)));
     }
 
-    TEST_F(TestFormatTokens, TokenRawMode)
+    TEST_F(TestFormatTokens, FormatRawModeToken_InsertsTextVerbatim)
     {
         /* %m stays raw */
 
@@ -176,7 +176,7 @@ namespace TestCApi
         ASSERT_EQ(2, OCI_GetInt(rs, 0));
     }
 
-    TEST_F(TestFormatTokens, TokenNullString)
+    TEST_F(TestFormatTokens, FormatNullStringToken_ProducesNull)
     {
         /* NULL %s writes NULL */
 
@@ -188,7 +188,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatTokens, TokenLiteralPercent)
+    TEST_F(TestFormatTokens, FormatLiteralPercentToken_EmitsPercentChar)
     {
         /* %% emits a literal percent */
 
@@ -258,7 +258,7 @@ namespace TestCApi
         OCI_Number*    num{ nullptr };
     };
 
-    TEST_F(TestFormatHandles, TokenDate)
+    TEST_F(TestFormatHandles, FormatDateToken_ProducesDateLiteral)
     {
         /* %t -> to_date() */
 
@@ -270,7 +270,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenTimestamp)
+    TEST_F(TestFormatHandles, FormatTimestampToken_ProducesTimestampLiteral)
     {
         /* %p -> to_timestamp() */
 
@@ -282,7 +282,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenInterval)
+    TEST_F(TestFormatHandles, FormatIntervalToken_ProducesIntervalLiteral)
     {
         /* %v -> interval text */
 
@@ -294,7 +294,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenRef)
+    TEST_F(TestFormatHandles, FormatRefToken_ProducesRefLiteral)
     {
         /* %r -> hex refid; fetch a real REF first */
 
@@ -314,7 +314,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenNumber)
+    TEST_F(TestFormatHandles, FormatNumberToken_ProducesNumberLiteral)
     {
         /* %n -> number text */
 
@@ -326,7 +326,7 @@ namespace TestCApi
         ASSERT_EQ(7, OCI_GetInt(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenNullDate)
+    TEST_F(TestFormatHandles, FormatNullDateToken_ProducesNull)
     {
         /* NULL handle arm: %t writes NULL */
 
@@ -338,7 +338,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenNullTimestamp)
+    TEST_F(TestFormatHandles, FormatNullTimestampToken_ProducesNull)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %p from dual"), static_cast<OCI_Timestamp*>(NULL)));
 
@@ -348,7 +348,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenNullInterval)
+    TEST_F(TestFormatHandles, FormatNullIntervalToken_ProducesNull)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %v from dual"), static_cast<OCI_Interval*>(NULL)));
 
@@ -358,7 +358,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenNullRef)
+    TEST_F(TestFormatHandles, FormatNullRefToken_ProducesNull)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %r from dual"), static_cast<OCI_Ref*>(NULL)));
 
@@ -368,7 +368,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenJson)
+    TEST_F(TestFormatHandles, FormatJsonToken_ProducesJsonLiteral)
     {
         /* %j -> quoted JSON text literal */
 
@@ -387,7 +387,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
     }
 
-    TEST_F(TestFormatHandles, TokenVector)
+    TEST_F(TestFormatHandles, FormatVectorToken_ProducesVectorLiteral)
     {
         /* %V -> quoted '[...]' vector text literal */
 
@@ -407,7 +407,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_VectorFree(vect));
     }
 
-    TEST_F(TestFormatHandles, TokenNullJson)
+    TEST_F(TestFormatHandles, FormatNullJsonToken_ProducesNull)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %j from dual"), static_cast<OCI_Json*>(NULL)));
 
@@ -417,7 +417,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
-    TEST_F(TestFormatHandles, TokenNullVector)
+    TEST_F(TestFormatHandles, FormatNullVectorToken_ProducesNull)
     {
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select %V from dual"), static_cast<OCI_Vector*>(NULL)));
 
@@ -429,30 +429,30 @@ namespace TestCApi
 
     /* --- invalid / unknown tokens --- */
 
-    TEST_F(TestFormatTokens, UnknownTokenRejected)
+    TEST_F(TestFormatTokens, UnknownFormatToken_FailsExecute)
     {
         ASSERT_FALSE(OCI_PrepareFmt(stmt, OTEXT("select %z from dual"), 0));
         ASSERT_NE(nullptr, OCI_GetLastError());
     }
 
-    TEST_F(TestFormatTokens, UnimplementedTokenObject)
+    TEST_F(TestFormatTokens, ObjectFormatToken_FailsExecute)
     {
         /* documented but unimplemented token hits the same arm */
 
         ASSERT_FALSE(OCI_PrepareFmt(stmt, OTEXT("select %o from dual"), NULL));
     }
 
-    TEST_F(TestFormatTokens, UnimplementedTokenColl)
+    TEST_F(TestFormatTokens, CollFormatToken_FailsExecute)
     {
         ASSERT_FALSE(OCI_PrepareFmt(stmt, OTEXT("select %c from dual"), NULL));
     }
 
-    TEST_F(TestFormatTokens, TrailingPercentRejected)
+    TEST_F(TestFormatTokens, TrailingPercentInFormat_FailsExecute)
     {
         ASSERT_FALSE(OCI_PrepareFmt(stmt, OTEXT("select 1 from dual where x = %")));
     }
 
-    TEST_F(TestFormatTokens, UnknownLengthSuffixExpandsEmpty)
+    TEST_F(TestFormatTokens, UnknownLengthSuffix_ProducesEmptyExpansion)
     {
         /* %l / %h with unknown suffix expand to nothing (no parse error),
            leaving invalid SQL that fails when actually parsed */

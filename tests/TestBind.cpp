@@ -10,85 +10,146 @@ namespace TestCApi
         context.Errs.emplace_back(Error{ OCI_ErrorGetCode(err), OCI_ErrorGetCategory(err) });
     }
 
-    TEST(TestBind, BasicBind)
+    /* -------------------------------------------------------------------------
+       Shared fixture: prepared insert with int + string scalar binds
+       ------------------------------------------------------------------------- */
+
+    class TestBindBasic : public ::testing::Test
     {
-        ExecDML(OTEXT("create table TestBind_Table (id int, name varchar2(50))"));
-        ExecDML(OTEXT("truncate table TestBind_Table"));
-
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
-
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_Statement* stmt = nullptr;
         OCI_Int32 id = 42;
         otext name[64] = OTEXT("hello");
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestBind_Table values (:id, :name)")));
-        ASSERT_NE(nullptr, OCI_BindInt(stmt, OTEXT(":id"), &id));
-        ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":name"), name, 50));
-        ASSERT_TRUE(OCI_Execute(stmt));
+    public:
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("create table TestBind_Table (id int, name varchar2(50))"));
+        }
 
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop table TestBind_Table"));
+        }
+
+    protected:
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+            ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestBind_Table values (:id, :name)")));
+            ASSERT_NE(nullptr, OCI_BindInt(stmt, OTEXT(":id"), &id));
+            ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":name"), name, 50));
+        }
+
+        void TearDown() override
+        {
+            if (stmt) OCI_StatementFree(stmt);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
+
+    TEST_F(TestBindBasic, BoundHandle_ReportsNameAndStatement)
+    {
         const auto bnd_id = OCI_GetBind(stmt, 0);
         const auto bnd_name = OCI_GetBindByName(stmt, OTEXT(":name"));
+
         ASSERT_NE(nullptr, bnd_id);
         ASSERT_NE(nullptr, bnd_name);
+        EXPECT_EQ(String(OTEXT(":id")), String(OCI_BindGetName(bnd_id)));
+        EXPECT_EQ(String(OTEXT(":name")), String(OCI_BindGetName(bnd_name)));
+        EXPECT_EQ(stmt, OCI_BindGetStatement(bnd_id));
+    }
 
-        ASSERT_EQ(String(OTEXT(":id")), String(OCI_BindGetName(bnd_id)));
-        ASSERT_EQ(String(OTEXT(":name")), String(OCI_BindGetName(bnd_name)));
-        ASSERT_EQ(stmt, OCI_BindGetStatement(bnd_id));
+    TEST_F(TestBindBasic, BoundHandle_ReportsTypeDirectionAndDataCount)
+    {
+        const auto bnd_id = OCI_GetBind(stmt, 0);
+        const auto bnd_name = OCI_GetBindByName(stmt, OTEXT(":name"));
 
-        ASSERT_EQ((OCI_UInt32) OCI_BDM_IN_OUT, OCI_BindGetDirection(bnd_id));
-        ASSERT_EQ((OCI_UInt32) OCI_CDT_NUMERIC, OCI_BindGetType(bnd_id));
-        ASSERT_EQ((OCI_UInt32) OCI_CDT_TEXT, OCI_BindGetType(bnd_name));
-        ASSERT_EQ(1u, OCI_BindGetDataCount(bnd_id));
+        ASSERT_NE(nullptr, bnd_id);
+        ASSERT_NE(nullptr, bnd_name);
+        EXPECT_EQ((OCI_UInt32) OCI_BDM_IN_OUT, OCI_BindGetDirection(bnd_id));
+        EXPECT_EQ((OCI_UInt32) OCI_CDT_NUMERIC, OCI_BindGetType(bnd_id));
+        EXPECT_EQ((OCI_UInt32) OCI_CDT_TEXT, OCI_BindGetType(bnd_name));
+        EXPECT_EQ(1u, OCI_BindGetDataCount(bnd_id));
+    }
 
-        ASSERT_NE(nullptr, OCI_BindGetData(bnd_id));
-        ASSERT_NE(nullptr, OCI_BindGetData(bnd_name));
-        ASSERT_EQ(id, *static_cast<OCI_Int32*>(OCI_BindGetData(bnd_id)));
-        ASSERT_EQ(String(name), String(static_cast<otext*>(OCI_BindGetData(bnd_name))));
+    TEST_F(TestBindBasic, BoundHandle_GetDataReturnsBoundBuffers)
+    {
+        const auto bnd_id = OCI_GetBind(stmt, 0);
+        const auto bnd_name = OCI_GetBindByName(stmt, OTEXT(":name"));
 
+        ASSERT_NE(nullptr, bnd_id);
+        ASSERT_NE(nullptr, bnd_name);
+        EXPECT_EQ(id, *static_cast<OCI_Int32*>(OCI_BindGetData(bnd_id)));
+        EXPECT_EQ(String(name), String(static_cast<otext*>(OCI_BindGetData(bnd_name))));
+    }
+
+    TEST_F(TestBindBasic, ExecuteInsertThenSelect_ReturnsBoundValues)
+    {
+        ASSERT_TRUE(OCI_Execute(stmt));
         ASSERT_TRUE(OCI_StatementFree(stmt));
-
         stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
+
         ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select name from TestBind_Table where id = 42")));
 
         const auto rset = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rset);
         ASSERT_TRUE(OCI_FetchNext(rset));
-        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rset, 0)));
-
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop table TestBind_Table"));
+        EXPECT_EQ(String(OTEXT("hello")), String(OCI_GetString(rset, 0)));
     }
 
-    TEST(TestBind, OutBindsAndDirection)
+    /* -------------------------------------------------------------------------
+       Shared fixture: prepared PL/SQL block with 3 OUT binds
+       ------------------------------------------------------------------------- */
+
+    class TestBindOut : public ::testing::Test
     {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
-
+    protected:
+        OCI_Environment* env = nullptr;
+        OCI_Connection* conn = nullptr;
+        OCI_Statement* stmt = nullptr;
         OCI_Int32 iout = 0;
         otext sout[64] = OTEXT("");
-        OCI_Date* dout = OCI_DateCreate(env);
-        ASSERT_NE(nullptr, dout);
+        OCI_Date* dout = nullptr;
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("BEGIN :i := 123; :s := 'hello'; :d := TO_DATE('2023-06-15', 'YYYY-MM-DD'); END;")));
+        void SetUp() override
+        {
+            env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+            dout = OCI_DateCreate(env);
+            ASSERT_NE(nullptr, dout);
+            ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("BEGIN :i := 123; :s := 'hello'; :d := TO_DATE('2023-06-15', 'YYYY-MM-DD'); END;")));
+            ASSERT_NE(nullptr, OCI_BindInt(stmt, OTEXT(":i"), &iout));
+            ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":s"), sout, 50));
+            ASSERT_NE(nullptr, OCI_BindDate(stmt, OTEXT(":d"), dout));
+        }
 
-        ASSERT_NE(nullptr, OCI_BindInt(stmt, OTEXT(":i"), &iout));
-        ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":s"), sout, 50));
-        ASSERT_NE(nullptr, OCI_BindDate(stmt, OTEXT(":d"), dout));
+        void TearDown() override
+        {
+            if (dout) OCI_DateFree(dout);
+            if (stmt) OCI_StatementFree(stmt);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+
+        void SetAllDirectionOut()
+        {
+            ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBindByName(stmt, OTEXT(":i")), OCI_BDM_OUT));
+            ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBindByName(stmt, OTEXT(":s")), OCI_BDM_OUT));
+            ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBindByName(stmt, OTEXT(":d")), OCI_BDM_OUT));
+        }
+    };
+
+    TEST_F(TestBindOut, SetDirectionOut_ReportsOutDirectionAndMetadata)
+    {
         const auto bnd_i = OCI_GetBindByName(stmt, OTEXT(":i"));
         const auto bnd_s = OCI_GetBindByName(stmt, OTEXT(":s"));
         const auto bnd_d = OCI_GetBindByName(stmt, OTEXT(":d"));
@@ -96,34 +157,31 @@ namespace TestCApi
         ASSERT_NE(nullptr, bnd_s);
         ASSERT_NE(nullptr, bnd_d);
 
-        ASSERT_TRUE(OCI_BindSetDirection(bnd_i, OCI_BDM_OUT));
-        ASSERT_TRUE(OCI_BindSetDirection(bnd_s, OCI_BDM_OUT));
-        ASSERT_TRUE(OCI_BindSetDirection(bnd_d, OCI_BDM_OUT));
+        SetAllDirectionOut();
 
-        ASSERT_EQ((OCI_UInt32) OCI_BDM_OUT, OCI_BindGetDirection(bnd_i));
-        ASSERT_EQ((OCI_UInt32) OCI_BDM_OUT, OCI_BindGetDirection(bnd_s));
-        ASSERT_EQ((OCI_UInt32) OCI_CDT_NUMERIC, OCI_BindGetType(bnd_i));
-        ASSERT_EQ((OCI_UInt32) OCI_CDT_TEXT, OCI_BindGetType(bnd_s));
-        ASSERT_EQ((OCI_UInt32) OCI_CDT_DATETIME, OCI_BindGetType(bnd_d));
-        ASSERT_EQ(1u, OCI_BindGetDataCount(bnd_i));
-        ASSERT_EQ(stmt, OCI_BindGetStatement(bnd_i));
-        ASSERT_EQ(static_cast<void*>(&iout), OCI_BindGetData(bnd_i));
+        EXPECT_EQ((OCI_UInt32) OCI_BDM_OUT, OCI_BindGetDirection(bnd_i));
+        EXPECT_EQ((OCI_UInt32) OCI_BDM_OUT, OCI_BindGetDirection(bnd_s));
+        EXPECT_EQ((OCI_UInt32) OCI_CDT_NUMERIC, OCI_BindGetType(bnd_i));
+        EXPECT_EQ((OCI_UInt32) OCI_CDT_TEXT, OCI_BindGetType(bnd_s));
+        EXPECT_EQ((OCI_UInt32) OCI_CDT_DATETIME, OCI_BindGetType(bnd_d));
+        EXPECT_EQ(1u, OCI_BindGetDataCount(bnd_i));
+        EXPECT_EQ(stmt, OCI_BindGetStatement(bnd_i));
+        EXPECT_EQ(static_cast<void*>(&iout), OCI_BindGetData(bnd_i));
+    }
+
+    TEST_F(TestBindOut, ExecutePlsql_ReturnsAssignedOutValues)
+    {
+        SetAllDirectionOut();
 
         ASSERT_TRUE(OCI_Execute(stmt));
 
-        ASSERT_EQ(123, iout);
-        ASSERT_EQ(String(OTEXT("hello")), String(sout));
-
+        EXPECT_EQ(123, iout);
+        EXPECT_EQ(String(OTEXT("hello")), String(sout));
         OCI_Int32 year = 0, month = 0, day = 0;
         ASSERT_TRUE(OCI_DateGetDate(dout, &year, &month, &day));
-        ASSERT_EQ(2023, year);
-        ASSERT_EQ(6, month);
-        ASSERT_EQ(15, day);
-
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_DateFree(dout));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
+        EXPECT_EQ(2023, year);
+        EXPECT_EQ(6, month);
+        EXPECT_EQ(15, day);
     }
 
     TEST(TestBind, NullAndDataSize)
@@ -175,47 +233,174 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestBind_Null"));
     }
 
-    TEST(TestBind, MultipleDataTypes)
+    /* -------------------------------------------------------------------------
+       Parameterized: each OCI_BindX call registers a valid bind handle
+       ------------------------------------------------------------------------- */
+
+    struct BindTypeCase
     {
-        ExecDML(OTEXT("create type TestBind_ObjType as object(code int, name varchar2(30))"));
-        ExecDML(OTEXT("create table TestBind_Types (n number, s varchar2(50), d date, r raw(20), l clob, o TestBind_ObjType)"));
+        const char* name;
+        void (*run)(OCI_Environment*, OCI_Connection*, OCI_Statement*);
+    };
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    void PrintTo(const BindTypeCase& c, std::ostream* os) { *os << c.name; }
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
-
+    static void BindNumber(OCI_Environment* env, OCI_Connection*, OCI_Statement* stmt)
+    {
         const auto number = OCI_NumberCreate(env);
         OCI_Int32 num = 42;
         ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT, &num));
 
+        ASSERT_NE(nullptr, OCI_BindNumber(stmt, OTEXT(":n"), number));
+
+        const auto bnd = OCI_GetBindByName(stmt, OTEXT(":n"));
+        ASSERT_NE(nullptr, bnd);
+        EXPECT_EQ((OCI_UInt32) OCI_NUM_NUMBER, OCI_BindGetSubtype(bnd));
+        EXPECT_EQ(static_cast<void*>(number), OCI_BindGetData(bnd));
+        EXPECT_EQ((OCI_UInt32) OCI_BAM_EXTERNAL, OCI_BindGetAllocationMode(bnd));
+
+        ASSERT_TRUE(OCI_NumberFree(number));
+    }
+    static void BindString(OCI_Environment*, OCI_Connection*, OCI_Statement* stmt)
+    {
         otext str[64] = OTEXT("typed bind");
 
+        ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":s"), str, 50));
+
+        const auto bnd = OCI_GetBindByName(stmt, OTEXT(":s"));
+        ASSERT_NE(nullptr, bnd);
+        EXPECT_EQ((OCI_UInt32) OCI_UNKNOWN, OCI_BindGetSubtype(bnd));
+    }
+    static void BindDate(OCI_Environment* env, OCI_Connection*, OCI_Statement* stmt)
+    {
         OCI_Date* date = OCI_DateCreate(env);
         ASSERT_NE(nullptr, date);
         ASSERT_TRUE(OCI_DateSetDateTime(date, 2024, 1, 2, 3, 4, 5));
 
+        ASSERT_NE(nullptr, OCI_BindDate(stmt, OTEXT(":d"), date));
+
+        const auto bnd = OCI_GetBindByName(stmt, OTEXT(":d"));
+        ASSERT_NE(nullptr, bnd);
+        EXPECT_EQ(static_cast<void*>(date), OCI_BindGetData(bnd));
+
+        ASSERT_TRUE(OCI_DateFree(date));
+    }
+    static void BindRaw(OCI_Environment*, OCI_Connection*, OCI_Statement* stmt)
+    {
         unsigned char raw[20] = { 0x00, 0x01, 0x02, 0x03, 0x04 };
 
+        ASSERT_NE(nullptr, OCI_BindRaw(stmt, OTEXT(":r"), raw, 20));
+
+        const auto bnd = OCI_GetBindByName(stmt, OTEXT(":r"));
+        ASSERT_NE(nullptr, bnd);
+        ASSERT_TRUE(OCI_BindSetDataSize(bnd, 5));
+        EXPECT_EQ(5u, OCI_BindGetDataSize(bnd));
+    }
+    static void BindLob(OCI_Environment*, OCI_Connection* conn, OCI_Statement* stmt)
+    {
         OCI_Lob* lob = OCI_LobCreate(conn, OCI_CLOB);
         ASSERT_NE(nullptr, lob);
         OCI_UInt32 lob_cc = (OCI_UInt32)ostrlen(OTEXT("clob data"));
         OCI_UInt32 lob_bc = 0;
         ASSERT_TRUE(OCI_LobWrite(lob, (void*)OTEXT("clob data"), &lob_cc, &lob_bc));
-        ASSERT_EQ((OCI_UInt32) 9, lob_cc);
 
+        ASSERT_NE(nullptr, OCI_BindLob(stmt, OTEXT(":l"), lob));
+
+        const auto bnd = OCI_GetBindByName(stmt, OTEXT(":l"));
+        ASSERT_NE(nullptr, bnd);
+        EXPECT_EQ(static_cast<void*>(lob), OCI_BindGetData(bnd));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+    }
+    static void BindObject(OCI_Environment*, OCI_Connection* conn, OCI_Statement* stmt)
+    {
         const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestBind_ObjType"), OCI_TIF_TYPE);
         OCI_Object* obj = OCI_ObjectCreate(typinf);
         ASSERT_NE(nullptr, obj);
         ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("CODE"), 7));
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("NAME"), OTEXT("obj")));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestBind_Types values (:n, :s, :d, :r, :l, :o)")));
+        ASSERT_NE(nullptr, OCI_BindObject(stmt, OTEXT(":o"), obj));
 
+        const auto bnd = OCI_GetBindByName(stmt, OTEXT(":o"));
+        ASSERT_NE(nullptr, bnd);
+        EXPECT_EQ(static_cast<void*>(obj), OCI_BindGetData(bnd));
+
+        ASSERT_TRUE(OCI_ObjectFree(obj));
+        ASSERT_TRUE(OCI_TypeInfoFree(typinf));
+    }
+
+    class TestBindTypes : public ::testing::TestWithParam<BindTypeCase>
+    {
+    protected:
+        OCI_Environment* env = nullptr;
+        OCI_Connection* conn = nullptr;
+        OCI_Statement* stmt = nullptr;
+
+    public:
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("create type TestBind_ObjType as object(code int, name varchar2(30))"));
+            ExecDML(OTEXT("create table TestBind_Types (n number, s varchar2(50), d date, r raw(20), l clob, o TestBind_ObjType)"));
+        }
+
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop table TestBind_Types"));
+            ExecDML(OTEXT("drop type TestBind_ObjType"));
+        }
+
+    protected:
+        void SetUp() override
+        {
+            env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+            ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestBind_Types values (:n, :s, :d, :r, :l, :o)")));
+        }
+
+        void TearDown() override
+        {
+            if (stmt) OCI_StatementFree(stmt);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
+
+    TEST_P(TestBindTypes, BindXOnPreparedInsert_ReturnsValidHandle)
+    {
+        GetParam().run(env, conn, stmt);
+    }
+
+    INSTANTIATE_TEST_CASE_P(BindKind, TestBindTypes,
+        ::testing::Values(
+            BindTypeCase{ "Number", BindNumber },
+            BindTypeCase{ "String", BindString },
+            BindTypeCase{ "Date",   BindDate },
+            BindTypeCase{ "Raw",    BindRaw },
+            BindTypeCase{ "Lob",    BindLob },
+            BindTypeCase{ "Object", BindObject }),
+        ::testing::PrintToStringParamName());
+
+    TEST_F(TestBindTypes, ExecuteInsertWithAllTypedBinds_InsertsOneRow)
+    {
+        const auto number = OCI_NumberCreate(env);
+        OCI_Int32 num = 42;
+        ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT, &num));
+        otext str[64] = OTEXT("typed bind");
+        OCI_Date* date = OCI_DateCreate(env);
+        ASSERT_TRUE(OCI_DateSetDateTime(date, 2024, 1, 2, 3, 4, 5));
+        unsigned char raw[20] = { 0x00, 0x01, 0x02, 0x03, 0x04 };
+        OCI_Lob* lob = OCI_LobCreate(conn, OCI_CLOB);
+        OCI_UInt32 lob_cc = (OCI_UInt32)ostrlen(OTEXT("clob data"));
+        OCI_UInt32 lob_bc = 0;
+        ASSERT_TRUE(OCI_LobWrite(lob, (void*)OTEXT("clob data"), &lob_cc, &lob_bc));
+        const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestBind_ObjType"), OCI_TIF_TYPE);
+        OCI_Object* obj = OCI_ObjectCreate(typinf);
+        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("CODE"), 7));
+        ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("NAME"), OTEXT("obj")));
         ASSERT_NE(nullptr, OCI_BindNumber(stmt, OTEXT(":n"), number));
         ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":s"), str, 50));
         ASSERT_NE(nullptr, OCI_BindDate(stmt, OTEXT(":d"), date));
@@ -223,47 +408,17 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_BindLob(stmt, OTEXT(":l"), lob));
         ASSERT_NE(nullptr, OCI_BindObject(stmt, OTEXT(":o"), obj));
 
-        const auto bnd_n = OCI_GetBindByName(stmt, OTEXT(":n"));
-        const auto bnd_s = OCI_GetBindByName(stmt, OTEXT(":s"));
-        const auto bnd_d = OCI_GetBindByName(stmt, OTEXT(":d"));
-        const auto bnd_r = OCI_GetBindByName(stmt, OTEXT(":r"));
-        const auto bnd_l = OCI_GetBindByName(stmt, OTEXT(":l"));
-        const auto bnd_o = OCI_GetBindByName(stmt, OTEXT(":o"));
-
-        ASSERT_NE(nullptr, bnd_n);
-        ASSERT_NE(nullptr, bnd_s);
-        ASSERT_NE(nullptr, bnd_d);
-        ASSERT_NE(nullptr, bnd_r);
-        ASSERT_NE(nullptr, bnd_l);
-        ASSERT_NE(nullptr, bnd_o);
-
-        ASSERT_EQ((OCI_UInt32) OCI_NUM_NUMBER, OCI_BindGetSubtype(bnd_n));
-        ASSERT_EQ((OCI_UInt32) OCI_UNKNOWN, OCI_BindGetSubtype(bnd_s));
-        ASSERT_EQ(static_cast<void*>(number), OCI_BindGetData(bnd_n));
-        ASSERT_EQ(static_cast<void*>(date), OCI_BindGetData(bnd_d));
-        ASSERT_EQ(static_cast<void*>(lob), OCI_BindGetData(bnd_l));
-        ASSERT_EQ(static_cast<void*>(obj), OCI_BindGetData(bnd_o));
-        ASSERT_EQ((OCI_UInt32) OCI_BAM_EXTERNAL, OCI_BindGetAllocationMode(bnd_n));
-
-        ASSERT_TRUE(OCI_BindSetDataSize(bnd_r, 5));
-        ASSERT_EQ(5u, OCI_BindGetDataSize(bnd_r));
-
         ASSERT_TRUE(OCI_Execute(stmt));
 
         OCI_Int32 count = 0;
         ASSERT_TRUE(OCI_Immediate(conn, OTEXT("select count(*) from TestBind_Types"), OCI_ARG_INT, &count));
-        ASSERT_EQ(1, count);
+        EXPECT_EQ(1, count);
 
-        ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_NumberFree(number));
         ASSERT_TRUE(OCI_DateFree(date));
         ASSERT_TRUE(OCI_LobFree(lob));
         ASSERT_TRUE(OCI_ObjectFree(obj));
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop table TestBind_Types"));
-        ExecDML(OTEXT("drop type TestBind_ObjType"));
     }
 
     TEST(TestBind, ArrayBind)
@@ -306,153 +461,318 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestBind_Array"));
     }
 
-    TEST(TestBind, InternalAllocRegisterBinds)
+    /* -------------------------------------------------------------------------
+       Parameterized: OCI_RegisterX succeeds per scalar out-bind type
+       ------------------------------------------------------------------------- */
+
+    struct BindRegCase
     {
-        ExecDML(OTEXT("create or replace type TestBind_RegObj as object(code int, name varchar2(30))"));
+        const char* name;
+        void (*run)(OCI_Statement*);
+    };
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    void PrintTo(const BindRegCase& c, std::ostream* os) { *os << c.name; }
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+    static void BindRegPrep(OCI_Statement* s)
+    {
+        ASSERT_TRUE(OCI_SetBindAllocation(s, OCI_BAM_INTERNAL));
+        ASSERT_TRUE(OCI_Prepare(s, OTEXT("BEGIN :v := :v; END;")));
+    }
 
-        const auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
+    static void BindRegInt(OCI_Statement* s)       { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterInt(s, OTEXT(":v"))); }
+    static void BindRegBigInt(OCI_Statement* s)    { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterBigInt(s, OTEXT(":v"))); }
+    static void BindRegNumber(OCI_Statement* s)    { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterNumber(s, OTEXT(":v"))); }
+    static void BindRegString(OCI_Statement* s)    { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterString(s, OTEXT(":v"), 20)); }
+    static void BindRegRaw(OCI_Statement* s)       { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterRaw(s, OTEXT(":v"), 16)); }
+    static void BindRegDouble(OCI_Statement* s)    { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterDouble(s, OTEXT(":v"))); }
+    static void BindRegFloat(OCI_Statement* s)     { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterFloat(s, OTEXT(":v"))); }
+    static void BindRegDate(OCI_Statement* s)      { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterDate(s, OTEXT(":v"))); }
+    static void BindRegTimestamp(OCI_Statement* s) { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterTimestamp(s, OTEXT(":v"), OCI_TIMESTAMP)); }
+    static void BindRegInterval(OCI_Statement* s)  { BindRegPrep(s); EXPECT_TRUE(OCI_RegisterInterval(s, OTEXT(":v"), OCI_INTERVAL_DS)); }
 
-        const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestBind_RegObj"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, typinf);
+    class TestBindReg : public ::testing::TestWithParam<BindRegCase>
+    {
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_Statement* stmt = nullptr;
 
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+        }
+
+        void TearDown() override
+        {
+            if (stmt) OCI_StatementFree(stmt);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
+
+    TEST_P(TestBindReg, RegisterByName_ReturnsTrue)
+    {
+        GetParam().run(stmt);
+    }
+
+    INSTANTIATE_TEST_CASE_P(RegBind, TestBindReg,
+        ::testing::Values(
+            BindRegCase{ "Int",       BindRegInt },
+            BindRegCase{ "BigInt",    BindRegBigInt },
+            BindRegCase{ "Number",    BindRegNumber },
+            BindRegCase{ "String",    BindRegString },
+            BindRegCase{ "Raw",       BindRegRaw },
+            BindRegCase{ "Double",    BindRegDouble },
+            BindRegCase{ "Float",     BindRegFloat },
+            BindRegCase{ "Date",      BindRegDate },
+            BindRegCase{ "Timestamp", BindRegTimestamp },
+            BindRegCase{ "Interval",  BindRegInterval }),
+        ::testing::PrintToStringParamName());
+
+    TEST_F(TestBindReg, BindNullDataInInternalMode_BindsAndReportsIndex)
+    {
         ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
-
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT(
-            "BEGIN :i := :i; :bi := :bi; :n := :n; :s := :s; :r := :r; :db := :db; "
-            ":f := :f; :d := :d; :ts := :ts; :iv := :iv; :d2 := :d2; END;")));
-
-        /* NULL data input bind in internal mode: covers the non-VNU numeric arm */
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("BEGIN :d2 := :d2; END;")));
 
         ASSERT_NE(nullptr, OCI_BindDouble(stmt, OTEXT(":d2"), NULL));
-        ASSERT_EQ(0, OCI_GetBindIndex(stmt, OTEXT(":d2")));
 
+        EXPECT_EQ(0, OCI_GetBindIndex(stmt, OTEXT(":d2")));
+    }
+
+    TEST_F(TestBindReg, GetBindIndexOnRegisteredBinds_ReturnsMinusOne)
+    {
+        ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("BEGIN :i := :i; :bi := :bi; :n := :n; :s := :s; END;")));
         ASSERT_TRUE(OCI_RegisterInt(stmt, OTEXT(":i")));
         ASSERT_TRUE(OCI_RegisterBigInt(stmt, OTEXT(":bi")));
         ASSERT_TRUE(OCI_RegisterNumber(stmt, OTEXT(":n")));
         ASSERT_TRUE(OCI_RegisterString(stmt, OTEXT(":s"), 20));
-        ASSERT_TRUE(OCI_RegisterRaw(stmt, OTEXT(":r"), 16));
-        ASSERT_TRUE(OCI_RegisterDouble(stmt, OTEXT(":db")));
-        ASSERT_TRUE(OCI_RegisterFloat(stmt, OTEXT(":f")));
-        ASSERT_TRUE(OCI_RegisterDate(stmt, OTEXT(":d")));
-        ASSERT_TRUE(OCI_RegisterTimestamp(stmt, OTEXT(":ts"), OCI_TIMESTAMP));
-        ASSERT_TRUE(OCI_RegisterInterval(stmt, OTEXT(":iv"), OCI_INTERVAL_DS));
 
-        /* registered binds are stored as negative indexes in the map */
+        /* register binds are not binds: OCI_GetBindIndex shall not see them */
 
-        ASSERT_EQ(0, OCI_GetBindIndex(stmt, OTEXT(":i")));
-        ASSERT_EQ(3, OCI_GetBindIndex(stmt, OTEXT(":s")));
-        ASSERT_EQ(9, OCI_GetBindIndex(stmt, OTEXT(":iv")));
-        ASSERT_EQ(-1, OCI_GetBindIndex(stmt, OTEXT(":missing")));
-
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_TypeInfoFree(typinf));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop type TestBind_RegObj"));
+        EXPECT_EQ(-1, OCI_GetBindIndex(stmt, OTEXT(":i")));
+        EXPECT_EQ(-1, OCI_GetBindIndex(stmt, OTEXT(":bi")));
+        EXPECT_EQ(-1, OCI_GetBindIndex(stmt, OTEXT(":n")));
+        EXPECT_EQ(-1, OCI_GetBindIndex(stmt, OTEXT(":s")));
+        EXPECT_EQ(-1, OCI_GetBindIndex(stmt, OTEXT(":missing")));
     }
 
-    TEST(TestBind, InternalAllocRegisterComplexBinds)
+    /* -------------------------------------------------------------------------
+       Parameterized: OCI_RegisterX succeeds per complex out-bind type
+       ------------------------------------------------------------------------- */
+
+    struct BindRegCxCase
     {
-        ExecDML(OTEXT("create or replace type TestBind_RegObj2 as object(code int)"));
+        const char* name;
+        void (*run)(OCI_Statement*, OCI_TypeInfo*);
+    };
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    void PrintTo(const BindRegCxCase& c, std::ostream* os) { *os << c.name; }
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
-
-        const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestBind_RegObj2"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, typinf);
-
-        ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
-
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT(
-            "BEGIN :cl := :cl; :fl := :fl; :o := :o; :rf := :rf; :v := :v; :j := :j; END;")));
-
-        ASSERT_TRUE(OCI_RegisterLob(stmt, OTEXT(":cl"), OCI_CLOB));
-        ASSERT_TRUE(OCI_RegisterFile(stmt, OTEXT(":fl"), OCI_BFILE));
-        ASSERT_TRUE(OCI_RegisterObject(stmt, OTEXT(":o"), typinf));
-        ASSERT_TRUE(OCI_RegisterRef(stmt, OTEXT(":rf"), typinf));
-        ASSERT_TRUE(OCI_RegisterVector(stmt, OTEXT(":v")));
-        ASSERT_TRUE(OCI_RegisterJson(stmt, OTEXT(":j")));
-
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_TypeInfoFree(typinf));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop type TestBind_RegObj2"));
+    static void BindRegCxPrep(OCI_Statement* s)
+    {
+        ASSERT_TRUE(OCI_SetBindAllocation(s, OCI_BAM_INTERNAL));
+        ASSERT_TRUE(OCI_Prepare(s, OTEXT("BEGIN :v := :v; END;")));
     }
 
-    TEST(TestBind, InternalAllocArrayBinds)
+    static void BindRegCxLob(OCI_Statement* s, OCI_TypeInfo*)    { BindRegCxPrep(s); EXPECT_TRUE(OCI_RegisterLob(s, OTEXT(":v"), OCI_CLOB)); }
+    static void BindRegCxFile(OCI_Statement* s, OCI_TypeInfo*)   { BindRegCxPrep(s); EXPECT_TRUE(OCI_RegisterFile(s, OTEXT(":v"), OCI_BFILE)); }
+    static void BindRegCxObject(OCI_Statement* s, OCI_TypeInfo* t){ BindRegCxPrep(s); EXPECT_TRUE(OCI_RegisterObject(s, OTEXT(":v"), t)); }
+    static void BindRegCxRef(OCI_Statement* s, OCI_TypeInfo* t)  { BindRegCxPrep(s); EXPECT_TRUE(OCI_RegisterRef(s, OTEXT(":v"), t)); }
+    static void BindRegCxVector(OCI_Statement* s, OCI_TypeInfo*) { BindRegCxPrep(s); EXPECT_TRUE(OCI_RegisterVector(s, OTEXT(":v"))); }
+    static void BindRegCxJson(OCI_Statement* s, OCI_TypeInfo*)   { BindRegCxPrep(s); EXPECT_TRUE(OCI_RegisterJson(s, OTEXT(":v"))); }
+
+    class TestBindRegCx : public ::testing::TestWithParam<BindRegCxCase>
     {
-        ExecDML(OTEXT("create or replace type TestBind_ArrObj as object(code int)"));
-        ExecDML(OTEXT("create or replace type TestBind_ArrNt as table of number"));
-        ExecDML(OTEXT("create table TestBind_Arr (id number, nn number, bi number, s varchar2(30), r raw(16), d date, ts timestamp, iv interval day to second, bl blob, o TestBind_ArrObj, c TestBind_ArrNt, rf ref TestBind_ArrObj, fl bfile, v vector, j json) nested table c store as TestBind_ArrNtt"));
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_Statement* stmt = nullptr;
+        OCI_TypeInfo* typinf = nullptr;
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    public:
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("create or replace type TestBind_RegCxObj as object(code int)"));
+        }
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop type TestBind_RegCxObj"));
+        }
 
-        const auto typinf_obj = OCI_TypeInfoGet(conn, OTEXT("TestBind_ArrObj"), OCI_TIF_TYPE);
-        const auto typinf_nt  = OCI_TypeInfoGet(conn, OTEXT("TestBind_ArrNt"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, typinf_obj);
-        ASSERT_NE(nullptr, typinf_nt);
+    protected:
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+            typinf = OCI_TypeInfoGet(conn, OTEXT("TestBind_RegCxObj"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, typinf);
+        }
 
-        const auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
+        void TearDown() override
+        {
+            if (stmt) OCI_StatementFree(stmt);
+            if (typinf) OCI_TypeInfoFree(typinf);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
 
-        ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
+    TEST_P(TestBindRegCx, RegisterByName_ReturnsTrue)
+    {
+        GetParam().run(stmt, typinf);
+    }
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT(
-            "insert into TestBind_Arr values(:n, :nn, :bi, :s, :r, :d, :ts, :iv, :bl, :o, :c, :rf, :fl, :v, :j)")));
-        ASSERT_TRUE(OCI_BindArraySetSize(stmt, 3));
+    INSTANTIATE_TEST_CASE_P(RegCx, TestBindRegCx,
+        ::testing::Values(
+            BindRegCxCase{ "Lob",    BindRegCxLob },
+            BindRegCxCase{ "File",   BindRegCxFile },
+            BindRegCxCase{ "Object", BindRegCxObject },
+            BindRegCxCase{ "Ref",    BindRegCxRef },
+            BindRegCxCase{ "Vector", BindRegCxVector },
+            BindRegCxCase{ "Json",   BindRegCxJson }),
+        ::testing::PrintToStringParamName());
 
-        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":n"), NULL, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfNumbers(stmt, OTEXT(":nn"), NULL, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfBigInts(stmt, OTEXT(":bi"), NULL, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":s"), NULL, 20, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfRaws(stmt, OTEXT(":r"), NULL, 16, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfDates(stmt, OTEXT(":d"), NULL, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfTimestamps(stmt, OTEXT(":ts"), NULL, OCI_TIMESTAMP, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfIntervals(stmt, OTEXT(":iv"), NULL, OCI_INTERVAL_DS, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfLobs(stmt, OTEXT(":bl"), NULL, OCI_BLOB, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfObjects(stmt, OTEXT(":o"), NULL, typinf_obj, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfJsons(stmt, OTEXT(":j"), NULL, 0));
+    /* -------------------------------------------------------------------------
+       Parameterized: each OCI_BindArrayOfX call registers an internal-alloc
+       array bind handle
+       ------------------------------------------------------------------------- */
 
-        /* NULL data array binds for types whose public API forbids NULL */
+    struct BindArrCase
+    {
+        const char* name;
+        void (*run)(OCI_Statement*, OCI_TypeInfo*);
+    };
 
+    void PrintTo(const BindArrCase& c, std::ostream* os) { *os << c.name; }
 
-        ASSERT_TRUE(OCI_StatementFree(stmt));
+    static void ArrInts(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfInts(s, OTEXT(":n"), NULL, 0));
+    }
+    static void ArrNumbers(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfNumbers(s, OTEXT(":nn"), NULL, 0));
+    }
+    static void ArrBigInts(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfBigInts(s, OTEXT(":bi"), NULL, 0));
+    }
+    static void ArrStrings(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfStrings(s, OTEXT(":s"), NULL, 20, 0));
+    }
+    static void ArrRaws(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfRaws(s, OTEXT(":r"), NULL, 16, 0));
+    }
+    static void ArrDates(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfDates(s, OTEXT(":d"), NULL, 0));
+    }
+    static void ArrTimestamps(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfTimestamps(s, OTEXT(":ts"), NULL, OCI_TIMESTAMP, 0));
+    }
+    static void ArrIntervals(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfIntervals(s, OTEXT(":iv"), NULL, OCI_INTERVAL_DS, 0));
+    }
+    static void ArrLobs(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfLobs(s, OTEXT(":bl"), NULL, OCI_BLOB, 0));
+    }
+    static void ArrObjects(OCI_Statement* s, OCI_TypeInfo* t)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfObjects(s, OTEXT(":o"), NULL, t, 0));
+    }
+    static void ArrJsons(OCI_Statement* s, OCI_TypeInfo*)
+    {
+        EXPECT_NE(nullptr, OCI_BindArrayOfJsons(s, OTEXT(":j"), NULL, 0));
+    }
 
+    class TestBindArr : public ::testing::TestWithParam<BindArrCase>
+    {
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_TypeInfo* typinf_obj = nullptr;
+        OCI_TypeInfo* typinf_nt = nullptr;
+        OCI_Statement* stmt = nullptr;
+
+    public:
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("create or replace type TestBind_ArrObj as object(code int)"));
+            ExecDML(OTEXT("create or replace type TestBind_ArrNt as table of number"));
+            ExecDML(OTEXT("create table TestBind_Arr (id number, nn number, bi number, s varchar2(30), r raw(16), d date, ts timestamp, iv interval day to second, bl blob, o TestBind_ArrObj, c TestBind_ArrNt, rf ref TestBind_ArrObj, fl bfile, v vector, j json) nested table c store as TestBind_ArrNtt"));
+        }
+
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop table TestBind_Arr"));
+            ExecDML(OTEXT("drop type TestBind_ArrNt"));
+            ExecDML(OTEXT("drop type TestBind_ArrObj"));
+        }
+
+    protected:
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            typinf_obj = OCI_TypeInfoGet(conn, OTEXT("TestBind_ArrObj"), OCI_TIF_TYPE);
+            typinf_nt = OCI_TypeInfoGet(conn, OTEXT("TestBind_ArrNt"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, typinf_obj);
+            ASSERT_NE(nullptr, typinf_nt);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+            ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
+            ASSERT_TRUE(OCI_Prepare(stmt, OTEXT(
+                "insert into TestBind_Arr values(:n, :nn, :bi, :s, :r, :d, :ts, :iv, :bl, :o, :c, :rf, :fl, :v, :j)")));
+            ASSERT_TRUE(OCI_BindArraySetSize(stmt, 3));
+        }
+
+        void TearDown() override
+        {
+            if (stmt) OCI_StatementFree(stmt);
+            if (typinf_obj) OCI_TypeInfoFree(typinf_obj);
+            if (typinf_nt) OCI_TypeInfoFree(typinf_nt);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
+
+    TEST_P(TestBindArr, BindArrayOfX_ReturnsValidHandle)
+    {
+        GetParam().run(stmt, typinf_obj);
+    }
+
+    INSTANTIATE_TEST_CASE_P(ArrBind, TestBindArr,
+        ::testing::Values(
+            BindArrCase{ "Ints",       ArrInts },
+            BindArrCase{ "Numbers",    ArrNumbers },
+            BindArrCase{ "BigInts",    ArrBigInts },
+            BindArrCase{ "Strings",    ArrStrings },
+            BindArrCase{ "Raws",       ArrRaws },
+            BindArrCase{ "Dates",      ArrDates },
+            BindArrCase{ "Timestamps", ArrTimestamps },
+            BindArrCase{ "Intervals",  ArrIntervals },
+            BindArrCase{ "Lobs",       ArrLobs },
+            BindArrCase{ "Objects",    ArrObjects },
+            BindArrCase{ "Jsons",      ArrJsons }),
+        ::testing::PrintToStringParamName());
+
+    TEST_F(TestBindArr, PrepareScalarCollInsert_Succeeds)
+    {
         /* scalar collection bind: no public API can create it with NULL data */
 
         const auto stmt2 = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt2);
-
         ASSERT_TRUE(OCI_SetBindAllocation(stmt2, OCI_BAM_INTERNAL));
-        ASSERT_TRUE(OCI_Prepare(stmt2, OTEXT("insert into TestBind_Arr (c) values(:c)")));
 
+        EXPECT_TRUE(OCI_Prepare(stmt2, OTEXT("insert into TestBind_Arr (c) values(:c)")));
 
         ASSERT_TRUE(OCI_StatementFree(stmt2));
-        ASSERT_TRUE(OCI_TypeInfoFree(typinf_obj));
-        ASSERT_TRUE(OCI_TypeInfoFree(typinf_nt));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop table TestBind_Arr"));
-        ExecDML(OTEXT("drop type TestBind_ArrNt"));
-        ExecDML(OTEXT("drop type TestBind_ArrObj"));
     }
 
     TEST(TestBind, PlsqlTableBind)

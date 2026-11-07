@@ -205,22 +205,15 @@ namespace TestCApi
 
     }
 
-    TEST(TestError, MiscSources)
+    TEST(TestError, BindError_CarriesConnectionAndStatement)
     {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
-
-        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto con = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
-
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
-
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select :i from dual")));
-
         OCI_Int32 i = 1;
         ASSERT_NE(nullptr, OCI_BindInt(stmt, OTEXT(":i"), &i));
-
         const auto bnd = OCI_GetBindByName(stmt, OTEXT(":i"));
         ASSERT_NE(nullptr, bnd);
 
@@ -228,31 +221,44 @@ namespace TestCApi
 
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
-        ASSERT_EQ(con, OCI_ErrorGetConnection(err));
-        ASSERT_EQ(stmt, OCI_ErrorGetStatement(err));
+        EXPECT_EQ(con, OCI_ErrorGetConnection(err));
+        EXPECT_EQ(stmt, OCI_ErrorGetStatement(err));
 
-        const auto num = OCI_NumberCreate(env);
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(con));
+    }
+
+    TEST(TestError, NumberConversionError_CarriesNoConnection)
+    {
+        const auto con = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, con);
+        const auto num = OCI_NumberCreate(GetEnvironment(nullptr));
         ASSERT_NE(nullptr, num);
 
         ASSERT_FALSE(OCI_NumberFromText(num, OTEXT("abc"), OTEXT("FM999")));
 
-        err = OCI_GetLastError();
+        auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
-        ASSERT_EQ(nullptr, OCI_ErrorGetConnection(err));
+        EXPECT_EQ(nullptr, OCI_ErrorGetConnection(err));
 
+        ASSERT_TRUE(OCI_NumberFree(num));
+        ASSERT_TRUE(OCI_ConnectionFree(con));
+    }
+
+    TEST(TestError, LobError_CarriesConnection)
+    {
+        const auto con = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, con);
         const auto lob = OCI_LobCreate(con, OCI_CLOB);
         ASSERT_NE(nullptr, lob);
 
         ASSERT_EQ(0u, OCI_LobErase(lob, 1, 0));
 
-        err = OCI_GetLastError();
+        auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
-        ASSERT_EQ(con, OCI_ErrorGetConnection(err));
+        EXPECT_EQ(con, OCI_ErrorGetConnection(err));
 
-        ASSERT_TRUE(OCI_NumberFree(num));
         ASSERT_TRUE(OCI_LobFree(lob));
-        ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
-
     }
 }

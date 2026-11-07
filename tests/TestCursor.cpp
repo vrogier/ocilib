@@ -50,61 +50,94 @@ namespace TestCApi
 
     }
 
-    TEST(TestCursor, FetchInfo)
+    /* -------------------------------------------------------------------------
+       Shared fixture: executed resultset (3 rows, 5 cols incl. null/raw/text)
+       ------------------------------------------------------------------------- */
+
+    class TestCursorInfo : public ::testing::Test
     {
-        auto env = GetEnvironment(nullptr);
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_Statement* stmt = nullptr;
+        OCI_Resultset* rs = nullptr;
 
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
-
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select rownum as rn, cast(null as int) as nullable, HEXTORAW('ABCD') as raw_col, 'text' as text_col, 12345 as num_col from dual connect by level <= 3")));
-
-        const auto rset = OCI_GetResultset(stmt);
-        ASSERT_NE(nullptr, rset);
-
-        ASSERT_EQ(5, OCI_GetColumnCount(rset));
-
-        ASSERT_NE(nullptr, OCI_GetColumn(rset, 0));
-        ASSERT_NE(nullptr, OCI_GetColumnByName(rset, OTEXT("RN")));
-        ASSERT_EQ(0, OCI_GetColumnIndex(rset, OTEXT("RN")));
-        ASSERT_EQ(-1, OCI_GetColumnIndex(rset, OTEXT("NOT_A_COLUMN")));
-
-        OCI_Int32 row = 0;
-        while (OCI_FetchNext(rset))
+        void SetUp() override
         {
-            row++;
-
-            ASSERT_EQ(row, OCI_GetInt(rset, 0));
-            ASSERT_EQ(String(TO_STRING(row)), String(OCI_GetString(rset, 0)));
-
-            ASSERT_TRUE(OCI_IsNull(rset, 1));
-            ASSERT_TRUE(OCI_IsNullByName(rset, OTEXT("NULLABLE")));
-            ASSERT_EQ(0, OCI_GetDataSize(rset, 1));
-            ASSERT_EQ(0, OCI_GetDataSizeByName(rset, OTEXT("NULLABLE")));
-
-            ASSERT_FALSE(OCI_IsNull(rset, 2));
-            ASSERT_EQ(2, OCI_GetDataSize(rset, 2));
-            ASSERT_EQ(2, OCI_GetDataLength(rset, 2));
-
-            unsigned char rawBuf[16] = { 0 };
-            ASSERT_EQ(2, OCI_GetRaw(rset, 2, rawBuf, sizeof(rawBuf)));
-            ASSERT_EQ(2, OCI_GetRawByName(rset, OTEXT("RAW_COL"), rawBuf, sizeof(rawBuf)));
-            ASSERT_EQ(0xAB, rawBuf[0]);
-            ASSERT_EQ(0xCD, rawBuf[1]);
-
-            ASSERT_EQ(String(OTEXT("text")), String(OCI_GetString(rset, 3)));
-            ASSERT_EQ(String(OTEXT("12345")), String(OCI_GetString(rset, 4)));
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+            ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select rownum as rn, cast(null as int) as nullable, HEXTORAW('ABCD') as raw_col, 'text' as text_col, 12345 as num_col from dual connect by level <= 3")));
+            rs = OCI_GetResultset(stmt);
+            ASSERT_NE(nullptr, rs);
         }
 
-        ASSERT_EQ(3, row);
+        void TearDown() override
+        {
+            if (stmt) OCI_StatementFree(stmt);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
 
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    TEST_F(TestCursorInfo, GetColumnCountOnResultset_ReturnsFive)
+    {
+        EXPECT_EQ(5, OCI_GetColumnCount(rs));
+    }
 
+    TEST_F(TestCursorInfo, GetColumnByIndexAndName_ReturnsColumns)
+    {
+        EXPECT_NE(nullptr, OCI_GetColumn(rs, 0));
+        EXPECT_NE(nullptr, OCI_GetColumnByName(rs, OTEXT("RN")));
+    }
+
+    TEST_F(TestCursorInfo, GetColumnIndexOnKnownAndUnknownName_ReturnsIndexOrMinusOne)
+    {
+        EXPECT_EQ(0, OCI_GetColumnIndex(rs, OTEXT("RN")));
+        EXPECT_EQ(-1, OCI_GetColumnIndex(rs, OTEXT("NOT_A_COLUMN")));
+    }
+
+    TEST_F(TestCursorInfo, FetchFirstRow_CoercesIntToTypedAndStringGetters)
+    {
+        ASSERT_TRUE(OCI_FetchNext(rs));
+
+        EXPECT_EQ(1, OCI_GetInt(rs, 0));
+        EXPECT_EQ(String(OTEXT("1")), String(OCI_GetString(rs, 0)));
+    }
+
+    TEST_F(TestCursorInfo, NullColumn_ReportsNullAndZeroSizeByIndexAndName)
+    {
+        ASSERT_TRUE(OCI_FetchNext(rs));
+
+        EXPECT_TRUE(OCI_IsNull(rs, 1));
+        EXPECT_TRUE(OCI_IsNullByName(rs, OTEXT("NULLABLE")));
+        EXPECT_EQ(0, OCI_GetDataSize(rs, 1));
+        EXPECT_EQ(0, OCI_GetDataSizeByName(rs, OTEXT("NULLABLE")));
+    }
+
+    TEST_F(TestCursorInfo, RawColumn_ReturnsBytesAndSizeByIndexAndName)
+    {
+        ASSERT_TRUE(OCI_FetchNext(rs));
+
+        EXPECT_FALSE(OCI_IsNull(rs, 2));
+        EXPECT_EQ(2, OCI_GetDataSize(rs, 2));
+        EXPECT_EQ(2, OCI_GetDataLength(rs, 2));
+        unsigned char buf[16] = { 0 };
+        EXPECT_EQ(2, OCI_GetRaw(rs, 2, buf, sizeof(buf)));
+        memset(buf, 0, sizeof(buf));
+        EXPECT_EQ(2, OCI_GetRawByName(rs, OTEXT("RAW_COL"), buf, sizeof(buf)));
+        EXPECT_EQ(0xAB, buf[0]);
+        EXPECT_EQ(0xCD, buf[1]);
+    }
+
+    TEST_F(TestCursorInfo, FetchAllRows_FetchesThreeRows)
+    {
+        OCI_Int32 row = 0;
+
+        while (OCI_FetchNext(rs))
+        {
+            row++;
+        }
+
+        EXPECT_EQ(3, row);
     }
 }

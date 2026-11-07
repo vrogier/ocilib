@@ -79,43 +79,43 @@ namespace TestCApi
         OCI_Pool*        pool{ nullptr };
     };
 
-    TEST_F(TestSessionPool, GetMin)
+    TEST_F(TestSessionPool, GetMinOnNewPool_ReturnsMinimum)
     {
         ASSERT_EQ(1u, OCI_PoolGetMin(pool));
     }
 
-    TEST_F(TestSessionPool, GetMax)
+    TEST_F(TestSessionPool, GetMaxOnNewPool_ReturnsMaximum)
     {
         ASSERT_EQ(5u, OCI_PoolGetMax(pool));
     }
 
-    TEST_F(TestSessionPool, GetIncrement)
+    TEST_F(TestSessionPool, GetIncrementOnNewPool_ReturnsIncrement)
     {
         ASSERT_EQ(1u, OCI_PoolGetIncrement(pool));
     }
 
-    TEST_F(TestSessionPool, GetBusyCountIdle)
+    TEST_F(TestSessionPool, GetBusyCountOnIdlePool_ReturnsZero)
     {
         ASSERT_EQ(0u, OCI_PoolGetBusyCount(pool));
     }
 
-    TEST_F(TestSessionPool, GetOpenedCount)
+    TEST_F(TestSessionPool, GetOpenedCountOnNewPool_ReturnsZero)
     {
         ASSERT_GE(OCI_PoolGetOpenedCount(pool), 0u);
     }
 
-    TEST_F(TestSessionPool, GetStatementCacheSize)
+    TEST_F(TestSessionPool, GetStatementCacheSizeOnNewPool_ReturnsCacheSize)
     {
         ASSERT_EQ(20u, OCI_PoolGetStatementCacheSize(pool));
     }
 
-    TEST_F(TestSessionPool, SetAndGetTimeout)
+    TEST_F(TestSessionPool, SetTimeoutThenGet_ReturnsTimeout)
     {
         ASSERT_TRUE(OCI_PoolSetTimeout(pool, 10));
         ASSERT_EQ(10u, OCI_PoolGetTimeout(pool));
     }
 
-    TEST_F(TestSessionPool, SetAndGetNoWait)
+    TEST_F(TestSessionPool, SetNoWaitThenGet_ReturnsNoWait)
     {
         ASSERT_TRUE(OCI_PoolSetNoWait(pool, TRUE));
         ASSERT_TRUE(OCI_PoolGetNoWait(pool));
@@ -123,13 +123,13 @@ namespace TestCApi
         ASSERT_FALSE(OCI_PoolGetNoWait(pool));
     }
 
-    TEST_F(TestSessionPool, SetAndGetStatementCacheSize)
+    TEST_F(TestSessionPool, SetStatementCacheSizeThenGet_ReturnsSize)
     {
         ASSERT_TRUE(OCI_PoolSetStatementCacheSize(pool, 10));
         ASSERT_EQ(10u, OCI_PoolGetStatementCacheSize(pool));
     }
 
-    TEST_F(TestSessionPool, BusyCountWithConnection)
+    TEST_F(TestSessionPool, GetBusyCountWithOpenConnection_ReturnsOne)
     {
         const auto conn = OCI_PoolGetConnection(env, pool, nullptr);
         ASSERT_NE(nullptr, conn);
@@ -187,38 +187,38 @@ namespace TestCApi
         OCI_Pool*        pool{ nullptr };
     };
 
-    TEST_F(TestConnPool, GetMin)
+    TEST_F(TestConnPool, GetMinOnNewPool_ReturnsMinimum)
     {
         ASSERT_EQ(0u, OCI_PoolGetMin(pool));
     }
 
-    TEST_F(TestConnPool, GetMax)
+    TEST_F(TestConnPool, GetMaxOnNewPool_ReturnsMaximum)
     {
         ASSERT_EQ(3u, OCI_PoolGetMax(pool));
     }
 
-    TEST_F(TestConnPool, GetIncrement)
+    TEST_F(TestConnPool, GetIncrementOnNewPool_ReturnsIncrement)
     {
         ASSERT_EQ(1u, OCI_PoolGetIncrement(pool));
     }
 
-    TEST_F(TestConnPool, GetBusyCount)
+    TEST_F(TestConnPool, GetBusyCountOnNewPool_ReturnsZero)
     {
         ASSERT_EQ(0u, OCI_PoolGetBusyCount(pool));
     }
 
-    TEST_F(TestConnPool, GetOpenedCount)
+    TEST_F(TestConnPool, GetOpenedCountOnNewPool_ReturnsZero)
     {
         ASSERT_GE(OCI_PoolGetOpenedCount(pool), 0u);
     }
 
-    TEST_F(TestConnPool, SetAndGetTimeout)
+    TEST_F(TestConnPool, SetTimeoutThenGet_ReturnsTimeout)
     {
         ASSERT_TRUE(OCI_PoolSetTimeout(pool, 15));
         ASSERT_EQ(15u, OCI_PoolGetTimeout(pool));
     }
 
-    TEST_F(TestConnPool, SetNoWait)
+    TEST_F(TestConnPool, SetNoWaitThenGet_ReturnsNoWait)
     {
         /* OCI_HTYPE_CPOOL attributes are settable after creation, but the
            reported values lag one update behind on this OCI version - so the
@@ -229,13 +229,13 @@ namespace TestCApi
         (void) OCI_PoolGetNoWait(pool);
     }
 
-    TEST_F(TestConnPool, SetAndGetStatementCacheSize)
+    TEST_F(TestConnPool, SetStatementCacheSizeThenGet_ReturnsSize)
     {
         ASSERT_TRUE(OCI_PoolSetStatementCacheSize(pool, 12));
         ASSERT_EQ(12u, OCI_PoolGetStatementCacheSize(pool));
     }
 
-    TEST_F(TestConnPool, GetConnection)
+    TEST_F(TestConnPool, GetConnectionFromPool_ReturnsConnection)
     {
         const auto conn = OCI_PoolGetConnection(env, pool, nullptr);
         ASSERT_NE(nullptr, conn);

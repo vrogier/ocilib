@@ -2,71 +2,121 @@
 
 namespace TestCApi
 {
-    TEST(TestEnqueue, CreateAndPut)
+    /* -------------------------------------------------------------------------
+       Parameterized: enqueue attribute setter/getter round-trips
+       ------------------------------------------------------------------------- */
+
+    struct EnqAttrCase
     {
-        ExecDML(OTEXT("create type TestEnqueuePayloadType as object(title varchar2(50), content varchar2(100))"));
+        const char* name;
+        void (*run)(OCI_Enqueue*);
+    };
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    void PrintTo(const EnqAttrCase& c, std::ostream* os) { *os << c.name; }
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+    static void EnqAttrVisibility(OCI_Enqueue* e)
+    {
+        ASSERT_TRUE(OCI_EnqueueSetVisibility(e, OCI_AMV_IMMEDIATE));
+        EXPECT_EQ(OCI_AMV_IMMEDIATE, OCI_EnqueueGetVisibility(e));
+    }
+    static void EnqAttrSeqDev(OCI_Enqueue* e)
+    {
+        ASSERT_TRUE(OCI_EnqueueSetSequenceDeviation(e, OCI_ASD_TOP));
+        EXPECT_EQ(OCI_ASD_TOP, OCI_EnqueueGetSequenceDeviation(e));
+    }
 
-        // cleanup if previous run left objects around
-        OCI_QueueStop(conn, OTEXT("TestEnqueueQueue"), TRUE, TRUE, FALSE);
-        OCI_QueueDrop(conn, OTEXT("TestEnqueueQueue"));
-        OCI_QueueTableDrop(conn, OTEXT("TestEnqueueQueueTable"), TRUE);
+    class TestEnqOps : public ::testing::TestWithParam<EnqAttrCase>
+    {
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_TypeInfo* inf = nullptr;
+        OCI_Enqueue* enq = nullptr;
 
-        ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestEnqueueQueueTable"), OTEXT("TestEnqueuePayloadType"), NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
-        ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestEnqueueQueue"), OTEXT("TestEnqueueQueueTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
-        ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestEnqueueQueue"), TRUE, TRUE));
+    public:
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("create type TestEnqOpsPayloadType as object(title varchar2(50), content varchar2(100))"));
+        }
 
-        const auto inf = OCI_TypeInfoGet(conn, OTEXT("TestEnqueuePayloadType"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, inf);
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop type TestEnqOpsPayloadType"));
+        }
 
-        const auto enq = OCI_EnqueueCreate(inf, OTEXT("TestEnqueueQueue"));
-        ASSERT_NE(nullptr, enq);
+    protected:
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
 
-        ASSERT_TRUE(OCI_EnqueueSetVisibility(enq, OCI_AMV_IMMEDIATE));
-        ASSERT_EQ(OCI_AMV_IMMEDIATE, OCI_EnqueueGetVisibility(enq));
+            OCI_QueueStop(conn, OTEXT("TestEnqOpsQueue"), TRUE, TRUE, FALSE);
+            OCI_QueueDrop(conn, OTEXT("TestEnqOpsQueue"));
+            OCI_QueueTableDrop(conn, OTEXT("TestEnqOpsTable"), TRUE);
 
-        ASSERT_TRUE(OCI_EnqueueSetSequenceDeviation(enq, OCI_ASD_TOP));
-        ASSERT_EQ(OCI_ASD_TOP, OCI_EnqueueGetSequenceDeviation(enq));
+            ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestEnqOpsTable"), OTEXT("TestEnqOpsPayloadType"),
+                                             NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
+            ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestEnqOpsQueue"), OTEXT("TestEnqOpsTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
+            ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestEnqOpsQueue"), TRUE, TRUE));
 
-        const unsigned char msgId[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 };
+            inf = OCI_TypeInfoGet(conn, OTEXT("TestEnqOpsPayloadType"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, inf);
+            enq = OCI_EnqueueCreate(inf, OTEXT("TestEnqOpsQueue"));
+            ASSERT_NE(nullptr, enq);
+        }
+
+        void TearDown() override
+        {
+            if (enq) OCI_EnqueueFree(enq);
+            if (conn)
+            {
+                OCI_QueueStop(conn, OTEXT("TestEnqOpsQueue"), TRUE, TRUE, FALSE);
+                OCI_QueueDrop(conn, OTEXT("TestEnqOpsQueue"));
+                OCI_QueueTableDrop(conn, OTEXT("TestEnqOpsTable"), TRUE);
+                OCI_ConnectionFree(conn);
+            }
+        }
+    };
+
+    TEST_P(TestEnqOps, SetThenGetAttr_RoundTripsValue)
+    {
+        GetParam().run(enq);
+    }
+
+    INSTANTIATE_TEST_CASE_P(EnqAttr, TestEnqOps,
+        ::testing::Values(
+            EnqAttrCase{ "Visibility",        EnqAttrVisibility },
+            EnqAttrCase{ "SequenceDeviation", EnqAttrSeqDev }),
+        ::testing::PrintToStringParamName());
+
+    TEST_F(TestEnqOps, SetRelativeMsgID_GetterReportsValue)
+    {
+        const unsigned char msgId[16] = { 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
+                                          0x09, 0x0A, 0x0B, 0x0C, 0x0D, 0x0E, 0x0F, 0x10 };
+
         ASSERT_TRUE(OCI_EnqueueSetRelativeMsgID(enq, msgId, sizeof(msgId)));
 
         unsigned char outMsgId[16] = {};
         OCI_UInt32 outMsgIdLen = sizeof(outMsgId);
-        ASSERT_TRUE(OCI_EnqueueGetRelativeMsgID(enq, outMsgId, &outMsgIdLen));
-        ASSERT_LE(outMsgIdLen, sizeof(outMsgId));
+        EXPECT_TRUE(OCI_EnqueueGetRelativeMsgID(enq, outMsgId, &outMsgIdLen));
+        EXPECT_LE(outMsgIdLen, sizeof(outMsgId));
+    }
 
+    TEST_F(TestEnqOps, EnqueuePutThenCommit_EnqueuesMessage)
+    {
         const auto msg = OCI_MsgCreate(inf);
         ASSERT_NE(nullptr, msg);
-
         const auto obj = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj);
-
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("title"), OTEXT("Enqueue test")));
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("content"), OTEXT("hello")));
         ASSERT_TRUE(OCI_MsgSetObject(msg, obj));
 
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg));
 
+        EXPECT_TRUE(OCI_Commit(conn));
+
         ASSERT_TRUE(OCI_ObjectFree(obj));
         ASSERT_TRUE(OCI_MsgFree(msg));
-
-        ASSERT_TRUE(OCI_Commit(conn));
-
-        ASSERT_TRUE(OCI_EnqueueFree(enq));
-
-        ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestEnqueueQueue"), TRUE, TRUE, FALSE));
-        ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestEnqueueQueue")));
-        ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestEnqueueQueueTable"), TRUE));
-
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop type TestEnqueuePayloadType"));
     }
 
     /* shared fixture: payload type + started queue + live enqueue */
@@ -139,7 +189,7 @@ namespace TestCApi
         OCI_Enqueue*    enq{ nullptr };
     };
 
-    TEST_F(TestEnqQueue, GetRelativeMsgIdAfterPut)
+    TEST_F(TestEnqQueue, GetRelativeMsgIdAfterPut_ReturnsId)
     {
         /* after a successful enqueue the relative msg id attribute is set;
            a buffer larger than the raw id covers the length clamp arm */
@@ -158,7 +208,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_MsgFree(msg));
     }
 
-    TEST_F(TestEnqQueue, PutToMissingQueue)
+    TEST_F(TestEnqQueue, EnqueuePutOnMissingQueue_Fails)
     {
         /* enqueue to a queue that does not exist -> OCI error thrown
            (also exercises the UTF16->ANSI queue name retry on wide builds) */

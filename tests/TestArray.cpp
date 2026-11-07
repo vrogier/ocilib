@@ -93,71 +93,109 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestExternalArrayInsertArrayError"));
     }
 
-    TEST(TestArray, InsertInternalArray)
+    /* -------------------------------------------------------------------------
+       Shared fixture: internal-alloc array binds on the insert table
+       ------------------------------------------------------------------------- */
+
+    class TestArrayInt : public ::testing::Test
     {
-        ExecDML(OTEXT("create table TestInternalArrayInsertArray(code int, name varchar2(50), creation date)"));
-        ExecDML(OTEXT("truncate table TestInternalArrayInsertArray"));
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_Statement* stmt = nullptr;
+        OCI_Date* sysdate = nullptr;
 
-        auto env = GetEnvironment(nullptr);
+    public:
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("create table TestInternalArrayInsertArray(code int, name varchar2(50), creation date)"));
+            ExecDML(OTEXT("truncate table TestInternalArrayInsertArray"));
+        }
 
-        ASSERT_NE(nullptr, env);
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop table TestInternalArrayInsertArray"));
+        }
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+    protected:
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+            sysdate = OCI_DateCreate(GetEnvironment(nullptr));
+            ASSERT_NE(nullptr, sysdate);
+            ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
+            ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestInternalArrayInsertArray values(:i, :s, :d)")));
+            ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
+        }
 
-        const auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
+        void TearDown() override
+        {
+            if (sysdate) OCI_DateFree(sysdate);
+            if (stmt) OCI_StatementFree(stmt);
+            if (conn) OCI_ConnectionFree(conn);
+            ExecDML(OTEXT("truncate table TestInternalArrayInsertArray"));
+        }
 
-        ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
+        void FillArrays()
+        {
+            auto tab_int = static_cast<OCI_Int32*>(OCI_BindGetData(OCI_GetBind(stmt, 0)));
+            auto tab_str = static_cast<otext*>(OCI_BindGetData(OCI_GetBind(stmt, 1)));
+            auto tab_date = static_cast<OCI_Date**>(OCI_BindGetData(OCI_GetBind(stmt, 2)));
+            for (OCI_Int32 i = 0; i < ARRAY_SIZE; i++)
+            {
+                tab_int[i] = i + 1;
+                osprintf(tab_str + (i * (STRING_SIZE + 1)), OTEXT("Name %d"), i + 1);
+                ASSERT_TRUE(OCI_DateAssign(tab_date[i], sysdate));
+            }
+        }
+    };
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestInternalArrayInsertArray values(:i, :s, :d)")));
-        ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
+    TEST_F(TestArrayInt, BindGetDataOnInternalBinds_ReturnsWritableBuffers)
+    {
         ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":i"), NULL, 0));
         ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
         ASSERT_NE(nullptr, OCI_BindArrayOfDates(stmt, OTEXT(":d"), NULL, 0));
 
-        auto sysdate = OCI_DateCreate(env);
-        ASSERT_NE(nullptr, sysdate);
+        EXPECT_NE(nullptr, OCI_BindGetData(OCI_GetBind(stmt, 0)));
+        EXPECT_NE(nullptr, OCI_BindGetData(OCI_GetBind(stmt, 1)));
+        EXPECT_NE(nullptr, OCI_BindGetData(OCI_GetBind(stmt, 2)));
+    }
 
-        auto tab_int = static_cast<OCI_Int32*>(OCI_BindGetData(OCI_GetBind(stmt, 0)));
-        ASSERT_NE(nullptr, tab_int);
-        auto tab_str = static_cast<otext*>(OCI_BindGetData(OCI_GetBind(stmt, 1)));
-        ASSERT_NE(nullptr, tab_str);
-        auto tab_date = static_cast<OCI_Date**>(OCI_BindGetData(OCI_GetBind(stmt, 2)));
-        ASSERT_NE(nullptr, tab_date);
-
-        for (OCI_Int32 i = 0; i < ARRAY_SIZE; i++)
-        {
-            tab_int[i] = i + 1;
-            osprintf(tab_str + (i * (STRING_SIZE + 1)), OTEXT("Name %d"), i + 1);
-            ASSERT_TRUE(OCI_DateAssign(tab_date[i], sysdate));
-        }
+    TEST_F(TestArrayInt, ExecuteInsertWithInternalArrays_InsertsAllRows)
+    {
+        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":i"), NULL, 0));
+        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
+        ASSERT_NE(nullptr, OCI_BindArrayOfDates(stmt, OTEXT(":d"), NULL, 0));
+        FillArrays();
 
         ASSERT_TRUE(OCI_Execute(stmt));
 
-        ASSERT_EQ(ARRAY_SIZE, OCI_GetAffectedRows(stmt));
+        EXPECT_EQ(ARRAY_SIZE, OCI_GetAffectedRows(stmt));
+    }
+
+    TEST_F(TestArrayInt, InsertedRows_FetchBackMatchingValues)
+    {
+        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":i"), NULL, 0));
+        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
+        ASSERT_NE(nullptr, OCI_BindArrayOfDates(stmt, OTEXT(":d"), NULL, 0));
+        FillArrays();
+        ASSERT_TRUE(OCI_Execute(stmt));
 
         ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select * from TestInternalArrayInsertArray")));
 
-        auto rslt = OCI_GetResultset(stmt);
+        const auto rslt = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rslt);
-
         OCI_Int32 count = 0;
         while (OCI_FetchNext(rslt))
         {
             count++;
             String str = OTEXT("Name ") + TO_STRING(count);
-            ASSERT_EQ(count, OCI_GetInt(rslt, 0));
-            ASSERT_EQ(str, OCI_GetString(rslt, 1));
-            ASSERT_EQ(0, OCI_DateCompare(sysdate, OCI_GetDate(rslt, 2)));
+            EXPECT_EQ(count, OCI_GetInt(rslt, 0));
+            EXPECT_EQ(str, OCI_GetString(rslt, 1));
+            EXPECT_EQ(0, OCI_DateCompare(sysdate, OCI_GetDate(rslt, 2)));
         }
-
-        ASSERT_EQ(ARRAY_SIZE, count);
-
-        ASSERT_TRUE(OCI_DateFree(sysdate));
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop table TestInternalArrayInsertArray"));
+        EXPECT_EQ(ARRAY_SIZE, count);
     }
 }

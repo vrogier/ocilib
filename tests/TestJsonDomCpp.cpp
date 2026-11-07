@@ -120,210 +120,308 @@ namespace TestCppApi
         ASSERT_EQ(0u, std::distance(root.GetFieldByName(OTEXT("name")).begin(),
                                     root.GetFieldByName(OTEXT("name")).end()));
     }
-    TEST(TestJsonDomCpp, NodeCreationAndSetters)
+    /* -------------------------------------------------------------------------
+       Parameterized: typed node create + set/get round-trip per node type
+       ------------------------------------------------------------------------- */
+
+    struct JsonCppTypeCase
     {
-        Environment& env = GetEnvironmentCpp();
-        Connection con(env, DBS, USR, PWD);
+        const char* name;
+        void (*run)(Environment&, Json&, JsonNode&);
+    };
 
-        Json json(con);
-        json.SetMutable(true);
-        json.LoadText(OTEXT("null"));
+    void PrintTo(const JsonCppTypeCase& c, std::ostream* os) { *os << c.name; }
 
-        JsonNode root = json.CreateObject();
-
-        JsonNode generic = json.CreateNode(Json::NodeString);
-        ASSERT_EQ(Json::NodeString, generic.GetType());
-        generic.SetString(OTEXT("generic"));
-        ASSERT_EQ(String(OTEXT("generic")), generic.GetString());
-        root.SetField(OTEXT("generic"), generic);
-
-        JsonNode str = json.CreateString(OTEXT("old"));
-        str.SetString(OTEXT("new"));
-        ASSERT_EQ(String(OTEXT("new")), str.GetString());
-        root.SetField(OTEXT("str"), str);
-
+    static void CppNodeString(Environment&, Json& json, JsonNode& root)
+    {
+        JsonNode n = json.CreateString(OTEXT("old"));
+        n.SetString(OTEXT("new"));
+        EXPECT_EQ(String(OTEXT("new")), n.GetString());
+        root.SetField(OTEXT("str"), n);
+    }
+    static void CppNodeNumber(Environment& env, Json& json, JsonNode& root)
+    {
         Number num(env, 3.14);
-        JsonNode numNode = json.CreateNumber(num);
-        ASSERT_EQ(Json::NodeNumber, numNode.GetType());
-        ASSERT_DOUBLE_EQ(3.14, static_cast<OCI_Double>(numNode.GetNumeric<Number>()));
-
+        JsonNode n = json.CreateNumber(num);
+        EXPECT_EQ(Json::NodeNumber, n.GetType());
+        EXPECT_DOUBLE_EQ(3.14, static_cast<OCI_Double>(n.GetNumeric<Number>()));
         num = 2.718;
-        numNode.SetNumeric(num);
-        ASSERT_DOUBLE_EQ(2.718, static_cast<OCI_Double>(numNode.GetNumeric<Number>()));
-        root.SetField(OTEXT("num"), numNode);
-
-        JsonNode OCI_Boolean = json.CreateBoolean(true);
-        ASSERT_TRUE(OCI_Boolean.GetBoolean());
-        OCI_Boolean.SetBoolean(false);
-        ASSERT_FALSE(OCI_Boolean.GetBoolean());
-        root.SetField(OTEXT("bool"), OCI_Boolean);
-
-        JsonNode nullNode = json.CreateNull();
-        ASSERT_TRUE(nullNode.IsNull());
-        nullNode.SetNull();
-        ASSERT_TRUE(nullNode.IsNull());
-        root.SetField(OTEXT("nil"), nullNode);
-
+        n.SetNumeric(num);
+        EXPECT_DOUBLE_EQ(2.718, static_cast<OCI_Double>(n.GetNumeric<Number>()));
+        root.SetField(OTEXT("num"), n);
+    }
+    static void CppNodeBoolean(Environment&, Json& json, JsonNode& root)
+    {
+        JsonNode n = json.CreateBoolean(true);
+        ASSERT_TRUE(n.GetBoolean());
+        n.SetBoolean(false);
+        EXPECT_FALSE(n.GetBoolean());
+        root.SetField(OTEXT("bool"), n);
+    }
+    static void CppNodeNull(Environment&, Json& json, JsonNode& root)
+    {
+        JsonNode n = json.CreateNull();
+        ASSERT_TRUE(n.IsNull());
+        n.SetNull();
+        EXPECT_TRUE(n.IsNull());
+        root.SetField(OTEXT("nil"), n);
+    }
+    static void CppNodeBinary(Environment&, Json& json, JsonNode& root)
+    {
         Raw binData = { 0xAB, 0xCD, 0xEF };
-        JsonNode binary = json.CreateBinary(binData);
-        Raw binVal = binary.GetBinary();
+        JsonNode n = json.CreateBinary(binData);
+        Raw binVal = n.GetBinary();
         ASSERT_EQ(binData.size(), binVal.size());
-        for (OCI_Size i = 0; i < binData.size(); ++i)
-        {
-            ASSERT_EQ(binData[i], binVal[i]);
-        }
-
+        for (OCI_Size i = 0; i < binData.size(); ++i) { EXPECT_EQ(binData[i], binVal[i]); }
         Raw binData2 = { 0x12, 0x34 };
-        binary.SetBinary(binData2);
-        binVal = binary.GetBinary();
+        n.SetBinary(binData2);
+        binVal = n.GetBinary();
         ASSERT_EQ(binData2.size(), binVal.size());
-        for (OCI_Size i = 0; i < binData2.size(); ++i)
-        {
-            ASSERT_EQ(binData2[i], binVal[i]);
-        }
-        root.SetField(OTEXT("bin"), binary);
-
+        for (OCI_Size i = 0; i < binData2.size(); ++i) { EXPECT_EQ(binData2[i], binVal[i]); }
+        root.SetField(OTEXT("bin"), n);
+    }
+    static void CppNodeDate(Environment& env, Json& json, JsonNode& root)
+    {
         Date date(env, true);
         date.SetDate(2024, 5, 15);
-        JsonNode dateNode = json.CreateDate(date);
-        ASSERT_EQ(Json::NodeDate, dateNode.GetType());
-
-        Date date2 = dateNode.GetDate();
+        JsonNode n = json.CreateDate(date);
+        EXPECT_EQ(Json::NodeDate, n.GetType());
+        Date d2 = n.GetDate();
         OCI_Int32 y = 0, m = 0, d = 0;
-        date2.GetDate(y, m, d);
-        ASSERT_EQ(2024, y);
-        ASSERT_EQ(5, m);
-        ASSERT_EQ(15, d);
-
+        d2.GetDate(y, m, d);
+        EXPECT_EQ(2024, y); EXPECT_EQ(5, m); EXPECT_EQ(15, d);
         Date date3(env, true);
         date3.SetDate(2025, 6, 20);
-        dateNode.SetDate(date3);
-        date2 = dateNode.GetDate();
-        date2.GetDate(y, m, d);
-        ASSERT_EQ(2025, y);
-        ASSERT_EQ(6, m);
-        ASSERT_EQ(20, d);
-        root.SetField(OTEXT("date"), dateNode);
-
+        n.SetDate(date3);
+        d2 = n.GetDate();
+        d2.GetDate(y, m, d);
+        EXPECT_EQ(2025, y); EXPECT_EQ(6, m); EXPECT_EQ(20, d);
+        root.SetField(OTEXT("date"), n);
+    }
+    static void CppNodeTimestamp(Environment& env, Json& json, JsonNode& root)
+    {
         Timestamp ts(env, Timestamp::NoTimeZone);
         ts.SetDateTime(2024, 5, 15, 10, 30, 0, 0);
-        JsonNode tsNode = json.CreateTimestamp(ts);
-        ASSERT_EQ(Json::NodeTimestamp, tsNode.GetType());
-
-        Timestamp ts2 = tsNode.GetTimestamp();
-        OCI_Int32 h = 0, mn = 0, s = 0, f = 0;
+        JsonNode n = json.CreateTimestamp(ts);
+        EXPECT_EQ(Json::NodeTimestamp, n.GetType());
+        Timestamp ts2 = n.GetTimestamp();
+        OCI_Int32 y = 0, m = 0, d = 0, h = 0, mn = 0, s = 0, f = 0;
         ts2.GetDateTime(y, m, d, h, mn, s, f);
-        ASSERT_EQ(2024, y);
-        ASSERT_EQ(5, m);
-        ASSERT_EQ(15, d);
-        ASSERT_EQ(10, h);
-        ASSERT_EQ(30, mn);
-
+        EXPECT_EQ(2024, y); EXPECT_EQ(5, m); EXPECT_EQ(15, d); EXPECT_EQ(10, h); EXPECT_EQ(30, mn);
         Timestamp ts3(env, Timestamp::NoTimeZone);
         ts3.SetDateTime(2025, 6, 20, 14, 45, 0, 0);
-        tsNode.SetTimestamp(ts3);
-        ts2 = tsNode.GetTimestamp();
+        n.SetTimestamp(ts3);
+        ts2 = n.GetTimestamp();
         ts2.GetDateTime(y, m, d, h, mn, s, f);
-        ASSERT_EQ(2025, y);
-        ASSERT_EQ(6, m);
-        ASSERT_EQ(20, d);
-        ASSERT_EQ(14, h);
-        ASSERT_EQ(45, mn);
-        root.SetField(OTEXT("ts"), tsNode);
-
+        EXPECT_EQ(2025, y); EXPECT_EQ(6, m); EXPECT_EQ(20, d); EXPECT_EQ(14, h); EXPECT_EQ(45, mn);
+        root.SetField(OTEXT("ts"), n);
+    }
+    static void CppNodeInterval(Environment& env, Json& json, JsonNode& root)
+    {
         Interval iv(env, Interval::YearMonth);
         iv.SetYearMonth(1, 6);
-        JsonNode ivNode = json.CreateInterval(iv);
-        ASSERT_EQ(Json::NodeInterval, ivNode.GetType());
-
-        Interval iv2 = ivNode.GetInterval();
+        JsonNode n = json.CreateInterval(iv);
+        EXPECT_EQ(Json::NodeInterval, n.GetType());
+        Interval iv2 = n.GetInterval();
+        OCI_Int32 y = 0, m = 0;
         iv2.GetYearMonth(y, m);
-        ASSERT_EQ(1, y);
-        ASSERT_EQ(6, m);
-
+        EXPECT_EQ(1, y); EXPECT_EQ(6, m);
         Interval iv3(env, Interval::YearMonth);
         iv3.SetYearMonth(2, 3);
-        ivNode.SetInterval(iv3);
-        iv2 = ivNode.GetInterval();
+        n.SetInterval(iv3);
+        iv2 = n.GetInterval();
         iv2.GetYearMonth(y, m);
-        ASSERT_EQ(2, y);
-        ASSERT_EQ(3, m);
-        root.SetField(OTEXT("iv"), ivNode);
-
-        JsonNode arr = json.CreateArray();
-        ASSERT_EQ(Json::NodeArray, arr.GetType());
-
-        Number n1(env, 1.0);
-        JsonNode item1 = json.CreateNumber(n1);
-        Number n2(env, 2.0);
-        JsonNode item2 = json.CreateNumber(n2);
-        arr.AppendItem(item1);
-        arr.AppendItem(item2);
-
-        JsonNode item3 = json.CreateString(OTEXT("three"));
-        arr.SetItem(1, item3);
-        ASSERT_EQ(3u, arr.GetItemCount());
-
-        JsonNode verifyItem = arr.GetItem(1);
-        ASSERT_EQ(Json::NodeString, verifyItem.GetType());
-        ASSERT_EQ(String(OTEXT("three")), verifyItem.GetString());
-
-        root.SetField(OTEXT("arr"), arr);
-
-        ASSERT_EQ(10u, root.GetFieldCount());
-
-        json.SetRoot(root);
-
-        JsonNode verify = json.GetRoot();
-        ASSERT_EQ(3u, verify.GetFieldByName(OTEXT("arr")).GetItemCount());
+        EXPECT_EQ(2, y); EXPECT_EQ(3, m);
+        root.SetField(OTEXT("iv"), n);
     }
 
-    TEST(TestJsonDomCpp, DomMutationOps)
+    class TestJsonDomCppCreate : public ::testing::TestWithParam<JsonCppTypeCase>
     {
-        Environment& env = GetEnvironmentCpp();
-        Connection con(env, DBS, USR, PWD);
+    protected:
+        Connection con;
+        Json json;
+        JsonNode root;
 
-        Json json(con);
-        json.SetMutable(true);
-        json.LoadText(OTEXT("{}"));
+        void SetUp() override
+        {
+            con = Connection(GetEnvironmentCpp(), DBS, USR, PWD);
+            json = Json(con);
+            json.SetMutable(true);
+            json.LoadText(OTEXT("null"));
+            root = json.CreateObject();
+        }
+    };
 
-        /* object ops on a detached node */
+    TEST_P(TestJsonDomCppCreate, CreateSetGetAndAttach_RoundTripsValue)
+    {
+        GetParam().run(GetEnvironmentCpp(), json, root);
+
+        EXPECT_EQ(1u, root.GetFieldCount());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NodeKind, TestJsonDomCppCreate,
+        ::testing::Values(
+            JsonCppTypeCase{ "String",    CppNodeString },
+            JsonCppTypeCase{ "Number",    CppNodeNumber },
+            JsonCppTypeCase{ "Boolean",   CppNodeBoolean },
+            JsonCppTypeCase{ "Null",      CppNodeNull },
+            JsonCppTypeCase{ "Binary",    CppNodeBinary },
+            JsonCppTypeCase{ "Date",      CppNodeDate },
+            JsonCppTypeCase{ "Timestamp", CppNodeTimestamp },
+            JsonCppTypeCase{ "Interval",  CppNodeInterval }),
+        ::testing::PrintToStringParamName());
+
+    TEST_F(TestJsonDomCppCreate, CreateGenericNodeWithStringType_ReturnsStringNode)
+    {
+        JsonNode generic = json.CreateNode(Json::NodeString);
+
+        EXPECT_EQ(Json::NodeString, generic.GetType());
+        generic.SetString(OTEXT("generic"));
+        EXPECT_EQ(String(OTEXT("generic")), generic.GetString());
+
+        root.SetField(OTEXT("generic"), generic);
+    }
+
+    TEST_F(TestJsonDomCppCreate, ArrayOpsOnCreatedArray_ManageItems)
+    {
+        JsonNode arr = json.CreateArray();
+        EXPECT_EQ(Json::NodeArray, arr.GetType());
+        Number n1(GetEnvironmentCpp(), 1.0);
+        Number n2(GetEnvironmentCpp(), 2.0);
+        JsonNode item1 = json.CreateNumber(n1);
+        JsonNode item2 = json.CreateNumber(n2);
+        JsonNode item3 = json.CreateString(OTEXT("three"));
+
+        arr.AppendItem(item1);
+        arr.AppendItem(item2);
+        arr.SetItem(1, item3);
+
+        EXPECT_EQ(3u, arr.GetItemCount());
+        JsonNode chk = arr.GetItem(1);
+        EXPECT_EQ(Json::NodeString, chk.GetType());
+        EXPECT_EQ(String(OTEXT("three")), chk.GetString());
+
+        root.SetField(OTEXT("arr"), arr);
+    }
+
+    TEST_F(TestJsonDomCppCreate, SetRootThenGetRoot_ReturnsAttachedDoc)
+    {
+        json.SetRoot(root);
+
+        EXPECT_NE(JsonNode(), json.GetRoot());
+    }
+
+    /* -------------------------------------------------------------------------
+       Shared fixture: mutable {} document for DOM mutation ops
+       ------------------------------------------------------------------------- */
+
+    class TestJsonDomCppOps : public ::testing::Test
+    {
+    protected:
+        Connection con;
+        Json json;
+
+        void SetUp() override
+        {
+            con = Connection(GetEnvironmentCpp(), DBS, USR, PWD);
+            json = Json(con);
+            json.SetMutable(true);
+            json.LoadText(OTEXT("{}"));
+        }
+    };
+
+    TEST_F(TestJsonDomCppOps, SetFieldOnObject_AddsFieldWithValue)
+    {
         JsonNode obj = json.CreateObject();
         JsonNode name = json.CreateString(OTEXT("test"));
+
         obj.SetField(OTEXT("name"), name);
-        ASSERT_EQ(1u, obj.GetFieldCount());
-        JsonNode back = obj.GetField(OTEXT("name"));
-        ASSERT_EQ(String(OTEXT("test")), back.GetString());
+
+        EXPECT_EQ(1u, obj.GetFieldCount());
+        EXPECT_EQ(String(OTEXT("test")), obj.GetField(OTEXT("name")).GetString());
+    }
+
+    TEST_F(TestJsonDomCppOps, RemoveFieldOnObject_RemovesField)
+    {
+        JsonNode obj = json.CreateObject();
+        obj.SetField(OTEXT("name"), json.CreateString(OTEXT("test")));
+
         obj.RemoveField(OTEXT("name"));
-        ASSERT_EQ(0u, obj.GetFieldCount());
 
-        /* array ops on a detached node */
+        EXPECT_EQ(0u, obj.GetFieldCount());
+    }
+
+    TEST_F(TestJsonDomCppOps, AppendItemOnArray_AddsItemAtEnd)
+    {
         JsonNode arr = json.CreateArray();
-        JsonNode s1  = json.CreateString(OTEXT("one"));
-        JsonNode s3  = json.CreateString(OTEXT("three"));
-        arr.AppendItem(s1);
-        arr.AppendItem(s3);
-        ASSERT_EQ(2u, arr.GetItemCount());
+        arr.AppendItem(json.CreateString(OTEXT("one")));
 
-        JsonNode s2 = json.CreateString(OTEXT("two"));
-        arr.InsertItem(1, s2);
-        ASSERT_EQ(3u, arr.GetItemCount());
-        ASSERT_EQ(String(OTEXT("two")), arr.GetItem(1).GetString());
+        arr.AppendItem(json.CreateString(OTEXT("three")));
+
+        EXPECT_EQ(2u, arr.GetItemCount());
+    }
+
+    TEST_F(TestJsonDomCppOps, InsertItemOnArray_InsertsItemAtIndex)
+    {
+        JsonNode arr = json.CreateArray();
+        arr.AppendItem(json.CreateString(OTEXT("one")));
+        arr.AppendItem(json.CreateString(OTEXT("three")));
+
+        arr.InsertItem(1, json.CreateString(OTEXT("two")));
+
+        EXPECT_EQ(3u, arr.GetItemCount());
+        EXPECT_EQ(String(OTEXT("two")), arr.GetItem(1).GetString());
+    }
+
+    TEST_F(TestJsonDomCppOps, RemoveItemOnArray_RemovesItemAtIndex)
+    {
+        JsonNode arr = json.CreateArray();
+        arr.AppendItem(json.CreateString(OTEXT("one")));
+        arr.AppendItem(json.CreateString(OTEXT("two")));
+        arr.AppendItem(json.CreateString(OTEXT("three")));
+
         arr.RemoveItem(0);
-        ASSERT_EQ(2u, arr.GetItemCount());
 
-        /* typed accessors */
+        EXPECT_EQ(2u, arr.GetItemCount());
+        EXPECT_EQ(String(OTEXT("two")), arr.GetItem(0).GetString());
+    }
+
+    TEST_F(TestJsonDomCppOps, SetNumericIntOnNumberNode_RoundTripsValue)
+    {
         JsonNode num = json.CreateNode(Json::NodeNumber);
-        num.SetNumeric(Int32(-7));
-        ASSERT_EQ(-7, num.GetNumeric<Int32>());
-        num.SetNumeric(2.5);
-        ASSERT_DOUBLE_EQ(2.5, num.GetNumeric<Double>());
 
-        /* Clear */
+        num.SetNumeric(Int32(-7));
+
+        EXPECT_EQ(-7, num.GetNumeric<Int32>());
+    }
+
+    TEST_F(TestJsonDomCppOps, SetNumericDoubleOnNumberNode_RoundTripsValue)
+    {
+        JsonNode num = json.CreateNode(Json::NodeNumber);
+
+        num.SetNumeric(2.5);
+
+        EXPECT_DOUBLE_EQ(2.5, num.GetNumeric<Double>());
+    }
+
+    TEST_F(TestJsonDomCppOps, ClearOnArray_RemovesAllItems)
+    {
+        JsonNode arr = json.CreateArray();
+        arr.AppendItem(json.CreateString(OTEXT("one")));
+
         arr.Clear();
-        ASSERT_EQ(0u, arr.GetItemCount());
+
+        EXPECT_EQ(0u, arr.GetItemCount());
+    }
+
+    TEST_F(TestJsonDomCppOps, ClearOnObject_RemovesAllFields)
+    {
+        JsonNode obj = json.CreateObject();
+        obj.SetField(OTEXT("name"), json.CreateString(OTEXT("test")));
+
         obj.Clear();
-        ASSERT_EQ(0u, obj.GetFieldCount());
+
+        EXPECT_EQ(0u, obj.GetFieldCount());
     }
 
     TEST(TestJsonDomCpp, Validate)

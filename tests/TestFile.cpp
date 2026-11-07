@@ -142,12 +142,12 @@ namespace TestCApi
         OCI_File*       file{ nullptr };
     };
 
-    TEST_F(TestFileBfile, Exists)
+    TEST_F(TestFileBfile, ExistsOnBfile_ReturnsTrue)
     {
         ASSERT_TRUE(OCI_FileExists(file));
     }
 
-    TEST_F(TestFileBfile, UnnamedLocatorGetInfo)
+    TEST_F(TestFileBfile, GetInfoOnUnnamedLocator_Fails)
     {
         /* an unnamed locator goes through OcilibFileGetInfo() */
 
@@ -160,26 +160,26 @@ namespace TestCApi
         ASSERT_TRUE(OCI_FileFree(unnamed));
     }
 
-    TEST_F(TestFileBfile, GetSize)
+    TEST_F(TestFileBfile, GetSizeOnBfile_ReturnsSize)
     {
         ASSERT_GT(OCI_FileGetSize(file), 0u);
     }
 
-    TEST_F(TestFileBfile, Open)
+    TEST_F(TestFileBfile, OpenOnBfile_Succeeds)
     {
         ASSERT_FALSE(OCI_FileIsOpen(file));
         ASSERT_TRUE(OCI_FileOpen(file));
         ASSERT_TRUE(OCI_FileIsOpen(file));
     }
 
-    TEST_F(TestFileBfile, Close)
+    TEST_F(TestFileBfile, CloseOnOpenBfile_Succeeds)
     {
         ASSERT_TRUE(OCI_FileOpen(file));
         ASSERT_TRUE(OCI_FileClose(file));
         ASSERT_FALSE(OCI_FileIsOpen(file));
     }
 
-    TEST_F(TestFileBfile, SeekAbsolute)
+    TEST_F(TestFileBfile, SeekAbsoluteOnBfile_Succeeds)
     {
         /* offsets are 0-based */
 
@@ -188,7 +188,7 @@ namespace TestCApi
         ASSERT_EQ((OCI_UInt64) 0, OCI_FileGetOffset(file));
     }
 
-    TEST_F(TestFileBfile, SeekRelative)
+    TEST_F(TestFileBfile, SeekRelativeOnBfile_Succeeds)
     {
         ASSERT_TRUE(OCI_FileOpen(file));
         ASSERT_TRUE(OCI_FileSeek(file, 0, OCI_SEEK_SET));
@@ -196,7 +196,7 @@ namespace TestCApi
         ASSERT_EQ((OCI_UInt64) 4, OCI_FileGetOffset(file));
     }
 
-    TEST_F(TestFileBfile, SeekFromEnd)
+    TEST_F(TestFileBfile, SeekFromEndOnBfile_Succeeds)
     {
         const auto size = OCI_FileGetSize(file);
         ASSERT_GT(size, 0u);
@@ -206,7 +206,7 @@ namespace TestCApi
         ASSERT_EQ(size - 1, OCI_FileGetOffset(file));
     }
 
-    TEST_F(TestFileBfile, SeekOutOfBounds)
+    TEST_F(TestFileBfile, SeekBeyondEnd_Fails)
     {
         const auto size = OCI_FileGetSize(file);
         ASSERT_GT(size, 0u);
@@ -216,13 +216,13 @@ namespace TestCApi
         ASSERT_FALSE(OCI_FileSeek(file, size + 1000, OCI_SEEK_END));
     }
 
-    TEST_F(TestFileBfile, SeekInvalidMode)
+    TEST_F(TestFileBfile, SeekWithInvalidMode_Fails)
     {
         ASSERT_TRUE(OCI_FileOpen(file));
         ASSERT_FALSE(OCI_FileSeek(file, 1, static_cast<OCI_SeekMode>(99)));
     }
 
-    TEST_F(TestFileBfile, Read)
+    TEST_F(TestFileBfile, ReadOnBfile_ReturnsData)
     {
         ASSERT_TRUE(OCI_FileOpen(file));
         ASSERT_TRUE(OCI_FileSeek(file, 0, OCI_SEEK_SET));

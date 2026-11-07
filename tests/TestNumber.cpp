@@ -632,74 +632,74 @@ namespace TestCApi
         OCI_Resultset*  rs{ nullptr };
     };
 
-    TEST_F(TestNumberCvt, NumberColumnToInt)
+    TEST_F(TestNumberCvt, GetIntOnNumberColumn_Converts)
     {
         ASSERT_EQ(42, OCI_GetInt(rs, 0));
     }
 
-    TEST_F(TestNumberCvt, NumberColumnToShort)
+    TEST_F(TestNumberCvt, GetShortOnNumberColumn_Converts)
     {
         ASSERT_EQ(42, OCI_GetShort(rs, 0));
     }
 
-    TEST_F(TestNumberCvt, NumberColumnToBigInt)
+    TEST_F(TestNumberCvt, GetBigIntOnNumberColumn_Converts)
     {
         ASSERT_EQ(42, OCI_GetBigInt(rs, 0));
     }
 
-    TEST_F(TestNumberCvt, NumberColumnToDouble)
+    TEST_F(TestNumberCvt, GetDoubleOnNumberColumn_Converts)
     {
         ASSERT_NEAR(42.0, OCI_GetDouble(rs, 0), 0.001);
     }
 
-    TEST_F(TestNumberCvt, NumberColumnToFloat)
+    TEST_F(TestNumberCvt, GetFloatOnNumberColumn_Converts)
     {
         ASSERT_NEAR(42.0f, OCI_GetFloat(rs, 0), 0.001f);
     }
 
-    TEST_F(TestNumberCvt, BinaryFloatColumnToDouble)
+    TEST_F(TestNumberCvt, GetDoubleOnBinaryFloatColumn_Converts)
     {
         ASSERT_NEAR(2.5, OCI_GetDouble(rs, 1), 0.001);
     }
 
-    TEST_F(TestNumberCvt, BinaryFloatColumnToInt)
+    TEST_F(TestNumberCvt, GetIntOnBinaryFloatColumn_Converts)
     {
         ASSERT_EQ(2, OCI_GetInt(rs, 1));
     }
 
-    TEST_F(TestNumberCvt, BinaryDoubleColumnToFloat)
+    TEST_F(TestNumberCvt, GetFloatOnBinaryDoubleColumn_Converts)
     {
         ASSERT_NEAR(7.25f, OCI_GetFloat(rs, 2), 0.001f);
     }
 
-    TEST_F(TestNumberCvt, BinaryDoubleColumnToInt)
+    TEST_F(TestNumberCvt, GetIntOnBinaryDoubleColumn_Converts)
     {
         ASSERT_EQ(7, OCI_GetInt(rs, 2));
     }
 
-    TEST_F(TestNumberCvt, VarcharColumnToShort)
+    TEST_F(TestNumberCvt, GetShortOnVarcharColumn_Converts)
     {
         /* VARCHAR2 column parsed to binary numeric types */
 
         ASSERT_EQ(17, OCI_GetShort(rs, 3));
     }
 
-    TEST_F(TestNumberCvt, VarcharColumnToInt)
+    TEST_F(TestNumberCvt, GetIntOnVarcharColumn_Converts)
     {
         ASSERT_EQ(17, OCI_GetInt(rs, 3));
     }
 
-    TEST_F(TestNumberCvt, VarcharColumnToBigInt)
+    TEST_F(TestNumberCvt, GetBigIntOnVarcharColumn_Converts)
     {
         ASSERT_EQ(17, OCI_GetBigInt(rs, 3));
     }
 
-    TEST_F(TestNumberCvt, VarcharColumnToDouble)
+    TEST_F(TestNumberCvt, GetDoubleOnVarcharColumn_Converts)
     {
         ASSERT_NEAR(17.0, OCI_GetDouble(rs, 3), 0.001);
     }
 
-    TEST_F(TestNumberCvt, VarcharColumnToFloat)
+    TEST_F(TestNumberCvt, GetFloatOnVarcharColumn_Converts)
     {
         ASSERT_NEAR(17.0f, OCI_GetFloat(rs, 3), 0.001f);
     }

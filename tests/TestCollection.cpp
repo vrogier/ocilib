@@ -303,139 +303,252 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestCApiCovStrVarray"));
     }
 
-    TEST(TestCollection, NumberVarrayCrud)
+    /* -------------------------------------------------------------------------
+       Shared fixture: NUMBER varray collection + reusable element
+       ------------------------------------------------------------------------- */
+
+    class TestCollVarray : public ::testing::Test
     {
-        ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollCrud AS VARRAY(10) OF NUMBER"));
+    protected:
+        OCI_Connection* con = nullptr;
+        OCI_TypeInfo* typinf = nullptr;
+        OCI_Coll* coll = nullptr;
+        OCI_Elem* elem = nullptr;
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+        void SetUp() override
+        {
+            ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollCrud AS VARRAY(10) OF NUMBER"));
 
-        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, con);
+            con = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, con);
+            typinf = OCI_TypeInfoGet(con, OTEXT("TestCollCrud"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, typinf);
+            coll = OCI_CollCreate(typinf);
+            ASSERT_NE(nullptr, coll);
+            elem = OCI_ElemCreate(typinf);
+            ASSERT_NE(nullptr, elem);
+        }
 
-        const auto typinf = OCI_TypeInfoGet(con, OTEXT("TestCollCrud"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, typinf);
+        void TearDown() override
+        {
+            if (elem) OCI_ElemFree(elem);
+            if (coll) OCI_CollFree(coll);
+            if (typinf) OCI_TypeInfoFree(typinf);
+            if (con) OCI_ConnectionFree(con);
 
-        const auto coll = OCI_CollCreate(typinf);
-        ASSERT_NE(nullptr, coll);
+            ExecDML(OTEXT("DROP TYPE TestCollCrud"));
+        }
 
-        ASSERT_EQ((OCI_UInt32) OCI_COLL_VARRAY, OCI_CollGetType(coll));
-        ASSERT_EQ(10u, OCI_CollGetMax(coll));
-        ASSERT_EQ(0u, OCI_CollGetSize(coll));
-        ASSERT_EQ(0u, OCI_CollGetCount(coll));
-        ASSERT_EQ(typinf, OCI_CollGetTypeInfo(coll));
+        void AppendInt(OCI_Int32 v)
+        {
+            ASSERT_TRUE(OCI_ElemSetInt(elem, v));
+            ASSERT_TRUE(OCI_CollAppend(coll, elem));
+        }
+    };
 
-        const auto elem = OCI_ElemCreate(typinf);
-        ASSERT_NE(nullptr, elem);
+    TEST_F(TestCollVarray, CreateVarray_ReportsTypeMetaAndEmpty)
+    {
+        EXPECT_EQ((OCI_UInt32) OCI_COLL_VARRAY, OCI_CollGetType(coll));
+        EXPECT_EQ(10u, OCI_CollGetMax(coll));
+        EXPECT_EQ(0u, OCI_CollGetSize(coll));
+        EXPECT_EQ(0u, OCI_CollGetCount(coll));
+        EXPECT_EQ(typinf, OCI_CollGetTypeInfo(coll));
+    }
 
-        ASSERT_TRUE(OCI_ElemSetInt(elem, 10));
-        ASSERT_TRUE(OCI_CollAppend(coll, elem));
-        ASSERT_EQ(1u, OCI_CollGetSize(coll));
-        ASSERT_EQ(1u, OCI_CollGetCount(coll));
+    TEST_F(TestCollVarray, AppendElem_IncreasesSizeAndCount)
+    {
+        AppendInt(10);
 
-        ASSERT_TRUE(OCI_ElemSetInt(elem, 20));
-        ASSERT_TRUE(OCI_CollAppend(coll, elem));
-        ASSERT_EQ(2u, OCI_CollGetSize(coll));
-        ASSERT_EQ(2u, OCI_CollGetCount(coll));
+        EXPECT_EQ(1u, OCI_CollGetSize(coll));
+        EXPECT_EQ(1u, OCI_CollGetCount(coll));
+
+        AppendInt(20);
+
+        EXPECT_EQ(2u, OCI_CollGetSize(coll));
+        EXPECT_EQ(2u, OCI_CollGetCount(coll));
+    }
+
+    TEST_F(TestCollVarray, GetElemAtIndex_ReturnsAppendedValues)
+    {
+        AppendInt(10);
+        AppendInt(20);
 
         auto e1 = OCI_CollGetElem(coll, 0);
         ASSERT_NE(nullptr, e1);
-        ASSERT_EQ(10, OCI_ElemGetInt(e1));
-
+        EXPECT_EQ(10, OCI_ElemGetInt(e1));
         auto e2 = OCI_CollGetElem(coll, 1);
         ASSERT_NE(nullptr, e2);
-        ASSERT_EQ(20, OCI_ElemGetInt(e2));
+        EXPECT_EQ(20, OCI_ElemGetInt(e2));
+    }
+
+    TEST_F(TestCollVarray, SetElemAtIndex_ReplacesValue)
+    {
+        AppendInt(10);
+        AppendInt(20);
 
         ASSERT_TRUE(OCI_ElemSetInt(elem, 30));
         ASSERT_TRUE(OCI_CollSetElem(coll, 0, elem));
-        e1 = OCI_CollGetElem(coll, 0);
-        ASSERT_EQ(30, OCI_ElemGetInt(e1));
 
-        auto elemRef = OCI_CollGetElem(coll, 0);
-        ASSERT_NE(nullptr, elemRef);
-        elemRef = OCI_CollGetElem(coll, 1);
-        ASSERT_EQ(20, OCI_ElemGetInt(elemRef));
-
-        const auto coll2 = OCI_CollCreate(typinf);
-        ASSERT_NE(nullptr, coll2);
-        ASSERT_TRUE(OCI_CollAssign(coll2, coll));
-        ASSERT_EQ(2u, OCI_CollGetCount(coll2));
-        ASSERT_EQ(20, OCI_ElemGetInt(OCI_CollGetElem(coll2, 1)));
-
-        otext text[512];
-        OCI_UInt32 size = 512;
-        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
-        ASSERT_GT(size, 0u);
-
-        ASSERT_TRUE(OCI_CollDeleteElem(coll, 0));
-        ASSERT_EQ(2u, OCI_CollGetCount(coll));
-
-        ASSERT_TRUE(OCI_CollTrim(coll, 1));
-        ASSERT_EQ(1u, OCI_CollGetCount(coll));
-
-        ASSERT_TRUE(OCI_CollClear(coll));
-        ASSERT_EQ(0u, OCI_CollGetCount(coll));
-
-        const auto colls = OCI_CollArrayCreate(typinf, 2);
-        ASSERT_NE(nullptr, colls);
-        ASSERT_NE(nullptr, colls[0]);
-        ASSERT_NE(nullptr, colls[1]);
-        ASSERT_TRUE(OCI_CollArrayFree(colls));
-
-        ASSERT_TRUE(OCI_CollFree(coll2));
-        ASSERT_TRUE(OCI_ElemFree(elem));
-        ASSERT_TRUE(OCI_CollFree(coll));
-        ASSERT_TRUE(OCI_TypeInfoFree(typinf));
-        ASSERT_TRUE(OCI_ConnectionFree(con));
-
-        ExecDML(OTEXT("DROP TYPE TestCollCrud"));
+        EXPECT_EQ(30, OCI_ElemGetInt(OCI_CollGetElem(coll, 0)));
+        EXPECT_EQ(20, OCI_ElemGetInt(OCI_CollGetElem(coll, 1)));
     }
 
-    TEST(TestCollection, NestedTableCrud)
+    TEST_F(TestCollVarray, CollAssign_CopiesAllElements)
     {
-        ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollNested AS TABLE OF NUMBER"));
+        AppendInt(10);
+        AppendInt(20);
+        const auto coll2 = OCI_CollCreate(typinf);
+        ASSERT_NE(nullptr, coll2);
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+        ASSERT_TRUE(OCI_CollAssign(coll2, coll));
 
-        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, con);
+        EXPECT_EQ(2u, OCI_CollGetCount(coll2));
+        EXPECT_EQ(20, OCI_ElemGetInt(OCI_CollGetElem(coll2, 1)));
 
-        const auto typinf = OCI_TypeInfoGet(con, OTEXT("TestCollNested"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, typinf);
+        ASSERT_TRUE(OCI_CollFree(coll2));
+    }
 
-        const auto coll = OCI_CollCreate(typinf);
-        ASSERT_NE(nullptr, coll);
+    TEST_F(TestCollVarray, CollToText_RendersNonEmptyText)
+    {
+        AppendInt(10);
+        AppendInt(20);
+        otext text[512];
+        OCI_UInt32 size = 512;
 
-        ASSERT_EQ((OCI_UInt32) OCI_COLL_NESTED_TABLE, OCI_CollGetType(coll));
+        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
 
-        const auto elem = OCI_ElemCreate(typinf);
-        ASSERT_NE(nullptr, elem);
+        EXPECT_GT(size, 0u);
+    }
 
-        ASSERT_TRUE(OCI_ElemSetInt(elem, 1));
-        ASSERT_TRUE(OCI_CollAppend(coll, elem));
-        ASSERT_TRUE(OCI_ElemSetInt(elem, 2));
-        ASSERT_TRUE(OCI_CollAppend(coll, elem));
-        ASSERT_TRUE(OCI_ElemSetInt(elem, 3));
-        ASSERT_TRUE(OCI_CollAppend(coll, elem));
+    TEST_F(TestCollVarray, DeleteElem_RemovesElementAtIndex)
+    {
+        AppendInt(10);
+        AppendInt(20);
 
-        ASSERT_EQ(3u, OCI_CollGetCount(coll));
+        ASSERT_TRUE(OCI_CollDeleteElem(coll, 0));
 
-        ASSERT_TRUE(OCI_CollDeleteElem(coll, 2));
-        ASSERT_LT(OCI_CollGetCount(coll), 3u);
+        EXPECT_EQ(2u, OCI_CollGetCount(coll));
+    }
+
+    TEST_F(TestCollVarray, Trim_ReducesCountFromEnd)
+    {
+        AppendInt(10);
+        AppendInt(20);
 
         ASSERT_TRUE(OCI_CollTrim(coll, 1));
-        ASSERT_GT(OCI_CollGetCount(coll), 0u);
+
+        EXPECT_EQ(1u, OCI_CollGetCount(coll));
+    }
+
+    TEST_F(TestCollVarray, Clear_EmptiesCollection)
+    {
+        AppendInt(10);
+        AppendInt(20);
 
         ASSERT_TRUE(OCI_CollClear(coll));
-        ASSERT_EQ(0u, OCI_CollGetCount(coll));
 
-        ASSERT_TRUE(OCI_ElemFree(elem));
-        ASSERT_TRUE(OCI_CollFree(coll));
-        ASSERT_TRUE(OCI_TypeInfoFree(typinf));
-        ASSERT_TRUE(OCI_ConnectionFree(con));
+        EXPECT_EQ(0u, OCI_CollGetCount(coll));
+    }
 
-        ExecDML(OTEXT("DROP TYPE TestCollNested"));
+    TEST_F(TestCollVarray, CollArrayCreate_AllocatesCollectionHandles)
+    {
+        const auto colls = OCI_CollArrayCreate(typinf, 2);
+
+        ASSERT_NE(nullptr, colls);
+        EXPECT_NE(nullptr, colls[0]);
+        EXPECT_NE(nullptr, colls[1]);
+
+        ASSERT_TRUE(OCI_CollArrayFree(colls));
+    }
+
+    /* -------------------------------------------------------------------------
+       Shared fixture: NUMBER nested-table collection + reusable element
+       ------------------------------------------------------------------------- */
+
+    class TestCollNested : public ::testing::Test
+    {
+    protected:
+        OCI_Connection* con = nullptr;
+        OCI_TypeInfo* typinf = nullptr;
+        OCI_Coll* coll = nullptr;
+        OCI_Elem* elem = nullptr;
+
+        void SetUp() override
+        {
+            ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollNested AS TABLE OF NUMBER"));
+
+            con = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, con);
+            typinf = OCI_TypeInfoGet(con, OTEXT("TestCollNested"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, typinf);
+            coll = OCI_CollCreate(typinf);
+            ASSERT_NE(nullptr, coll);
+            elem = OCI_ElemCreate(typinf);
+            ASSERT_NE(nullptr, elem);
+        }
+
+        void TearDown() override
+        {
+            if (elem) OCI_ElemFree(elem);
+            if (coll) OCI_CollFree(coll);
+            if (typinf) OCI_TypeInfoFree(typinf);
+            if (con) OCI_ConnectionFree(con);
+
+            ExecDML(OTEXT("DROP TYPE TestCollNested"));
+        }
+
+        void AppendInt(OCI_Int32 v)
+        {
+            ASSERT_TRUE(OCI_ElemSetInt(elem, v));
+            ASSERT_TRUE(OCI_CollAppend(coll, elem));
+        }
+    };
+
+    TEST_F(TestCollNested, CreateNestedTable_ReportsNestedTableType)
+    {
+        EXPECT_EQ((OCI_UInt32) OCI_COLL_NESTED_TABLE, OCI_CollGetType(coll));
+    }
+
+    TEST_F(TestCollNested, AppendElems_IncreasesCount)
+    {
+        AppendInt(1);
+        AppendInt(2);
+        AppendInt(3);
+
+        EXPECT_EQ(3u, OCI_CollGetCount(coll));
+    }
+
+    TEST_F(TestCollNested, DeleteElem_DecreasesCount)
+    {
+        AppendInt(1);
+        AppendInt(2);
+        AppendInt(3);
+
+        ASSERT_TRUE(OCI_CollDeleteElem(coll, 2));
+
+        EXPECT_LT(OCI_CollGetCount(coll), 3u);
+    }
+
+    TEST_F(TestCollNested, Trim_ReducesCount)
+    {
+        AppendInt(1);
+        AppendInt(2);
+        AppendInt(3);
+
+        ASSERT_TRUE(OCI_CollTrim(coll, 1));
+
+        EXPECT_GT(OCI_CollGetCount(coll), 0u);
+    }
+
+    TEST_F(TestCollNested, Clear_EmptiesCollection)
+    {
+        AppendInt(1);
+        AppendInt(2);
+        AppendInt(3);
+
+        ASSERT_TRUE(OCI_CollClear(coll));
+
+        EXPECT_EQ(0u, OCI_CollGetCount(coll));
     }
 
     TEST(TestCollection, NullElementToText)
@@ -718,7 +831,7 @@ namespace TestCApi
     /* element flagged not null but without data goes through the
        null literal arm of the element value rendering */
 
-    TEST_F(TestCollectionToText, RendersNullDataElement)
+    TEST_F(TestCollectionToText, CollToTextWithNullElem_RendersNull)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);

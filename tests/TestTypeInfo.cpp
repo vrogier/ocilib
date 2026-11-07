@@ -119,7 +119,7 @@ namespace TestCApi
         OCI_Connection* con{ nullptr };
     };
 
-    TEST_F(TestTypeInfoSub, SubtypeResolvesColumns)
+    TEST_F(TestTypeInfoSub, SubtypeTableDescribe_ResolvesColumns)
     {
         const auto typinf = OCI_TypeInfoGet(con, OTEXT("TestCApiCovSub"), OCI_TIF_TYPE);
         ASSERT_NE(nullptr, typinf);
@@ -129,7 +129,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
     }
 
-    TEST_F(TestTypeInfoSub, SupertypeIsNotFinal)
+    TEST_F(TestTypeInfoSub, Supertype_IsNotFinal)
     {
         /* the supertype is NOT FINAL (a leaf subtype is FINAL by default) */
 
@@ -140,7 +140,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_TypeInfoFree(super));
     }
 
-    TEST_F(TestTypeInfoSub, WrongTypeFails)
+    TEST_F(TestTypeInfoSub, TypeInfoOnWrongType_Fails)
     {
         /* describing a table as a type fails */
 

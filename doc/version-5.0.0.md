@@ -89,7 +89,7 @@ A new, opt-in logging subsystem is introduced in `src/log.c` / `src/log.h`.
 - `OcilibExceptionCallHandler()` emits `[ERR]`/`[WRN]` lines for Oracle and OCILIB errors.
 - `OCIErrorGet` is deliberately untraced — it runs inside error handling.
 - Log files are plain text; `otext` messages are converted to UTF-8 before writing.
-- The public programmatic control API (`OCI_GetLogLevel` / `OCI_SetLogLevel` / etc.) is documented as a future Phase-6 addition; the initial release is environment-variable driven.
+- Logging is environment-variable driven — there is no programmatic control API.
 
 ### Levels and categories
 
@@ -226,6 +226,7 @@ The following items require code changes when upgrading from v4.x to v5.0.0:
 10. **Index convention — 1-based → 0-based**
    - All index parameters in the C and C++ APIs are now 0-based (resultset columns, binds, collection elements, JSON items/fields, type-info columns, direct-path rows/columns, bind array positions, absolute fetch seeks).
    - `OCI_GetColumnIndex`, `OCI_GetBindIndex`, `OCI_GetCurrentRow`, `OCI_ErrorGetRow` (and their C++ mirrors `GetColumnIndex`/`GetBindIndex`/`GetCurrentRow`/`Exception::GetRow`) now return `OCI_Int32`/`Int32` and use **`-1`** as the "not found / no position" sentinel where v4 used `0`.
+   - `OCI_GetBindIndex` (and C++ `Statement::GetBindIndex`) no longer reports registered binds: names created by `OCI_RegisterXxx()`/`RegisterXxx()` leaked an internal position in v4 that could not be used with `OCI_GetBind()`/`GetBind()` — in v5 they return **`-1`** (registers are out-params, not binds).
    - C++ `coll[i]`/`node[i]` and `Collection`/`JsonNode` iterators iterate positions `0..count-1` (`end()` is now `count`, not `count+1`).
    - Audit every numeric literal and index loop (`for (i = 1; i <= n; ++i)` → `for (i = 0; i < n; ++i)`), including JSONPath-like array access (`$.arr[0]` is now the first item).
 

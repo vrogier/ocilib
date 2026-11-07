@@ -349,7 +349,7 @@ namespace TestCppApi
        unfreed-data warnings and reports failure. objects not tracked by
        the environment disposal lists still count as leaks */
 
-    TEST_F(TestEnvironmentLeak, FreeWarnsOnLeakedHandle)
+    TEST_F(TestEnvironmentLeak, FreeWithLeakedHandle_Warns)
     {
         /* a leaked dirpath bumps the handle counter */
 
@@ -367,7 +367,7 @@ namespace TestCppApi
         ASSERT_FALSE(OCI_EnvironmentFree(env));
     }
 
-    TEST_F(TestEnvironmentLeak, FreeWarnsOnLeakedDescriptor)
+    TEST_F(TestEnvironmentLeak, FreeWithLeakedDescriptor_Warns)
     {
         /* a leaked lob bumps the descriptor counter */
 
@@ -382,7 +382,7 @@ namespace TestCppApi
         ASSERT_FALSE(OCI_EnvironmentFree(env));
     }
 
-    TEST_F(TestEnvironmentLeak, FreeWarnsOnLeakedObjectInstance)
+    TEST_F(TestEnvironmentLeak, FreeWithLeakedObjectInstance_Warns)
     {
         /* a leaked object instance bumps the object counter */
 

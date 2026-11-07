@@ -623,6 +623,13 @@ index-returning functions are 0-based**, and lookups that can miss return
    (connections, pools, statements, standalone datatypes) are released at environment
    free — v4 `OCI_Cleanup` did the same, but any code relying on object lifetimes
    *after* cleanup ordering should double-check.
+6. **`OCI_GetBindIndex` no longer reports registered binds.** In v4, names created
+   by `OCI_RegisterXxx()` leaked through the shared name map: the call returned a
+   `rbinds[]` position that could not be fed back into `OCI_GetBind()` (which only
+   indexes `ubinds[]`). In v5 it returns **`-1`** for register names — as was always
+   intended; registers are out-params, not binds. Code relying on the leaked index
+   should iterate register results via `OCI_Execute()` + `OCI_GetResultset()`/
+   `OCI_RegisterGetXxx()` instead.
 6. **`OCI_IPC_*` values were renumbered** (and thread/mutex/thread-key IDs removed).
    Never hard-code the numeric values; use the macros.
 7. **`OCI_Environment` is public but opaque** — you never dereference it.

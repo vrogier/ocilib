@@ -5,75 +5,97 @@ static std::atomic<OCI_Int32> MessageWithConsumersCount {0};
 
 namespace TestCApi
 {
-    TEST(TestQueue, SingleMessage)
+    /* -------------------------------------------------------------------------
+       Shared fixture: payload type + started queue + enqueue/dequeue handles
+       ------------------------------------------------------------------------- */
+
+    class TestQueueOps : public ::testing::Test
     {
-        ExecDML(OTEXT("create type TestQueueSingleMessageType as object(title varchar2(50), content varchar2(100))"));
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_TypeInfo* inf = nullptr;
+        OCI_Enqueue* enq = nullptr;
+        OCI_Dequeue* deq = nullptr;
 
-        auto env = GetEnvironment(nullptr);
+    public:
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("create type TestQueueOpsType as object(title varchar2(50), content varchar2(100))"));
+        }
 
-        ASSERT_NE(nullptr, env);
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop type TestQueueOpsType"));
+        }
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+    protected:
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
 
-        // no check - for cleanup
-        OCI_QueueStop(conn, OTEXT("TestQueueSingleMessage"), TRUE, TRUE, FALSE);
-        OCI_QueueDrop(conn, OTEXT("TestQueueSingleMessage"));
-        OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleMessageTable"), TRUE);
-        // end no check
+            OCI_QueueStop(conn, OTEXT("TestQueueOpsQueue"), TRUE, TRUE, FALSE);
+            OCI_QueueDrop(conn, OTEXT("TestQueueOpsQueue"));
+            OCI_QueueTableDrop(conn, OTEXT("TestQueueOpsTable"), TRUE);
 
-        ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestQueueSingleMessageTable"), OTEXT("TestQueueSingleMessageType"), NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
-        ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestQueueSingleMessage"), OTEXT("TestQueueSingleMessageTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
-        ASSERT_TRUE(OCI_QueueAlter(conn, OTEXT("TestQueueSingleMessage"), 0, 0, 0, OTEXT("altered comment")));
-        ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestQueueSingleMessage"), TRUE, TRUE));
+            ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestQueueOpsTable"), OTEXT("TestQueueOpsType"),
+                                             NULL, NULL, FALSE, OCI_AGM_NONE, NULL, 0, 0, NULL));
+            ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestQueueOpsQueue"), OTEXT("TestQueueOpsTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
+            ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestQueueOpsQueue"), TRUE, TRUE));
 
-        const auto inf = OCI_TypeInfoGet(conn, OTEXT("TestQueueSingleMessageType"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, inf);
+            inf = OCI_TypeInfoGet(conn, OTEXT("TestQueueOpsType"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, inf);
+            enq = OCI_EnqueueCreate(inf, OTEXT("TestQueueOpsQueue"));
+            ASSERT_NE(nullptr, enq);
+            deq = OCI_DequeueCreate(inf, OTEXT("TestQueueOpsQueue"));
+            ASSERT_NE(nullptr, deq);
+        }
 
-        const auto enq = OCI_EnqueueCreate(inf, OTEXT("TestQueueSingleMessage"));
-        ASSERT_NE(nullptr, enq);
+        void TearDown() override
+        {
+            if (enq) OCI_EnqueueFree(enq);
+            if (deq) OCI_DequeueFree(deq);
+            if (conn)
+            {
+                OCI_QueueStop(conn, OTEXT("TestQueueOpsQueue"), TRUE, TRUE, FALSE);
+                OCI_QueueDrop(conn, OTEXT("TestQueueOpsQueue"));
+                OCI_QueueTableDrop(conn, OTEXT("TestQueueOpsTable"), TRUE);
+                OCI_ConnectionFree(conn);
+            }
+        }
+    };
 
-        const auto deq = OCI_DequeueCreate(inf, OTEXT("TestQueueSingleMessage"));
-        ASSERT_NE(nullptr, deq);
+    TEST_F(TestQueueOps, QueueAlterOnStartedQueue_Succeeds)
+    {
+        EXPECT_TRUE(OCI_QueueAlter(conn, OTEXT("TestQueueOpsQueue"), 0, 0, 0, OTEXT("altered comment")));
+    }
 
+    TEST_F(TestQueueOps, EnqueueDequeue_ReturnsMessagePayload)
+    {
         const auto msg_in = OCI_MsgCreate(inf);
         ASSERT_NE(nullptr, msg_in);
-
         const auto obj_in = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj_in);
-
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("title"), OTEXT("NEXT MEETING")));
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("content"), OTEXT("12:00 PM IN STARBUCKS")));
-
         ASSERT_TRUE(OCI_MsgSetObject(msg_in, obj_in));
-
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
-
         ASSERT_TRUE(OCI_MsgFree(msg_in));
         ASSERT_TRUE(OCI_ObjectFree(obj_in));
-
         ASSERT_TRUE(OCI_Commit(conn));
 
         const auto msg_out = OCI_DequeueGet(deq);
-        ASSERT_NE(nullptr, msg_out);
 
+        ASSERT_NE(nullptr, msg_out);
         const auto obj_out = OCI_MsgGetObject(msg_out);
         ASSERT_NE(nullptr, obj_out);
+        EXPECT_EQ(String(OTEXT("NEXT MEETING")), String(OCI_ObjectGetString(obj_out, OTEXT("title"))));
+        EXPECT_EQ(String(OTEXT("12:00 PM IN STARBUCKS")), String(OCI_ObjectGetString(obj_out, OTEXT("content"))));
+    }
 
-        ASSERT_EQ(String(OTEXT("NEXT MEETING")), String(OCI_ObjectGetString(obj_out, OTEXT("title"))));
-        ASSERT_EQ(String(OTEXT("12:00 PM IN STARBUCKS")), String(OCI_ObjectGetString(obj_out, OTEXT("content"))));
-
-        ASSERT_TRUE(OCI_EnqueueFree(enq));
-        ASSERT_TRUE(OCI_DequeueFree(deq));
-
-        ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestQueueSingleMessage"), TRUE, TRUE, FALSE));
-        ASSERT_TRUE(OCI_QueueTablePurge(conn, OTEXT("TestQueueSingleMessageTable"), NULL, FALSE, OCI_APM_PERSISTENT));
-        ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestQueueSingleMessage")));
-        ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueSingleMessageTable"), TRUE));
-
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop type TestQueueSingleMessageType"));
+    TEST_F(TestQueueOps, QueueTablePurgeOnEmptyQueue_Succeeds)
+    {
+        EXPECT_TRUE(OCI_QueueTablePurge(conn, OTEXT("TestQueueOpsTable"), NULL, FALSE, OCI_APM_PERSISTENT));
     }
 
     static void OnMessage(OCI_Dequeue* deq)
@@ -89,105 +111,123 @@ namespace TestCApi
         ASSERT_EQ(String(OTEXT("12:00 PM IN STARBUCKS")), String(OCI_ObjectGetString(obj_out, OTEXT("content"))));
     }
 
-    TEST(TestQueue, MessageWithConsumers)
+    /* -------------------------------------------------------------------------
+       Shared fixture: multi-consumer queue + two consumer dequeues + agents
+       ------------------------------------------------------------------------- */
+
+    class TestQueueConsumers : public ::testing::Test
     {
-        ExecDML(OTEXT("create type TestQueueMessageWithConsumersType as object(title varchar2(50), content varchar2(100))"));
-
-        auto env = GetEnvironment(nullptr);
-
-        ASSERT_NE(nullptr, env);
-
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-  //      ASSERT_TRUE(OCI_SetSubscriptionPort(env, 9998));
-
-        // no check - for cleanup
-        OCI_QueueStop(conn, OTEXT("TestQueueMessageWithConsumers"), TRUE, TRUE, FALSE);
-        OCI_QueueDrop(conn, OTEXT("TestQueueMessageWithConsumers"));
-        OCI_QueueTableDrop(conn, OTEXT("TestQueueMessageWithConsumersTable"), TRUE);
-        // end no check
-
-        ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestQueueMessageWithConsumersTable"), OTEXT("TestQueueMessageWithConsumersType"), NULL, NULL, TRUE, OCI_AGM_NONE, NULL, 0, 0, NULL));
-        ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestQueueMessageWithConsumers"), OTEXT("TestQueueMessageWithConsumersTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
-        ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestQueueMessageWithConsumers"), TRUE, TRUE));
-
-        const auto inf = OCI_TypeInfoGet(conn, OTEXT("TestQueueMessageWithConsumersType"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, inf);
-
-        const auto enq = OCI_EnqueueCreate(inf, OTEXT("TestQueueMessageWithConsumers"));
-        ASSERT_NE(nullptr, enq);
-
-        const auto deq1 = OCI_DequeueCreate(inf, OTEXT("TestQueueMessageWithConsumers"));
-        ASSERT_NE(nullptr, deq1);
-
-        const auto deq2 = OCI_DequeueCreate(inf, OTEXT("TestQueueMessageWithConsumers"));
-        ASSERT_NE(nullptr, deq2);
-
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_TypeInfo* inf = nullptr;
+        OCI_Enqueue* enq = nullptr;
+        OCI_Dequeue* deq1 = nullptr;
+        OCI_Dequeue* deq2 = nullptr;
         OCI_Agent* agents[2]{};
 
-        agents[0] = OCI_AgentCreate(conn, OTEXT("C1"), nullptr);
-        ASSERT_NE(nullptr, agents[0]);
-        agents[1] = OCI_AgentCreate(conn, OTEXT("C2"), nullptr);
-        ASSERT_NE(nullptr, agents[1]);
+    public:
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("create type TestQueueMessageWithConsumersType as object(title varchar2(50), content varchar2(100))"));
+        }
 
-        ASSERT_TRUE(OCI_DequeueSetConsumer(deq1, OTEXT("C1")));
-        ASSERT_TRUE(OCI_DequeueSetNavigation(deq1, OCI_ADN_FIRST_MSG));
-        ASSERT_TRUE(OCI_DequeueSetConsumer(deq2, OTEXT("C2")));
-        ASSERT_TRUE(OCI_DequeueSetNavigation(deq2, OCI_ADN_FIRST_MSG));
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop type TestQueueMessageWithConsumersType"));
+        }
 
-        std::array<OCI_Dequeue*, 2> dequeues {deq1, deq2};
+    protected:
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+
+            OCI_QueueStop(conn, OTEXT("TestQueueMessageWithConsumers"), TRUE, TRUE, FALSE);
+            OCI_QueueDrop(conn, OTEXT("TestQueueMessageWithConsumers"));
+            OCI_QueueTableDrop(conn, OTEXT("TestQueueMessageWithConsumersTable"), TRUE);
+
+            ASSERT_TRUE(OCI_QueueTableCreate(conn, OTEXT("TestQueueMessageWithConsumersTable"), OTEXT("TestQueueMessageWithConsumersType"),
+                                             NULL, NULL, TRUE, OCI_AGM_NONE, NULL, 0, 0, NULL));
+            ASSERT_TRUE(OCI_QueueCreate(conn, OTEXT("TestQueueMessageWithConsumers"), OTEXT("TestQueueMessageWithConsumersTable"), OCI_AQT_NORMAL, 0, 0, 0, FALSE, NULL));
+            ASSERT_TRUE(OCI_QueueStart(conn, OTEXT("TestQueueMessageWithConsumers"), TRUE, TRUE));
+
+            inf = OCI_TypeInfoGet(conn, OTEXT("TestQueueMessageWithConsumersType"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, inf);
+            enq = OCI_EnqueueCreate(inf, OTEXT("TestQueueMessageWithConsumers"));
+            ASSERT_NE(nullptr, enq);
+            deq1 = OCI_DequeueCreate(inf, OTEXT("TestQueueMessageWithConsumers"));
+            ASSERT_NE(nullptr, deq1);
+            deq2 = OCI_DequeueCreate(inf, OTEXT("TestQueueMessageWithConsumers"));
+            ASSERT_NE(nullptr, deq2);
+            agents[0] = OCI_AgentCreate(conn, OTEXT("C1"), nullptr);
+            ASSERT_NE(nullptr, agents[0]);
+            agents[1] = OCI_AgentCreate(conn, OTEXT("C2"), nullptr);
+            ASSERT_NE(nullptr, agents[1]);
+            ASSERT_TRUE(OCI_DequeueSetConsumer(deq1, OTEXT("C1")));
+            ASSERT_TRUE(OCI_DequeueSetNavigation(deq1, OCI_ADN_FIRST_MSG));
+            ASSERT_TRUE(OCI_DequeueSetConsumer(deq2, OTEXT("C2")));
+            ASSERT_TRUE(OCI_DequeueSetNavigation(deq2, OCI_ADN_FIRST_MSG));
+        }
+
+        void TearDown() override
+        {
+            if (agents[0]) OCI_AgentFree(agents[0]);
+            if (agents[1]) OCI_AgentFree(agents[1]);
+            if (enq) OCI_EnqueueFree(enq);
+            if (deq1) OCI_DequeueFree(deq1);
+            if (deq2) OCI_DequeueFree(deq2);
+            if (conn)
+            {
+                OCI_QueueStop(conn, OTEXT("TestQueueMessageWithConsumers"), TRUE, TRUE, FALSE);
+                OCI_QueueDrop(conn, OTEXT("TestQueueMessageWithConsumers"));
+                OCI_QueueTableDrop(conn, OTEXT("TestQueueMessageWithConsumersTable"), TRUE);
+                OCI_ConnectionFree(conn);
+            }
+        }
+    };
+
+    TEST_F(TestQueueConsumers, SubscribeTwoConsumers_Succeeds)
+    {
+        std::array<OCI_Dequeue*, 2> dequeues{ deq1, deq2 };
+
+        ASSERT_TRUE(OCI_DequeueSubscribe(conn, dequeues.data(), static_cast<OCI_UInt32>(dequeues.size()), 0, OnMessage));
+
+        EXPECT_TRUE(OCI_DequeueUnsubscribe(deq1));
+        EXPECT_TRUE(OCI_DequeueUnsubscribe(deq2));
+    }
+
+    TEST_F(TestQueueConsumers, EnqueueForConsumers_DeliversToBothCallbacks)
+    {
+        std::array<OCI_Dequeue*, 2> dequeues{ deq1, deq2 };
         ASSERT_TRUE(OCI_DequeueSubscribe(conn, dequeues.data(), static_cast<OCI_UInt32>(dequeues.size()), 0, OnMessage));
 
         const auto msg_in = OCI_MsgCreate(inf);
         ASSERT_NE(nullptr, msg_in);
-
         const auto obj_in = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj_in);
-
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("title"), OTEXT("NEXT MEETING")));
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("content"), OTEXT("12:00 PM IN STARBUCKS")));
-
         ASSERT_TRUE(OCI_MsgSetObject(msg_in, obj_in));
         ASSERT_TRUE(OCI_MsgSetConsumers(msg_in, agents, 2));
 
         MessageWithConsumersCount = 0;
-
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
-
         ASSERT_TRUE(OCI_MsgFree(msg_in));
         ASSERT_TRUE(OCI_ObjectFree(obj_in));
-
         ASSERT_TRUE(OCI_Commit(conn));
 
         const OCI_Int32 MaxRetries = 15;
         OCI_Int32 retry = 1;
-
         while (MessageWithConsumersCount < 2 && retry <= MaxRetries)
         {
             Sleep(100);
             retry++;
         }
 
-        ASSERT_EQ(MessageWithConsumersCount, 2);
+        EXPECT_EQ(2, MessageWithConsumersCount);
 
         ASSERT_TRUE(OCI_DequeueUnsubscribe(deq1));
         ASSERT_TRUE(OCI_DequeueUnsubscribe(deq2));
-
-        ASSERT_TRUE(OCI_AgentFree(agents[0]));
-        ASSERT_TRUE(OCI_AgentFree(agents[1]));
-
-        ASSERT_TRUE(OCI_EnqueueFree(enq));
-        ASSERT_TRUE(OCI_DequeueFree(deq1));
-        ASSERT_TRUE(OCI_DequeueFree(deq2));
-
-        ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestQueueMessageWithConsumers"), TRUE, TRUE, FALSE));
-        ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestQueueMessageWithConsumers")));
-        ASSERT_TRUE(OCI_QueueTableDrop(conn, OTEXT("TestQueueMessageWithConsumersTable"), TRUE));
-
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop type TestQueueMessageWithConsumersType"));
     }
 
     TEST(TestQueue, SingleRawMessage)
@@ -435,12 +475,12 @@ namespace TestCApi
         OCI_Connection* conn{ nullptr };
     };
 
-    TEST_F(TestQueueTableAlter, Alter)
+    TEST_F(TestQueueTableAlter, QueueTableAlter_ChangesComment)
     {
         ASSERT_TRUE(OCI_QueueTableAlter(conn, OTEXT("TestQueueAlterMigrateTable"), OTEXT("altered comment"), 0, 0));
     }
 
-    TEST_F(TestQueueTableAlter, Migrate)
+    TEST_F(TestQueueTableAlter, QueueTableMigrate_Succeeds)
     {
         ASSERT_TRUE(OCI_QueueTableMigrate(conn, OTEXT("TestQueueAlterMigrateTable"), OTEXT("10.0")));
     }

@@ -124,7 +124,7 @@ namespace TestCApi
         OCI_Statement*  stmt{ nullptr };
     };
 
-    TEST_F(TestClong, CreateAndGetType)
+    TEST_F(TestClong, ClongCreate_ReturnsLongType)
     {
         const auto lg = OCI_LongCreate(stmt, OCI_CLONG);
         ASSERT_NE(nullptr, lg);
@@ -133,13 +133,13 @@ namespace TestCApi
         ASSERT_TRUE(OCI_LongFree(lg));
     }
 
-    TEST_F(TestClong, SetLongModeAndPieceSize)
+    TEST_F(TestClong, SetLongModeAndPieceSize_RoundTrips)
     {
         ASSERT_TRUE(OCI_SetLongMode(stmt, OCI_LONG_EXPLICIT));
         ASSERT_TRUE(OCI_SetPieceSize(stmt, 8));
     }
 
-    TEST_F(TestClong, WritePieces)
+    TEST_F(TestClong, WritePieces_WritesLongData)
     {
         /* write two pieces then terminate with an empty write
            (OCI_LAST_PIECE arm of OcilibLongWrite) */
@@ -164,7 +164,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_LongFree(lg));
     }
 
-    TEST_F(TestClong, ReadPieces)
+    TEST_F(TestClong, ReadPieces_ReadsLongData)
     {
         /* fetch a character LONG and read it back with clamped reads */
 

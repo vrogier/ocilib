@@ -615,58 +615,104 @@ namespace TestCApi
        OcilibColumnDescribe): describe a table and walk every column getter
        on the describe'd columns --- */
 
-    TEST(TestColumn, MappingInternalsViaDescribe)
+    /* -------------------------------------------------------------------------
+       Parameterized: per-column attribute getter returns sane value per getter
+       ------------------------------------------------------------------------- */
+
+    struct ColAttrCase
     {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+        const char* name;
+        void (*run)(OCI_Column*);
+    };
 
-        ExecDML(OTEXT("drop table TestColMapTbl"));
-        ExecDML(OTEXT("create table TestColMapTbl (num number(10,2), str varchar2(30), rawc raw(8), dt date, cl clob, bl blob, ts timestamp, iv interval day to second, rowid_col rowid, vec vector)"));
+    void PrintTo(const ColAttrCase& c, std::ostream* os) { *os << c.name; }
 
-        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, con);
+    static void ColAttrName(OCI_Column* c)        { EXPECT_NE(nullptr, OCI_ColumnGetName(c)); }
+    static void ColAttrSqlType(OCI_Column* c)     { EXPECT_NE(nullptr, OCI_ColumnGetSQLType(c)); }
+    static void ColAttrType(OCI_Column* c)        { EXPECT_NE(0u, OCI_ColumnGetType(c)); }
+    static void ColAttrCharset(OCI_Column* c)     { EXPECT_GE((OCI_Int32)OCI_ColumnGetCharsetForm(c), 0); }
+    static void ColAttrSize(OCI_Column* c)        { EXPECT_GE((OCI_Int64)OCI_ColumnGetSize(c), 0); }
+    static void ColAttrScale(OCI_Column* c)       { EXPECT_GE((OCI_Int32)OCI_ColumnGetScale(c), -127); }
+    static void ColAttrPrecision(OCI_Column* c)   { EXPECT_GE((OCI_Int32)OCI_ColumnGetPrecision(c), -1); }
+    static void ColAttrFracPrec(OCI_Column* c)    { EXPECT_GE((OCI_Int32)OCI_ColumnGetFractionalPrecision(c), -1); }
+    static void ColAttrLeadPrec(OCI_Column* c)    { EXPECT_GE((OCI_Int32)OCI_ColumnGetLeadingPrecision(c), -1); }
+    static void ColAttrNullable(OCI_Column* c)    { EXPECT_GE((OCI_Int32)OCI_ColumnGetNullable(c), 0); }
+    static void ColAttrCharUsed(OCI_Column* c)    { EXPECT_GE((OCI_Int32)OCI_ColumnGetCharUsed(c), 0); }
+    static void ColAttrPropFlags(OCI_Column* c)   { EXPECT_GE((OCI_Int32)OCI_ColumnGetPropertyFlags(c), 0); }
+    static void ColAttrCollation(OCI_Column* c)   { EXPECT_GE((OCI_Int32)OCI_ColumnGetCollationID(c), 0); }
+    static void ColAttrDimension(OCI_Column* c)   { EXPECT_GE((OCI_Int32)OCI_ColumnGetDimension(c), 0); }
+    static void ColAttrFullType(OCI_Column* c)
+    {
+        otext buf[128] = { 0 };
+        EXPECT_GE((OCI_Int32)OCI_ColumnGetFullSQLType(c, buf, (OCI_UInt32)(sizeof(buf) / sizeof(otext))), 0);
+    }
+    static void ColAttrSubType(OCI_Column* c)     { EXPECT_GE((OCI_Int32)OCI_ColumnGetSubType(c), 0); }
 
-        const auto stmt = OCI_StatementCreate(con);
-        ASSERT_NE(nullptr, stmt);
-        ASSERT_TRUE(OCI_Describe(stmt, OTEXT("select * from TestColMapTbl")));
+    class TestColAttr : public ::testing::TestWithParam<ColAttrCase>
+    {
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_Statement* stmt = nullptr;
+        OCI_Resultset* rs = nullptr;
 
-        const auto rs = OCI_GetResultset(stmt);
-        ASSERT_NE(nullptr, rs);
-        ASSERT_EQ(10u, OCI_GetColumnCount(rs));
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+            ASSERT_TRUE(OCI_Describe(stmt, OTEXT("select * from TestColMapTbl")));
+            rs = OCI_GetResultset(stmt);
+            ASSERT_NE(nullptr, rs);
+            ASSERT_EQ(10u, OCI_GetColumnCount(rs));
+        }
 
-        /* OcilibColumnMapInfo / OcilibColumnGetAttributeInfo /
-           OcilibColumnGetSqlType / OcilibColumnGetFullSqlType /
-           OcilibColumnVectorFormat internals via public column getters */
+        void TearDown() override
+        {
+            if (stmt) OCI_StatementFree(stmt);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+
+    public:
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("drop table TestColMapTbl"));
+            ExecDML(OTEXT("create table TestColMapTbl (num number(10,2), str varchar2(30), rawc raw(8), dt date, cl clob, bl blob, ts timestamp, iv interval day to second, rowid_col rowid, vec vector)"));
+        }
+
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop table TestColMapTbl"));
+        }
+    };
+
+    TEST_P(TestColAttr, GetterOnEachColumn_ReturnsSaneValue)
+    {
         for (OCI_UInt32 i = 0; i < OCI_GetColumnCount(rs); ++i)
         {
             const auto col = OCI_GetColumn(rs, i);
             ASSERT_NE(nullptr, col);
-            ASSERT_NE(nullptr, OCI_ColumnGetName(col));
-            ASSERT_NE(nullptr, OCI_ColumnGetSQLType(col));
-            ASSERT_NE(0u, OCI_ColumnGetType(col));
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetCharsetForm(col), 0);
-            ASSERT_GE((OCI_Int64)OCI_ColumnGetSize(col), 0);
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetScale(col), -127);
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetPrecision(col), -1);
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetFractionalPrecision(col), -1);
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetLeadingPrecision(col), -1);
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetNullable(col), 0);
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetCharUsed(col), 0);
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetPropertyFlags(col), 0);
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetCollationID(col), 0);
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetDimension(col), 0);
-
-            otext fullBuf[128] = { 0 };
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetFullSQLType(col, fullBuf, (OCI_UInt32)(sizeof(fullBuf) / sizeof(otext))), 0);
-
-            /* vector-format internals via OCI_ColumnGetSubType /
-               OcilibColumnVectorFormat exercised via describe */
-            ASSERT_GE((OCI_Int32)OCI_ColumnGetSubType(col), 0);
+            GetParam().run(col);
         }
-
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_ConnectionFree(con));
-
-        ExecDML(OTEXT("drop table TestColMapTbl"));
     }
+
+    INSTANTIATE_TEST_CASE_P(ColAttr, TestColAttr,
+        ::testing::Values(
+            ColAttrCase{ "Name",            ColAttrName },
+            ColAttrCase{ "SQLType",         ColAttrSqlType },
+            ColAttrCase{ "Type",            ColAttrType },
+            ColAttrCase{ "CharsetForm",     ColAttrCharset },
+            ColAttrCase{ "Size",            ColAttrSize },
+            ColAttrCase{ "Scale",           ColAttrScale },
+            ColAttrCase{ "Precision",       ColAttrPrecision },
+            ColAttrCase{ "FractionalPrec",  ColAttrFracPrec },
+            ColAttrCase{ "LeadingPrec",     ColAttrLeadPrec },
+            ColAttrCase{ "Nullable",        ColAttrNullable },
+            ColAttrCase{ "CharUsed",        ColAttrCharUsed },
+            ColAttrCase{ "PropertyFlags",   ColAttrPropFlags },
+            ColAttrCase{ "CollationID",     ColAttrCollation },
+            ColAttrCase{ "Dimension",       ColAttrDimension },
+            ColAttrCase{ "FullSQLType",     ColAttrFullType },
+            ColAttrCase{ "SubType",         ColAttrSubType }),
+        ::testing::PrintToStringParamName());
 }

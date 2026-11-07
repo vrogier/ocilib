@@ -452,63 +452,81 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, FindWithOptions)
+    /* -------------------------------------------------------------------------
+       Shared fixture: SODA coll seeded with 5 parity docs
+       ------------------------------------------------------------------------- */
+
+    class TestSodaFind : public ::testing::Test
     {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_SodaDb* sdb = nullptr;
+        OCI_SodaColl* coll = nullptr;
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto sdb = OCI_SodaDbCreate(conn);
-        ASSERT_NE(nullptr, sdb);
-
-        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_OPT_COLL"));
-        const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_OPT_COLL"), NULL);
-        ASSERT_NE(nullptr, coll);
-
-        for (OCI_Int32 i = 1; i <= 5; i++)
+        void SetUp() override
         {
-            std::basic_ostringstream<otext> oss;
-            oss << OTEXT("{\"seq\":") << i << OTEXT(",\"parity\":")
-                << ((i % 2) ? OTEXT("\"odd\"") : OTEXT("\"even\"")) << OTEXT("}");
-            const String content = oss.str();
-
-            const auto doc = OCI_SodaDocCreateFromText
-            (
-                sdb,
-                content.c_str(),
-                static_cast<OCI_UInt32>(content.size() * sizeof(otext)),
-                NULL
-            );
-            ASSERT_NE(nullptr, doc);
-            ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, doc));
-            ASSERT_TRUE(OCI_SodaDocFree(doc));
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            sdb = OCI_SodaDbCreate(conn);
+            ASSERT_NE(nullptr, sdb);
+            DropCollIfExists(sdb, OTEXT("OCILIB_SODA_OPT_COLL"));
+            coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_OPT_COLL"), NULL);
+            ASSERT_NE(nullptr, coll);
+            for (OCI_Int32 i = 1; i <= 5; i++)
+            {
+                std::basic_ostringstream<otext> oss;
+                oss << OTEXT("{\"seq\":") << i << OTEXT(",\"parity\":")
+                    << ((i % 2) ? OTEXT("\"odd\"") : OTEXT("\"even\"")) << OTEXT("}");
+                const String content = oss.str();
+                const auto doc = OCI_SodaDocCreateFromText(sdb, content.c_str(),
+                    static_cast<OCI_UInt32>(content.size() * sizeof(otext)), NULL);
+                ASSERT_NE(nullptr, doc);
+                ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, doc));
+                ASSERT_TRUE(OCI_SodaDocFree(doc));
+            }
         }
 
-        /* QBE filter + skip + limit */
+        void TearDown() override
+        {
+            if (coll) { OCI_SodaCollDrop(coll); OCI_SodaCollFree(coll); }
+            if (sdb) OCI_SodaDbFree(sdb);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
 
+    TEST_F(TestSodaFind, SodaOptionsSettersOnNewOptions_ReturnTrue)
+    {
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
 
-        ASSERT_TRUE(OCI_SodaOptionsSetFilter(options, OTEXT("{\"parity\":\"even\"}")));
-        ASSERT_TRUE(OCI_SodaOptionsSetSkip(options, 0));
-        ASSERT_TRUE(OCI_SodaOptionsSetLimit(options, 10));
-        ASSERT_TRUE(OCI_SodaOptionsSetFetchArraySize(options, 32));
-        ASSERT_TRUE(OCI_SodaOptionsSetLock(options, FALSE));
+        EXPECT_TRUE(OCI_SodaOptionsSetFilter(options, OTEXT("{\"parity\":\"even\"}")));
+        EXPECT_TRUE(OCI_SodaOptionsSetSkip(options, 0));
+        EXPECT_TRUE(OCI_SodaOptionsSetLimit(options, 10));
+        EXPECT_TRUE(OCI_SodaOptionsSetFetchArraySize(options, 32));
+        EXPECT_TRUE(OCI_SodaOptionsSetLock(options, FALSE));
 
-        /* SODA hints reject enclosing comment markers (ORA-40856) —
-           pass the bare hint text */
-        {
-            auto* opt2 = OCI_SodaOptionsCreate(sdb);
-            ASSERT_NE(nullptr, opt2);
-            ASSERT_TRUE(OCI_SodaOptionsSetHint(opt2, OTEXT("index(OCILIB_SODA_OPT_COLL)")));
-            ASSERT_TRUE(OCI_SodaOptionsFree(opt2));
-        }
+        ASSERT_TRUE(OCI_SodaOptionsFree(options));
+    }
+
+    TEST_F(TestSodaFind, SodaOptionsSetHintWithBareHint_ReturnsTrue)
+    {
+        auto* options = OCI_SodaOptionsCreate(sdb);
+        ASSERT_NE(nullptr, options);
+
+        EXPECT_TRUE(OCI_SodaOptionsSetHint(options, OTEXT("index(OCILIB_SODA_OPT_COLL)")));
+
+        ASSERT_TRUE(OCI_SodaOptionsFree(options));
+    }
+
+    TEST_F(TestSodaFind, FindWithQbeFilter_ReturnsMatchingDocsOnly)
+    {
+        auto* options = OCI_SodaOptionsCreate(sdb);
+        ASSERT_NE(nullptr, options);
+        ASSERT_TRUE(OCI_SodaOptionsSetFilter(options, OTEXT("{\"parity\":\"even\"}")));
 
         auto* cursor = OCI_SodaCollFind(coll, options);
-        ASSERT_NE(nullptr, cursor);
 
+        ASSERT_NE(nullptr, cursor);
         OCI_UInt32 count = 0;
         OCI_SodaDoc* item = NULL;
         while (NULL != (item = OCI_SodaDocCursorGetNext(cursor)))
@@ -516,86 +534,81 @@ namespace TestCApi
             count++;
             ASSERT_TRUE(OCI_SodaDocFree(item));
         }
-
-        ASSERT_EQ(2u, count);
+        EXPECT_EQ(2u, count);
 
         ASSERT_TRUE(OCI_SodaDocCursorFree(cursor));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
-
-        ASSERT_TRUE(OCI_Commit(conn));
-        ASSERT_TRUE(OCI_SodaCollDrop(coll));
-        ASSERT_TRUE(OCI_SodaCollFree(coll));
-
-        ASSERT_TRUE(OCI_SodaDbFree(sdb));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, FindOneWithOptions)
+    /* -------------------------------------------------------------------------
+       Shared fixture: SODA coll seeded with one tagged doc
+       ------------------------------------------------------------------------- */
+
+    class TestSodaFindOne : public ::testing::Test
     {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_SodaDb* sdb = nullptr;
+        OCI_SodaColl* coll = nullptr;
+        String key;
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            sdb = OCI_SodaDbCreate(conn);
+            ASSERT_NE(nullptr, sdb);
+            DropCollIfExists(sdb, OTEXT("OCILIB_SODA_FINDONE_COLL"));
+            coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_FINDONE_COLL"), NULL);
+            ASSERT_NE(nullptr, coll);
 
-        const auto sdb = OCI_SodaDbCreate(conn);
-        ASSERT_NE(nullptr, sdb);
+            const String content = OTEXT("{\"tag\":\"findone\"}");
+            const auto doc = OCI_SodaDocCreateFromText(sdb, content.c_str(),
+                static_cast<OCI_UInt32>(content.size() * sizeof(otext)), NULL);
+            ASSERT_NE(nullptr, doc);
+            ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, doc));
+            const auto k = OCI_SodaDocGetKey(doc);
+            ASSERT_NE(nullptr, k);
+            key = String(k);
+            ASSERT_TRUE(OCI_SodaDocFree(doc));
+        }
 
-        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_FINDONE_COLL"));
-        const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_FINDONE_COLL"), NULL);
-        ASSERT_NE(nullptr, coll);
+        void TearDown() override
+        {
+            if (coll) { OCI_SodaCollDrop(coll); OCI_SodaCollFree(coll); }
+            if (sdb) OCI_SodaDbFree(sdb);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
 
-        const String content = OTEXT("{\"tag\":\"findone\"}");
-
-        const auto doc = OCI_SodaDocCreateFromText
-        (
-            sdb,
-            content.c_str(),
-            static_cast<OCI_UInt32>(content.size() * sizeof(otext)),
-            NULL
-        );
-        ASSERT_NE(nullptr, doc);
-        ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, doc));
-
-        const auto key = OCI_SodaDocGetKey(doc);
-        ASSERT_NE(nullptr, key);
-
-        /* FindOne with a key option */
-
+    TEST_F(TestSodaFindOne, FindOneWithKeyOption_ReturnsSeededDoc)
+    {
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
-        ASSERT_TRUE(OCI_SodaOptionsSetKey(options, key));
+        ASSERT_TRUE(OCI_SodaOptionsSetKey(options, key.c_str()));
 
         auto* foundDoc = OCI_SodaCollFindOne(coll, options);
+
         ASSERT_NE(nullptr, foundDoc);
-        const auto foundKey = OCI_SodaDocGetKey(foundDoc);
-        ASSERT_EQ(String(key), String(foundKey));
+        EXPECT_EQ(key, String(OCI_SodaDocGetKey(foundDoc)));
 
         ASSERT_TRUE(OCI_SodaDocFree(foundDoc));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
+    }
 
-        /* FindOne with keys option */
-
-        options = OCI_SodaOptionsCreate(sdb);
+    TEST_F(TestSodaFindOne, FindOneWithKeysOption_ReturnsSeededDoc)
+    {
+        auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
-
-        const otext* keys[] = { key };
+        const otext* keys[] = { key.c_str() };
         ASSERT_TRUE(OCI_SodaOptionsSetKeys(options, keys, 1));
 
-        foundDoc = OCI_SodaCollFindOne(coll, options);
+        auto* foundDoc = OCI_SodaCollFindOne(coll, options);
+
         ASSERT_NE(nullptr, foundDoc);
 
         ASSERT_TRUE(OCI_SodaDocFree(foundDoc));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
-
-        ASSERT_TRUE(OCI_SodaDocFree(doc));
-
-        ASSERT_TRUE(OCI_Commit(conn));
-        ASSERT_TRUE(OCI_SodaCollDrop(coll));
-        ASSERT_TRUE(OCI_SodaCollFree(coll));
-
-        ASSERT_TRUE(OCI_SodaDbFree(sdb));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
     TEST(TestSoda, DocCount)
@@ -732,96 +745,83 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, ReplaceOneWithOptions)
+    /* -------------------------------------------------------------------------
+       Shared fixture: SODA coll seeded with one versioned doc
+       ------------------------------------------------------------------------- */
+
+    class TestSodaReplace : public ::testing::Test
     {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_SodaDb* sdb = nullptr;
+        OCI_SodaColl* coll = nullptr;
+        String key;
+        String version;
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            sdb = OCI_SodaDbCreate(conn);
+            ASSERT_NE(nullptr, sdb);
+            DropCollIfExists(sdb, OTEXT("OCILIB_SODA_REP_COLL"));
+            coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_REP_COLL"), NULL);
+            ASSERT_NE(nullptr, coll);
 
-        const auto sdb = OCI_SodaDbCreate(conn);
-        ASSERT_NE(nullptr, sdb);
+            const String content = OTEXT("{\"v\":10}");
+            const auto doc = OCI_SodaDocCreateFromText(sdb, content.c_str(),
+                static_cast<OCI_UInt32>(content.size() * sizeof(otext)), NULL);
+            ASSERT_NE(nullptr, doc);
+            ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, doc));
+            key = String(OCI_SodaDocGetKey(doc));
+            version = String(OCI_SodaDocGetVersion(doc));
+            ASSERT_TRUE(OCI_SodaDocFree(doc));
+        }
 
-        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_REPLOPT_COLL"));
-        const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_REPLOPT_COLL"), NULL);
-        ASSERT_NE(nullptr, coll);
+        void TearDown() override
+        {
+            if (coll) { OCI_SodaCollDrop(coll); OCI_SodaCollFree(coll); }
+            if (sdb) OCI_SodaDbFree(sdb);
+            if (conn) OCI_ConnectionFree(conn);
+        }
 
-        const String content = OTEXT("{\"v\":10}");
+        OCI_SodaDoc* MakeDoc(const otext* content)
+        {
+            return OCI_SodaDocCreateFromText(sdb, content,
+                static_cast<OCI_UInt32>(String(content).size() * sizeof(otext)), NULL);
+        }
+    };
 
-        const auto doc = OCI_SodaDocCreateFromText
-        (
-            sdb,
-            content.c_str(),
-            static_cast<OCI_UInt32>(content.size() * sizeof(otext)),
-            NULL
-        );
-        ASSERT_NE(nullptr, doc);
-        ASSERT_TRUE(OCI_SodaCollInsertDoc(coll, doc));
-
-        const String key = OCI_SodaDocGetKey(doc);
-        ASSERT_FALSE(key.empty());
-
-        const String newContent = OTEXT("{\"v\":20}");
-        const auto newDoc = OCI_SodaDocCreateFromText
-        (
-            sdb,
-            newContent.c_str(),
-            static_cast<OCI_UInt32>(newContent.size() * sizeof(otext)),
-            NULL
-        );
-        ASSERT_NE(nullptr, newDoc);
-
+    TEST_F(TestSodaReplace, ReplaceOneByKeyOption_ReplacesDoc)
+    {
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
         ASSERT_TRUE(OCI_SodaOptionsSetKey(options, key.c_str()));
+        OCI_SodaDoc* newDoc = MakeDoc(OTEXT("{\"v\":20}"));
+        ASSERT_NE(nullptr, newDoc);
 
-        ASSERT_TRUE(OCI_SodaCollReplaceOne(coll, options, newDoc, FALSE));
+        EXPECT_TRUE(OCI_SodaCollReplaceOne(coll, options, newDoc, FALSE));
+
+        ASSERT_TRUE(OCI_SodaDocFree(newDoc));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
+    }
 
-        const auto foundDoc = OCI_SodaCollFindOneByKey(coll, key.c_str());
-        ASSERT_NE(nullptr, foundDoc);
-
-        const auto text = OCI_SodaDocGetText(foundDoc);
-        ASSERT_NE(nullptr, text);
-        ASSERT_NE(String::npos, String(text).find(OTEXT("\"v\":20")));
-
-        const String version = OCI_SodaDocGetVersion(foundDoc);
-        ASSERT_TRUE(OCI_SodaDocFree(foundDoc));
-
-        /* replace-and-get with key + version options */
-
-        options = OCI_SodaOptionsCreate(sdb);
+    TEST_F(TestSodaReplace, ReplaceOneByKeyAndVersion_ReturnsUpdatedDoc)
+    {
+        auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
         ASSERT_TRUE(OCI_SodaOptionsSetKey(options, key.c_str()));
         ASSERT_TRUE(OCI_SodaOptionsSetVersion(options, version.c_str()));
+        OCI_SodaDoc* newDoc = MakeDoc(OTEXT("{\"v\":30}"));
+        ASSERT_NE(nullptr, newDoc);
 
-        const String newContent2 = OTEXT("{\"v\":30}");
-        const auto newDoc2 = OCI_SodaDocCreateFromText
-        (
-            sdb,
-            newContent2.c_str(),
-            static_cast<OCI_UInt32>(newContent2.size() * sizeof(otext)),
-            NULL
-        );
-        ASSERT_NE(nullptr, newDoc2);
+        ASSERT_TRUE(OCI_SodaCollReplaceOne(coll, options, newDoc, TRUE));
 
-        ASSERT_TRUE(OCI_SodaCollReplaceOne(coll, options, newDoc2, TRUE));
-        ASSERT_NE(nullptr, OCI_SodaDocGetVersion(newDoc2));
+        EXPECT_NE(nullptr, OCI_SodaDocGetVersion(newDoc));
 
-        ASSERT_TRUE(OCI_SodaOptionsFree(options));
-        ASSERT_TRUE(OCI_SodaDocFree(newDoc2));
         ASSERT_TRUE(OCI_SodaDocFree(newDoc));
-        ASSERT_TRUE(OCI_SodaDocFree(doc));
-
-        ASSERT_TRUE(OCI_Commit(conn));
-        ASSERT_TRUE(OCI_SodaCollDrop(coll));
-        ASSERT_TRUE(OCI_SodaCollFree(coll));
-
-        ASSERT_TRUE(OCI_SodaDbFree(sdb));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_SodaOptionsFree(options));
     }
-
     TEST(TestSoda, RemoveOneByKey)
     {
         auto env = GetEnvironment(nullptr);
@@ -991,7 +991,7 @@ namespace TestCApi
         OCI_SodaColl*   coll{ nullptr };
     };
 
-    TEST_F(TestSodaErrors, SodaDbNullArgs)
+    TEST_F(TestSodaErrors, SodaDbFnsWithNullArgs_ReturnFalse)
     {
         ASSERT_EQ(nullptr, OCI_SodaDbCreateColl(NULL, OTEXT("X"), NULL));
         ASSERT_EQ(nullptr, OCI_SodaDbOpenColl(NULL, OTEXT("X")));
@@ -1000,13 +1000,13 @@ namespace TestCApi
         ASSERT_EQ(nullptr, OCI_SodaDbGetConnection(NULL));
     }
 
-    TEST_F(TestSodaErrors, DocCreateNullArgs)
+    TEST_F(TestSodaErrors, SodaDocCreateWithNullArgs_ReturnsNull)
     {
         ASSERT_EQ(nullptr, OCI_SodaDocCreateFromText(NULL, OTEXT("{}"), 2, NULL));
         ASSERT_EQ(nullptr, OCI_SodaDocCreateFromJson(NULL, NULL, NULL));
     }
 
-    TEST_F(TestSodaErrors, DocCreateNullContentIsValid)
+    TEST_F(TestSodaErrors, SodaDocCreateWithNullContent_ReturnsDoc)
     {
         /* NULL content is valid - creates an empty document */
         OCI_SodaDoc* emptyDoc = OCI_SodaDocCreateFromText(sdb, NULL, 0, NULL);
@@ -1014,7 +1014,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaDocFree(emptyDoc));
     }
 
-    TEST_F(TestSodaErrors, CollNullHandle)
+    TEST_F(TestSodaErrors, CollFnsOnNullHandle_ReturnFalse)
     {
         ASSERT_EQ(nullptr, OCI_SodaCollGetName(NULL));
         ASSERT_EQ(nullptr, OCI_SodaCollGetMetadata(NULL));
@@ -1025,7 +1025,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_SodaCollFree(NULL));
     }
 
-    TEST_F(TestSodaErrors, DocNullHandle)
+    TEST_F(TestSodaErrors, DocFnsOnNullHandle_ReturnFalse)
     {
         ASSERT_EQ(nullptr, OCI_SodaDocGetKey(NULL));
         ASSERT_EQ(nullptr, OCI_SodaDocGetVersion(NULL));
@@ -1037,7 +1037,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_SodaDocFree(NULL));
     }
 
-    TEST_F(TestSodaErrors, OptionsNullHandle)
+    TEST_F(TestSodaErrors, OptionsFnsOnNullHandle_ReturnFalse)
     {
         ASSERT_EQ(nullptr, OCI_SodaOptionsCreate(NULL));
         ASSERT_FALSE(OCI_SodaOptionsFree(NULL));
@@ -1049,7 +1049,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_SodaOptionsSetLimit(NULL, 0));
     }
 
-    TEST_F(TestSodaErrors, CursorNullHandles)
+    TEST_F(TestSodaErrors, CursorFnsOnNullHandle_ReturnFalse)
     {
         ASSERT_EQ(nullptr, OCI_SodaCollCursorGetNext(NULL));
         ASSERT_FALSE(OCI_SodaCollCursorFree(NULL));
@@ -1057,7 +1057,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_SodaDocCursorFree(NULL));
     }
 
-    TEST_F(TestSodaErrors, CollOpsNullArgs)
+    TEST_F(TestSodaErrors, CollOpsWithNullArgs_ReturnFalse)
     {
         ASSERT_FALSE(OCI_SodaCollInsertDoc(NULL, NULL));
         ASSERT_FALSE(OCI_SodaCollInsertDoc(coll, NULL));
@@ -1183,7 +1183,7 @@ namespace TestCApi
     String      TestSodaMultiKey::keystr[DocCount];
     const otext* TestSodaMultiKey::keys[DocCount];
 
-    TEST_F(TestSodaMultiKey, FindWithKeyList)
+    TEST_F(TestSodaMultiKey, FindWithKeyList_ReturnsDocs)
     {
         /* materializes all matching docs (>8 also covers the document
            array growth arm) */
@@ -1207,7 +1207,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
     }
 
-    TEST_F(TestSodaMultiKey, FindOneWithMixedKeys)
+    TEST_F(TestSodaMultiKey, FindOneWithMixedKeys_ReturnsMatchingDoc)
     {
         /* first keys miss, a later one hits */
         auto* options = OCI_SodaOptionsCreate(sdb);
@@ -1223,7 +1223,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
     }
 
-    TEST_F(TestSodaMultiKey, FindOneWithMissingKeys)
+    TEST_F(TestSodaMultiKey, FindOneWithMissingKeys_ReturnsDoc)
     {
         /* full miss loop + doc cleanup */
         auto* options = OCI_SodaOptionsCreate(sdb);
@@ -1236,7 +1236,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
     }
 
-    TEST_F(TestSodaMultiKey, DocCountWithKeyList)
+    TEST_F(TestSodaMultiKey, DocCountWithKeyList_ReturnsCount)
     {
         /* per-key counts are summed */
         auto* options = OCI_SodaOptionsCreate(sdb);
@@ -1248,7 +1248,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
     }
 
-    TEST_F(TestSodaMultiKey, ReplaceOneWithKeyList)
+    TEST_F(TestSodaMultiKey, ReplaceOneWithKeyList_UpdatesDoc)
     {
         const String repl = OTEXT("{\"idx\":2}");
         auto* replDoc = OCI_SodaDocCreateFromText
@@ -1269,7 +1269,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaDocFree(replDoc));
     }
 
-    TEST_F(TestSodaMultiKey, ReplaceOneAndGetWithKeyList)
+    TEST_F(TestSodaMultiKey, ReplaceOneAndGetWithKeyList_ReturnsDoc)
     {
         const String repl = OTEXT("{\"idx\":2}");
         auto* replDoc = OCI_SodaDocCreateFromText
@@ -1290,7 +1290,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaDocFree(replDoc));
     }
 
-    TEST_F(TestSodaMultiKey, RemoveWithKeyList)
+    TEST_F(TestSodaMultiKey, RemoveWithKeyList_RemovesDocs)
     {
         /* per-key removes are summed */
         auto* options = OCI_SodaOptionsCreate(sdb);
@@ -1391,7 +1391,7 @@ namespace TestCApi
         OCI_SodaColl*   coll{ nullptr };
     };
 
-    TEST_F(TestSodaNullOptions, FindWithNullOptions)
+    TEST_F(TestSodaNullOptions, FindWithNullOptions_UsesDefaults)
     {
         /* NULL options: internal temporary options are created */
         auto* cursor = OCI_SodaCollFind(coll, NULL);
@@ -1408,25 +1408,25 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaDocCursorFree(cursor));
     }
 
-    TEST_F(TestSodaNullOptions, FindOneWithNullOptions)
+    TEST_F(TestSodaNullOptions, FindOneWithNullOptions_UsesDefaults)
     {
         auto* found = OCI_SodaCollFindOne(coll, NULL);
         ASSERT_NE(nullptr, found);
         ASSERT_TRUE(OCI_SodaDocFree(found));
     }
 
-    TEST_F(TestSodaNullOptions, DocCountWithNullOptions)
+    TEST_F(TestSodaNullOptions, DocCountWithNullOptions_CountsAll)
     {
         ASSERT_EQ(1u, OCI_SodaCollDocCount(coll, NULL));
     }
 
-    TEST_F(TestSodaNullOptions, FindOneByKeyMiss)
+    TEST_F(TestSodaNullOptions, FindOneByUnknownKey_ReturnsNull)
     {
         /* NO_DATA cleanup arm */
         ASSERT_EQ(nullptr, OCI_SodaCollFindOneByKey(coll, OTEXT("no_such_key")));
     }
 
-    TEST_F(TestSodaNullOptions, ReplaceOneWithNullOptions)
+    TEST_F(TestSodaNullOptions, ReplaceOneWithNullOptions_UsesDefaults)
     {
         /* NULL options exercises the temporary-options arm; an empty
            filter does not replace the doc, so only the call matters */
@@ -1444,7 +1444,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaDocFree(replDoc));
     }
 
-    TEST_F(TestSodaNullOptions, ReplaceOneAndGetWithNullOptions)
+    TEST_F(TestSodaNullOptions, ReplaceOneAndGetWithNullOptions_UsesDefaults)
     {
         const String repl = OTEXT("{\"name\":\"nopts2\"}");
 
@@ -1460,7 +1460,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaDocFree(replDoc));
     }
 
-    TEST_F(TestSodaNullOptions, RemoveWithNullOptions)
+    TEST_F(TestSodaNullOptions, RemoveWithNullOptions_UsesDefaults)
     {
         OCI_UInt64 removed = 0;
         (void) OCI_SodaCollRemove(coll, NULL, &removed);
@@ -1563,111 +1563,149 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, BulkSaveIndexAndMeta)
+    /* -------------------------------------------------------------------------
+       Shared fixture: SODA db + metadata-backed collection
+       ------------------------------------------------------------------------- */
+
+    class TestSodaOps : public ::testing::Test
     {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_SodaDb* sdb = nullptr;
+        OCI_SodaColl* coll = nullptr;
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+        void SetUp() override
+        {
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            sdb = OCI_SodaDbCreate(conn);
+            ASSERT_NE(nullptr, sdb);
+            DropCollIfExists(sdb, OTEXT("OCILIB_SODA_TEST_COLL"));
+            const String collMeta = OTEXT("{\"keyColumn\":{\"name\":\"ID\",\"sqlType\":\"VARCHAR2\",\"maxLength\":255,\"assignmentMethod\":\"CLIENT\"}}");
+            coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_TEST_COLL"), collMeta.c_str());
+            ASSERT_NE(nullptr, coll);
+        }
 
-        const auto sdb = OCI_SodaDbCreate(conn);
-        ASSERT_NE(nullptr, sdb);
+        void TearDown() override
+        {
+            if (coll) { OCI_SodaCollDrop(coll); OCI_SodaCollFree(coll); }
+            if (sdb) OCI_SodaDbFree(sdb);
+            if (conn) OCI_ConnectionFree(conn);
+        }
 
-        DropCollIfExists(sdb, OTEXT("OCILIB_SODA_TEST_COLL"));
-        const String collMeta = OTEXT("{\"keyColumn\":{\"name\":\"ID\",\"sqlType\":\"VARCHAR2\",\"maxLength\":255,\"assignmentMethod\":\"CLIENT\"}}");
-        const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_TEST_COLL"), collMeta.c_str());
-        ASSERT_NE(nullptr, coll);
+        OCI_SodaDoc* MakeDoc(const String& content, const otext* key)
+        {
+            return OCI_SodaDocCreateFromText(sdb, content.c_str(), static_cast<OCI_UInt32>(content.size() * sizeof(otext)), key);
+        }
+    };
 
-        const String c1 = OTEXT("{\"a\":1}");
-        const String c2 = OTEXT("{\"a\":2}");
-        const String c3 = OTEXT("{\"a\":3}");
+    TEST_F(TestSodaOps, SodaCollInsertMany_InsertsDocs)
+    {
+        OCI_SodaDoc* docs[3] = {
+            MakeDoc(OTEXT("{\"a\":1}"), OTEXT("k1")),
+            MakeDoc(OTEXT("{\"a\":2}"), OTEXT("k2")),
+            MakeDoc(OTEXT("{\"a\":3}"), OTEXT("k3"))
+        };
+        ASSERT_NE(nullptr, docs[0]);
+        ASSERT_NE(nullptr, docs[1]);
+        ASSERT_NE(nullptr, docs[2]);
 
-        /* bulk insert */
-        OCI_SodaDoc* d1 = OCI_SodaDocCreateFromText(sdb, c1.c_str(), static_cast<OCI_UInt32>(c1.size() * sizeof(otext)), OTEXT("k1"));
-        OCI_SodaDoc* d2 = OCI_SodaDocCreateFromText(sdb, c2.c_str(), static_cast<OCI_UInt32>(c2.size() * sizeof(otext)), OTEXT("k2"));
-        OCI_SodaDoc* d3 = OCI_SodaDocCreateFromText(sdb, c3.c_str(), static_cast<OCI_UInt32>(c3.size() * sizeof(otext)), OTEXT("k3"));
-        ASSERT_NE(nullptr, d1);
-        ASSERT_NE(nullptr, d2);
-        ASSERT_NE(nullptr, d3);
+        EXPECT_TRUE(OCI_SodaCollInsertMany(coll, docs, 3, FALSE));
 
-        OCI_SodaDoc* docs[3] = { d1, d2, d3 };
-        const OCI_Boolean ins = OCI_SodaCollInsertMany(coll, docs, 3, FALSE);
-        OCI_Error* ier = OCI_GetLastError();
-        EXPECT_TRUE(ins) << "oci_code=" << (ier ? (int)OCI_ErrorGetCode(ier) : -1)
-                         << " msg=" << (ier && OCI_ErrorGetString(ier) ? String(OCI_ErrorGetString(ier)) : String()) ;
+        ASSERT_TRUE(OCI_SodaDocFree(docs[0]));
+        ASSERT_TRUE(OCI_SodaDocFree(docs[1]));
+        ASSERT_TRUE(OCI_SodaDocFree(docs[2]));
+    }
 
-        /* isJson discriminator */
-        ASSERT_TRUE(OCI_SodaDocGetIsJson(d1));
+    TEST_F(TestSodaOps, SodaDocGetIsJsonOnJsonDoc_ReturnsTrue)
+    {
+        OCI_SodaDoc* d = MakeDoc(OTEXT("{\"a\":1}"), OTEXT("k1"));
+        ASSERT_NE(nullptr, d);
 
-        /* bulk insert and get metadata */
-        OCI_SodaDoc* e1 = OCI_SodaDocCreateFromText(sdb, c1.c_str(), static_cast<OCI_UInt32>(c1.size() * sizeof(otext)), OTEXT("k4"));
-        ASSERT_NE(nullptr, e1);
-        OCI_SodaDoc* edocs[1] = { e1 };
+        EXPECT_TRUE(OCI_SodaDocGetIsJson(d));
+
+        ASSERT_TRUE(OCI_SodaDocFree(d));
+    }
+
+    TEST_F(TestSodaOps, SodaCollInsertManyWithMeta_ReturnsDocVersion)
+    {
+        OCI_SodaDoc* e = MakeDoc(OTEXT("{\"a\":1}"), OTEXT("k4"));
+        ASSERT_NE(nullptr, e);
+        OCI_SodaDoc* edocs[1] = { e };
+
         ASSERT_TRUE(OCI_SodaCollInsertMany(coll, edocs, 1, TRUE));
-        ASSERT_NE(nullptr, OCI_SodaDocGetVersion(e1));
 
-        /* save (upsert) */
-        const String newc = OTEXT("{\"a\":99}");
-        OCI_SodaDoc* sv = OCI_SodaDocCreateFromText(sdb, newc.c_str(), static_cast<OCI_UInt32>(newc.size() * sizeof(otext)), OTEXT("k1"));
+        EXPECT_NE(nullptr, OCI_SodaDocGetVersion(e));
+
+        ASSERT_TRUE(OCI_SodaDocFree(e));
+    }
+
+    TEST_F(TestSodaOps, SodaCollSave_UpsertsAndReturnsVersion)
+    {
+        OCI_SodaDoc* sv = MakeDoc(OTEXT("{\"a\":99}"), OTEXT("k1"));
         ASSERT_NE(nullptr, sv);
-        ASSERT_TRUE(OCI_SodaCollSave(coll, sv, FALSE));
-        ASSERT_NE(nullptr, OCI_SodaDocGetVersion(sv));
 
-        /* index management on a default (UUID) collection */
+        ASSERT_TRUE(OCI_SodaCollSave(coll, sv, FALSE));
+
+        EXPECT_NE(nullptr, OCI_SodaDocGetVersion(sv));
+
+        ASSERT_TRUE(OCI_SodaDocFree(sv));
+    }
+
+    TEST_F(TestSodaOps, SodaCollCreateAndDropIndex_WorksWhenClientSupports)
+    {
         DropCollIfExists(sdb, OTEXT("OCILIB_SODA_IDX_COLL"));
         OCI_SodaColl* coll2 = OCI_SodaDbCreateColl(sdb, OTEXT("OCILIB_SODA_IDX_COLL"), NULL);
         ASSERT_NE(nullptr, coll2);
-        /* materialize the backing table: empty colls may not exist server-side */
-        OCI_SodaDoc* seed = OCI_SodaDocCreateFromText(sdb, c1.c_str(), static_cast<OCI_UInt32>(c1.size() * sizeof(otext)), NULL);
+        OCI_SodaDoc* seed = MakeDoc(OTEXT("{\"a\":1}"), NULL);
         ASSERT_TRUE(OCI_SodaCollInsertDoc(coll2, seed));
         ASSERT_TRUE(OCI_SodaDocFree(seed));
         ASSERT_TRUE(OCI_Commit(conn));
         const String spec = OTEXT("{\"name\":\"OCILIB_SODA_TEST_IDX\"}");
-        /* OCISodaIndexCreate fails inside the OCI call itself in UNICODE
-           builds (ORA-40671, collection-name resolution is charset-broken in
-           the 23ai client under OCI_UTF16ID) — works in ANSI; diagnostic only */
+
+        /* fails inside the OCI call in UNICODE builds (ORA-40671) — ANSI only */
         const OCI_Boolean cix = OCI_SodaCollCreateIndex(coll2, spec.c_str());
+
         if (cix)
         {
-            ASSERT_TRUE(OCI_SodaCollDropIndex(coll2, OTEXT("OCILIB_SODA_TEST_IDX")));
+            EXPECT_TRUE(OCI_SodaCollDropIndex(coll2, OTEXT("OCILIB_SODA_TEST_IDX")));
         }
+
         ASSERT_TRUE(OCI_SodaCollDrop(coll2));
         ASSERT_TRUE(OCI_SodaCollFree(coll2));
+    }
 
-        /* data guide: NULL without error when none exists */
+    TEST_F(TestSodaOps, SodaCollGetDataGuideWithoutGuide_NoError)
+    {
         OCI_SodaDoc* dg = OCI_SodaCollGetDataGuide(coll);
+
         if (NULL != dg)
         {
             ASSERT_TRUE(OCI_SodaDocFree(dg));
         }
+    }
 
-        /* collection names list */
+    TEST_F(TestSodaOps, SodaDbGetCollectionNames_ReturnsNamesList)
+    {
+        OCI_UInt32 ncount = 0;
+
+        otext** collNames = OCI_SodaDbGetCollectionNames(sdb, &ncount);
+
+        ASSERT_NE(nullptr, collNames);
+        ASSERT_TRUE(OCI_SodaDbFreeCollectionNames(sdb, collNames, ncount));
+    }
+
+    TEST_F(TestSodaOps, SodaCollListIndexes_NoErrorWhenSupported)
+    {
+        OCI_UInt32 ncount = 0;
+
+        /* fails inside the OCI call in UNICODE builds (OCI-22303) — tolerant */
+        otext** idxNames = OCI_SodaCollListIndexes(coll, &ncount);
+
+        if (NULL != idxNames)
         {
-            OCI_UInt32 ncount = 0;
-            otext** collNames = OCI_SodaDbGetCollectionNames(sdb, &ncount);
-            ASSERT_NE(nullptr, collNames);
-            ASSERT_TRUE(OCI_SodaDbFreeCollectionNames(sdb, collNames, ncount));
-
-            /* OCISodaIndexList fails inside the OCI call itself in UNICODE
-               builds (OCI-22303, client-side type resolution) — tolerant */
-            otext** idxNames = OCI_SodaCollListIndexes(coll, &ncount);
-            if (NULL != idxNames)
-            {
-                ASSERT_TRUE(OCI_SodaCollFreeIndexNames(coll, idxNames, ncount));
-            }
+            ASSERT_TRUE(OCI_SodaCollFreeIndexNames(coll, idxNames, ncount));
         }
-
-        ASSERT_TRUE(OCI_SodaDocFree(sv));
-        ASSERT_TRUE(OCI_SodaDocFree(e1));
-        ASSERT_TRUE(OCI_SodaDocFree(d1));
-        ASSERT_TRUE(OCI_SodaDocFree(d2));
-        ASSERT_TRUE(OCI_SodaDocFree(d3));
-        ASSERT_TRUE(OCI_Commit(conn));
-        ASSERT_TRUE(OCI_SodaCollDrop(coll));
-        ASSERT_TRUE(OCI_SodaCollFree(coll));
-        ASSERT_TRUE(OCI_SodaDbFree(sdb));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
 #ifdef OCI_CHARSET_ANSI

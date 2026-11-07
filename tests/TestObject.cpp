@@ -4,263 +4,451 @@ using namespace ocilib;
 
 namespace TestCApi
 {
-    TEST(TestObject, SetGetBasicProps)
+    /* -------------------------------------------------------------------------
+       Shared fixture: Sale object with Vendor child and Date attr
+       ------------------------------------------------------------------------- */
+
+    class TestObjectSetGet : public ::testing::Test
     {
-        ExecDML(OTEXT("create type TestObjectSetGetBasicPropsVendor as object(code number, name varchar2(30))"));
-        ExecDML(OTEXT("create type TestObjectSetGetBasicPropsSale as object(code number, price float, name varchar2(30), ref varchar2(30), date_sale date, vendor TestObjectSetGetBasicPropsVendor)"));
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_Date* date = nullptr;
+        OCI_Object* vendor = nullptr;
+        OCI_Object* sale = nullptr;
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+        void SetUp() override
+        {
+            ExecDML(OTEXT("create or replace type TestObjectSetGetBasicPropsVendor as object(code number, name varchar2(30))"));
+            ExecDML(OTEXT("create or replace type TestObjectSetGetBasicPropsSale as object(code number, price float, name varchar2(30), ref varchar2(30), date_sale date, vendor TestObjectSetGetBasicPropsVendor)"));
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+            const auto env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            date = OCI_DateCreate(env);
+            ASSERT_NE(nullptr, date);
+            ASSERT_TRUE(OCI_DateSysDate(date));
+            vendor = OCI_ObjectCreate(OCI_TypeInfoGet(conn, OTEXT("TestObjectSetGetBasicPropsVendor"), OCI_TIF_TYPE));
+            ASSERT_NE(nullptr, vendor);
+            ASSERT_TRUE(OCI_ObjectSetInt(vendor, OTEXT("CODE"), 134));
+            ASSERT_TRUE(OCI_ObjectSetString(vendor, OTEXT("NAME"), OTEXT("JOHN SMITH")));
+            sale = OCI_ObjectCreate(OCI_TypeInfoGet(conn, OTEXT("TestObjectSetGetBasicPropsSale"), OCI_TIF_TYPE));
+            ASSERT_NE(nullptr, sale);
+        }
 
-        const auto date = OCI_DateCreate(env);
-        ASSERT_NE(nullptr, date);
+        void TearDown() override
+        {
+            if (sale) OCI_ObjectFree(sale);
+            if (vendor) OCI_ObjectFree(vendor);
+            if (date) OCI_DateFree(date);
+            if (conn) OCI_ConnectionFree(conn);
 
-        ASSERT_TRUE(OCI_DateSysDate(date));
+            ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsSale"));
+            ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsVendor"));
+        }
+    };
 
-        const auto vendor = OCI_ObjectCreate(OCI_TypeInfoGet(conn, OTEXT("TestObjectSetGetBasicPropsVendor"), OCI_TIF_TYPE));
-        ASSERT_NE(nullptr, vendor);
-        ASSERT_TRUE(OCI_ObjectSetInt(vendor, OTEXT("CODE"), 134));
-        ASSERT_TRUE(OCI_ObjectSetString(vendor, OTEXT("NAME"), OTEXT("JOHN SMITH")));
-
-        const auto sale = OCI_ObjectCreate(OCI_TypeInfoGet(conn, OTEXT("TestObjectSetGetBasicPropsSale"), OCI_TIF_TYPE));
-        ASSERT_NE(nullptr, vendor);
-
+    TEST_F(TestObjectSetGet, SetAndGetScalarAttrs_RoundTripsValues)
+    {
         ASSERT_TRUE(OCI_ObjectSetInt(sale, OTEXT("CODE"), 1));
         ASSERT_TRUE(OCI_ObjectSetDouble(sale, OTEXT("PRICE"), 12.99));
         ASSERT_TRUE(OCI_ObjectSetString(sale, OTEXT("NAME"), OTEXT("USB KEY 2go")));
         ASSERT_TRUE(OCI_ObjectSetString(sale, OTEXT("REF"), OTEXT("A56547WSAA")));
-        ASSERT_TRUE(OCI_ObjectSetObject(sale, OTEXT("VENDOR"), vendor));
-        ASSERT_TRUE(OCI_ObjectSetDate(sale, OTEXT("DATE_SALE"), date));
 
-        ASSERT_EQ(1, OCI_ObjectGetInt(sale, OTEXT("CODE")));
-        ASSERT_EQ(12.99, OCI_ObjectGetDouble(sale, OTEXT("PRICE")));
-        ASSERT_EQ(String(OTEXT("USB KEY 2go")), String(OCI_ObjectGetString(sale, OTEXT("NAME"))));
-        ASSERT_EQ(String(OTEXT("A56547WSAA")), String(OCI_ObjectGetString(sale, OTEXT("REF"))));
-
-        const auto vendor2 = OCI_ObjectGetObject(sale, OTEXT("VENDOR"));
-        ASSERT_NE(nullptr, vendor2);
-
-        ASSERT_EQ(134, OCI_ObjectGetInt(vendor2, OTEXT("CODE")));
-        ASSERT_EQ(String(OTEXT("JOHN SMITH")), String(OCI_ObjectGetString(vendor2, OTEXT("NAME"))));
-
-        const auto date2 = OCI_ObjectGetDate(sale, OTEXT("DATE_SALE"));
-        ASSERT_NE(nullptr, date2);
-        ASSERT_EQ(0, OCI_DateCompare(date, date2));
-
-        ASSERT_TRUE(OCI_ObjectFree(sale));
-        ASSERT_TRUE(OCI_ObjectFree(vendor));
-        ASSERT_TRUE(OCI_DateFree(date));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-       ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsSale"));
-       ExecDML(OTEXT("drop type TestObjectSetGetBasicPropsVendor"));
+        EXPECT_EQ(1, OCI_ObjectGetInt(sale, OTEXT("CODE")));
+        EXPECT_EQ(12.99, OCI_ObjectGetDouble(sale, OTEXT("PRICE")));
+        EXPECT_EQ(String(OTEXT("USB KEY 2go")), String(OCI_ObjectGetString(sale, OTEXT("NAME"))));
+        EXPECT_EQ(String(OTEXT("A56547WSAA")), String(OCI_ObjectGetString(sale, OTEXT("REF"))));
     }
 
-    TEST(TestObject, AllAttributeGettersAndSetters)
+    TEST_F(TestObjectSetGet, SetAndGetNestedObjectAttr_ReturnsNestedValues)
     {
-        ExecDML(OTEXT("create or replace type TestObject_TgtType as object(code int, name varchar2(30))"));
-        ExecDML(OTEXT("create or replace type TestObject_NumVarray as varray(3) of number"));
-        ExecDML(OTEXT("create or replace type TestObject_FullType as object(n number, i int, s varchar2(30), r raw(20), d date, ts timestamp, iv interval day to second, lob clob, coll TestObject_NumVarray, ref_val ref TestObject_TgtType, f bfile, nested TestObject_TgtType)"));
+        ASSERT_TRUE(OCI_ObjectSetObject(sale, OTEXT("VENDOR"), vendor));
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+        const auto vendor2 = OCI_ObjectGetObject(sale, OTEXT("VENDOR"));
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+        ASSERT_NE(nullptr, vendor2);
+        EXPECT_EQ(134, OCI_ObjectGetInt(vendor2, OTEXT("CODE")));
+        EXPECT_EQ(String(OTEXT("JOHN SMITH")), String(OCI_ObjectGetString(vendor2, OTEXT("NAME"))));
+    }
 
-        const auto fullType = OCI_TypeInfoGet(conn, OTEXT("TestObject_FullType"), OCI_TIF_TYPE);
-        const auto obj = OCI_ObjectCreate(fullType);
-        ASSERT_NE(nullptr, obj);
-        ASSERT_NE((OCI_UInt32) OCI_UNKNOWN, OCI_ObjectGetType(obj));
+    TEST_F(TestObjectSetGet, SetAndGetDateAttr_ReturnsSameDate)
+    {
+        ASSERT_TRUE(OCI_ObjectSetDate(sale, OTEXT("DATE_SALE"), date));
 
-        const auto tgtType = OCI_TypeInfoGet(conn, OTEXT("TestObject_TgtType"), OCI_TIF_TYPE);
-        const auto nested = OCI_ObjectCreate(tgtType);
-        ASSERT_NE(nullptr, nested);
-        ASSERT_TRUE(OCI_ObjectSetInt(nested, OTEXT("CODE"), 7));
-        ASSERT_TRUE(OCI_ObjectSetString(nested, OTEXT("NAME"), OTEXT("nested")));
+        const auto date2 = OCI_ObjectGetDate(sale, OTEXT("DATE_SALE"));
 
+        ASSERT_NE(nullptr, date2);
+        EXPECT_EQ(0, OCI_DateCompare(date, date2));
+    }
+
+    /* -------------------------------------------------------------------------
+       Shared fixture: TestObject_FullType object + nested TestObject_TgtType
+       ------------------------------------------------------------------------- */
+
+    class TestObjectAttrs : public ::testing::Test
+    {
+    protected:
+        OCI_Environment* env = nullptr;
+        OCI_Connection* conn = nullptr;
+        OCI_TypeInfo* fullType = nullptr;
+        OCI_TypeInfo* tgtType = nullptr;
+        OCI_Object* obj = nullptr;
+        OCI_Object* nested = nullptr;
+
+        void SetUp() override
+        {
+            ExecDML(OTEXT("create or replace type TestObject_TgtType as object(code int, name varchar2(30))"));
+            ExecDML(OTEXT("create or replace type TestObject_NumVarray as varray(3) of number"));
+            ExecDML(OTEXT("create or replace type TestObject_FullType as object(n number, i int, s varchar2(30), r raw(20), d date, ts timestamp, iv interval day to second, lob clob, coll TestObject_NumVarray, ref_val ref TestObject_TgtType, f bfile, nested TestObject_TgtType)"));
+
+            env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            fullType = OCI_TypeInfoGet(conn, OTEXT("TestObject_FullType"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, fullType);
+            tgtType = OCI_TypeInfoGet(conn, OTEXT("TestObject_TgtType"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, tgtType);
+            obj = OCI_ObjectCreate(fullType);
+            ASSERT_NE(nullptr, obj);
+            nested = OCI_ObjectCreate(tgtType);
+            ASSERT_NE(nullptr, nested);
+        }
+
+        void TearDown() override
+        {
+            if (nested) OCI_ObjectFree(nested);
+            if (obj) OCI_ObjectFree(obj);
+            if (tgtType) OCI_TypeInfoFree(tgtType);
+            if (fullType) OCI_TypeInfoFree(fullType);
+            if (conn) OCI_ConnectionFree(conn);
+
+            ExecDML(OTEXT("drop type TestObject_FullType"));
+            ExecDML(OTEXT("drop type TestObject_NumVarray"));
+            ExecDML(OTEXT("drop type TestObject_TgtType"));
+        }
+    };
+
+    TEST_F(TestObjectAttrs, GetTypeOnCreatedObject_ReturnsKnownType)
+    {
+        EXPECT_NE((OCI_UInt32) OCI_UNKNOWN, OCI_ObjectGetType(obj));
+    }
+
+    TEST_F(TestObjectAttrs, SetAndGetNumberAttr_RoundTripsValue)
+    {
         const auto number = OCI_NumberCreate(env);
         OCI_Int32 num = 42;
         ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT, &num));
+
         ASSERT_TRUE(OCI_ObjectSetNumber(obj, OTEXT("N"), number));
+
         const auto num2 = OCI_ObjectGetNumber(obj, OTEXT("N"));
         ASSERT_NE(nullptr, num2);
         OCI_Int32 numOut = 0;
         ASSERT_TRUE(OCI_NumberGetValue(num2, OCI_NUM_INT, &numOut));
-        ASSERT_EQ(42, numOut);
+        EXPECT_EQ(42, numOut);
 
+        ASSERT_TRUE(OCI_NumberFree(number));
+    }
+
+    TEST_F(TestObjectAttrs, SetAndGetIntAttr_RoundTripsValue)
+    {
         ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("I"), 99));
-        ASSERT_EQ(99, OCI_ObjectGetInt(obj, OTEXT("I")));
 
+        EXPECT_EQ(99, OCI_ObjectGetInt(obj, OTEXT("I")));
+    }
+
+    TEST_F(TestObjectAttrs, SetAndGetStringAttr_RoundTripsValue)
+    {
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("S"), OTEXT("full")));
-        ASSERT_EQ(String(OTEXT("full")), String(OCI_ObjectGetString(obj, OTEXT("S"))));
 
+        EXPECT_EQ(String(OTEXT("full")), String(OCI_ObjectGetString(obj, OTEXT("S"))));
+    }
+
+    TEST_F(TestObjectAttrs, SetAndGetRawAttr_RoundTripsBytes)
+    {
         unsigned char raw[] = { 0x00, 0x01, 0x02, 0x03, 0x04 };
-        ASSERT_TRUE(OCI_ObjectSetRaw(obj, OTEXT("R"), raw, sizeof(raw)));
-        ASSERT_EQ(sizeof(raw), OCI_ObjectGetRawSize(obj, OTEXT("R")));
-        unsigned char rawOut[20] = {};
-        ASSERT_EQ((OCI_Int32)sizeof(raw), OCI_ObjectGetRaw(obj, OTEXT("R"), rawOut, sizeof(rawOut)));
-        ASSERT_EQ(0, memcmp(raw, rawOut, sizeof(raw)));
 
+        ASSERT_TRUE(OCI_ObjectSetRaw(obj, OTEXT("R"), raw, sizeof(raw)));
+
+        EXPECT_EQ(sizeof(raw), OCI_ObjectGetRawSize(obj, OTEXT("R")));
+        unsigned char rawOut[20] = {};
+        EXPECT_EQ((OCI_Int32)sizeof(raw), OCI_ObjectGetRaw(obj, OTEXT("R"), rawOut, sizeof(rawOut)));
+        EXPECT_EQ(0, memcmp(raw, rawOut, sizeof(raw)));
+    }
+
+    TEST_F(TestObjectAttrs, SetAndGetDateAttr_RoundTripsValue)
+    {
         const auto date = OCI_DateCreate(env);
         ASSERT_NE(nullptr, date);
         ASSERT_TRUE(OCI_DateSetDateTime(date, 2023, 6, 15, 12, 30, 0));
+
         ASSERT_TRUE(OCI_ObjectSetDate(obj, OTEXT("D"), date));
+
         const auto date2 = OCI_ObjectGetDate(obj, OTEXT("D"));
         ASSERT_NE(nullptr, date2);
-        ASSERT_EQ(0, OCI_DateCompare(date, date2));
+        EXPECT_EQ(0, OCI_DateCompare(date, date2));
 
+        ASSERT_TRUE(OCI_DateFree(date));
+    }
+
+    TEST_F(TestObjectAttrs, SetAndGetTimestampAttr_ReturnsValue)
+    {
         const auto ts = OCI_TimestampCreate(env, OCI_TIMESTAMP);
         ASSERT_NE(nullptr, ts);
         ASSERT_TRUE(OCI_TimestampConstruct(ts, 2023, 6, 15, 12, 30, 0, 0, nullptr));
-        ASSERT_TRUE(OCI_ObjectSetTimestamp(obj, OTEXT("TS"), ts));
-        const auto ts2 = OCI_ObjectGetTimestamp(obj, OTEXT("TS"));
-        ASSERT_NE(nullptr, ts2);
 
+        ASSERT_TRUE(OCI_ObjectSetTimestamp(obj, OTEXT("TS"), ts));
+
+        EXPECT_NE(nullptr, OCI_ObjectGetTimestamp(obj, OTEXT("TS")));
+
+        ASSERT_TRUE(OCI_TimestampFree(ts));
+    }
+
+    TEST_F(TestObjectAttrs, SetAndGetIntervalAttr_ReturnsValue)
+    {
         const auto itv = OCI_IntervalCreate(env, OCI_INTERVAL_DS);
         ASSERT_NE(nullptr, itv);
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv, 1, 2, 3, 4, 0));
-        ASSERT_TRUE(OCI_ObjectSetInterval(obj, OTEXT("IV"), itv));
-        const auto itv2 = OCI_ObjectGetInterval(obj, OTEXT("IV"));
-        ASSERT_NE(nullptr, itv2);
 
+        ASSERT_TRUE(OCI_ObjectSetInterval(obj, OTEXT("IV"), itv));
+
+        EXPECT_NE(nullptr, OCI_ObjectGetInterval(obj, OTEXT("IV")));
+
+        ASSERT_TRUE(OCI_IntervalFree(itv));
+    }
+
+    TEST_F(TestObjectAttrs, SetAndGetLobAttr_ReturnsLob)
+    {
         const auto lob = OCI_LobCreate(conn, OCI_CLOB);
         ASSERT_NE(nullptr, lob);
         OCI_UInt32 lob_cc = (OCI_UInt32)ostrlen(OTEXT("object clob"));
         OCI_UInt32 lob_bc = 0;
         ASSERT_TRUE(OCI_LobWrite(lob, (void*)OTEXT("object clob"), &lob_cc, &lob_bc));
-        ASSERT_EQ(lob_cc, (OCI_UInt32)ostrlen(OTEXT("object clob")));
+
         ASSERT_TRUE(OCI_ObjectSetLob(obj, OTEXT("LOB"), lob));
+
         const auto lob2 = OCI_ObjectGetLob(obj, OTEXT("LOB"));
         ASSERT_NE(nullptr, lob2);
-        ASSERT_GT(OCI_LobGetLength(lob2), (OCI_UInt64)0);
+        EXPECT_GT(OCI_LobGetLength(lob2), (OCI_UInt64)0);
 
+        ASSERT_TRUE(OCI_LobFree(lob));
+    }
+
+    TEST_F(TestObjectAttrs, SetAndGetCollAttr_ReturnsCollection)
+    {
         const auto collType = OCI_TypeInfoGet(conn, OTEXT("TestObject_NumVarray"), OCI_TIF_TYPE);
         const auto coll = OCI_CollCreate(collType);
         ASSERT_NE(nullptr, coll);
         const auto elem = OCI_ElemCreate(collType);
-        ASSERT_NE(nullptr, elem);
         ASSERT_TRUE(OCI_ElemSetInt(elem, 1));
         ASSERT_TRUE(OCI_CollAppend(coll, elem));
         ASSERT_TRUE(OCI_ElemFree(elem));
+
         ASSERT_TRUE(OCI_ObjectSetColl(obj, OTEXT("COLL"), coll));
+
         const auto coll2 = OCI_ObjectGetColl(obj, OTEXT("COLL"));
         ASSERT_NE(nullptr, coll2);
-        ASSERT_EQ(1u, OCI_CollGetCount(coll2));
+        EXPECT_EQ(1u, OCI_CollGetCount(coll2));
 
-        ASSERT_TRUE(OCI_ObjectSetRef(obj, OTEXT("REF_VAL"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("REF_VAL")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetRef(obj, OTEXT("REF_VAL")));
-
-        ASSERT_TRUE(OCI_ObjectSetFile(obj, OTEXT("F"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("F")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetFile(obj, OTEXT("F")));
-
-        ASSERT_TRUE(OCI_ObjectSetObject(obj, OTEXT("NESTED"), nested));
-        const auto nested2 = OCI_ObjectGetObject(obj, OTEXT("NESTED"));
-        ASSERT_NE(nullptr, nested2);
-        ASSERT_EQ(7, OCI_ObjectGetInt(nested2, OTEXT("CODE")));
-        ASSERT_EQ(String(OTEXT("nested")), String(OCI_ObjectGetString(nested2, OTEXT("NAME"))));
-
-        OCI_UInt32 size = 0;
-        ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
-        static std::vector<otext> text(size + 1);
-        ASSERT_TRUE(OCI_ObjectToText(obj, &size, text.data()));
-        ASSERT_GT(size, 0u);
-
-        const auto tinf = OCI_ObjectGetTypeInfo(obj);
-        ASSERT_EQ(fullType, tinf);
-
-        void* p_struct = nullptr;
-        void* p_ind = nullptr;
-        ASSERT_TRUE(OCI_ObjectGetStruct(obj, &p_struct, &p_ind));
-
-        const auto arr = OCI_ObjectArrayCreate(fullType, 2);
-        ASSERT_NE(nullptr, arr);
-        ASSERT_TRUE(OCI_ObjectSetInt(arr[0], OTEXT("I"), 1));
-        ASSERT_TRUE(OCI_ObjectArrayFree(arr));
-
-        const auto assigned = OCI_ObjectCreate(fullType);
-        ASSERT_NE(nullptr, assigned);
-        ASSERT_TRUE(OCI_ObjectAssign(assigned, obj));
-        ASSERT_EQ(99, OCI_ObjectGetInt(assigned, OTEXT("I")));
-
-        ASSERT_TRUE(OCI_ObjectFree(assigned));
-        ASSERT_TRUE(OCI_ObjectFree(obj));
-        ASSERT_TRUE(OCI_ObjectFree(nested));
-        ASSERT_TRUE(OCI_NumberFree(number));
-        ASSERT_TRUE(OCI_DateFree(date));
-        ASSERT_TRUE(OCI_TimestampFree(ts));
-        ASSERT_TRUE(OCI_IntervalFree(itv));
-        ASSERT_TRUE(OCI_LobFree(lob));
         ASSERT_TRUE(OCI_CollFree(coll));
-        ASSERT_TRUE(OCI_TypeInfoFree(fullType));
-        ASSERT_TRUE(OCI_TypeInfoFree(tgtType));
         ASSERT_TRUE(OCI_TypeInfoFree(collType));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop type TestObject_FullType"));
-        ExecDML(OTEXT("drop type TestObject_NumVarray"));
-        ExecDML(OTEXT("drop type TestObject_TgtType"));
     }
 
-    TEST(TestObject, NumericVariations)
+    TEST_F(TestObjectAttrs, SetNullOnRefAttr_MarksAttributeNull)
     {
-        ExecDML(OTEXT("create or replace type TestObject_NumericT as object(n number, s varchar2(20))"));
+        ASSERT_TRUE(OCI_ObjectSetRef(obj, OTEXT("REF_VAL"), nullptr));
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("REF_VAL")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetRef(obj, OTEXT("REF_VAL")));
+    }
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+    TEST_F(TestObjectAttrs, SetNullOnFileAttr_MarksAttributeNull)
+    {
+        ASSERT_TRUE(OCI_ObjectSetFile(obj, OTEXT("F"), nullptr));
 
-        const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestObject_NumericT"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, typinf);
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("F")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetFile(obj, OTEXT("F")));
+    }
 
-        const auto obj = OCI_ObjectCreate(typinf);
-        ASSERT_NE(nullptr, obj);
+    TEST_F(TestObjectAttrs, SetAndGetNestedObjectAttr_ReturnsNested)
+    {
+        ASSERT_TRUE(OCI_ObjectSetInt(nested, OTEXT("CODE"), 7));
+        ASSERT_TRUE(OCI_ObjectSetString(nested, OTEXT("NAME"), OTEXT("nested")));
 
-        ASSERT_TRUE(OCI_ObjectSetShort(obj, OTEXT("N"), 11));
-        ASSERT_EQ(11, OCI_ObjectGetShort(obj, OTEXT("N")));
+        ASSERT_TRUE(OCI_ObjectSetObject(obj, OTEXT("NESTED"), nested));
 
-        ASSERT_TRUE(OCI_ObjectSetUnsignedShort(obj, OTEXT("N"), 12u));
-        ASSERT_EQ(12u, OCI_ObjectGetUnsignedShort(obj, OTEXT("N")));
+        const auto nested2 = OCI_ObjectGetObject(obj, OTEXT("NESTED"));
+        ASSERT_NE(nullptr, nested2);
+        EXPECT_EQ(7, OCI_ObjectGetInt(nested2, OTEXT("CODE")));
+        EXPECT_EQ(String(OTEXT("nested")), String(OCI_ObjectGetString(nested2, OTEXT("NAME"))));
+    }
 
-        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("N"), 13));
-        ASSERT_EQ(13, OCI_ObjectGetInt(obj, OTEXT("N")));
+    TEST_F(TestObjectAttrs, ObjectToText_RendersNonEmptyText)
+    {
+        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("I"), 99));
+        OCI_UInt32 size = 0;
+        ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
+        std::vector<otext> text(size + 1);
 
-        ASSERT_TRUE(OCI_ObjectSetUnsignedInt(obj, OTEXT("N"), 14u));
-        ASSERT_EQ(14u, OCI_ObjectGetUnsignedInt(obj, OTEXT("N")));
+        ASSERT_TRUE(OCI_ObjectToText(obj, &size, text.data()));
 
-        ASSERT_TRUE(OCI_ObjectSetBigInt(obj, OTEXT("N"), static_cast<OCI_Int64>(15)));
-        ASSERT_EQ(15, OCI_ObjectGetBigInt(obj, OTEXT("N")));
+        EXPECT_GT(size, 0u);
+    }
 
-        ASSERT_TRUE(OCI_ObjectSetUnsignedBigInt(obj, OTEXT("N"), static_cast<OCI_UInt64>(16)));
-        ASSERT_EQ(16u, OCI_ObjectGetUnsignedBigInt(obj, OTEXT("N")));
+    TEST_F(TestObjectAttrs, GetTypeInfo_ReturnsCreationTypeInfo)
+    {
+        EXPECT_EQ(fullType, OCI_ObjectGetTypeInfo(obj));
+    }
 
-        ASSERT_TRUE(OCI_ObjectSetFloat(obj, OTEXT("N"), 1.5f));
-        ASSERT_NEAR(1.5f, OCI_ObjectGetFloat(obj, OTEXT("N")), 0.01f);
+    TEST_F(TestObjectAttrs, GetStruct_ReturnsRawStructPointer)
+    {
+        void* p_struct = nullptr;
+        void* p_ind = nullptr;
 
-        ASSERT_TRUE(OCI_ObjectSetDouble(obj, OTEXT("N"), 2.5));
-        ASSERT_NEAR(2.5, OCI_ObjectGetDouble(obj, OTEXT("N")), 0.01);
+        ASSERT_TRUE(OCI_ObjectGetStruct(obj, &p_struct, &p_ind));
 
+        EXPECT_NE(nullptr, p_struct);
+    }
+
+    TEST_F(TestObjectAttrs, ObjectArrayCreate_AllocatesUsableObjects)
+    {
+        const auto arr = OCI_ObjectArrayCreate(fullType, 2);
+        ASSERT_NE(nullptr, arr);
+
+        EXPECT_TRUE(OCI_ObjectSetInt(arr[0], OTEXT("I"), 1));
+
+        ASSERT_TRUE(OCI_ObjectArrayFree(arr));
+    }
+
+    TEST_F(TestObjectAttrs, ObjectAssign_CopiesAttributeValues)
+    {
+        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("I"), 99));
+        const auto assigned = OCI_ObjectCreate(fullType);
+        ASSERT_NE(nullptr, assigned);
+
+        ASSERT_TRUE(OCI_ObjectAssign(assigned, obj));
+
+        EXPECT_EQ(99, OCI_ObjectGetInt(assigned, OTEXT("I")));
+
+        ASSERT_TRUE(OCI_ObjectFree(assigned));
+    }
+
+    /* -------------------------------------------------------------------------
+       Parameterized: numeric setter/getter round-trip per subtype on attr N
+       ------------------------------------------------------------------------- */
+
+    struct ObjNumCase
+    {
+        const char* name;
+        void (*run)(OCI_Object*);
+    };
+
+    void PrintTo(const ObjNumCase& c, std::ostream* os) { *os << c.name; }
+
+    static void ObjNumShort(OCI_Object* o)
+    {
+        ASSERT_TRUE(OCI_ObjectSetShort(o, OTEXT("N"), 11));
+        EXPECT_EQ(11, OCI_ObjectGetShort(o, OTEXT("N")));
+    }
+    static void ObjNumUShort(OCI_Object* o)
+    {
+        ASSERT_TRUE(OCI_ObjectSetUnsignedShort(o, OTEXT("N"), 12u));
+        EXPECT_EQ(12u, OCI_ObjectGetUnsignedShort(o, OTEXT("N")));
+    }
+    static void ObjNumInt(OCI_Object* o)
+    {
+        ASSERT_TRUE(OCI_ObjectSetInt(o, OTEXT("N"), 13));
+        EXPECT_EQ(13, OCI_ObjectGetInt(o, OTEXT("N")));
+    }
+    static void ObjNumUInt(OCI_Object* o)
+    {
+        ASSERT_TRUE(OCI_ObjectSetUnsignedInt(o, OTEXT("N"), 14u));
+        EXPECT_EQ(14u, OCI_ObjectGetUnsignedInt(o, OTEXT("N")));
+    }
+    static void ObjNumBigInt(OCI_Object* o)
+    {
+        ASSERT_TRUE(OCI_ObjectSetBigInt(o, OTEXT("N"), static_cast<OCI_Int64>(15)));
+        EXPECT_EQ(15, OCI_ObjectGetBigInt(o, OTEXT("N")));
+    }
+    static void ObjNumUBigInt(OCI_Object* o)
+    {
+        ASSERT_TRUE(OCI_ObjectSetUnsignedBigInt(o, OTEXT("N"), static_cast<OCI_UInt64>(16)));
+        EXPECT_EQ(16u, OCI_ObjectGetUnsignedBigInt(o, OTEXT("N")));
+    }
+    static void ObjNumFloat(OCI_Object* o)
+    {
+        ASSERT_TRUE(OCI_ObjectSetFloat(o, OTEXT("N"), 1.5f));
+        EXPECT_NEAR(1.5f, OCI_ObjectGetFloat(o, OTEXT("N")), 0.01f);
+    }
+    static void ObjNumDouble(OCI_Object* o)
+    {
+        ASSERT_TRUE(OCI_ObjectSetDouble(o, OTEXT("N"), 2.5));
+        EXPECT_NEAR(2.5, OCI_ObjectGetDouble(o, OTEXT("N")), 0.01);
+    }
+
+    class TestObjectNumeric : public ::testing::TestWithParam<ObjNumCase>
+    {
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_TypeInfo* typinf = nullptr;
+        OCI_Object* obj = nullptr;
+
+        void SetUp() override
+        {
+            ExecDML(OTEXT("create or replace type TestObject_NumericT as object(n number, s varchar2(20))"));
+
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            typinf = OCI_TypeInfoGet(conn, OTEXT("TestObject_NumericT"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, typinf);
+            obj = OCI_ObjectCreate(typinf);
+            ASSERT_NE(nullptr, obj);
+        }
+
+        void TearDown() override
+        {
+            if (obj) OCI_ObjectFree(obj);
+            if (typinf) OCI_TypeInfoFree(typinf);
+            if (conn) OCI_ConnectionFree(conn);
+
+            ExecDML(OTEXT("drop type TestObject_NumericT"));
+        }
+    };
+
+    TEST_P(TestObjectNumeric, SetThenGet_RoundTripsValue)
+    {
+        GetParam().run(obj);
+    }
+
+    INSTANTIATE_TEST_CASE_P(NumSubtype, TestObjectNumeric,
+        ::testing::Values(
+            ObjNumCase{ "Short",   ObjNumShort },
+            ObjNumCase{ "UShort",  ObjNumUShort },
+            ObjNumCase{ "Int",     ObjNumInt },
+            ObjNumCase{ "UInt",    ObjNumUInt },
+            ObjNumCase{ "BigInt",  ObjNumBigInt },
+            ObjNumCase{ "UBigInt", ObjNumUBigInt },
+            ObjNumCase{ "Float",   ObjNumFloat },
+            ObjNumCase{ "Double",  ObjNumDouble }),
+        ::testing::PrintToStringParamName());
+
+    TEST_F(TestObjectNumeric, GetNumericOnStringAttr_CoercesValue)
+    {
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("S"), OTEXT("1234")));
-        ASSERT_EQ(1234, OCI_ObjectGetInt(obj, OTEXT("S")));
-        ASSERT_NEAR(1234.0, OCI_ObjectGetDouble(obj, OTEXT("S")), 0.01);
 
+        EXPECT_EQ(1234, OCI_ObjectGetInt(obj, OTEXT("S")));
+        EXPECT_NEAR(1234.0, OCI_ObjectGetDouble(obj, OTEXT("S")), 0.01);
+    }
+
+    TEST_F(TestObjectNumeric, SetNullNumberAttr_MarksNullAndGetterReturnsDefault)
+    {
         ASSERT_TRUE(OCI_ObjectSetNumber(obj, OTEXT("N"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("N")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetNumber(obj, OTEXT("N")));
-        ASSERT_EQ(0, OCI_ObjectGetInt(obj, OTEXT("N")));
 
-        ASSERT_TRUE(OCI_ObjectFree(obj));
-        ASSERT_TRUE(OCI_TypeInfoFree(typinf));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop type TestObject_NumericT"));
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("N")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetNumber(obj, OTEXT("N")));
+        EXPECT_EQ(0, OCI_ObjectGetInt(obj, OTEXT("N")));
     }
 
     TEST(TestObject, SelfRef)
@@ -359,155 +547,250 @@ namespace TestCApi
         ExecDML(OTEXT("drop type TestObject_BaseNF"));
     }
 
-    TEST(TestObject, NullAttributeSetters)
+    /* -------------------------------------------------------------------------
+       Parameterized: setting NULL on each attribute type marks it null and
+       makes its getter return the documented default
+       ------------------------------------------------------------------------- */
+
+    struct ObjNullCase
     {
-        ExecDML(OTEXT("create or replace type TestObject_NullTgtT as object(code int, name varchar2(20))"));
-        ExecDML(OTEXT("create or replace type TestObject_NullVarray as varray(1) of number"));
-        ExecDML(OTEXT("create or replace type TestObject_NullFullT as object(n number, i int, s varchar2(20), r raw(10), d date, ts timestamp, iv interval day to second, lob clob, coll TestObject_NullVarray, ref_val ref TestObject_NullTgtT, f bfile, nested TestObject_NullTgtT)"));
+        const char* name;
+        void (*run)(OCI_Object*);
+    };
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    void PrintTo(const ObjNullCase& c, std::ostream* os) { *os << c.name; }
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
-
-        const auto tgtType = OCI_TypeInfoGet(conn, OTEXT("TestObject_NullTgtT"), OCI_TIF_TYPE);
-        const auto fullType = OCI_TypeInfoGet(conn, OTEXT("TestObject_NullFullT"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, fullType);
-
-        const auto obj = OCI_ObjectCreate(fullType);
-        ASSERT_NE(nullptr, obj);
-
+    static void ObjNullNumber(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetNull(obj, OTEXT("N")));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("N")));
-        ASSERT_EQ(0, OCI_ObjectGetInt(obj, OTEXT("N")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetNumber(obj, OTEXT("N")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("N")));
+        EXPECT_EQ(0, OCI_ObjectGetInt(obj, OTEXT("N")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetNumber(obj, OTEXT("N")));
+    }
+    static void ObjNullInt(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetNull(obj, OTEXT("I")));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("I")));
-        ASSERT_EQ(0, OCI_ObjectGetInt(obj, OTEXT("I")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("I")));
+        EXPECT_EQ(0, OCI_ObjectGetInt(obj, OTEXT("I")));
+    }
+    static void ObjNullString(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("S"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("S")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetString(obj, OTEXT("S")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("S")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetString(obj, OTEXT("S")));
+    }
+    static void ObjNullRaw(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetRaw(obj, OTEXT("R"), nullptr, 0));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("R")));
-        ASSERT_EQ(0, OCI_ObjectGetRaw(obj, OTEXT("R"), nullptr, 0));
-        ASSERT_EQ(0u, OCI_ObjectGetRawSize(obj, OTEXT("R")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("R")));
+        EXPECT_EQ(0, OCI_ObjectGetRaw(obj, OTEXT("R"), nullptr, 0));
+        EXPECT_EQ(0u, OCI_ObjectGetRawSize(obj, OTEXT("R")));
+    }
+    static void ObjNullDate(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetDate(obj, OTEXT("D"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("D")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetDate(obj, OTEXT("D")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("D")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetDate(obj, OTEXT("D")));
+    }
+    static void ObjNullTimestamp(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetTimestamp(obj, OTEXT("TS"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("TS")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetTimestamp(obj, OTEXT("TS")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("TS")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetTimestamp(obj, OTEXT("TS")));
+    }
+    static void ObjNullInterval(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetInterval(obj, OTEXT("IV"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("IV")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetInterval(obj, OTEXT("IV")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("IV")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetInterval(obj, OTEXT("IV")));
+    }
+    static void ObjNullLob(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetLob(obj, OTEXT("LOB"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("LOB")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetLob(obj, OTEXT("LOB")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("LOB")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetLob(obj, OTEXT("LOB")));
+    }
+    static void ObjNullColl(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetColl(obj, OTEXT("COLL"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("COLL")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetColl(obj, OTEXT("COLL")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("COLL")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetColl(obj, OTEXT("COLL")));
+    }
+    static void ObjNullRef(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetRef(obj, OTEXT("REF_VAL"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("REF_VAL")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetRef(obj, OTEXT("REF_VAL")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("REF_VAL")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetRef(obj, OTEXT("REF_VAL")));
+    }
+    static void ObjNullFile(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetFile(obj, OTEXT("F"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("F")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetFile(obj, OTEXT("F")));
-
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("F")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetFile(obj, OTEXT("F")));
+    }
+    static void ObjNullNested(OCI_Object* obj)
+    {
         ASSERT_TRUE(OCI_ObjectSetObject(obj, OTEXT("NESTED"), nullptr));
-        ASSERT_TRUE(OCI_ObjectIsNull(obj, OTEXT("NESTED")));
-        ASSERT_EQ(nullptr, OCI_ObjectGetObject(obj, OTEXT("NESTED")));
-
-        OCI_UInt32 size = 0;
-        ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
-        static std::vector<otext> text(size + 1);
-        ASSERT_TRUE(OCI_ObjectToText(obj, &size, text.data()));
-        ASSERT_GT(size, 0u);
-
-        ASSERT_TRUE(OCI_ObjectFree(obj));
-        ASSERT_TRUE(OCI_TypeInfoFree(fullType));
-        ASSERT_TRUE(OCI_TypeInfoFree(tgtType));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
-
-        ExecDML(OTEXT("drop type TestObject_NullFullT"));
-        ExecDML(OTEXT("drop type TestObject_NullVarray"));
-        ExecDML(OTEXT("drop type TestObject_NullTgtT"));
+        EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("NESTED")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetObject(obj, OTEXT("NESTED")));
     }
 
-    TEST(TestObject, FileAndRefAttributes)
+    class TestObjectNullAttrs : public ::testing::TestWithParam<ObjNullCase>
     {
-        ExecDML(OTEXT("create or replace type TestObject_RefTgtT as object(code int)"));
-        ExecDML(OTEXT("create table TestObject_RefTgtTable of TestObject_RefTgtT"));
-        ExecDML(OTEXT("insert into TestObject_RefTgtTable values (1)"));
-        ExecDML(OTEXT("create or replace type TestObject_FileRefT as object(code int, f bfile, r ref TestObject_RefTgtT)"));
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_TypeInfo* fullType = nullptr;
+        OCI_TypeInfo* tgtType = nullptr;
+        OCI_Object* obj = nullptr;
 
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+        void SetUp() override
+        {
+            ExecDML(OTEXT("create or replace type TestObject_NullTgtT as object(code int, name varchar2(20))"));
+            ExecDML(OTEXT("create or replace type TestObject_NullVarray as varray(1) of number"));
+            ExecDML(OTEXT("create or replace type TestObject_NullFullT as object(n number, i int, s varchar2(20), r raw(10), d date, ts timestamp, iv interval day to second, lob clob, coll TestObject_NullVarray, ref_val ref TestObject_NullTgtT, f bfile, nested TestObject_NullTgtT)"));
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+            conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            tgtType = OCI_TypeInfoGet(conn, OTEXT("TestObject_NullTgtT"), OCI_TIF_TYPE);
+            fullType = OCI_TypeInfoGet(conn, OTEXT("TestObject_NullFullT"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, fullType);
+            obj = OCI_ObjectCreate(fullType);
+            ASSERT_NE(nullptr, obj);
+        }
 
-        const auto stmt = OCI_StatementCreate(conn);
-        ASSERT_NE(nullptr, stmt);
+        void TearDown() override
+        {
+            if (obj) OCI_ObjectFree(obj);
+            if (fullType) OCI_TypeInfoFree(fullType);
+            if (tgtType) OCI_TypeInfoFree(tgtType);
+            if (conn) OCI_ConnectionFree(conn);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT REF(t) FROM TestObject_RefTgtTable t")));
+            ExecDML(OTEXT("drop type TestObject_NullFullT"));
+            ExecDML(OTEXT("drop type TestObject_NullVarray"));
+            ExecDML(OTEXT("drop type TestObject_NullTgtT"));
+        }
+    };
 
-        const auto rs = OCI_GetResultset(stmt);
-        ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+    TEST_P(TestObjectNullAttrs, SetNullOnAttr_MarksNullAndGetterReturnsDefault)
+    {
+        GetParam().run(obj);
+    }
 
-        const auto ref = OCI_GetRef(rs, 0);
-        ASSERT_NE(nullptr, ref);
-        ASSERT_FALSE(OCI_RefIsNull(ref));
+    INSTANTIATE_TEST_CASE_P(AttrType, TestObjectNullAttrs,
+        ::testing::Values(
+            ObjNullCase{ "Number",    ObjNullNumber },
+            ObjNullCase{ "Int",       ObjNullInt },
+            ObjNullCase{ "String",    ObjNullString },
+            ObjNullCase{ "Raw",       ObjNullRaw },
+            ObjNullCase{ "Date",      ObjNullDate },
+            ObjNullCase{ "Timestamp", ObjNullTimestamp },
+            ObjNullCase{ "Interval",  ObjNullInterval },
+            ObjNullCase{ "Lob",       ObjNullLob },
+            ObjNullCase{ "Coll",      ObjNullColl },
+            ObjNullCase{ "Ref",       ObjNullRef },
+            ObjNullCase{ "File",      ObjNullFile },
+            ObjNullCase{ "Nested",    ObjNullNested }),
+        ::testing::PrintToStringParamName());
 
-        const auto fileType = OCI_TypeInfoGet(conn, OTEXT("TestObject_FileRefT"), OCI_TIF_TYPE);
-        ASSERT_NE(nullptr, fileType);
+    TEST_F(TestObjectNullAttrs, ObjectToTextOnNullObject_RendersNonEmptyText)
+    {
+        OCI_UInt32 size = 0;
+        ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
+        std::vector<otext> text(size + 1);
 
-        const auto obj = OCI_ObjectCreate(fileType);
-        ASSERT_NE(nullptr, obj);
+        ASSERT_TRUE(OCI_ObjectToText(obj, &size, text.data()));
 
-        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("CODE"), 7));
+        EXPECT_GT(size, 0u);
+    }
 
+    /* -------------------------------------------------------------------------
+       Shared fixture: FileRefT object + fetched REF + BFILE
+       ------------------------------------------------------------------------- */
+
+    class TestObjectFileRef : public ::testing::Test
+    {
+    protected:
+        OCI_Connection* conn = nullptr;
+        OCI_Statement* stmt = nullptr;
+        OCI_TypeInfo* fileType = nullptr;
+        OCI_Object* obj = nullptr;
+        OCI_Ref* ref = nullptr;
+
+        void SetUp() override
+        {
+            ExecDML(OTEXT("create or replace type TestObject_RefTgtT as object(code int)"));
+            ExecDML(OTEXT("create table TestObject_RefTgtTable of TestObject_RefTgtT"));
+            ExecDML(OTEXT("insert into TestObject_RefTgtTable values (1)"));
+            ExecDML(OTEXT("create or replace type TestObject_FileRefT as object(code int, f bfile, r ref TestObject_RefTgtT)"));
+
+            const auto env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            stmt = OCI_StatementCreate(conn);
+            ASSERT_NE(nullptr, stmt);
+            ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT REF(t) FROM TestObject_RefTgtTable t")));
+            const auto rs = OCI_GetResultset(stmt);
+            ASSERT_NE(nullptr, rs);
+            ASSERT_TRUE(OCI_FetchNext(rs));
+            ref = OCI_GetRef(rs, 0);
+            ASSERT_NE(nullptr, ref);
+            fileType = OCI_TypeInfoGet(conn, OTEXT("TestObject_FileRefT"), OCI_TIF_TYPE);
+            ASSERT_NE(nullptr, fileType);
+            obj = OCI_ObjectCreate(fileType);
+            ASSERT_NE(nullptr, obj);
+        }
+
+        void TearDown() override
+        {
+            if (obj) OCI_ObjectFree(obj);
+            if (fileType) OCI_TypeInfoFree(fileType);
+            if (stmt) OCI_StatementFree(stmt);
+            if (conn) OCI_ConnectionFree(conn);
+
+            ExecDML(OTEXT("drop table TestObject_RefTgtTable"));
+            ExecDML(OTEXT("drop type TestObject_FileRefT"));
+            ExecDML(OTEXT("drop type TestObject_RefTgtT"));
+        }
+    };
+
+    TEST_F(TestObjectFileRef, SetAndGetFileAttr_ReturnsFileNameParts)
+    {
         const auto file = OCI_FileCreate(conn, OCI_BFILE);
         ASSERT_NE(nullptr, file);
         ASSERT_TRUE(OCI_FileSetName(file, OTEXT("FAKE_DIR"), OTEXT("file.txt")));
+
         ASSERT_TRUE(OCI_ObjectSetFile(obj, OTEXT("F"), file));
 
         const auto file2 = OCI_ObjectGetFile(obj, OTEXT("F"));
         ASSERT_NE(nullptr, file2);
-        ASSERT_EQ(String(OTEXT("FAKE_DIR")), String(OCI_FileGetDirectory(file2)));
-        ASSERT_EQ(String(OTEXT("file.txt")), String(OCI_FileGetName(file2)));
-
-        ASSERT_TRUE(OCI_ObjectSetRef(obj, OTEXT("R"), ref));
-        const auto ref2 = OCI_ObjectGetRef(obj, OTEXT("R"));
-        ASSERT_NE(nullptr, ref2);
-        ASSERT_FALSE(OCI_RefIsNull(ref2));
-
-        OCI_UInt32 size = 0;
-        ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
-        static std::vector<otext> text(size + 1);
-        ASSERT_TRUE(OCI_ObjectToText(obj, &size, text.data()));
-        ASSERT_GT(size, 0u);
+        EXPECT_EQ(String(OTEXT("FAKE_DIR")), String(OCI_FileGetDirectory(file2)));
+        EXPECT_EQ(String(OTEXT("file.txt")), String(OCI_FileGetName(file2)));
 
         ASSERT_TRUE(OCI_FileFree(file));
-        ASSERT_TRUE(OCI_ObjectFree(obj));
-        ASSERT_TRUE(OCI_TypeInfoFree(fileType));
-        ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
 
-        ExecDML(OTEXT("drop table TestObject_RefTgtTable"));
-        ExecDML(OTEXT("drop type TestObject_FileRefT"));
-        ExecDML(OTEXT("drop type TestObject_RefTgtT"));
+    TEST_F(TestObjectFileRef, SetAndGetRefAttr_ReturnsNonNullRef)
+    {
+        ASSERT_FALSE(OCI_RefIsNull(ref));
+
+        ASSERT_TRUE(OCI_ObjectSetRef(obj, OTEXT("R"), ref));
+
+        const auto ref2 = OCI_ObjectGetRef(obj, OTEXT("R"));
+        ASSERT_NE(nullptr, ref2);
+        EXPECT_FALSE(OCI_RefIsNull(ref2));
+    }
+
+    TEST_F(TestObjectFileRef, ObjectToTextOnFileRefObject_RendersNonEmptyText)
+    {
+        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("CODE"), 7));
+        OCI_UInt32 size = 0;
+        ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
+        std::vector<otext> text(size + 1);
+
+        ASSERT_TRUE(OCI_ObjectToText(obj, &size, text.data()));
+
+        EXPECT_GT(size, 0u);
     }
 
     TEST(TestObject, GetStringOnNonTextAttributes)

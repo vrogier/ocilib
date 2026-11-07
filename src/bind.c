@@ -1075,13 +1075,14 @@ OCI_Int32 OcilibBindGetIndex
                register binds :
                   - user binds are stored as positive values
                   - registers binds are stored as negatives values
-            */
+               Register binds are not binds: they are stored in the map
+               for internal bookkeeping only and are not reported here */
 
             index = he->values->value.num;
 
             if (index < 0)
             {
-                index = -index;
+                index = -1;
             }
 
         if (index > 0)

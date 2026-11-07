@@ -40,7 +40,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestCallback, SetTAFAndHAHandlers)
+    TEST(TestCallback, SetTAFHandlerOnCapableConnection)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -50,12 +50,17 @@ namespace TestCApi
 
         if (OCI_IsTAFCapable(conn))
         {
-            ASSERT_TRUE(OCI_SetTAFHandler(conn, TAFHandler));
+            EXPECT_TRUE(OCI_SetTAFHandler(conn, TAFHandler));
         }
 
-        ASSERT_TRUE(OCI_SetHAHandler(env, HAHandler));
-
         ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
 
+    TEST(TestCallback, SetHAHandlerOnEnvironment)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        ASSERT_TRUE(OCI_SetHAHandler(env, HAHandler));
     }
 }

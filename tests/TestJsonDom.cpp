@@ -118,336 +118,611 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestJsonDom, NodeCreationAndSetters)
+    /* -------------------------------------------------------------------------
+       Parameterized: create/get/set round-trip per JSON node type
+       ------------------------------------------------------------------------- */
+
+    struct JsonNodeTypeCase
     {
-        auto env = GetEnvironment(nullptr);
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+        const char* name;
+        void (*run)(OCI_Environment*, OCI_Json*, OCI_JsonNode*);
+    };
 
-        const auto json = OCI_JsonCreate(conn);
-        ASSERT_NE(nullptr, json);
-        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+    void PrintTo(const JsonNodeTypeCase& c, std::ostream* os) { *os << c.name; }
 
-        OCI_JsonNode* root = OCI_JsonNodeCreateObject(json);
-        ASSERT_NE(nullptr, root);
-
-        OCI_JsonNode* generic = OCI_JsonNodeCreate(json, OCI_JNT_STRING);
-        ASSERT_NE(nullptr, generic);
-        ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(generic));
-        ASSERT_TRUE(OCI_JsonNodeSetString(generic, OTEXT("generic"), 0));
-        ASSERT_EQ(String(OTEXT("generic")), String(OCI_JsonNodeGetString(generic, nullptr)));
-        OCI_JsonNodeSetField(root, OTEXT("generic"), generic);
-        OCI_JsonNodeFree(generic);
-
-        OCI_JsonNode* str = OCI_JsonNodeCreateString(json, OTEXT("old"), 0);
-        ASSERT_TRUE(OCI_JsonNodeSetString(str, OTEXT("new"), 0));
-        ASSERT_EQ(String(OTEXT("new")), String(OCI_JsonNodeGetString(str, nullptr)));
-        OCI_JsonNodeSetField(root, OTEXT("str"), str);
-        OCI_JsonNodeFree(str);
-
+    static void NodeString(OCI_Environment*, OCI_Json* json, OCI_JsonNode* root)
+    {
+        OCI_JsonNode* n = OCI_JsonNodeCreateString(json, OTEXT("old"), 0);
+        ASSERT_NE(nullptr, n);
+        ASSERT_TRUE(OCI_JsonNodeSetString(n, OTEXT("new"), 0));
+        EXPECT_EQ(String(OTEXT("new")), String(OCI_JsonNodeGetString(n, nullptr)));
+        OCI_JsonNodeSetField(root, OTEXT("str"), n);
+        OCI_JsonNodeFree(n);
+    }
+    static void NodeNumber(OCI_Environment* env, OCI_Json* json, OCI_JsonNode* root)
+    {
         OCI_Number* num = OCI_NumberCreate(env);
         ASSERT_NE(nullptr, num);
         OCI_Double v = 3.14;
         ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_DOUBLE, &v));
-        OCI_JsonNode* numNode = OCI_JsonNodeCreateNumber(json, num);
-        ASSERT_EQ(OCI_JNT_NUMBER, OCI_JsonNodeGetType(numNode));
-
-        OCI_Number* numOut = OCI_JsonNodeGetNumber(numNode);
-        ASSERT_NE(nullptr, numOut);
+        OCI_JsonNode* n = OCI_JsonNodeCreateNumber(json, num);
+        ASSERT_NE(nullptr, n);
+        ASSERT_EQ(OCI_JNT_NUMBER, OCI_JsonNodeGetType(n));
+        ASSERT_TRUE(OCI_NumberFree(num));
+        OCI_Number* out = OCI_JsonNodeGetNumber(n);
+        ASSERT_NE(nullptr, out);
         OCI_Double vOut = 0.0;
-        ASSERT_TRUE(OCI_NumberGetValue(numOut, OCI_NUM_DOUBLE, &vOut));
-        ASSERT_DOUBLE_EQ(3.14, vOut);
-        ASSERT_TRUE(OCI_NumberFree(numOut));
-
+        ASSERT_TRUE(OCI_NumberGetValue(out, OCI_NUM_DOUBLE, &vOut));
+        EXPECT_DOUBLE_EQ(3.14, vOut);
+        ASSERT_TRUE(OCI_NumberFree(out));
         OCI_Number* num2 = OCI_NumberCreate(env);
-        ASSERT_NE(nullptr, num2);
         v = 2.718;
         ASSERT_TRUE(OCI_NumberSetValue(num2, OCI_NUM_DOUBLE, &v));
-        ASSERT_TRUE(OCI_JsonNodeSetNumber(numNode, num2));
+        ASSERT_TRUE(OCI_JsonNodeSetNumber(n, num2));
         ASSERT_TRUE(OCI_NumberFree(num2));
-
-        numOut = OCI_JsonNodeGetNumber(numNode);
-        ASSERT_TRUE(OCI_NumberGetValue(numOut, OCI_NUM_DOUBLE, &vOut));
-        ASSERT_DOUBLE_EQ(2.718, vOut);
-        ASSERT_TRUE(OCI_NumberFree(numOut));
-        ASSERT_TRUE(OCI_NumberFree(num));
-
-        OCI_JsonNodeSetField(root, OTEXT("num"), numNode);
-        OCI_JsonNodeFree(numNode);
-
-        OCI_JsonNode* OCI_Boolean = OCI_JsonNodeCreateBoolean(json, TRUE);
-        ASSERT_TRUE(OCI_JsonNodeGetBoolean(OCI_Boolean));
-        ASSERT_TRUE(OCI_JsonNodeSetBoolean(OCI_Boolean, FALSE));
-        ASSERT_FALSE(OCI_JsonNodeGetBoolean(OCI_Boolean));
-        OCI_JsonNodeSetField(root, OTEXT("bool"), OCI_Boolean);
-        OCI_JsonNodeFree(OCI_Boolean);
-
-        OCI_JsonNode* nullNode = OCI_JsonNodeCreateNull(json);
-        ASSERT_TRUE(OCI_JsonNodeIsNull(nullNode));
-        ASSERT_TRUE(OCI_JsonNodeSetNull(nullNode));
-        ASSERT_TRUE(OCI_JsonNodeIsNull(nullNode));
-        OCI_JsonNodeSetField(root, OTEXT("nil"), nullNode);
-        OCI_JsonNodeFree(nullNode);
-
-        unsigned char binData[] = { 0xAB, 0xCD, 0xEF };
-        OCI_JsonNode* binary = OCI_JsonNodeCreateBinary(json, binData, 3);
-        OCI_UInt32 binLen = 0;
-        const void* binVal = OCI_JsonNodeGetBinary(binary, &binLen);
-        ASSERT_EQ(3u, binLen);
-        ASSERT_EQ(0, memcmp(binVal, binData, 3));
-
-        unsigned char binData2[] = { 0x12, 0x34 };
-        ASSERT_TRUE(OCI_JsonNodeSetBinary(binary, binData2, 2));
-        binVal = OCI_JsonNodeGetBinary(binary, &binLen);
-        ASSERT_EQ(2u, binLen);
-        ASSERT_EQ(0, memcmp(binVal, binData2, 2));
-        OCI_JsonNodeSetField(root, OTEXT("bin"), binary);
-        OCI_JsonNodeFree(binary);
-
+        out = OCI_JsonNodeGetNumber(n);
+        ASSERT_TRUE(OCI_NumberGetValue(out, OCI_NUM_DOUBLE, &vOut));
+        EXPECT_DOUBLE_EQ(2.718, vOut);
+        ASSERT_TRUE(OCI_NumberFree(out));
+        OCI_JsonNodeSetField(root, OTEXT("num"), n);
+        OCI_JsonNodeFree(n);
+    }
+    static void NodeBoolean(OCI_Environment*, OCI_Json* json, OCI_JsonNode* root)
+    {
+        OCI_JsonNode* n = OCI_JsonNodeCreateBoolean(json, TRUE);
+        ASSERT_NE(nullptr, n);
+        ASSERT_TRUE(OCI_JsonNodeGetBoolean(n));
+        ASSERT_TRUE(OCI_JsonNodeSetBoolean(n, FALSE));
+        EXPECT_FALSE(OCI_JsonNodeGetBoolean(n));
+        OCI_JsonNodeSetField(root, OTEXT("bool"), n);
+        OCI_JsonNodeFree(n);
+    }
+    static void NodeNull(OCI_Environment*, OCI_Json* json, OCI_JsonNode* root)
+    {
+        OCI_JsonNode* n = OCI_JsonNodeCreateNull(json);
+        ASSERT_NE(nullptr, n);
+        ASSERT_TRUE(OCI_JsonNodeIsNull(n));
+        ASSERT_TRUE(OCI_JsonNodeSetNull(n));
+        EXPECT_TRUE(OCI_JsonNodeIsNull(n));
+        OCI_JsonNodeSetField(root, OTEXT("nil"), n);
+        OCI_JsonNodeFree(n);
+    }
+    static void NodeBinary(OCI_Environment*, OCI_Json* json, OCI_JsonNode* root)
+    {
+        unsigned char d1[] = { 0xAB, 0xCD, 0xEF };
+        unsigned char d2[] = { 0x12, 0x34 };
+        OCI_JsonNode* n = OCI_JsonNodeCreateBinary(json, d1, 3);
+        ASSERT_NE(nullptr, n);
+        OCI_UInt32 len = 0;
+        const void* val = OCI_JsonNodeGetBinary(n, &len);
+        ASSERT_EQ(3u, len);
+        ASSERT_EQ(0, memcmp(val, d1, 3));
+        ASSERT_TRUE(OCI_JsonNodeSetBinary(n, d2, 2));
+        val = OCI_JsonNodeGetBinary(n, &len);
+        EXPECT_EQ(2u, len);
+        EXPECT_EQ(0, memcmp(val, d2, 2));
+        OCI_JsonNodeSetField(root, OTEXT("bin"), n);
+        OCI_JsonNodeFree(n);
+    }
+    static void NodeDate(OCI_Environment* env, OCI_Json* json, OCI_JsonNode* root)
+    {
         OCI_Date* date = OCI_DateCreate(env);
         ASSERT_NE(nullptr, date);
         ASSERT_TRUE(OCI_DateSetDate(date, 2024, 5, 15));
-        OCI_JsonNode* dateNode = OCI_JsonNodeCreateDate(json, date);
-        ASSERT_EQ(OCI_JNT_DATE, OCI_JsonNodeGetType(dateNode));
-
-        OCI_Date* date2 = OCI_JsonNodeGetDate(dateNode);
-        ASSERT_NE(nullptr, date2);
-        OCI_Int32 y = 0, m = 0, d = 0;
-        ASSERT_TRUE(OCI_DateGetDate(date2, &y, &m, &d));
-        ASSERT_EQ(2024, y);
-        ASSERT_EQ(5, m);
-        ASSERT_EQ(15, d);
-        ASSERT_TRUE(OCI_DateFree(date2));
-
-        OCI_Date* date3 = OCI_DateCreate(env);
-        ASSERT_TRUE(OCI_DateSetDate(date3, 2025, 6, 20));
-        ASSERT_TRUE(OCI_JsonNodeSetDate(dateNode, date3));
-        ASSERT_TRUE(OCI_DateFree(date3));
-
-        date2 = OCI_JsonNodeGetDate(dateNode);
-        ASSERT_TRUE(OCI_DateGetDate(date2, &y, &m, &d));
-        ASSERT_EQ(2025, y);
-        ASSERT_EQ(6, m);
-        ASSERT_EQ(20, d);
-        ASSERT_TRUE(OCI_DateFree(date2));
+        OCI_JsonNode* n = OCI_JsonNodeCreateDate(json, date);
+        ASSERT_NE(nullptr, n);
+        ASSERT_EQ(OCI_JNT_DATE, OCI_JsonNodeGetType(n));
         ASSERT_TRUE(OCI_DateFree(date));
-
-        OCI_JsonNodeSetField(root, OTEXT("date"), dateNode);
-        OCI_JsonNodeFree(dateNode);
-
+        OCI_Date* out = OCI_JsonNodeGetDate(n);
+        ASSERT_NE(nullptr, out);
+        OCI_Int32 y = 0, m = 0, d = 0;
+        ASSERT_TRUE(OCI_DateGetDate(out, &y, &m, &d));
+        EXPECT_EQ(2024, y); EXPECT_EQ(5, m); EXPECT_EQ(15, d);
+        ASSERT_TRUE(OCI_DateFree(out));
+        OCI_Date* d2 = OCI_DateCreate(env);
+        ASSERT_TRUE(OCI_DateSetDate(d2, 2025, 6, 20));
+        ASSERT_TRUE(OCI_JsonNodeSetDate(n, d2));
+        ASSERT_TRUE(OCI_DateFree(d2));
+        out = OCI_JsonNodeGetDate(n);
+        ASSERT_TRUE(OCI_DateGetDate(out, &y, &m, &d));
+        EXPECT_EQ(2025, y); EXPECT_EQ(6, m); EXPECT_EQ(20, d);
+        ASSERT_TRUE(OCI_DateFree(out));
+        OCI_JsonNodeSetField(root, OTEXT("date"), n);
+        OCI_JsonNodeFree(n);
+    }
+    static void NodeTimestamp(OCI_Environment* env, OCI_Json* json, OCI_JsonNode* root)
+    {
         OCI_Timestamp* ts = OCI_TimestampCreate(env, OCI_TIMESTAMP);
         ASSERT_NE(nullptr, ts);
         ASSERT_TRUE(OCI_TimestampConstruct(ts, 2024, 5, 15, 10, 30, 0, 0, nullptr));
-        OCI_JsonNode* tsNode = OCI_JsonNodeCreateTimestamp(json, ts);
-        ASSERT_EQ(OCI_JNT_TIMESTAMP, OCI_JsonNodeGetType(tsNode));
-
-        OCI_Timestamp* ts2 = OCI_JsonNodeGetTimestamp(tsNode);
-        ASSERT_NE(nullptr, ts2);
-        OCI_Int32 h = 0, mn = 0, s = 0, f = 0;
-        ASSERT_TRUE(OCI_TimestampGetDateTime(ts2, &y, &m, &d, &h, &mn, &s, &f));
-        ASSERT_EQ(2024, y);
-        ASSERT_EQ(5, m);
-        ASSERT_EQ(15, d);
-        ASSERT_EQ(10, h);
-        ASSERT_EQ(30, mn);
-        ASSERT_TRUE(OCI_TimestampFree(ts2));
-
-        OCI_Timestamp* ts3 = OCI_TimestampCreate(env, OCI_TIMESTAMP);
-        ASSERT_TRUE(OCI_TimestampConstruct(ts3, 2025, 6, 20, 14, 45, 0, 0, nullptr));
-        ASSERT_TRUE(OCI_JsonNodeSetTimestamp(tsNode, ts3));
-        ASSERT_TRUE(OCI_TimestampFree(ts3));
-
-        ts2 = OCI_JsonNodeGetTimestamp(tsNode);
-        ASSERT_TRUE(OCI_TimestampGetDateTime(ts2, &y, &m, &d, &h, &mn, &s, &f));
-        ASSERT_EQ(2025, y);
-        ASSERT_EQ(6, m);
-        ASSERT_EQ(20, d);
-        ASSERT_EQ(14, h);
-        ASSERT_EQ(45, mn);
-        ASSERT_TRUE(OCI_TimestampFree(ts2));
+        OCI_JsonNode* n = OCI_JsonNodeCreateTimestamp(json, ts);
+        ASSERT_NE(nullptr, n);
+        ASSERT_EQ(OCI_JNT_TIMESTAMP, OCI_JsonNodeGetType(n));
         ASSERT_TRUE(OCI_TimestampFree(ts));
-
-        OCI_JsonNodeSetField(root, OTEXT("ts"), tsNode);
-        OCI_JsonNodeFree(tsNode);
-
+        OCI_Timestamp* out = OCI_JsonNodeGetTimestamp(n);
+        ASSERT_NE(nullptr, out);
+        OCI_Int32 y = 0, m = 0, d = 0, h = 0, mn = 0, s = 0, f = 0;
+        ASSERT_TRUE(OCI_TimestampGetDateTime(out, &y, &m, &d, &h, &mn, &s, &f));
+        EXPECT_EQ(2024, y); EXPECT_EQ(5, m); EXPECT_EQ(15, d); EXPECT_EQ(10, h); EXPECT_EQ(30, mn);
+        ASSERT_TRUE(OCI_TimestampFree(out));
+        OCI_Timestamp* t2 = OCI_TimestampCreate(env, OCI_TIMESTAMP);
+        ASSERT_TRUE(OCI_TimestampConstruct(t2, 2025, 6, 20, 14, 45, 0, 0, nullptr));
+        ASSERT_TRUE(OCI_JsonNodeSetTimestamp(n, t2));
+        ASSERT_TRUE(OCI_TimestampFree(t2));
+        out = OCI_JsonNodeGetTimestamp(n);
+        ASSERT_TRUE(OCI_TimestampGetDateTime(out, &y, &m, &d, &h, &mn, &s, &f));
+        EXPECT_EQ(2025, y); EXPECT_EQ(6, m); EXPECT_EQ(20, d); EXPECT_EQ(14, h); EXPECT_EQ(45, mn);
+        ASSERT_TRUE(OCI_TimestampFree(out));
+        OCI_JsonNodeSetField(root, OTEXT("ts"), n);
+        OCI_JsonNodeFree(n);
+    }
+    static void NodeInterval(OCI_Environment* env, OCI_Json* json, OCI_JsonNode* root)
+    {
         OCI_Interval* itv = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
         ASSERT_NE(nullptr, itv);
         ASSERT_TRUE(OCI_IntervalSetYearMonth(itv, 1, 6));
-        OCI_JsonNode* itvNode = OCI_JsonNodeCreateInterval(json, itv);
-        ASSERT_EQ(OCI_JNT_INTERVAL, OCI_JsonNodeGetType(itvNode));
-
-        OCI_Interval* itv2 = OCI_JsonNodeGetInterval(itvNode);
-        ASSERT_NE(nullptr, itv2);
-        ASSERT_TRUE(OCI_IntervalGetYearMonth(itv2, &y, &m));
-        ASSERT_EQ(1, y);
-        ASSERT_EQ(6, m);
-        ASSERT_TRUE(OCI_IntervalFree(itv2));
-
-        OCI_Interval* itv3 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
-        ASSERT_TRUE(OCI_IntervalSetYearMonth(itv3, 2, 3));
-        ASSERT_TRUE(OCI_JsonNodeSetInterval(itvNode, itv3));
-        ASSERT_TRUE(OCI_IntervalFree(itv3));
-
-        itv2 = OCI_JsonNodeGetInterval(itvNode);
-        ASSERT_TRUE(OCI_IntervalGetYearMonth(itv2, &y, &m));
-        ASSERT_EQ(2, y);
-        ASSERT_EQ(3, m);
-        ASSERT_TRUE(OCI_IntervalFree(itv2));
+        OCI_JsonNode* n = OCI_JsonNodeCreateInterval(json, itv);
+        ASSERT_NE(nullptr, n);
+        ASSERT_EQ(OCI_JNT_INTERVAL, OCI_JsonNodeGetType(n));
         ASSERT_TRUE(OCI_IntervalFree(itv));
-
-        OCI_JsonNodeSetField(root, OTEXT("iv"), itvNode);
-        OCI_JsonNodeFree(itvNode);
-
-        OCI_JsonNode* arr = OCI_JsonNodeCreateArray(json);
-        ASSERT_EQ(OCI_JNT_ARRAY, OCI_JsonNodeGetType(arr));
-
-        OCI_Number* numA = OCI_NumberCreate(env);
-        v = 1.0;
-        ASSERT_TRUE(OCI_NumberSetValue(numA, OCI_NUM_DOUBLE, &v));
-        OCI_JsonNode* item1 = OCI_JsonNodeCreateNumber(json, numA);
-        ASSERT_TRUE(OCI_NumberFree(numA));
-
-        OCI_Number* numB = OCI_NumberCreate(env);
-        v = 2.0;
-        ASSERT_TRUE(OCI_NumberSetValue(numB, OCI_NUM_DOUBLE, &v));
-        OCI_JsonNode* item2 = OCI_JsonNodeCreateNumber(json, numB);
-        ASSERT_TRUE(OCI_JsonNodeAppendItem(arr, item1));
-        ASSERT_TRUE(OCI_JsonNodeAppendItem(arr, item2));
-        ASSERT_TRUE(OCI_NumberFree(numB));
-
-        OCI_JsonNode* item3str = OCI_JsonNodeCreateString(json, OTEXT("three"), 0);
-        ASSERT_TRUE(OCI_JsonNodeSetItem(arr, 1, item3str));
-        ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(arr));
-
-        OCI_JsonNode* verifyItem = OCI_JsonNodeGetItem(arr, 1);
-        ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(verifyItem));
-        ASSERT_EQ(String(OTEXT("three")), String(OCI_JsonNodeGetString(verifyItem, nullptr)));
-        OCI_JsonNodeFree(verifyItem);
-
-        OCI_JsonNodeFree(item1);
-        OCI_JsonNodeFree(item2);
-        OCI_JsonNodeFree(item3str);
-
-        OCI_JsonNodeSetField(root, OTEXT("arr"), arr);
-        OCI_JsonNodeFree(arr);
-
-        ASSERT_EQ(10u, OCI_JsonNodeGetFieldCount(root));
-
-        ASSERT_TRUE(OCI_JsonSetRoot(json, root));
-        OCI_JsonNodeFree(root);
-
-        ASSERT_TRUE(OCI_JsonFree(json));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        OCI_Interval* out = OCI_JsonNodeGetInterval(n);
+        ASSERT_NE(nullptr, out);
+        OCI_Int32 y = 0, m = 0;
+        ASSERT_TRUE(OCI_IntervalGetYearMonth(out, &y, &m));
+        EXPECT_EQ(1, y); EXPECT_EQ(6, m);
+        ASSERT_TRUE(OCI_IntervalFree(out));
+        OCI_Interval* i2 = OCI_IntervalCreate(env, OCI_INTERVAL_YM);
+        ASSERT_TRUE(OCI_IntervalSetYearMonth(i2, 2, 3));
+        ASSERT_TRUE(OCI_JsonNodeSetInterval(n, i2));
+        ASSERT_TRUE(OCI_IntervalFree(i2));
+        out = OCI_JsonNodeGetInterval(n);
+        ASSERT_TRUE(OCI_IntervalGetYearMonth(out, &y, &m));
+        EXPECT_EQ(2, y); EXPECT_EQ(3, m);
+        ASSERT_TRUE(OCI_IntervalFree(out));
+        OCI_JsonNodeSetField(root, OTEXT("iv"), n);
+        OCI_JsonNodeFree(n);
     }
 
-    TEST(TestJsonDom, DomMutationOps)
+    class TestJsonNodeCreate : public ::testing::TestWithParam<JsonNodeTypeCase>
     {
-        auto env = GetEnvironment(nullptr);
-        ASSERT_NE(nullptr, env);
+    protected:
+        OCI_Environment* env = nullptr;
+        OCI_Connection* conn = nullptr;
+        OCI_Json* json = nullptr;
+        OCI_JsonNode* root = nullptr;
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-        ASSERT_NE(nullptr, conn);
+        void SetUp() override
+        {
+            env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            json = OCI_JsonCreate(conn);
+            ASSERT_NE(nullptr, json);
+            ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
+            ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+            root = OCI_JsonNodeCreateObject(json);
+            ASSERT_NE(nullptr, root);
+        }
 
-        const auto json = OCI_JsonCreate(conn);
-        ASSERT_NE(nullptr, json);
+        void TearDown() override
+        {
+            if (root) OCI_JsonNodeFree(root);
+            if (json) OCI_JsonFree(json);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
 
-        ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+    TEST_P(TestJsonNodeCreate, CreateSetGetAndAttach_RoundTripsValue)
+    {
+        GetParam().run(env, json, root);
 
-        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"name\":\"test\",\"arr\":[\"one\",\"two\"],\"num\":123}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+        EXPECT_EQ(1u, OCI_JsonNodeGetFieldCount(root));
+    }
 
-        OCI_JsonNode* obj = OCI_JsonGetRoot(json);
-        ASSERT_NE(nullptr, obj);
+    INSTANTIATE_TEST_CASE_P(NodeType, TestJsonNodeCreate,
+        ::testing::Values(
+            JsonNodeTypeCase{ "String",    NodeString },
+            JsonNodeTypeCase{ "Number",    NodeNumber },
+            JsonNodeTypeCase{ "Boolean",   NodeBoolean },
+            JsonNodeTypeCase{ "Null",      NodeNull },
+            JsonNodeTypeCase{ "Binary",    NodeBinary },
+            JsonNodeTypeCase{ "Date",      NodeDate },
+            JsonNodeTypeCase{ "Timestamp", NodeTimestamp },
+            JsonNodeTypeCase{ "Interval",  NodeInterval }),
+        ::testing::PrintToStringParamName());
 
-        /* HasField / GetFieldByName / RemoveField / SetField on root */
+    class TestJsonDomCreate : public ::testing::Test
+    {
+    protected:
+        OCI_Environment* env = nullptr;
+        OCI_Connection* conn = nullptr;
+        OCI_Json* json = nullptr;
+        OCI_JsonNode* root = nullptr;
+
+        void SetUp() override
+        {
+            env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            json = OCI_JsonCreate(conn);
+            ASSERT_NE(nullptr, json);
+            ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
+            ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("null"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+            root = OCI_JsonNodeCreateObject(json);
+            ASSERT_NE(nullptr, root);
+        }
+
+        void TearDown() override
+        {
+            if (root) OCI_JsonNodeFree(root);
+            if (json) OCI_JsonFree(json);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
+
+    TEST_F(TestJsonDomCreate, CreateNodeWithStringType_ReturnsStringNode)
+    {
+        OCI_JsonNode* generic = OCI_JsonNodeCreate(json, OCI_JNT_STRING);
+        ASSERT_NE(nullptr, generic);
+        EXPECT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(generic));
+        ASSERT_TRUE(OCI_JsonNodeSetString(generic, OTEXT("generic"), 0));
+        EXPECT_EQ(String(OTEXT("generic")), String(OCI_JsonNodeGetString(generic, nullptr)));
+        OCI_JsonNodeSetField(root, OTEXT("generic"), generic);
+        OCI_JsonNodeFree(generic);
+    }
+
+    TEST_F(TestJsonDomCreate, ArrayOpsOnCreatedArray_ManageItems)
+    {
+        OCI_JsonNode* arr = OCI_JsonNodeCreateArray(json);
+        ASSERT_NE(nullptr, arr);
+        EXPECT_EQ(OCI_JNT_ARRAY, OCI_JsonNodeGetType(arr));
+
+        OCI_Number* nA = OCI_NumberCreate(env);
+        OCI_Number* nB = OCI_NumberCreate(env);
+        OCI_Double v = 1.0;
+        ASSERT_TRUE(OCI_NumberSetValue(nA, OCI_NUM_DOUBLE, &v));
+        v = 2.0;
+        ASSERT_TRUE(OCI_NumberSetValue(nB, OCI_NUM_DOUBLE, &v));
+        OCI_JsonNode* item1 = OCI_JsonNodeCreateNumber(json, nA);
+        OCI_JsonNode* item2 = OCI_JsonNodeCreateNumber(json, nB);
+        ASSERT_TRUE(OCI_NumberFree(nA));
+        ASSERT_TRUE(OCI_NumberFree(nB));
+        OCI_JsonNode* item3 = OCI_JsonNodeCreateString(json, OTEXT("three"), 0);
+
+        ASSERT_TRUE(OCI_JsonNodeAppendItem(arr, item1));
+        ASSERT_TRUE(OCI_JsonNodeAppendItem(arr, item2));
+        ASSERT_TRUE(OCI_JsonNodeSetItem(arr, 1, item3));
+
+        EXPECT_EQ(3u, OCI_JsonNodeGetItemCount(arr));
+        OCI_JsonNode* chk = OCI_JsonNodeGetItem(arr, 1);
+        ASSERT_NE(nullptr, chk);
+        EXPECT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(chk));
+        EXPECT_EQ(String(OTEXT("three")), String(OCI_JsonNodeGetString(chk, nullptr)));
+
+        OCI_JsonNodeFree(chk);
+        OCI_JsonNodeFree(item1);
+        OCI_JsonNodeFree(item2);
+        OCI_JsonNodeFree(item3);
+        OCI_JsonNodeSetField(root, OTEXT("arr"), arr);
+        OCI_JsonNodeFree(arr);
+    }
+
+    TEST_F(TestJsonDomCreate, SetRootOnJson_AttachesObjectAsRoot)
+    {
+        ASSERT_TRUE(OCI_JsonSetRoot(json, root));
+
+        OCI_JsonNode* fetched = OCI_JsonGetRoot(json);
+        EXPECT_NE(nullptr, fetched);
+        OCI_JsonNodeFree(fetched);
+    }
+
+    /* -------------------------------------------------------------------------
+       Shared DOM fixture: mutable {"name":"test","arr":["one","two"],"num":123}
+       ------------------------------------------------------------------------- */
+
+    class TestJsonDomOps : public ::testing::Test
+    {
+    protected:
+        OCI_Environment* env = nullptr;
+        OCI_Connection* conn = nullptr;
+        OCI_Json* json = nullptr;
+        OCI_JsonNode* obj = nullptr;
+
+        void SetUp() override
+        {
+            env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            json = OCI_JsonCreate(conn);
+            ASSERT_NE(nullptr, json);
+            ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
+            ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"name\":\"test\",\"arr\":[\"one\",\"two\"],\"num\":123}"),
+                                         0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+            obj = OCI_JsonGetRoot(json);
+            ASSERT_NE(nullptr, obj);
+        }
+
+        void TearDown() override
+        {
+            if (obj) OCI_JsonNodeFree(obj);
+            if (json) OCI_JsonFree(json);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+
+        OCI_JsonNode* GetArr()
+        {
+            return OCI_JsonNodeGetFieldByName(obj, OTEXT("arr"));
+        }
+    };
+
+    TEST_F(TestJsonDomOps, GetFieldByNameOnExistingField_ReturnsFieldValue)
+    {
         ASSERT_TRUE(OCI_JsonNodeHasField(obj, OTEXT("name")));
+
         OCI_JsonNode* name = OCI_JsonNodeGetFieldByName(obj, OTEXT("name"));
+
         ASSERT_NE(nullptr, name);
-        ASSERT_EQ(String(OTEXT("test")), String(OCI_JsonNodeGetString(name, nullptr)));
+        EXPECT_EQ(String(OTEXT("test")), String(OCI_JsonNodeGetString(name, nullptr)));
+
         OCI_JsonNodeFree(name);
-        ASSERT_FALSE(OCI_JsonNodeHasField(obj, OTEXT("missing")));
+    }
+
+    TEST_F(TestJsonDomOps, HasFieldOnUnknownField_ReturnsFalse)
+    {
+        EXPECT_FALSE(OCI_JsonNodeHasField(obj, OTEXT("missing")));
+    }
+
+    TEST_F(TestJsonDomOps, RemoveFieldOnExistingField_RemovesIt)
+    {
         ASSERT_TRUE(OCI_JsonNodeRemoveField(obj, OTEXT("name")));
-        ASSERT_FALSE(OCI_JsonNodeHasField(obj, OTEXT("name")));
 
-        /* GetByPath on root */
-        OCI_JsonNode* pathNode = OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[0]"));
-        ASSERT_NE(nullptr, pathNode);
-        ASSERT_EQ(String(OTEXT("one")), String(OCI_JsonNodeGetString(pathNode, nullptr)));
-        OCI_JsonNodeFree(pathNode);
-        ASSERT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[5]")));
-        ASSERT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.missing")));
-        ASSERT_EQ(nullptr, OCI_GetLastError());
+        EXPECT_FALSE(OCI_JsonNodeHasField(obj, OTEXT("name")));
+    }
 
-        /* array ops on root.arr */
-        OCI_JsonNode* arr = OCI_JsonNodeGetFieldByName(obj, OTEXT("arr"));
+    TEST_F(TestJsonDomOps, GetByPathOnArrayItem_ReturnsItem)
+    {
+        OCI_JsonNode* node = OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[0]"));
+
+        ASSERT_NE(nullptr, node);
+        EXPECT_EQ(String(OTEXT("one")), String(OCI_JsonNodeGetString(node, nullptr)));
+
+        OCI_JsonNodeFree(node);
+    }
+
+    TEST_F(TestJsonDomOps, GetByPathOnOutOfRangeIndex_ReturnsNull)
+    {
+        EXPECT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[5]")));
+        EXPECT_EQ(nullptr, OCI_GetLastError());
+    }
+
+    TEST_F(TestJsonDomOps, GetByPathOnUnknownField_ReturnsNull)
+    {
+        EXPECT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.missing")));
+        EXPECT_EQ(nullptr, OCI_GetLastError());
+    }
+
+    TEST_F(TestJsonDomOps, AppendItemOnArray_AddsItemAtEnd)
+    {
+        OCI_JsonNode* arr = GetArr();
         ASSERT_NE(nullptr, arr);
         ASSERT_EQ(2u, OCI_JsonNodeGetItemCount(arr));
         OCI_JsonNode* s3 = OCI_JsonNodeCreateString(json, OTEXT("three"), 0);
-        ASSERT_TRUE(OCI_JsonNodeAppendItem(arr, s3));
-        OCI_JsonNodeFree(s3);
-        OCI_JsonNode* s2 = OCI_JsonNodeCreateString(json, OTEXT("inserted"), 0);
-        ASSERT_TRUE(OCI_JsonNodeInsertItem(arr, 1, s2));
-        OCI_JsonNodeFree(s2);
-        ASSERT_EQ(4u, OCI_JsonNodeGetItemCount(arr));
-        OCI_JsonNode* chk = OCI_JsonNodeGetItem(arr, 1);
-        ASSERT_EQ(String(OTEXT("inserted")), String(OCI_JsonNodeGetString(chk, nullptr)));
-        OCI_JsonNodeFree(chk);
-        ASSERT_TRUE(OCI_JsonNodeRemoveItem(arr, 2));
-        ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(arr));
+        ASSERT_NE(nullptr, s3);
 
-        /* GetParent */
+        ASSERT_TRUE(OCI_JsonNodeAppendItem(arr, s3));
+
+        EXPECT_EQ(3u, OCI_JsonNodeGetItemCount(arr));
+
+        OCI_JsonNodeFree(s3);
+        OCI_JsonNodeFree(arr);
+    }
+
+    TEST_F(TestJsonDomOps, InsertItemOnArray_InsertsItemAtIndex)
+    {
+        OCI_JsonNode* arr = GetArr();
+        ASSERT_NE(nullptr, arr);
+        OCI_JsonNode* s2 = OCI_JsonNodeCreateString(json, OTEXT("inserted"), 0);
+        ASSERT_NE(nullptr, s2);
+
+        ASSERT_TRUE(OCI_JsonNodeInsertItem(arr, 1, s2));
+
+        EXPECT_EQ(3u, OCI_JsonNodeGetItemCount(arr));
+        OCI_JsonNode* chk = OCI_JsonNodeGetItem(arr, 1);
+        ASSERT_NE(nullptr, chk);
+        EXPECT_EQ(String(OTEXT("inserted")), String(OCI_JsonNodeGetString(chk, nullptr)));
+
+        OCI_JsonNodeFree(chk);
+        OCI_JsonNodeFree(s2);
+        OCI_JsonNodeFree(arr);
+    }
+
+    TEST_F(TestJsonDomOps, RemoveItemOnArray_RemovesItemAtIndex)
+    {
+        OCI_JsonNode* arr = GetArr();
+        ASSERT_NE(nullptr, arr);
+        ASSERT_EQ(2u, OCI_JsonNodeGetItemCount(arr));
+
+        ASSERT_TRUE(OCI_JsonNodeRemoveItem(arr, 1));
+
+        EXPECT_EQ(1u, OCI_JsonNodeGetItemCount(arr));
+
+        OCI_JsonNodeFree(arr);
+    }
+
+    TEST_F(TestJsonDomOps, GetParentOnArrayItem_ReturnsArrayNode)
+    {
+        OCI_JsonNode* arr = GetArr();
+        ASSERT_NE(nullptr, arr);
         OCI_JsonNode* it = OCI_JsonNodeGetItem(arr, 0);
         ASSERT_NE(nullptr, it);
+
         OCI_JsonNode* par = OCI_JsonNodeGetParent(it);
+
         ASSERT_NE(nullptr, par);
-        ASSERT_EQ(OCI_JNT_ARRAY, OCI_JsonNodeGetType(par));
-        ASSERT_EQ(nullptr, OCI_JsonNodeGetParent(obj));
+        EXPECT_EQ(OCI_JNT_ARRAY, OCI_JsonNodeGetType(par));
+
         OCI_JsonNodeFree(par);
         OCI_JsonNodeFree(it);
-
-        /* typed accessors on root.num */
-        OCI_JsonNode* num = OCI_JsonNodeGetFieldByName(obj, OTEXT("num"));
-        ASSERT_NE(nullptr, num);
-        ASSERT_TRUE(OCI_JsonNodeSetInt(num, 456));
-        OCI_Int32 iv = 0;
-        ASSERT_TRUE(OCI_JsonNodeGetInt(num, &iv));
-        ASSERT_EQ(456, iv);
-        ASSERT_TRUE(OCI_JsonNodeSetDouble(num, 2.5));
-        OCI_Double dv = 0;
-        ASSERT_TRUE(OCI_JsonNodeGetDouble(num, &dv));
-        ASSERT_EQ(2.5, dv);
-        OCI_Int16  v1=0; OCI_UInt16 v2=0; OCI_UInt32 v4=0; OCI_Int64 v5=0; OCI_UInt64 v6=0; OCI_Float v7=0.f;
-        ASSERT_TRUE(OCI_JsonNodeSetShort(num, (OCI_Int16)-11));
-        ASSERT_TRUE(OCI_JsonNodeGetShort(num, &v1)); ASSERT_EQ(-11, (OCI_Int16)v1);
-        ASSERT_TRUE(OCI_JsonNodeSetUShort(num, (OCI_UInt16)12));
-        ASSERT_TRUE(OCI_JsonNodeGetUShort(num, &v2)); ASSERT_EQ(12, (OCI_UInt16)v2);
-        ASSERT_TRUE(OCI_JsonNodeSetUInt(num, 5678u));
-        ASSERT_TRUE(OCI_JsonNodeGetUInt(num, &v4)); ASSERT_EQ(5678u, (OCI_UInt32)v4);
-        ASSERT_TRUE(OCI_JsonNodeSetBigInt(num, -123456789012345LL));
-        ASSERT_TRUE(OCI_JsonNodeGetBigInt(num, &v5)); ASSERT_EQ(-123456789012345LL, (OCI_Int64)v5);
-        ASSERT_TRUE(OCI_JsonNodeSetBigUInt(num, 123456789012345ULL));
-        ASSERT_TRUE(OCI_JsonNodeGetBigUInt(num, &v6)); ASSERT_EQ(123456789012345ULL, (OCI_UInt64)v6);
-        ASSERT_TRUE(OCI_JsonNodeSetFloat(num, 1.5f));
-        ASSERT_TRUE(OCI_JsonNodeGetFloat(num, &v7)); ASSERT_NEAR(1.5f, (OCI_Float)v7, 0.001f);
-        OCI_JsonNodeFree(num);
-
-        /* SetString / SetBoolean / SetNull / GetType round-trip on a scalar node */
-        OCI_JsonNode* strN = OCI_JsonNodeCreateString(json, OTEXT("v"), 0);
-        ASSERT_TRUE(OCI_JsonNodeSetField(obj, OTEXT("s"), strN));
-        OCI_JsonNodeFree(strN);
-        
-        /* Clear */
-        ASSERT_TRUE(OCI_JsonNodeClear(arr));
-        ASSERT_EQ(0u, OCI_JsonNodeGetItemCount(arr));
         OCI_JsonNodeFree(arr);
-        ASSERT_TRUE(OCI_JsonNodeClear(obj));
-        ASSERT_EQ(0u, OCI_JsonNodeGetFieldCount(obj));
-
-        OCI_JsonNodeFree(obj);
-        ASSERT_TRUE(OCI_JsonFree(json));
-        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+    TEST_F(TestJsonDomOps, GetParentOnRootNode_ReturnsNull)
+    {
+        EXPECT_EQ(nullptr, OCI_JsonNodeGetParent(obj));
+    }
+
+    TEST_F(TestJsonDomOps, SetFieldOnObject_AddsNewField)
+    {
+        OCI_JsonNode* s = OCI_JsonNodeCreateString(json, OTEXT("v"), 0);
+        ASSERT_NE(nullptr, s);
+
+        ASSERT_TRUE(OCI_JsonNodeSetField(obj, OTEXT("s"), s));
+
+        EXPECT_TRUE(OCI_JsonNodeHasField(obj, OTEXT("s")));
+
+        OCI_JsonNodeFree(s);
+    }
+
+    TEST_F(TestJsonDomOps, ClearOnArray_RemovesAllItems)
+    {
+        OCI_JsonNode* arr = GetArr();
+        ASSERT_NE(nullptr, arr);
+
+        ASSERT_TRUE(OCI_JsonNodeClear(arr));
+
+        EXPECT_EQ(0u, OCI_JsonNodeGetItemCount(arr));
+
+        OCI_JsonNodeFree(arr);
+    }
+
+    TEST_F(TestJsonDomOps, ClearOnObject_RemovesAllFields)
+    {
+        ASSERT_TRUE(OCI_JsonNodeClear(obj));
+
+        EXPECT_EQ(0u, OCI_JsonNodeGetFieldCount(obj));
+    }
+
+    /* -------------------------------------------------------------------------
+       Parameterized: every numeric setter/getter pair round-trips its value
+       ------------------------------------------------------------------------- */
+
+    struct JsonNumCase
+    {
+        const char* name;
+        void (*run)(OCI_JsonNode*);
+    };
+
+    void PrintTo(const JsonNumCase& c, std::ostream* os) { *os << c.name; }
+
+    static void NumInt(OCI_JsonNode* n)
+    {
+        OCI_Int32 v = 0;
+        ASSERT_TRUE(OCI_JsonNodeSetInt(n, 456));
+        ASSERT_TRUE(OCI_JsonNodeGetInt(n, &v));
+        EXPECT_EQ(456, v);
+    }
+    static void NumShort(OCI_JsonNode* n)
+    {
+        OCI_Int16 v = 0;
+        ASSERT_TRUE(OCI_JsonNodeSetShort(n, (OCI_Int16)-11));
+        ASSERT_TRUE(OCI_JsonNodeGetShort(n, &v));
+        EXPECT_EQ((OCI_Int16)-11, v);
+    }
+    static void NumUShort(OCI_JsonNode* n)
+    {
+        OCI_UInt16 v = 0;
+        ASSERT_TRUE(OCI_JsonNodeSetUShort(n, (OCI_UInt16)12));
+        ASSERT_TRUE(OCI_JsonNodeGetUShort(n, &v));
+        EXPECT_EQ((OCI_UInt16)12, v);
+    }
+    static void NumUInt(OCI_JsonNode* n)
+    {
+        OCI_UInt32 v = 0;
+        ASSERT_TRUE(OCI_JsonNodeSetUInt(n, 5678u));
+        ASSERT_TRUE(OCI_JsonNodeGetUInt(n, &v));
+        EXPECT_EQ(5678u, v);
+    }
+    static void NumBigInt(OCI_JsonNode* n)
+    {
+        OCI_Int64 v = 0;
+        ASSERT_TRUE(OCI_JsonNodeSetBigInt(n, -123456789012345LL));
+        ASSERT_TRUE(OCI_JsonNodeGetBigInt(n, &v));
+        EXPECT_EQ(-123456789012345LL, v);
+    }
+    static void NumBigUInt(OCI_JsonNode* n)
+    {
+        OCI_UInt64 v = 0;
+        ASSERT_TRUE(OCI_JsonNodeSetBigUInt(n, 123456789012345ULL));
+        ASSERT_TRUE(OCI_JsonNodeGetBigUInt(n, &v));
+        EXPECT_EQ(123456789012345ULL, v);
+    }
+    static void NumFloat(OCI_JsonNode* n)
+    {
+        OCI_Float v = 0.f;
+        ASSERT_TRUE(OCI_JsonNodeSetFloat(n, 1.5f));
+        ASSERT_TRUE(OCI_JsonNodeGetFloat(n, &v));
+        EXPECT_NEAR(1.5f, v, 0.001f);
+    }
+    static void NumDouble(OCI_JsonNode* n)
+    {
+        OCI_Double v = 0;
+        ASSERT_TRUE(OCI_JsonNodeSetDouble(n, 2.5));
+        ASSERT_TRUE(OCI_JsonNodeGetDouble(n, &v));
+        EXPECT_EQ(2.5, v);
+    }
+
+    class TestJsonNumScalar : public ::testing::TestWithParam<JsonNumCase>
+    {
+    protected:
+        OCI_Environment* env = nullptr;
+        OCI_Connection* conn = nullptr;
+        OCI_Json* json = nullptr;
+        OCI_JsonNode* node = nullptr;
+
+        void SetUp() override
+        {
+            env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+            conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
+            json = OCI_JsonCreate(conn);
+            ASSERT_NE(nullptr, json);
+            ASSERT_TRUE(OCI_JsonSetMutable(json, TRUE));
+            ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"num\":123}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+            OCI_JsonNode* root = OCI_JsonGetRoot(json);
+            ASSERT_NE(nullptr, root);
+            node = OCI_JsonNodeGetFieldByName(root, OTEXT("num"));
+            ASSERT_NE(nullptr, node);
+            OCI_JsonNodeFree(root);
+        }
+
+        void TearDown() override
+        {
+            if (node) OCI_JsonNodeFree(node);
+            if (json) OCI_JsonFree(json);
+            if (conn) OCI_ConnectionFree(conn);
+        }
+    };
+
+    TEST_P(TestJsonNumScalar, SetThenGet_RoundTripsValue)
+    {
+        GetParam().run(node);
+    }
+
+    INSTANTIATE_TEST_CASE_P(NumType, TestJsonNumScalar,
+        ::testing::Values(
+            JsonNumCase{ "Int",     NumInt },
+            JsonNumCase{ "Short",   NumShort },
+            JsonNumCase{ "UShort",  NumUShort },
+            JsonNumCase{ "UInt",    NumUInt },
+            JsonNumCase{ "BigInt",  NumBigInt },
+            JsonNumCase{ "BigUInt", NumBigUInt },
+            JsonNumCase{ "Float",   NumFloat },
+            JsonNumCase{ "Double",  NumDouble }),
+        ::testing::PrintToStringParamName());
 
     TEST(TestJsonDom, ValidateSchema)
     {

@@ -4577,8 +4577,13 @@ OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_GetBindByName
  * @note
  * Bind indexes are 0-based in OCILIB.
  *
+ * @note
+ * Registered binds created by OCI_RegisterXxx() are not binds and are
+ * not reported by this function.
+ *
  * @return
- * The bind index on success, or 0 if the bind does not exist or if the statement is NULL.
+ * The 0-based bind index on success, or -1 if the bind does not exist or
+ * if the statement is NULL.
  *
  */
 
@@ -21201,12 +21206,6 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetDouble
  *   `[DBG] [MEM] OcilibMemoryAlloc: bytes=27 type=7`
  *   `[INF] [LIB] OcilibConnectionCreateInternal: handle=[...] connected ...`
  *   `[TRC] [OCI] LEAVE OCIServerAttach (ret=0000000000000000)`
- *
- * @note The public programmatic control API (`OCI_GetLogLevel`,
- *       `OCI_SetLogLevel`, `OCI_SetLogHandler`) is planned for a later phase;
- *       the initial release is environment-variable driven.
- *
- * @see POCI_LOG_HANDLER
  *
  */
 

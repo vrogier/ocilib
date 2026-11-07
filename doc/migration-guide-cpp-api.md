@@ -522,6 +522,10 @@ Do not rely on the compiler alone — these compile fine but behave differently:
 6. **Copy semantics are now `std::shared_ptr`-backed.** Handle wrappers still behave
    as reference-counted smart handles — semantics are preserved, but the old manual
    reference-list internals are gone. No source change expected.
+7. **`Statement::GetBindIndex` no longer reports registered binds.** In v4, names
+   created by `RegisterXxx()` leaked through the shared name map, returning an
+   internal position that could not be used with `GetBind()`. In v5 it returns
+   **`-1`** for register names — registers are out-params, not binds.
 
 ---
 
