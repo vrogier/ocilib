@@ -368,6 +368,7 @@
     <ClCompile Include="..\..\src\statement.c" />
     <ClCompile Include="..\..\src\stringutils.c" />
     <ClCompile Include="..\..\src\subscription.c" />
+    <ClCompile Include="..\..\src\threading.c" />
     <ClCompile Include="..\..\src\timestamp.c" />
     <ClCompile Include="..\..\src\transaction.c" />
     <ClCompile Include="..\..\src\typeinfo.c" />
@@ -436,6 +437,7 @@
     <ClInclude Include="..\..\src\statement.h" />
     <ClInclude Include="..\..\src\stringutils.h" />
     <ClInclude Include="..\..\src\subscription.h" />
+    <ClInclude Include="..\..\src\threading.h" />
     <ClInclude Include="..\..\src\timestamp.h" />
     <ClInclude Include="..\..\src\transaction.h" />
     <ClInclude Include="..\..\src\typeinfo.h" />

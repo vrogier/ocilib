@@ -64,6 +64,7 @@ libocilib_la_SOURCES=   \
     statement.c         \
     stringutils.c       \
     subscription.c      \
+    threading.c         \
     timestamp.c         \
     transaction.c       \
     typeinfo.c          \
@@ -147,6 +148,7 @@ noinst_HEADERS=     \
     statement.h     \
     stringutils.h   \
     subscription.h  \
+    threading.h     \
     timestamp.h     \
     transaction.h   \
     typeinfo.h      \

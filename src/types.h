@@ -25,7 +25,7 @@
 
 #include "defs.h"
 
-#include <threads.h>
+#include "threading.h"
 
 /* ********************************************************************************************* *
  *                             PRIVATE TYPES

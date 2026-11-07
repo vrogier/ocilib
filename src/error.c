@@ -22,7 +22,7 @@
 
 #include "macros.h"
 #include "stringutils.h"
-#include <threads.h>
+#include "threading.h"
 
 /* Upper bound applied to the location and message parts of an error string.
     Prevents overflow of the length arithmetic in OcilibErrorSet() and of the
