@@ -19548,7 +19548,7 @@ OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_SodaCollDocCountWithFilter
  * @param options - SODA options handle identifying the document (key and/or
  *                  version)
  * @param doc     - SODA document handle with the new content
- * @param refresh - TRUE to refresh @doc in place with the server-assigned
+ * @param refresh - TRUE to refresh p doc in place with the server-assigned
  *                  attributes (key, version, timestamps) of the replaced
  *                  document; FALSE for a plain replace
  *
@@ -19572,7 +19572,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollReplaceOne
  * @param coll    - SODA collection handle
  * @param key     - Document key
  * @param doc     - SODA document handle with the new content
- * @param refresh - TRUE to refresh @doc in place with the server-assigned
+ * @param refresh - TRUE to refresh p doc in place with the server-assigned
  *                  attributes (key, version, timestamps) of the replaced
  *                  document; FALSE for a plain replace
  *
@@ -19636,7 +19636,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollRemoveOneByKey
  * @param coll    - SODA collection handle
  * @param docs    - Array of SODA document handles to insert
  * @param count   - Number of documents in the array
- * @param refresh - TRUE to refresh each document in @docs in place with its
+ * @param refresh - TRUE to refresh each document in p docs in place with its
  *                  server-assigned attributes (key, version, timestamps);
  *                  FALSE for a plain insert
  *
@@ -19778,7 +19778,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollFreeIndexNames
  *
  * @param coll    - SODA collection handle
  * @param doc     - SODA document handle
- * @param refresh - TRUE to refresh @doc in place with its server-assigned
+ * @param refresh - TRUE to refresh \p doc in place with its server-assigned
  *                  attributes (key, version, timestamps) after the save;
  *                  FALSE for a plain save
  *
@@ -19995,7 +19995,6 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonLoadBinary
  * @param buffer       - Output buffer (can be NULL to request length)
  * @param length       - In: buffer size, Out: number of characters written
  * @param print        - Print flags (see OCI_JTP_* values)
- * @param useEnvCharset - Use environment charset for output
  *
  * @return TRUE on success, FALSE otherwise
  */
@@ -20863,7 +20862,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeEquals
  * @param src  - Source JSON node handle (may belong to a different document)
  *
  * @note
- * @src is deep-copied into @node's document and @node is repointed at the
+ * \p src is deep-copied into \p node's document and \p node is repointed at the
  * copy. The source node is left unchanged.
  *
  * @return TRUE on success, FALSE on error.

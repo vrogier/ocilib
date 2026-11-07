@@ -5446,7 +5446,7 @@ namespace ocilib
         *
         * @note
         * Returns TRUE when the document validates cleanly; FALSE when invalid
-        * (the @errors report explains why). Requires Oracle client 23ai+.
+        * (the \p errors report explains why). Requires Oracle client 23ai+.
         *
         */
         [[nodiscard]] bool Validate(const Json& schema, Json& errors) const;
