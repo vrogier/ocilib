@@ -3422,8 +3422,8 @@ OCI_Boolean OcilibJsonNodeRenameField
 
     CHECK_JSON(node->json->jdoc,
                0 == JsonDomRenameField(node->json->jdoc, (jznDomObject *)node->handle,
-                                       (oratext *) dbold, (ub2) (dbold_size / sizeof(dbtext)),
-                                       (oratext *) dbnew, (ub2) (dbnew_size / sizeof(dbtext))));
+                                       (oratext *) dbold, (ub2) ((OCI_UInt32) dbold_size / sizeof(dbtext)),
+                                       (oratext *) dbnew, (ub2) ((OCI_UInt32) dbnew_size / sizeof(dbtext))));
 
     SET_SUCCESS();
 #else

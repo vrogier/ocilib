@@ -5578,11 +5578,11 @@ OCI_SYM_PUBLIC OCI_Column* OCI_API OCI_GetColumnByName
  * Column indexes are 0-based in OCILIB.
  *
  * @return
- * The column index on success, or 0 if not found.
+ * The 0-based column index on success, or -1 if not found.
  *
  */
 
-OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetColumnIndex
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_GetColumnIndex
 (
     OCI_Resultset* rs,
     const otext  * name
@@ -20858,7 +20858,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeEquals
  * @brief
  * Assign the content of a JSON node to another node
  *
- * @param node - Target JSON node handle (receives a deep copy of @src)
+ * @param node - Target JSON node handle (receives a deep copy of \p src)
  * @param src  - Source JSON node handle (may belong to a different document)
  *
  * @note

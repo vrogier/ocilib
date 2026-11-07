@@ -4879,7 +4879,7 @@ OCI_Column* OCI_API OCI_GetColumnByName
     CALL_IMPL(OcilibResultsetGetColumnByName, rs, name);
 }
 
-OCI_UInt32 OCI_API OCI_GetColumnIndex
+OCI_Int32 OCI_API OCI_GetColumnIndex
 (
     OCI_Resultset* rs,
     const otext  * name
