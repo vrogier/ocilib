@@ -1783,7 +1783,7 @@ OCI_UInt32 OCI_API OCI_DirPathGetAffectedRows
     CALL_IMPL(OcilibDirPathGetAffectedRows, dp);
 }
 
-OCI_UInt32 OCI_API OCI_DirPathGetErrorColumn
+OCI_Int32 OCI_API OCI_DirPathGetErrorColumn
 (
     OCI_DirPath* dp
 )
@@ -1791,7 +1791,7 @@ OCI_UInt32 OCI_API OCI_DirPathGetErrorColumn
     CALL_IMPL(OcilibDirPathGetErrorColumn, dp);
 }
 
-OCI_UInt32 OCI_API OCI_DirPathGetErrorRow
+OCI_Int32 OCI_API OCI_DirPathGetErrorRow
 (
     OCI_DirPath* dp
 )

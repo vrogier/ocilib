@@ -157,12 +157,12 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetAffectedRows
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetErrorColumn
+OCI_SYM_LOCAL OCI_Int32 OcilibDirPathGetErrorColumn
 (
     OCI_DirPath *dp
 );
 
-OCI_SYM_LOCAL OCI_UInt32 OcilibDirPathGetErrorRow
+OCI_SYM_LOCAL OCI_Int32 OcilibDirPathGetErrorRow
 (
     OCI_DirPath *dp
 );

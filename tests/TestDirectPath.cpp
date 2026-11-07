@@ -281,7 +281,7 @@ namespace TestCApi
                         OCI_Int32 err_row = OCI_DirPathGetErrorRow(dp);
                         OCI_Int32 err_col = OCI_DirPathGetErrorColumn(dp);
 
-                        while (err_row != 0)
+                        while (err_row != -1)
                         {
                             CheckAllErrorWorkflows(conn, dp, nb_error == 0 ? 5 : 8, err_row, "erred converted row index (force mode)");
                             CheckAllErrorWorkflows(conn, dp, err_col, 0, "erred column index in force mode");
@@ -344,7 +344,7 @@ namespace TestCApi
                         /* on loading error in force mode, check we got the expected errors*/
                         OCI_Int32 err_row = OCI_DirPathGetErrorRow(dp);
 
-                        while (err_row != 0)
+                        while (err_row != -1)
                         {
                             CheckAllErrorWorkflows(conn, dp, nb_error == 0 ? 5 : 8, err_row, "erred loaded row index");
 

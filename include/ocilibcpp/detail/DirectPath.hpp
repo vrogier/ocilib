@@ -142,12 +142,12 @@ inline void DirectPath::SetConversionMode(ConversionMode value)
     core::Check(OCI_DirPathSetConvertMode(*this, value));
 }
 
-inline UInt32 DirectPath::GetErrorColumn()
+inline Int32 DirectPath::GetErrorColumn()
 {
     return core::Check(OCI_DirPathGetErrorColumn(*this));
 }
 
-inline UInt32 DirectPath::GetErrorRow()
+inline Int32 DirectPath::GetErrorRow()
 {
     return core::Check(OCI_DirPathGetErrorRow(*this));
 }

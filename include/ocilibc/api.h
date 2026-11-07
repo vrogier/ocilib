@@ -15974,18 +15974,18 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetAffectedRows
  * When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() returns
  * OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all column
  * indexes that have erred, the application can call OCI_DirPathGetErrorColumn()
- * repeatedly until it returns 0.
+ * repeatedly until it returns -1.
  *
  * @note
  * The internal value is reset to 0 when calling OCI_DirPathConvert().
  *
  * @return
- * 0 if no error occurred, otherwise the index of the column which caused the
+ * -1 if no error occurred, otherwise the index of the column which caused the
  * error.
  *
  */
 
-OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetErrorColumn
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_DirPathGetErrorColumn
 (
     OCI_DirPath* dp
 );
@@ -16011,23 +16011,23 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetErrorColumn
  * When using conversion mode OCI_DCM_FORCE, OCI_DirPathConvert() returns
  * OCI_DPR_COMPLETE even on errors. In order to retrieve the list of all row
  * indexes that have erred, the application can call OCI_DirPathGetErrorRow()
- * repeatedly until it returns 0.
+ * repeatedly until it returns -1.
  *
  * @note
  * After a call to OCI_DirPathLoad(), in order to retrieve the list of all faulted rows
- * indexes, the application can call OCI_DirPathGetErrorRow() repeatedly until it returns 0.
+ * indexes, the application can call OCI_DirPathGetErrorRow() repeatedly until it returns -1.
  *
  * @note
  * The internal value is reset to 0 when calling OCI_DirPathConvert(),
  * OCI_DirPathReset() or OCI_DirPathLoad().
  *
  * @return
- * 0 if no error occurred, otherwise the index of the row which caused the
+ * -1 if no error occurred, otherwise the index of the row which caused the
  * error.
  *
  */
 
-OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetErrorRow
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_DirPathGetErrorRow
 (
     OCI_DirPath* dp
 );

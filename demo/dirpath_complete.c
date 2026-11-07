@@ -239,7 +239,7 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
                     OCI_Int32 err_row = OCI_DirPathGetErrorRow(dp);
                     OCI_Int32 err_col = OCI_DirPathGetErrorColumn(dp);
 
-                    while (err_row != 0)
+                    while (err_row != -1)
                     {
                         check_results(con, dp, nb_error == 0 ? 5 : 8, err_row, "erred converted row index (force mode)");
                         check_results(con, dp, 0, err_col, "erred column index in force mode");
@@ -302,7 +302,7 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
                     /* on loading error in force mode, check we got the expected errors*/
                     OCI_Int32 err_row = OCI_DirPathGetErrorRow(dp);
 
-                    while (err_row != 0)
+                    while (err_row != -1)
                     {
                         check_results(con, dp, nb_error == 0 ? 5 : 8, err_row, "erred loaded row index");
 

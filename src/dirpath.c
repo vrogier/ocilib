@@ -1594,14 +1594,14 @@ OCI_UInt32 OcilibDirPathGetAffectedRows
  * OcilibDirPathGetErrorColumn
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibDirPathGetErrorColumn
+OCI_Int32 OcilibDirPathGetErrorColumn
 (
     OCI_DirPath *dp
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_UInt32, 0,
+        /* returns */ OCI_Int32, -1,
         /* context */ OCI_IPC_DIRPATH, dp
     );
 
@@ -1609,7 +1609,7 @@ OCI_UInt32 OcilibDirPathGetErrorColumn
 
     CHECK(dp->idx_err_col < dp->nb_err);
 
-    SET_RETVAL((OCI_UInt32) dp->err_cols[dp->idx_err_col++]);
+    SET_RETVAL((OCI_Int32) dp->err_cols[dp->idx_err_col++]);
 
     EXIT_FUNC();
 }
@@ -1618,14 +1618,14 @@ OCI_UInt32 OcilibDirPathGetErrorColumn
  * OcilibDirPathGetErrorRow
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibDirPathGetErrorRow
+OCI_Int32 OcilibDirPathGetErrorRow
 (
     OCI_DirPath *dp
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_UInt32, 0,
+        /* returns */ OCI_Int32, -1,
         /* context */ OCI_IPC_DIRPATH, dp
     );
 
@@ -1633,7 +1633,7 @@ OCI_UInt32 OcilibDirPathGetErrorRow
 
     CHECK(dp->idx_err_row < dp->nb_err);
 
-    SET_RETVAL((OCI_UInt32) dp->err_rows[dp->idx_err_row++]);
+    SET_RETVAL((OCI_Int32) dp->err_rows[dp->idx_err_row++]);
 
     EXIT_FUNC();
 }

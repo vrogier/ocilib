@@ -10835,17 +10835,17 @@ namespace ocilib
          * - When using conversion mode DirectPath::Force, Convert() returns
          * DirectPath::ResultComplete even on errors. In order to retrieve the list of all column
          * indexes that have erred, the application can call GetErrorColumn()
-         * repeatedly until it returns 0.
+         * repeatedly until it returns -1.
          *
          * @note
          * The internal value is reset to 0 when calling Convert()
          *
          * @return
-         * 0 is no error occurs otherwise the index of the given column which caused an
+         * -1 is no error occurs otherwise the index of the given column which caused an
          * error
          *
          */
-        [[nodiscard]] UInt32 GetErrorColumn();
+        [[nodiscard]] Int32 GetErrorColumn();
 
         /**
          * @brief
@@ -10865,22 +10865,22 @@ namespace ocilib
          *   caused the error.
          * - When using conversion mode DirectPath::Force, Convert() returns
          *   DirectPath::ResultComplete even on errors. In order to retrieve the list of all row
-         *   indexes that have erred, the application can call GetErrorRow() repeatedly until it returns 0.
+         *   indexes that have erred, the application can call GetErrorRow() repeatedly until it returns -1.
          *
          * @par  Usage after a Load() call
          * After a call to Load(), in order to retrieve the list of all faulted rows
-         * indexes, the application can call GetErrorRow() repeatedly until it returns 0.
+         * indexes, the application can call GetErrorRow() repeatedly until it returns -1.
          *
          * @note
          * The internal value is reset to 0 when calling Convert(),Reset() or Load()
          *
          * @return
-         * 0 is no error occurs otherwise the index of the given row which caused an
+         * -1 is no error occurs otherwise the index of the given row which caused an
          * error
          *
          */
 
-        [[nodiscard]] UInt32 GetErrorRow();
+        [[nodiscard]] Int32 GetErrorRow();
     };
 
 
