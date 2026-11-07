@@ -206,7 +206,7 @@ OCI_Boolean OcilibShardingKeyAddString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != skey ? skey->env : NULL, dbstr);
+        OcilibStringReleaseDBString(skey->env, dbstr);
     );
 }
 

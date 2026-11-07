@@ -5,8 +5,8 @@
 | Configuration | Release - ANSI|x64 (OCI_CHARSET_ANSI) |
 | Test executable | tests\x64\Release - ANSI\ocilib_tests.exe |
 | Overall line coverage | 93.65% |
-| Covered lines | 14114 |
-| Total lines | 15071 |
+| Covered lines | 14074 |
+| Total lines | 15028 |
 | Source files | 55 |
 
 ## Per-file coverage (sorted by coverage descending)
@@ -38,8 +38,8 @@
 | sodadoc.c | 95.4% | 166 | 174 |
 | json.c | 95% | 190 | 200 |
 | xmltype.c | 94.74% | 36 | 38 |
+| sodacoll.c | 94.49% | 429 | 454 |
 | pool.c | 94.41% | 169 | 179 |
-| sodacoll.c | 94.37% | 469 | 497 |
 | sodadb.c | 94.17% | 113 | 120 |
 | collection.c | 94.01% | 204 | 217 |
 | define.c | 93.64% | 103 | 110 |

@@ -1568,12 +1568,16 @@ OCI_Boolean OcilibConnectionSetPassword
     OCI_Int32 dbsize2 = -1;
     OCI_Int32 dbsize3 = -1;
 
-    dbtext* dbstr1 = OcilibStringGetDBString(con->env, con->user, &dbsize1);
-    dbtext* dbstr2 = OcilibStringGetDBString(con->env, con->pwd, &dbsize2);
-    dbtext* dbstr3 = OcilibStringGetDBString(con->env, password, &dbsize3);
+    dbtext* dbstr1 = NULL;
+    dbtext* dbstr2 = NULL;
+    dbtext* dbstr3 = NULL;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con);
     CHECK_PTR(OCI_IPC_STRING,     password);
+
+    dbstr1 = OcilibStringGetDBString(con->env, con->user, &dbsize1);
+    dbstr2 = OcilibStringGetDBString(con->env, con->pwd, &dbsize2);
+    dbstr3 = OcilibStringGetDBString(con->env, password, &dbsize3);
 
     if (OCI_CONN_LOGGED != con->cstate)
     {

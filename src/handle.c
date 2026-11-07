@@ -31,7 +31,7 @@ OCI_Environment * OcilibHandleGetEnvironment
     void *handle
 )
 {
-    return ((OCI_Handle *) handle)->env;
+    return (NULL != handle) ? ((OCI_Handle *) handle)->env : NULL;
 }
 
 /* --------------------------------------------------------------------------------------------- *

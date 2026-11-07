@@ -269,7 +269,7 @@ OCI_SodaDoc* OcilibSodaDocInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != sdb ? sdb->env : NULL, dbkey);
+        OcilibStringReleaseDBString(sdb->env, dbkey);
 
         if (NULL != src)
         {

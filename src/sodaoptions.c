@@ -209,7 +209,7 @@ OCI_Boolean OcilibSodaOptionsSetKeyAttr
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != options && NULL != options->sdb ? options->sdb->env : NULL, dbstr);
+        OcilibStringReleaseDBString(options->sdb->env, dbstr);
     );
 }
 
@@ -229,6 +229,8 @@ OCI_Boolean OcilibSodaOptionsSetKey
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
+
+    CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
 
     /* single key setting overrides any previously set key list */
 
@@ -297,7 +299,7 @@ OCI_Boolean OcilibSodaOptionsSetKeys
     (
         OcilibSodaOptionsFreeKeysArray
         (
-            NULL != options && NULL != options->sdb ? options->sdb->env : NULL,
+            options->sdb->env,
             dbkeys,
             dblengths,
             count
@@ -350,7 +352,7 @@ OCI_Boolean OcilibSodaOptionsSetVersion
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != options && NULL != options->sdb ? options->sdb->env : NULL, dbstr);
+        OcilibStringReleaseDBString(options->sdb->env, dbstr);
     );
 }
 
@@ -394,7 +396,7 @@ OCI_Boolean OcilibSodaOptionsSetFilter
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != options && NULL != options->sdb ? options->sdb->env : NULL, dbstr);
+        OcilibStringReleaseDBString(options->sdb->env, dbstr);
     );
 }
 
@@ -558,7 +560,7 @@ OCI_Boolean OcilibSodaOptionsSetHint
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != options && NULL != options->sdb ? options->sdb->env : NULL, dbstr);
+        OcilibStringReleaseDBString(options->sdb->env, dbstr);
     );
 }
 

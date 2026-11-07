@@ -169,8 +169,8 @@ OCI_SodaColl * OcilibSodaDbCreateColl
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != sdb ? sdb->env : NULL, dbstr);
-        OcilibStringReleaseDBString(NULL != sdb ? sdb->env : NULL, dbmta);
+        OcilibStringReleaseDBString(sdb->env, dbstr);
+        OcilibStringReleaseDBString(sdb->env, dbmta);
 
         if (FAILURE && NULL != coll)
         {
@@ -241,7 +241,7 @@ OCI_SodaColl * OcilibSodaDbOpenColl
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != sdb ? sdb->env : NULL, dbstr);
+        OcilibStringReleaseDBString(sdb->env, dbstr);
 
         if (FAILURE && NULL != coll)
         {
@@ -302,7 +302,7 @@ OCI_SodaCollCursor * OcilibSodaDbGetColls
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != sdb ? sdb->env : NULL, dbstr);
+        OcilibStringReleaseDBString(sdb->env, dbstr);
 
         if (FAILURE && NULL != cursor)
         {

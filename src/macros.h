@@ -128,11 +128,14 @@
 
 /* labels */
 
-#define LABEL_CLEANUP(exp)      \
-                                \
-ocilib_cleanup_label:           \
-        {exp;}                  \
-        goto ocilib_exit_label; \
+#define LABEL_CLEANUP(exp)                                      \
+                                                                \
+ocilib_cleanup_label:                                           \
+        if (NULL != ocilib_call_context.source_ptr)             \
+        {                                                       \
+            exp;                                                \
+        }                                                       \
+        goto ocilib_exit_label;                                 \
 
 /* return to the caller */
 

@@ -576,7 +576,7 @@ OCI_SodaDocCursor* OcilibSodaCollFind
 
         if (FAILURE)
         {
-            OCI_Environment *env = (NULL != coll && NULL != coll->sdb) ? coll->sdb->env : NULL;
+            OCI_Environment *env = coll->sdb->env;
             OCI_UInt32 d;
 
             for (d = 0; d < mat_count; d++)
@@ -767,7 +767,7 @@ OCI_SodaDoc* OcilibSodaCollFindOneByKey
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbkey);
+        OcilibStringReleaseDBString(coll->sdb->env, dbkey);
 
         if (FAILURE && NULL != doc)
         {
@@ -903,7 +903,7 @@ OCI_UInt64 OcilibSodaCollDocCountWithFilter
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbflt);
+        OcilibStringReleaseDBString(coll->sdb->env, dbflt);
     );
 }
 
@@ -1096,7 +1096,7 @@ OCI_Boolean OcilibSodaCollReplaceOneByKey
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbkey);
+        OcilibStringReleaseDBString(coll->sdb->env, dbkey);
     );
 }
 
@@ -1231,7 +1231,7 @@ OCI_Boolean OcilibSodaCollRemoveOneByKey
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbkey);
+        OcilibStringReleaseDBString(coll->sdb->env, dbkey);
     );
 }
 
@@ -1380,7 +1380,7 @@ OCI_Boolean OcilibSodaCollCreateIndex
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbspec);
+        OcilibStringReleaseDBString(coll->sdb->env, dbspec);
     );
 }
 
@@ -1427,7 +1427,7 @@ OCI_Boolean OcilibSodaCollDropIndex
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(NULL != coll && NULL != coll->sdb ? coll->sdb->env : NULL, dbkey);
+        OcilibStringReleaseDBString(coll->sdb->env, dbkey);
     );
 }
 

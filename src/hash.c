@@ -150,6 +150,7 @@ OCI_HashTable * OcilibHashCreate
 
     OCI_HashTable* table = NULL;
 
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
     CHECK_ENUM_VALUE(type, HashTypeValues, OTEXT("Hash type"));
 
     /* allocate table structure */
