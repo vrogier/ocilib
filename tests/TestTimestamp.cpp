@@ -199,7 +199,7 @@ namespace TestCApi
         const auto rslt = OCI_GetResultset(stmt);
         ASSERT_TRUE(OCI_FetchNext(rslt));
 
-        const auto tmsp = OCI_GetTimestamp(rslt, 1);
+        const auto tmsp = OCI_GetTimestamp(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_TimestampToText(tmsp, OCI_STRING_FORMAT_TIMESTAMP, 512, buffer, 9));
@@ -224,7 +224,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :tmsp := :tmsp + to_dsinterval('1 01:00:00'); end;")));
         ASSERT_NE(nullptr, OCI_BindTimestamp(stmt, OTEXT(":tmsp"), tmsp));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN_OUT));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN_OUT));
         ASSERT_TRUE(OCI_Execute(stmt));
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
@@ -257,7 +257,7 @@ namespace TestCApi
         const auto rslt = OCI_GetResultset(stmt);
         ASSERT_TRUE(OCI_FetchNext(rslt));
 
-        const auto tmsp = OCI_GetTimestamp(rslt, 1);
+        const auto tmsp = OCI_GetTimestamp(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_TimestampToText(tmsp, OCI_STRING_FORMAT_TIMESTAMP, 512, buffer, 6));

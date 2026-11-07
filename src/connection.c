@@ -1992,7 +1992,7 @@ OCI_Boolean OcilibConnectionEnableServerOutput
 
     if (0 == bufsize)
     {
-        OCI_Bind* bnd = OcilibStatementGetBind(con->svopt->stmt, 1);
+        OCI_Bind* bnd = OcilibStatementGetBind(con->svopt->stmt, 0);
         CHECK_NULL(bnd);
 
         CHECK(OcilibBindSetNull(bnd));

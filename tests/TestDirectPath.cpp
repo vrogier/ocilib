@@ -67,9 +67,9 @@ namespace TestCApi
 
         /* describe the target table */
 
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_int"), ColSize1, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_str"), ColSize2, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 3, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD")));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 0, OTEXT("val_int"), ColSize1, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"), ColSize2, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD")));
 
         /* prepare the load */
 
@@ -82,7 +82,7 @@ namespace TestCApi
         {
             ASSERT_TRUE(OCI_DirPathReset(dp));
 
-            for (j = 1; j <= nb_rows; j++)
+            for (j = 0; j < nb_rows; j++)
             {
                 /* fill test values */
 
@@ -90,9 +90,9 @@ namespace TestCApi
                 osprintf(val2, OTEXT("value %05d"), j + (i * 100));
                 osprintf(val3, OTEXT("%04d%02d%02d"), (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
             }
 
             /* load data to the server */
@@ -194,9 +194,9 @@ namespace TestCApi
 
         /* describe the target table */
 
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_int"), ColSize1, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_str"), ColSize2, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 3, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD")));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 0, OTEXT("val_int"), ColSize1, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"), ColSize2, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD")));
 
         /* prepare the load */
 
@@ -210,15 +210,15 @@ namespace TestCApi
             ASSERT_TRUE(OCI_DirPathReset(dp));
 
             /* set the values for the current load iteration */
-            for (j = 1; j <= nb_rows; j++)
+            for (j = 0; j < nb_rows; j++)
             {
                 /* conversion and loading errors are performed on the first load for rows 5 and 8 */
                 if (i == 0 && (j == 5 || j == 8) && gen_conv_error)
                 {
                     /* generate a conversion error - not null clause violation on column val_int  */
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, NULL, 0, TRUE));
                     ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, NULL, 0, TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 3, NULL, 0, TRUE));
+                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, NULL, 0, TRUE));
+                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, NULL, 0, TRUE));
                 }
                 else if (i == 0 && (j == 5 || j == 8) && gen_load_error)
                 {
@@ -227,9 +227,9 @@ namespace TestCApi
                     osprintf(val2, OTEXT("value %05d"), j + (i * ArraySize));
                     osprintf(val3, OTEXT("%04d%02d%02d"), (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
                 }
                 else
                 {
@@ -238,9 +238,9 @@ namespace TestCApi
                     osprintf(val2, OTEXT("value %05d"), j + (i * ArraySize));
                     osprintf(val3, OTEXT("%04d%02d%02d"), (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
                 }
             }
 
@@ -268,9 +268,9 @@ namespace TestCApi
                         osprintf(val2, OTEXT("value %05d"), row);
                         osprintf(val3, OTEXT("%04d%02d%02d"), (row % 23) + 1 + 2000, (row % 11) + 1, (row % 23) + 1);
 
-                        ASSERT_TRUE(OCI_DirPathSetEntry(dp, row, 1, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                        ASSERT_TRUE(OCI_DirPathSetEntry(dp, row, 2, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                        ASSERT_TRUE(OCI_DirPathSetEntry(dp, row, 3, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                        ASSERT_TRUE(OCI_DirPathSetEntry(dp, row, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                        ASSERT_TRUE(OCI_DirPathSetEntry(dp, row, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                        ASSERT_TRUE(OCI_DirPathSetEntry(dp, row, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
 
                         nb_conv = 0;
                     }
@@ -284,7 +284,7 @@ namespace TestCApi
                         while (err_row != 0)
                         {
                             CheckAllErrorWorkflows(conn, dp, nb_error == 0 ? 5 : 8, err_row, "erred converted row index (force mode)");
-                            CheckAllErrorWorkflows(conn, dp, err_col, 1, "erred column index in force mode");
+                            CheckAllErrorWorkflows(conn, dp, err_col, 0, "erred column index in force mode");
 
                             err_row = OCI_DirPathGetErrorRow(dp);
                             err_col = OCI_DirPathGetErrorColumn(dp);
@@ -307,15 +307,15 @@ namespace TestCApi
 
                     while (nb_conv < ArraySize)
                     {
-                        for (j = 1; j <= nb_rows - nb_conv; j++)
+                        for (j = 0; j < nb_rows - nb_conv; j++)
                         {
                             osprintf(val1, OTEXT("%04d"), (j + nb_conv) + (i * ArraySize));
                             osprintf(val2, OTEXT("value %05d"), (j + nb_conv) + (i * ArraySize));
                             osprintf(val3, OTEXT("%04d%02d%02d"), ((j + nb_conv) % 23) + 1 + 2000, ((j + nb_conv) % 11) + 1, ((j + nb_conv) % 23) + 1);
 
-                            ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                            ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                            ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                            ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                            ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                            ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
                         }
 
                         /* convert again */

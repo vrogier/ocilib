@@ -27,7 +27,7 @@ namespace TestCppApi
         JsonNode a = root.GetFieldByName(OTEXT("only"));
         ASSERT_EQ(Json::NodeString, a.GetType());
 
-        JsonNode b = root.GetFieldByIndex(1);
+        JsonNode b = root.GetFieldByIndex(0);
         ASSERT_EQ(Json::NodeString, b.GetType());
 
         json.SetRoot(root);
@@ -48,7 +48,7 @@ namespace TestCppApi
         JsonNode field = json.CreateString(OTEXT("alpha"));
         root.SetField(OTEXT("only"), field);
 
-        String name = root.GetFieldName(1);
+        String name = root.GetFieldName(0);
         ASSERT_EQ(String(OTEXT("only")), name);
     }
 

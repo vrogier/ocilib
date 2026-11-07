@@ -172,7 +172,7 @@ namespace ocilib
                     memcpy(_data + (_elemSize * index), &value[0], value.size());
                 }
 
-                OCI_BindSetDataSizeAtPos(OCI_GetBindByName(_statement, GetName().c_str()), index + 1, static_cast<UInt32>(value.size()));
+                OCI_BindSetDataSizeAtPos(OCI_GetBindByName(_statement, GetName().c_str()), index, static_cast<UInt32>(value.size()));
             }
         }
 
@@ -204,7 +204,7 @@ namespace ocilib
             {
                 otext* currData = _data + (_elemSize * index);
 
-                (*it).assign(currData, currData + core::Check(OCI_BindGetDataSizeAtPos(pBind, index + 1)));
+                (*it).assign(currData, currData + core::Check(OCI_BindGetDataSizeAtPos(pBind, index)));
             }
         }
 
@@ -222,7 +222,7 @@ namespace ocilib
             {
                 unsigned char* currData = _data + (_elemSize * index);
 
-                (*it).assign(currData, currData + core::Check(OCI_BindGetDataSizeAtPos(pBind, index + 1)));
+                (*it).assign(currData, currData + core::Check(OCI_BindGetDataSizeAtPos(pBind, index)));
             }
         }
 

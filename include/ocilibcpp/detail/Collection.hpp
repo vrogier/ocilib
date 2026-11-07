@@ -131,25 +131,25 @@ bool Collection<T>::Delete(UInt32 index) const
 template<class T>
 typename Collection<T>::iterator Collection<T>::begin()
 {
-    return iterator(this, 1);
+    return iterator(this, 0);
 }
 
 template<class T>
 typename Collection<T>::const_iterator Collection<T>::begin() const
 {
-    return const_iterator(const_cast<Collection*>(this), 1);
+    return const_iterator(const_cast<Collection*>(this), 0);
 }
 
 template<class T>
 typename Collection<T>::iterator Collection<T>::end()
 {
-    return iterator(const_cast<Collection*>(this), GetCount() + 1);
+    return iterator(const_cast<Collection*>(this), GetCount());
 }
 
 template<class T>
 typename Collection<T>::const_iterator Collection<T>::end() const
 {
-    return const_iterator(const_cast<Collection*>(this), GetCount() + 1);
+    return const_iterator(const_cast<Collection*>(this), GetCount());
 }
 
 template<class T>

@@ -293,10 +293,10 @@ OCI_Int32 omain(OCI_Int32 argc, oarg* argv[])
 
 bool FillProductFromQuery(const Resultset &rs, Product &p)
 {
-    p.code = rs.Get<OCI_Int32>(1);
-    p.action = rs.Get<String>(2);
-    p.price = rs.Get<OCI_Double>(3);
-    p.date = rs.Get<Date>(4);
+    p.code = rs.Get<OCI_Int32>(0);
+    p.action = rs.Get<String>(1);
+    p.price = rs.Get<OCI_Double>(2);
+    p.date = rs.Get<Date>(3);
 
 
     return true;
@@ -306,20 +306,20 @@ Product CreateProductFromQuery(const Resultset &rs)
 {
     Product p;
 
-    rs.Get(1, p.code);
-    rs.Get(2, p.action);
-    rs.Get(3, p.price);
-    rs.Get(4, p.date);
+    rs.Get(0, p.code);
+    rs.Get(1, p.action);
+    rs.Get(2, p.price);
+    rs.Get(3, p.date);
 
     return p;
 }
 
 bool PrintProductFromQuery(const Resultset &rs)
 {
-    ocout << otext("> code   : ") << rs.Get<OCI_Int32>(1);
-    ocout << otext(", action : ") << rs.Get<String>(2);
-    ocout << otext(", price  : ") << rs.Get<OCI_Double>(3);
-    ocout << otext(", date   : ") << rs.Get<Date>(4);
+    ocout << otext("> code   : ") << rs.Get<OCI_Int32>(0);
+    ocout << otext(", action : ") << rs.Get<String>(1);
+    ocout << otext(", price  : ") << rs.Get<OCI_Double>(2);
+    ocout << otext(", date   : ") << rs.Get<Date>(3);
     ocout << oendl;
     return true;
 }
@@ -556,16 +556,18 @@ void test_fetch(void)
     st.Execute(otext("select * from test_fetch"));
 
     Resultset rs = st.GetResultset();
-    for (OCI_Int32 i = 1, n = rs.GetColumnCount(); i <= n; ++i)
+    UInt32 colIndex = 0;
+    for (auto&& col : rs.Columns())
     {
-        ocout << otext("> Field : #") << i << otext(" - Name : ") << rs.GetColumn(i).GetName() << oendl;
+        ocout << otext("> Field : #") << ++colIndex << otext(" - Name : ") << col.GetName() << oendl;
     }
 
     ocout << oendl;
 
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
         PrintProductFromQuery(rs);
+        (void)row;
     }
 
     ocout << oendl << rs.GetCount() << otext(" row(s) fetched") << oendl;
@@ -586,7 +588,7 @@ void test_fetch_translate(void)
 
     ocout << oendl;
 
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
         Product p;
 
@@ -594,6 +596,7 @@ void test_fetch_translate(void)
         {
             PrintProductFromObject(p);
         }
+        (void)row;
     }
 
     ocout << oendl << rs.GetCount() << otext(" row(s) fetched") << oendl;
@@ -744,9 +747,9 @@ void test_piecewise_fetch(void)
     st.Execute(otext("select content from test_long_raw where code = 1"));
 
     Resultset rs1 = st.GetResultset();
-    while (rs1++)
+    for (auto&& row1 : rs1.Rows())
     {
-        Blong lg = rs1.Get<Blong>(1);
+        Blong lg = row1.Get<Blong>(0);
         ocout << oendl << lg.GetLength() << otext(" bytes read") << oendl;
     }
 
@@ -758,9 +761,9 @@ void test_piecewise_fetch(void)
     st.SetLongMode(Statement::LongImplicit);
 
     Resultset rs2 = st.GetResultset();
-    while (rs2++)
+    for (auto&& row2 : rs2.Rows())
     {
-        String str = rs2.Get<String>(1);
+        String str = row2.Get<String>(0);
 
         ocout << str << oendl;
         ocout << str.size() << otext(" bytes read") << oendl;
@@ -781,15 +784,15 @@ void test_lob(void)
     st.Execute(otext("select code, content from test_lob where code=1 for update"));
 
     Resultset rs = st.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
-        Clob clob = rs.Get<Clob>(2);
+        Clob clob = row.Get<Clob>(1);
 
         clob.Write(otext("today, "));
         clob.Append(otext("i'm going to the cinema ! "));
         clob.Seek(SeekSet, 0);
 
-        ocout << otext("> code : ") << rs.Get<OCI_Int32>(1) << otext(", content : ") << clob.Read(SizeString) << oendl;
+        ocout << otext("> code : ") << row.Get<OCI_Int32>(0) << otext(", content : ") << clob.Read(SizeString) << oendl;
     }
 
     con.Commit();
@@ -809,13 +812,13 @@ void test_nested_table(void)
     st.Execute(otext("select article, cursor(select sysdate from dual) from test_fetch"));
 
     Resultset rs = st.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
-        Statement st2 = rs.Get<Statement>(2);
+        Statement st2 = row.Get<Statement>(1);
         Resultset rs2 = st2.GetResultset();
-        while (rs2++)
+        for (auto&& row2 : rs2.Rows())
         {
-            ocout << otext("Article : ") << rs.Get<String>(1) << otext(", Date : ") << rs2.Get<String>(1) << oendl;
+            ocout << otext("Article : ") << row.Get<String>(0) << otext(", Date : ") << row2.Get<String>(0) << oendl;
         }
     }
 }
@@ -836,9 +839,10 @@ void test_ref_cursor(void)
     st.ExecutePrepared();
 
     Resultset rs = stBind.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
         PrintProductFromQuery(rs);
+        (void)row;
     }
 
     ocout << oendl << rs.GetCount() << otext(" row(s) fetched") << oendl;
@@ -962,9 +966,8 @@ void test_describe(void)
 
     TypeInfo table(con, otext("test_fetch"), TypeInfo::Table);
 
-    for (OCI_Int32 i = 1, n = table.GetColumnCount(); i <= n; ++i)
+    for (auto&& col : table.Columns())
     {
-        Column col = table.GetColumn(i);
 
         ocout << std::setw(20) << col.GetName().c_str()
             << std::setw(20) << col.GetFullSQLType().c_str()
@@ -980,9 +983,8 @@ void test_describe(void)
 
     TypeInfo type(con, otext("test_t"), TypeInfo::Type);
 
-    for (OCI_Int32 i = 1, n = type.GetColumnCount(); i <= n; ++i)
+    for (auto&& col : type.Columns())
     {
-        Column col = type.GetColumn(i);
 
         ocout << std::setw(20) << col.GetName().c_str()
             << std::setw(20) << col.GetFullSQLType().c_str()
@@ -1005,13 +1007,13 @@ void test_returning(void)
     st.ExecutePrepared();
 
     Resultset rs = st.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
-        Clob clob = rs.Get<Clob>(2);
+        Clob clob = row.Get<Clob>(1);
         clob.Append(otext("(modified)"));
         clob.Seek(SeekSet, 0);
 
-        ocout << otext("> code : ") << rs.Get<OCI_Int32>(1) << otext(" - ") << clob.Read(static_cast<OCI_UInt32>(clob.GetLength())) << oendl;
+        ocout << otext("> code : ") << row.Get<OCI_Int32>(0) << otext(" - ") << clob.Read(static_cast<OCI_UInt32>(clob.GetLength())) << oendl;
     }
 
     con.Commit();
@@ -1107,20 +1109,20 @@ void test_returning_array(void)
     Resultset rs = st.GetResultset();
     while (!rs.IsNull())
     {
-        while (rs++)
+        for (auto&& row : rs.Rows())
         {
             ocout << otext("Row #") << ++rowIndex << otext("---------------") << oendl;
 
-            ocout << otext(".... val_int    : ") << rs.Get<OCI_Int32>(otext(":OUT_INT")) << oendl;
-            ocout << otext(".... val_dbl    : ") << rs.Get<OCI_Double>(otext(":OUT_DBL")) << oendl;
-            ocout << otext(".... val_flt    : ") << rs.Get<OCI_Float>(otext(":OUT_FLT")) << oendl;
-            ocout << otext(".... val_str    : ") << rs.Get<String>(otext(":OUT_STR")) << oendl;
-            ocout << otext(".... val_date   : ") << rs.Get<Date>(otext(":OUT_DATE")) << oendl;
+            ocout << otext(".... val_int    : ") << row.Get<OCI_Int32>(otext(":OUT_INT")) << oendl;
+            ocout << otext(".... val_dbl    : ") << row.Get<OCI_Double>(otext(":OUT_DBL")) << oendl;
+            ocout << otext(".... val_flt    : ") << row.Get<OCI_Float>(otext(":OUT_FLT")) << oendl;
+            ocout << otext(".... val_str    : ") << row.Get<String>(otext(":OUT_STR")) << oendl;
+            ocout << otext(".... val_date   : ") << row.Get<Date>(otext(":OUT_DATE")) << oendl;
 
-            Clob clob = rs.Get<Clob>(otext(":OUT_LOB"));
+            Clob clob = row.Get<Clob>(otext(":OUT_LOB"));
             ocout << otext(".... val_lob    : ") << clob.Read(SizeBuffer) << oendl;
 
-            File file = rs.Get<File>(otext(":OUT_FILE"));
+            File file = row.Get<File>(otext(":OUT_FILE"));
             ocout << otext(".... val_file   : ") << file.GetDirectory() << otext("/") << file.GetName() << oendl;
         }
 
@@ -1183,9 +1185,9 @@ void test_object_fetch(void)
     st.Execute(otext("select val from test_object for update"));
 
     Resultset rs = st.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
-        Object obj = rs.Get<Object>(1);
+        Object obj = row.Get<Object>(0);
 
         ocout << otext(".... val_int      : ") << obj.Get<OCI_Int32>(otext("VAL_INT")) << oendl;
         ocout << otext(".... val_dbl      : ") << obj.Get<OCI_Double>(otext("VAL_DBL")) << oendl;
@@ -1215,9 +1217,9 @@ void test_object_fetch(void)
     st.Execute(otext("select val from test_object"));
 
     rs = st.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
-        ocout << rs.Get<Object>(1) << oendl;
+        ocout << row.Get<Object>(0) << oendl;
     }
 }
 
@@ -1244,28 +1246,31 @@ void test_scrollable_cursor(void)
 
         ocout << otext("... Go to row 1\n");
         rs.First();
-        ocout << otext("table ") << rs.Get<String>(1) << oendl;
+        ocout << otext("table ") << rs.Rows()[0].Get<String>(0) << oendl;
 
         ocout << otext("... Enumerate from row 2 to row ") << rs.GetCount() << otext(" ") << oendl;
-        while (rs++)
+        for (auto&& row : rs.Rows())
         {
-            ocout << otext("table ") << rs.Get<String>(1) << oendl;
+            ocout << otext("table ") << row.Get<String>(0) << oendl;
         }
 
         ocout << otext("... Enumerate from row ") << rs.GetCount() - 1 << otext(" back to row 1") << oendl;
         while (rs.Prev())
         {
-            ocout << otext("table ") << rs.Get<String>(1) << oendl;
+            ocout << otext("table ") << rs.Rows()[rs.GetCurrentRow()].Get<String>(0) << oendl;
         }
 
         ocout << otext("... Go to the 3th row") << oendl;
-        rs.Seek(Resultset::SeekAbsolute, 3);
-        ocout << otext("table ") << rs.Get<String>(1) << oendl;
+        ocout << otext("table ") << rs.Rows()[2].Get<String>(0) << oendl;
 
         ocout << otext("... Fetch the next 2 rows") << oendl;
-        while (rs.GetCurrentRow() < 5 && rs++)
+        for (auto&& row : rs.Rows())
         {
-            ocout << otext("table ") << rs.Get<String>(1) << oendl;
+            ocout << otext("table ") << row.Get<String>(0) << oendl;
+            if (rs.GetCurrentRow() >= 5)
+            {
+                break;
+            }
         }
     }
 }
@@ -1311,11 +1316,11 @@ void test_collection(void)
     st.Execute(otext("SELECT * from test_coll_varray"));
 
     Resultset rs = st.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
-        ocout << otext("Department ID #") << rs.Get<OCI_Int32>(1) << oendl;
+        ocout << otext("Department ID #") << row.Get<OCI_Int32>(0) << oendl;
 
-        coll = rs.Get<Collection<String> >(2);
+        coll = row.Get<Collection<String> >(1);
 
         Collection<String>::iterator it3 = coll.begin();
         Collection<String>::iterator it4 = coll.end();
@@ -1331,12 +1336,12 @@ void test_collection(void)
     st.Execute(otext("SELECT * from test_coll_nested"));
 
     rs = st.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
-        ocout << otext("Department ID #") << rs.Get<OCI_Int32>(1) << oendl;
+        ocout << otext("Department ID #") << row.Get<OCI_Int32>(0) << oendl;
 
-        coll = rs.Get<Collection<String> >(2);
-        for (OCI_UInt32 index = 1, n = coll.GetSize(); index <= n; ++index)
+        coll = row.Get<Collection<String> >(1);
+        for (OCI_UInt32 index = 0, n = coll.GetSize(); index < n; ++index)
         {
             ocout << otext("... Employee : ") << static_cast<String>(coll[index]) << oendl;
         }
@@ -1355,9 +1360,9 @@ void test_ref(void)
     st.Execute(otext("select ref(e) from test_table_obj e"));
 
     Resultset rs = st.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
-        Reference ref = rs.Get<Reference>(1);
+        Reference ref = row.Get<Reference>(0);
         Object   obj = ref.GetObject();
 
         ocout << obj.Get<OCI_Int32>(otext("ID")) << otext(" - ") << obj.Get<String>(otext("NAME")) << oendl;
@@ -1412,9 +1417,9 @@ void test_directpath(void)
 
         /* describe the target table */
 
-        dp.SetColumn(1, otext("VAL_INT"), DirPathSizeColumn1);
-        dp.SetColumn(2, otext("VAL_STR"), DirPathSizeColumn2);
-        dp.SetColumn(3, otext("VAL_DATE"), DirPathSizeColumn3, otext("YYYYMMDD"));
+        dp.SetColumn(0, otext("VAL_INT"), DirPathSizeColumn1);
+        dp.SetColumn(1, otext("VAL_STR"), DirPathSizeColumn2);
+        dp.SetColumn(2, otext("VAL_DATE"), DirPathSizeColumn3, otext("YYYYMMDD"));
 
         /* prepare the load */
 
@@ -1426,7 +1431,7 @@ void test_directpath(void)
         {
             dp.Reset();
 
-            for (OCI_Int32 j = 1; j <= n; ++j)
+            for (OCI_Int32 j = 0; j < n; ++j)
             {
                 oostringstream val1, val2, val3;
 
@@ -1436,9 +1441,9 @@ void test_directpath(void)
                 val2 << otext("value ") << std::setfill(otext('0')) << std::setw(5) << j + (i * DirPathLoadCount);
                 val3 << std::setfill(otext('0')) << std::setw(2) << (j % 23) + 1 + 2000 << std::setw(2) << (j % 11) + 1 << (j % 23) + 1;
 
-                dp.SetEntry(j, 1, val1.str());
-                dp.SetEntry(j, 2, val2.str());
-                dp.SetEntry(j, 3, val3.str());
+                dp.SetEntry(j, 0, val1.str());
+                dp.SetEntry(j, 1, val2.str());
+                dp.SetEntry(j, 2, val3.str());
             }
 
             /* load data to the server */
@@ -1493,10 +1498,10 @@ void test_number()
     // Testing fetching numbers (as number and using implicit conversion number to string)
     st.Execute(otext("select value from test_number"));
     Resultset rs = st.GetResultset();
-    for (auto&& row : rs)
+    for (auto&& row : rs.Rows())
     {
-        Number num = row.Get<Number>(1);
-        String str = row.Get<String>(1);
+        Number num = row.Get<Number>(0);
+        String str = row.Get<String>(0);
 
         ocout << str << " - " << num << oendl;
     }
@@ -1513,9 +1518,9 @@ void test_number()
     st.Register<Number>(otext(":1"));
     st.ExecutePrepared();
     rs = st.GetResultset();
-    for (auto&& row : rs)
+    for (auto&& row : rs.Rows())
     {
-        ocout << row.Get<String>(1) << oendl;
+        ocout << row.Get<String>(0) << oendl;
     }
 
     // testing Collections
@@ -1539,9 +1544,9 @@ void test_number()
     // Testing fetching infinite values to string
     st.Execute(otext("SELECT utl_raw.cast_to_number('FF65'), utl_raw.cast_to_number('00') from dual"));
     rs = st.GetResultset();
-    for (auto&& row : rs)
+    for (auto&& row : rs.Rows())
     {
-        ocout << otext("pos infinite = ") << row.Get<String>(1) << oendl;
-        ocout << otext("neg infinite = ") << row.Get<String>(2) << oendl;
+        ocout << otext("pos infinite = ") << row.Get<String>(0) << oendl;
+        ocout << otext("neg infinite = ") << row.Get<String>(1) << oendl;
     }
 }

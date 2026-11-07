@@ -741,9 +741,9 @@ OCI_Column * OcilibTypeInfoGetColumn
     );
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf);
-    CHECK_BOUND(index, 1, typinf->nb_cols);
+    CHECK_INDEX(index, typinf->nb_cols);
 
-    SET_RETVAL(&(typinf->cols[index - 1]));
+    SET_RETVAL(&(typinf->cols[index]));
 
     EXIT_FUNC();
 }

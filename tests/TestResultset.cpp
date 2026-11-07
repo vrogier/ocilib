@@ -26,7 +26,7 @@ namespace TestCApi
 
         ASSERT_EQ(2u, OCI_GetColumnCount(rs));
 
-        const auto col1 = OCI_GetColumn(rs, 1);
+        const auto col1 = OCI_GetColumn(rs, 0);
         ASSERT_NE(nullptr, col1);
         ASSERT_EQ(String(OTEXT("ID")), ToUpper(OCI_ColumnGetName(col1)));
         ASSERT_EQ(OCI_CDT_NUMERIC, OCI_ColumnGetType(col1));
@@ -42,26 +42,26 @@ namespace TestCApi
         while (OCI_FetchNext(rs))
         {
             ++row;
-            ASSERT_EQ(row, OCI_GetInt(rs, 1));
-            ASSERT_EQ(String(OCI_GetString(rs, 2)), String(OCI_GetStringByName(rs, OTEXT("NAME"))));
+            ASSERT_EQ(row, OCI_GetInt(rs, 0));
+            ASSERT_EQ(String(OCI_GetString(rs, 1)), String(OCI_GetStringByName(rs, OTEXT("NAME"))));
 
             if (row == 1)
             {
-                ASSERT_EQ(String(OTEXT("one")), String(OCI_GetString(rs, 2)));
+                ASSERT_EQ(String(OTEXT("one")), String(OCI_GetString(rs, 1)));
             }
             else if (row == 2)
             {
-                ASSERT_EQ(String(OTEXT("two")), String(OCI_GetString(rs, 2)));
+                ASSERT_EQ(String(OTEXT("two")), String(OCI_GetString(rs, 1)));
             }
             else if (row == 3)
             {
-                ASSERT_EQ(String(OTEXT("three")), String(OCI_GetString(rs, 2)));
+                ASSERT_EQ(String(OTEXT("three")), String(OCI_GetString(rs, 1)));
             }
         }
 
         ASSERT_EQ(3, row);
         ASSERT_EQ(3u, OCI_GetRowCount(rs));
-        ASSERT_EQ(3u, OCI_GetCurrentRow(rs));
+        ASSERT_EQ(2, OCI_GetCurrentRow(rs));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -93,19 +93,19 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
 
         ASSERT_TRUE(OCI_FetchFirst(rs));
-        ASSERT_EQ(1u, OCI_GetCurrentRow(rs));
-        ASSERT_EQ(10, OCI_GetInt(rs, 1));
+        ASSERT_EQ(0, OCI_GetCurrentRow(rs));
+        ASSERT_EQ(10, OCI_GetInt(rs, 0));
 
         ASSERT_TRUE(OCI_FetchLast(rs));
-        ASSERT_EQ(3u, OCI_GetCurrentRow(rs));
-        ASSERT_EQ(30, OCI_GetInt(rs, 1));
+        ASSERT_EQ(2, OCI_GetCurrentRow(rs));
+        ASSERT_EQ(30, OCI_GetInt(rs, 0));
 
-        ASSERT_TRUE(OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, 2));
-        ASSERT_EQ(2u, OCI_GetCurrentRow(rs));
-        ASSERT_EQ(20, OCI_GetInt(rs, 1));
+        ASSERT_TRUE(OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, 1));
+        ASSERT_EQ(1, OCI_GetCurrentRow(rs));
+        ASSERT_EQ(20, OCI_GetInt(rs, 0));
 
         ASSERT_TRUE(OCI_FetchPrev(rs));
-        ASSERT_EQ(1u, OCI_GetCurrentRow(rs));
+        ASSERT_EQ(0, OCI_GetCurrentRow(rs));
 
         ASSERT_TRUE(OCI_ReleaseResultsets(stmt));
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -137,11 +137,11 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_ColumnGetName(col));
 
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
         ASSERT_EQ(1, OCI_GetIntByName(rs, OTEXT("N")));
-        ASSERT_EQ(String(OTEXT("x")), String(OCI_GetString(rs, 2)));
-        ASSERT_TRUE(OCI_IsNull(rs, 3));
-        ASSERT_EQ(nullptr, OCI_GetString(rs, 3));
+        ASSERT_EQ(String(OTEXT("x")), String(OCI_GetString(rs, 1)));
+        ASSERT_TRUE(OCI_IsNull(rs, 2));
+        ASSERT_EQ(nullptr, OCI_GetString(rs, 2));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -165,10 +165,10 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
-        ASSERT_NE(nullptr, OCI_GetDate(rs, 2));
-        ASSERT_GT(OCI_GetDouble(rs, 3), 0.0);
-        ASSERT_EQ(String(OTEXT("1")), String(OCI_GetString(rs, 1)));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
+        ASSERT_NE(nullptr, OCI_GetDate(rs, 1));
+        ASSERT_GT(OCI_GetDouble(rs, 2), 0.0);
+        ASSERT_EQ(String(OTEXT("1")), String(OCI_GetString(rs, 0)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -192,12 +192,12 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        ASSERT_EQ(1, OCI_GetShort(rs, 1));
-        ASSERT_NE(0, OCI_GetBigInt(rs, 2));
-        ASSERT_GT(OCI_GetFloat(rs, 3), 0.0f);
-        ASSERT_NE(nullptr, OCI_GetString(rs, 4));
-        ASSERT_NE(nullptr, OCI_GetLob(rs, 5));
-        ASSERT_NE(nullptr, OCI_GetNumber(rs, 6));
+        ASSERT_EQ(1, OCI_GetShort(rs, 0));
+        ASSERT_NE(0, OCI_GetBigInt(rs, 1));
+        ASSERT_GT(OCI_GetFloat(rs, 2), 0.0f);
+        ASSERT_NE(nullptr, OCI_GetString(rs, 3));
+        ASSERT_NE(nullptr, OCI_GetLob(rs, 4));
+        ASSERT_NE(nullptr, OCI_GetNumber(rs, 5));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -221,9 +221,9 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        ASSERT_NE(nullptr, OCI_GetInterval(rs, 1));
-        ASSERT_NE(nullptr, OCI_GetTimestamp(rs, 2));
-        ASSERT_NE(nullptr, OCI_GetString(rs, 3));
+        ASSERT_NE(nullptr, OCI_GetInterval(rs, 0));
+        ASSERT_NE(nullptr, OCI_GetTimestamp(rs, 1));
+        ASSERT_NE(nullptr, OCI_GetString(rs, 2));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -247,12 +247,12 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto sub = OCI_GetStatement(rs, 1);
+        const auto sub = OCI_GetStatement(rs, 0);
         ASSERT_NE(nullptr, sub);
         const auto subrs = OCI_GetResultset(sub);
         ASSERT_NE(nullptr, subrs);
         ASSERT_TRUE(OCI_FetchNext(subrs));
-        ASSERT_EQ(1, OCI_GetInt(subrs, 1));
+        ASSERT_EQ(1, OCI_GetInt(subrs, 0));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -280,7 +280,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        ASSERT_TRUE(OCI_SetStructNumericType(rs, 1, OCI_NUM_INT));
+        ASSERT_TRUE(OCI_SetStructNumericType(rs, 0, OCI_NUM_INT));
         ASSERT_TRUE(OCI_SetStructNumericTypeByName(rs, OTEXT("ID"), OCI_NUM_INT));
 
         struct Row { OCI_Int32 id; otext* name; };
@@ -463,7 +463,7 @@ namespace TestCApi
     }
 
     INSTANTIATE_TEST_CASE_P(Columns, TestResultsetStringCvt,
-        ::testing::Range(1u, 15u));
+        ::testing::Range(0u, 14u));
 
     /* --- LONG columns --- */
 
@@ -519,7 +519,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(String(OTEXT("long value")), String(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("long value")), String(OCI_GetString(rs, 0)));
         ASSERT_TRUE(OCI_FetchNext(rs) == FALSE);
     }
 
@@ -532,7 +532,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_NE(nullptr, OCI_GetString(rs, 1));
+        ASSERT_NE(nullptr, OCI_GetString(rs, 0));
         ASSERT_NE(nullptr, OCI_GetLongByName(rs, OTEXT("L")));
     }
 
@@ -544,7 +544,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_NE(nullptr, OCI_GetString(rs, 1));
+        ASSERT_NE(nullptr, OCI_GetString(rs, 0));
     }
 
     /* --- by-name handle getters --- */
@@ -608,7 +608,7 @@ namespace TestCApi
 
     TEST_F(TestResultsetByName, GetUnsignedBigInt)
     {
-        ASSERT_EQ(42u, OCI_GetUnsignedBigInt(rs, 1));
+        ASSERT_EQ(42u, OCI_GetUnsignedBigInt(rs, 0));
     }
 
     TEST_F(TestResultsetByName, GetUnsignedBigIntByName)
@@ -648,7 +648,7 @@ namespace TestCApi
 
     TEST_F(TestResultsetByName, GetFile)
     {
-        ASSERT_NE(nullptr, OCI_GetFile(rs, 9));
+        ASSERT_NE(nullptr, OCI_GetFile(rs, 8));
     }
 
     TEST_F(TestResultsetByName, GetFileByName)
@@ -658,7 +658,7 @@ namespace TestCApi
 
     TEST_F(TestResultsetByName, GetDataSize)
     {
-        ASSERT_EQ(5u, OCI_GetDataSize(rs, 2));
+        ASSERT_EQ(5u, OCI_GetDataSize(rs, 1));
     }
 
     TEST_F(TestResultsetByName, GetDataSizeByName)
@@ -668,7 +668,7 @@ namespace TestCApi
 
     TEST_F(TestResultsetByName, GetColumnIndex)
     {
-        ASSERT_EQ(2u, OCI_GetColumnIndex(rs, OTEXT("TXT_COL")));
+        ASSERT_EQ(1, OCI_GetColumnIndex(rs, OTEXT("TXT_COL")));
     }
 
     /* --- scrollable edge cases --- */
@@ -713,7 +713,7 @@ namespace TestCApi
     {
         ASSERT_TRUE(OCI_FetchNext(rs));
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(2u, OCI_GetCurrentRow(rs));
+        ASSERT_EQ(1, OCI_GetCurrentRow(rs));
     }
 
     TEST_F(TestResultsetScroll, RelativeSeekPastBeginning)
@@ -771,18 +771,18 @@ namespace TestCApi
 
         /* OcilibResultset* fetch/seek internals via public fetch API */
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(2, OCI_GetInt(rs, 1));
+        ASSERT_EQ(2, OCI_GetInt(rs, 0));
         ASSERT_TRUE(OCI_GetRowCount(rs) >= 2u);
         ASSERT_TRUE(OCI_FetchPrev(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
         ASSERT_TRUE(OCI_FetchLast(rs));
-        ASSERT_EQ(2, OCI_GetInt(rs, 1));
+        ASSERT_EQ(2, OCI_GetInt(rs, 0));
         ASSERT_TRUE(OCI_FetchFirst(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
         ASSERT_TRUE(OCI_FetchSeek(rs, OCI_SFD_RELATIVE, 1));
-        ASSERT_EQ(2, OCI_GetInt(rs, 1));
+        ASSERT_EQ(2, OCI_GetInt(rs, 0));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

@@ -27,7 +27,7 @@ void print_coll_by_index(Collection<Object> &coll)
 
     const OCI_UInt32 n = coll.GetCount();
 
-    for (OCI_UInt32 i = 1; i <= n; ++i)
+    for (OCI_UInt32 i = 0; i < n; ++i)
     {
         print_product(coll[i]);
     }
@@ -50,7 +50,7 @@ void print_const_coll_by_index(const Collection<Object> &coll)
 
     const OCI_UInt32 n = coll.GetCount();
 
-    for (OCI_UInt32 i = 1; i <= n; ++i)
+    for (OCI_UInt32 i = 0; i < n; ++i)
     {
         print_product(coll[i]);
     }
@@ -77,11 +77,11 @@ void fetch_coll(Connection &con, String table_name, T func, Environment &env)
 
     st.Execute("select * from " + table_name);
     Resultset rs = st.GetResultset();
-    while (rs++)
+    for (auto&& row : rs.Rows())
     {
-        std::cout << "#" << rs.Get<String>(1) << std::endl;
+        std::cout << "#" << row.Get<String>(0) << std::endl;
 
-        func(rs.Get<Collection<Object>>(2));
+        func(row.Get<Collection<Object>>(1));
     }
 }
 

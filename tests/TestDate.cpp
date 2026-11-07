@@ -290,7 +290,7 @@ namespace TestCApi
         const auto rslt = OCI_GetResultset(stmt);
         ASSERT_TRUE(OCI_FetchNext(rslt));
 
-        const auto date = OCI_GetDate(rslt, 1);
+        const auto date = OCI_GetDate(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_DateToText(date, OCI_STRING_FORMAT_DATETIME, 512, buffer));
@@ -315,7 +315,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DateFromText(date, OTEXT("1978-04-12 20:30:15"), OCI_STRING_FORMAT_DATETIME));
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :date := :date + 1; end;")));
         ASSERT_NE(nullptr, OCI_BindDate(stmt, OTEXT(":date"), date));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN_OUT));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN_OUT));
         ASSERT_TRUE(OCI_Execute(stmt));
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
@@ -348,7 +348,7 @@ namespace TestCApi
         const auto rslt = OCI_GetResultset(stmt);
         ASSERT_TRUE(OCI_FetchNext(rslt));
 
-        const auto date = OCI_GetDate(rslt, 1);
+        const auto date = OCI_GetDate(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_DateToText(date, OCI_STRING_FORMAT_DATETIME, 512, buffer));

@@ -358,7 +358,7 @@ namespace TestCApi
         const auto rslt = OCI_GetResultset(stmt);
         ASSERT_TRUE(OCI_FetchNext(rslt));
 
-        const auto itv = OCI_GetInterval(rslt, 1);
+        const auto itv = OCI_GetInterval(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));
@@ -384,7 +384,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :itv := :itv * 2; end;")));
         ASSERT_NE(nullptr, OCI_BindInterval(stmt, OTEXT(":itv"), itv));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN_OUT));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN_OUT));
         ASSERT_TRUE(OCI_Execute(stmt));
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
@@ -417,7 +417,7 @@ namespace TestCApi
         const auto rslt = OCI_GetResultset(stmt);
         ASSERT_TRUE(OCI_FetchNext(rslt));
 
-        const auto itv = OCI_GetInterval(rslt, 1);
+        const auto itv = OCI_GetInterval(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));

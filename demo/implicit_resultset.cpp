@@ -31,9 +31,9 @@ int main()
 
         while (rs)
         {
-            while (rs++)
+            for (auto&& row : rs.Rows())
             {
-                std::cout << "Fetch column name:" << rs.GetColumn(1).GetName() << ", Value:" << rs.Get<String>(1) << std::endl;
+                std::cout << "Fetch column name:" << rs.Columns()[0].GetName() << ", Value:" << row.Get<String>(0) << std::endl;
             }
 
             std::cout << "=> Total fetched rows : " << rs.GetCount() << std::endl;

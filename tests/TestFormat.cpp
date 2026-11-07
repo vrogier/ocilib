@@ -96,7 +96,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
 
         ASSERT_TRUE(OCI_NumberFree(num));
         ASSERT_TRUE(OCI_DateFree(date));
@@ -115,8 +115,8 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(-5, OCI_GetInt(rs, 1));
-        ASSERT_EQ(-7, OCI_GetInt(rs, 2));
+        ASSERT_EQ(-5, OCI_GetInt(rs, 0));
+        ASSERT_EQ(-7, OCI_GetInt(rs, 1));
     }
 
     TEST_F(TestFormatTokens, TokenUnsignedInt)
@@ -126,8 +126,8 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(42, OCI_GetInt(rs, 1));
-        ASSERT_EQ(8, OCI_GetInt(rs, 2));
+        ASSERT_EQ(42, OCI_GetInt(rs, 0));
+        ASSERT_EQ(8, OCI_GetInt(rs, 1));
     }
 
     TEST_F(TestFormatTokens, TokenBigInt)
@@ -138,8 +138,8 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(-1234567890123, OCI_GetBigInt(rs, 1));
-        ASSERT_EQ((OCI_UInt64)1234567890123, OCI_GetUnsignedBigInt(rs, 2));
+        ASSERT_EQ(-1234567890123, OCI_GetBigInt(rs, 0));
+        ASSERT_EQ((OCI_UInt64)1234567890123, OCI_GetUnsignedBigInt(rs, 1));
     }
 
     TEST_F(TestFormatTokens, TokenDouble)
@@ -149,7 +149,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1.5, OCI_GetDouble(rs, 1));
+        ASSERT_EQ(1.5, OCI_GetDouble(rs, 0));
     }
 
     /* --- string / null / literal tokens --- */
@@ -161,7 +161,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rs, 0)));
     }
 
     TEST_F(TestFormatTokens, TokenRawMode)
@@ -173,7 +173,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(2, OCI_GetInt(rs, 1));
+        ASSERT_EQ(2, OCI_GetInt(rs, 0));
     }
 
     TEST_F(TestFormatTokens, TokenNullString)
@@ -185,7 +185,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_TRUE(OCI_IsNull(rs, 1));
+        ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatTokens, TokenLiteralPercent)
@@ -197,7 +197,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(String(OTEXT("x%y")), String(OCI_GetString(rs, 1)));
+        ASSERT_EQ(String(OTEXT("x%y")), String(OCI_GetString(rs, 0)));
     }
 
     /* --- handle tokens --- */
@@ -267,7 +267,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_FALSE(OCI_IsNull(rs, 1));
+        ASSERT_FALSE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenTimestamp)
@@ -279,7 +279,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_FALSE(OCI_IsNull(rs, 1));
+        ASSERT_FALSE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenInterval)
@@ -291,7 +291,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_FALSE(OCI_IsNull(rs, 1));
+        ASSERT_FALSE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenRef)
@@ -303,7 +303,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, refrs);
         ASSERT_TRUE(OCI_FetchNext(refrs));
 
-        const auto ref = OCI_GetRef(refrs, 1);
+        const auto ref = OCI_GetRef(refrs, 0);
         ASSERT_NE(nullptr, ref);
 
         ASSERT_TRUE(OCI_ExecuteStmtFmt(stmt, OTEXT("select '%r' from dual"), ref));
@@ -311,7 +311,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_FALSE(OCI_IsNull(rs, 1));
+        ASSERT_FALSE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenNumber)
@@ -323,7 +323,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(7, OCI_GetInt(rs, 1));
+        ASSERT_EQ(7, OCI_GetInt(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenNullDate)
@@ -335,7 +335,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_TRUE(OCI_IsNull(rs, 1));
+        ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenNullTimestamp)
@@ -345,7 +345,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_TRUE(OCI_IsNull(rs, 1));
+        ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenNullInterval)
@@ -355,7 +355,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_TRUE(OCI_IsNull(rs, 1));
+        ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenNullRef)
@@ -365,7 +365,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_TRUE(OCI_IsNull(rs, 1));
+        ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenJson)
@@ -382,7 +382,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_FALSE(OCI_IsNull(rs, 1));
+        ASSERT_FALSE(OCI_IsNull(rs, 0));
 
         ASSERT_TRUE(OCI_JsonFree(json));
     }
@@ -402,7 +402,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_FALSE(OCI_IsNull(rs, 1));
+        ASSERT_FALSE(OCI_IsNull(rs, 0));
 
         ASSERT_TRUE(OCI_VectorFree(vect));
     }
@@ -414,7 +414,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_TRUE(OCI_IsNull(rs, 1));
+        ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
     TEST_F(TestFormatHandles, TokenNullVector)
@@ -424,7 +424,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_TRUE(OCI_IsNull(rs, 1));
+        ASSERT_TRUE(OCI_IsNull(rs, 0));
     }
 
     /* --- invalid / unknown tokens --- */

@@ -634,74 +634,74 @@ namespace TestCApi
 
     TEST_F(TestNumberCvt, NumberColumnToInt)
     {
-        ASSERT_EQ(42, OCI_GetInt(rs, 1));
+        ASSERT_EQ(42, OCI_GetInt(rs, 0));
     }
 
     TEST_F(TestNumberCvt, NumberColumnToShort)
     {
-        ASSERT_EQ(42, OCI_GetShort(rs, 1));
+        ASSERT_EQ(42, OCI_GetShort(rs, 0));
     }
 
     TEST_F(TestNumberCvt, NumberColumnToBigInt)
     {
-        ASSERT_EQ(42, OCI_GetBigInt(rs, 1));
+        ASSERT_EQ(42, OCI_GetBigInt(rs, 0));
     }
 
     TEST_F(TestNumberCvt, NumberColumnToDouble)
     {
-        ASSERT_NEAR(42.0, OCI_GetDouble(rs, 1), 0.001);
+        ASSERT_NEAR(42.0, OCI_GetDouble(rs, 0), 0.001);
     }
 
     TEST_F(TestNumberCvt, NumberColumnToFloat)
     {
-        ASSERT_NEAR(42.0f, OCI_GetFloat(rs, 1), 0.001f);
+        ASSERT_NEAR(42.0f, OCI_GetFloat(rs, 0), 0.001f);
     }
 
     TEST_F(TestNumberCvt, BinaryFloatColumnToDouble)
     {
-        ASSERT_NEAR(2.5, OCI_GetDouble(rs, 2), 0.001);
+        ASSERT_NEAR(2.5, OCI_GetDouble(rs, 1), 0.001);
     }
 
     TEST_F(TestNumberCvt, BinaryFloatColumnToInt)
     {
-        ASSERT_EQ(2, OCI_GetInt(rs, 2));
+        ASSERT_EQ(2, OCI_GetInt(rs, 1));
     }
 
     TEST_F(TestNumberCvt, BinaryDoubleColumnToFloat)
     {
-        ASSERT_NEAR(7.25f, OCI_GetFloat(rs, 3), 0.001f);
+        ASSERT_NEAR(7.25f, OCI_GetFloat(rs, 2), 0.001f);
     }
 
     TEST_F(TestNumberCvt, BinaryDoubleColumnToInt)
     {
-        ASSERT_EQ(7, OCI_GetInt(rs, 3));
+        ASSERT_EQ(7, OCI_GetInt(rs, 2));
     }
 
     TEST_F(TestNumberCvt, VarcharColumnToShort)
     {
         /* VARCHAR2 column parsed to binary numeric types */
 
-        ASSERT_EQ(17, OCI_GetShort(rs, 4));
+        ASSERT_EQ(17, OCI_GetShort(rs, 3));
     }
 
     TEST_F(TestNumberCvt, VarcharColumnToInt)
     {
-        ASSERT_EQ(17, OCI_GetInt(rs, 4));
+        ASSERT_EQ(17, OCI_GetInt(rs, 3));
     }
 
     TEST_F(TestNumberCvt, VarcharColumnToBigInt)
     {
-        ASSERT_EQ(17, OCI_GetBigInt(rs, 4));
+        ASSERT_EQ(17, OCI_GetBigInt(rs, 3));
     }
 
     TEST_F(TestNumberCvt, VarcharColumnToDouble)
     {
-        ASSERT_NEAR(17.0, OCI_GetDouble(rs, 4), 0.001);
+        ASSERT_NEAR(17.0, OCI_GetDouble(rs, 3), 0.001);
     }
 
     TEST_F(TestNumberCvt, VarcharColumnToFloat)
     {
-        ASSERT_NEAR(17.0f, OCI_GetFloat(rs, 4), 0.001f);
+        ASSERT_NEAR(17.0f, OCI_GetFloat(rs, 3), 0.001f);
     }
 
     /* --- public-API coverage of the dropped OcilibNumber* internals:

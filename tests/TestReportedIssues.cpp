@@ -128,7 +128,7 @@ namespace TestCApi
         }
 
         ASSERT_NE(nullptr, OCI_BindArrayOfNumbers(stmt, OTEXT(":v"), numbers.data(), static_cast<OCI_UInt32>(numbers.size())));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN_OUT));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN_OUT));
         ASSERT_TRUE(OCI_Execute(stmt));
 
         ASSERT_EQ(TO_STRING(numbers.size()), String(OCI_ServerGetOutput(conn)));
@@ -183,7 +183,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_FetchNext(rslt));
 
-        auto value = OCI_GetString(rslt, 1);
+        auto value = OCI_GetString(rslt, 0);
         ASSERT_NE(nullptr, value);
         auto len = strlen(value);
         ASSERT_EQ(32767, len);
@@ -248,11 +248,11 @@ namespace TestCApi
         ASSERT_NE(nullptr, rslt);
 
         ASSERT_TRUE(OCI_FetchNext(rslt));
-        const auto name = OCI_GetString(rslt, 1);
+        const auto name = OCI_GetString(rslt, 0);
         ASSERT_NE(nullptr, name);
-        const auto length = static_cast<OCI_Size>(OCI_GetInt(rslt, 2));
+        const auto length = static_cast<OCI_Size>(OCI_GetInt(rslt, 1));
         ASSERT_EQ(true, length > 0);
-        const auto rowid = OCI_GetString(rslt, 3);
+        const auto rowid = OCI_GetString(rslt, 2);
         ASSERT_NE(nullptr, rowid);
 
         const auto expected_length = length;
@@ -299,9 +299,9 @@ namespace TestCApi
         {
             counter++;
 
-            auto id = OCI_GetInt(rslt, 1);
-            auto val = OCI_GetString(rslt, 2);
-            auto len = OCI_GetInt(rslt, 3);
+            auto id = OCI_GetInt(rslt, 0);
+            auto val = OCI_GetString(rslt, 1);
+            auto len = OCI_GetInt(rslt, 2);
 
             ASSERT_NE(nullptr, val);
 
@@ -375,9 +375,9 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_BindBigInt(stmt, OTEXT(":id"), &id));
         ASSERT_NE(nullptr, OCI_BindBigInt(stmt, OTEXT(":ret"), &ret));
 
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_OUT));
         ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 2), OCI_BDM_OUT));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 3), OCI_BDM_OUT));
 
         ASSERT_TRUE(OCI_Execute(stmt));
 
@@ -416,8 +416,8 @@ namespace TestCApi
 
         while (OCI_FetchNext(rslt))
         {
-            auto test = OCI_GetInt(rslt, 1);
-            auto value = OCI_GetString(rslt, 2);
+            auto test = OCI_GetInt(rslt, 0);
+            auto value = OCI_GetString(rslt, 1);
 
             if (test == 1 || test == 2)
             {

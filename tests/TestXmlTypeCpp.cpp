@@ -27,7 +27,7 @@ namespace TestCppApi
         stmt.Describe(OTEXT("SELECT XMLELEMENT(\"person\",xmlattributes(('john') as \"firstname\", ('doe') as \"lastname\")) as xml from dual"));
 
         auto rst = stmt.GetResultset();
-        auto col = rst.GetColumn(1);
+        auto col = rst.GetColumn(0);
 
         ASSERT_EQ(String(OTEXT("XML")), col.GetName());
         ASSERT_EQ(String(OTEXT("XMLTYPE")), col.GetSQLType());
@@ -59,13 +59,13 @@ namespace TestCppApi
         auto expected1 = String(OTEXT("<person firstname=\"john\" lastname=\"doe\"></person>"));
         auto expected2 = String(OTEXT("<person firstname=\"vince\" lastname=\"rogier\"></person>"));
 
-        auto xmlType1 = rst.Get<XmlType>(1);
+        auto xmlType1 = rst.Get<XmlType>(0);
         ASSERT_EQ(expected1, xmlType1.ToString());
-        ASSERT_EQ(expected1, rst.Get<String>(1));
+        ASSERT_EQ(expected1, rst.Get<String>(0));
 
-        auto xmlType2 = rst.Get<XmlType>(2);
+        auto xmlType2 = rst.Get<XmlType>(1);
         ASSERT_EQ(expected2, xmlType2.ToString());
-        ASSERT_EQ(expected2, rst.Get<String>(2));
+        ASSERT_EQ(expected2, rst.Get<String>(1));
 
         
     }
@@ -101,7 +101,7 @@ namespace TestCppApi
         auto rs = st.GetResultset();
         while (rs++)
         {
-            xmlRowValues.push_back({ rs.Get<OCI_Int32>(1), ToUpper(rs.Get<String>(2)) });
+            xmlRowValues.push_back({ rs.Get<OCI_Int32>(0), ToUpper(rs.Get<String>(1)) });
         }
 
         const auto expectedRows = 100u;
@@ -180,14 +180,14 @@ namespace TestCppApi
         auto expectedLast = String(OTEXT("<person index=\"2\"></person>"));
 
         rst.Last();
-        auto xmlType1 = rst.Get<XmlType>(1);
+        auto xmlType1 = rst.Get<XmlType>(0);
         ASSERT_EQ(expectedLast, xmlType1.ToString());
-        ASSERT_EQ(expectedLast, rst.Get<String>(1));
+        ASSERT_EQ(expectedLast, rst.Get<String>(0));
 
         rst.First();
-        auto xmlType2 = rst.Get<XmlType>(1);
+        auto xmlType2 = rst.Get<XmlType>(0);
         ASSERT_EQ(expectedFirst, xmlType2.ToString());
-        ASSERT_EQ(expectedFirst, rst.Get<String>(1));
+        ASSERT_EQ(expectedFirst, rst.Get<String>(0));
 
 
         
@@ -207,7 +207,7 @@ namespace TestCppApi
         auto rst = stmt.GetResultset();
         ASSERT_TRUE(rst.Next());
 
-        XmlType xml = rst.Get<XmlType>(1);
+        XmlType xml = rst.Get<XmlType>(0);
         ASSERT_EQ(String(), xml.ToString());
 
         ExecDML(OTEXT("DROP TABLE TestXmlTypeNull"));

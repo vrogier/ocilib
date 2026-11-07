@@ -601,12 +601,12 @@ OCI_Statement* OcilibErrorGetStatement
  * OcilibErrorGetRow
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibErrorGetRow
+OCI_Int32 OcilibErrorGetRow
 (
     OCI_Error* err
 )
 {
-    if (NULL == err) return (0);
+    if (NULL == err) return (-1);
 
-    return err->row;
+    return (err->row > 0) ? ((OCI_Int32) err->row - 1) : -1;
 }

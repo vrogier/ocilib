@@ -25,18 +25,17 @@ int main()
         st.ExecutePrepared();
         
         Resultset rs = st.GetResultset();
-        while (rs++)
+        for (auto&& row : rs.Rows())
         {
-            std::cout << "element with code " << rs.Get<OCI_Int32>(1) << " has been updated" << std::endl;
+            std::cout << "element with code " << row.Get<OCI_Int32>(0) << " has been updated" << std::endl;
         }
 
         std::cout << "=> Total updated rows : " << rs.GetCount() << std::endl;
 
         st.Execute("select count(*) from products where name like '%updated'");
         rs = st.GetResultset();
-        rs++;
-        
-        std::cout << rs.Get<OCI_Int32>(1) << " elements updated in DB" << std::endl;
+                rs.Next();
+        std::cout << rs.Get<OCI_Int32>(0) << " elements updated in DB" << std::endl;
 
     }
     catch (const std::exception &ex)

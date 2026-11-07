@@ -79,7 +79,7 @@ static OCI_UInt32 SeekModeValues[] =
         ENTER_FUNC(type, res, OCI_IPC_RESULTSET, rs);            \
                                                                  \
         CHECK_PTR(OCI_IPC_RESULTSET, rs);                        \
-        CHECK_BOUND(index, 1, (rs)->nb_defs);                    \
+        CHECK_INDEX(index, (rs)->nb_defs);                    \
                                                                  \
         type tmp = res;                                          \
                                                                  \
@@ -96,7 +96,7 @@ static OCI_UInt32 SeekModeValues[] =
         OCI_Define *def = NULL;                          \
                                                          \
         CHECK_PTR(OCI_IPC_RESULTSET, rs);                \
-        CHECK_BOUND(index, 1, (rs)->nb_defs);            \
+        CHECK_INDEX(index, (rs)->nb_defs);            \
                                                          \
         def = OcilibDefineGet(rs, index);                \
         CHECK_NULL(def);                                 \
@@ -610,7 +610,8 @@ static OCI_Boolean OcilibResultsetFetchCustom
         }
         case OCI_SFD_ABSOLUTE:
         {
-            CHECK(offset != 0);
+            CHECK(offset >= 0);
+            offset += 1;
             break;
         }
         default:
@@ -1093,17 +1094,22 @@ OCI_UInt32 OcilibResultsetGetRowCount
  * OcilibResultsetGetCurrentRow
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibResultsetGetCurrentRow
+OCI_Int32 OcilibResultsetGetCurrentRow
 (
     OCI_Resultset *rs
 )
 {
-    GET_PROP
+    ENTER_FUNC
     (
-        OCI_UInt32, 0,
-        OCI_IPC_RESULTSET, rs,
-        row_abs
+        /* returns */ OCI_Int32, -1,
+        /* context */ OCI_IPC_RESULTSET, rs
     );
+
+    CHECK_PTR(OCI_IPC_RESULTSET, rs);
+
+    SET_RETVAL((OCI_Int32) rs->row_abs - 1);
+
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1140,9 +1146,9 @@ OCI_Column * OcilibResultsetGetColumn
     );
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs);
-    CHECK_BOUND(index, 1, rs->nb_defs);
+    CHECK_INDEX(index, rs->nb_defs);
 
-    SET_RETVAL(&rs->defs[index - 1].col);
+    SET_RETVAL(&rs->defs[index].col);
 
     EXIT_FUNC();
 }
@@ -1169,7 +1175,7 @@ OCI_Column * OcilibResultsetGetColumnByName
     const OCI_Int32 index = OcilibDefineGetIndex(rs, name);
     CHECK(index >= 0);
 
-    SET_RETVAL(&rs->defs[index - 1].col);
+    SET_RETVAL(&rs->defs[index].col);
 
     EXIT_FUNC();
 }
@@ -1178,7 +1184,7 @@ OCI_Column * OcilibResultsetGetColumnByName
  * OcilibResultsetGetColumnIndex
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibResultsetGetColumnIndex
+OCI_Int32 OcilibResultsetGetColumnIndex
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -1186,17 +1192,14 @@ OCI_UInt32 OcilibResultsetGetColumnIndex
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_UInt32, 0,
+        /* returns */ OCI_Int32, -1,
         /* context */ OCI_IPC_RESULTSET, rs
     );
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs);
     CHECK_PTR(OCI_IPC_STRING,    name);
 
-    const OCI_Int32 index = OcilibDefineGetIndex(rs, name);
-    CHECK(index >= 0);
-
-    SET_RETVAL((OCI_UInt32) index);
+    SET_RETVAL(OcilibDefineGetIndex(rs, name));
 
     EXIT_FUNC();
 }
@@ -1219,10 +1222,10 @@ OCI_Boolean OcilibResultsetSetStructNumericType
     );
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs);
-    CHECK_BOUND(index, 1, rs->nb_defs);
-    CHECK_COMPAT(OCI_CDT_NUMERIC == rs->defs[index - 1].col.datatype);
+    CHECK_INDEX(index, rs->nb_defs);
+    CHECK_COMPAT(OCI_CDT_NUMERIC == rs->defs[index].col.datatype);
 
-    rs->defs[index-1].col.struct_subtype = type;
+    rs->defs[index].col.struct_subtype = type;
 
     SET_SUCCESS();
 
@@ -1293,24 +1296,24 @@ OCI_Boolean OcilibResultsetGetStruct
 
         OCI_Size size = 0;
 
-        for (ub4 i = 1; i <= rs->nb_defs; i++)
+        for (ub4 i = 0; i < rs->nb_defs; i++)
         {
-            OCI_Define *def = &rs->defs[i - 1];
+            OCI_Define *def = &rs->defs[i];
 
             const OCI_Boolean is_not_null = OcilibDefineIsDataNotNull(def);
 
-            if (i == 1)
+            if (i == 0)
             {
-                OcilibColumnGetAttributeInfo(&def->col, rs->nb_defs, i - 1, &size1, &align);
+                OcilibColumnGetAttributeInfo(&def->col, rs->nb_defs, i, &size1, &align);
             }
             else
             {
                 size1 = size2;
             }
 
-            if (i < rs->nb_defs)
+            if (i + 1 < rs->nb_defs)
             {
-                OcilibColumnGetAttributeInfo(&rs->defs[i].col, rs->nb_defs, i, &size2, &align);
+                OcilibColumnGetAttributeInfo(&rs->defs[i + 1].col, rs->nb_defs, i + 1, &size2, &align);
             }
             else
             {
@@ -1640,7 +1643,7 @@ const otext * OcilibResultsetGetString
     OCI_Define *def = NULL;
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs);
-    CHECK_BOUND(index, 1, rs->nb_defs);
+    CHECK_INDEX(index, rs->nb_defs);
 
     def = OcilibDefineGet(rs, index);
     CHECK_NULL(def);
@@ -1976,7 +1979,7 @@ OCI_UInt32 OcilibResultsetGetRaw
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs);
     CHECK_PTR(OCI_IPC_VOID,      buffer);
-    CHECK_BOUND(index, 1, rs->nb_defs);
+    CHECK_INDEX(index, rs->nb_defs);
 
     OCI_Define* def = OcilibDefineGet(rs, (OCI_UInt32) index);
     CHECK_NULL(def);
@@ -2516,7 +2519,7 @@ OCI_UInt32 OcilibResultsetGetDataSize
     );
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs);
-    CHECK_BOUND(index, 1, rs->nb_defs);
+    CHECK_INDEX(index, rs->nb_defs);
 
     OCI_Define* def = OcilibDefineGet(rs, (OCI_UInt32) index);
     CHECK_NULL(def);
@@ -2589,7 +2592,7 @@ OCI_Boolean OcilibResultsetIsNull
     );
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs);
-    CHECK_BOUND(index, 1, rs->nb_defs);
+    CHECK_INDEX(index, rs->nb_defs);
 
     OCI_Define *def = OcilibDefineGet(rs, index);
     CHECK_NULL(def);
@@ -2660,7 +2663,7 @@ OCI_UInt32 OcilibResultsetGetDataLength
     );
 
     CHECK_PTR(OCI_IPC_RESULTSET, rs);
-    CHECK_BOUND(index, 1, rs->nb_defs);
+    CHECK_INDEX(index, rs->nb_defs);
 
     OCI_Define *def = OcilibDefineGet(rs, index);
     CHECK_NULL(def);

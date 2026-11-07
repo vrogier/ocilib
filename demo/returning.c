@@ -31,7 +31,7 @@ int main(void)
     OCI_Resultset  * rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        printf("element with code %d has been updated\n", OCI_GetInt(rs, 1));
+        printf("element with code %d has been updated\n", OCI_GetInt(rs, 0));
     }
 
     printf("Number of affected rows : %d\n", OCI_GetAffectedRows(st));
@@ -39,7 +39,7 @@ int main(void)
     OCI_ExecuteStmt(st, "select count(*) from products where name like '%updated'");
     rs = OCI_GetResultset(st);
     OCI_FetchNext(rs);
-    printf("%i elements updated in DB\n", OCI_GetInt(rs, 1));
+    printf("%i elements updated in DB\n", OCI_GetInt(rs, 0));
 
     OCI_Commit(cn);
 

@@ -2322,7 +2322,7 @@ OCI_Statement* OCI_API OCI_ErrorGetStatement
     return OcilibErrorGetStatement(err);
 }
 
-OCI_UInt32 OCI_API OCI_ErrorGetRow
+OCI_Int32 OCI_API OCI_ErrorGetRow
 (
     OCI_Error* err
 )
@@ -4845,7 +4845,7 @@ OCI_UInt32 OCI_API OCI_GetRowCount
     CALL_IMPL(OcilibResultsetGetRowCount, rs);
 }
 
-OCI_UInt32 OCI_API OCI_GetCurrentRow
+OCI_Int32 OCI_API OCI_GetCurrentRow
 (
     OCI_Resultset* rs
 )
@@ -6479,7 +6479,7 @@ OCI_Bind* OCI_API OCI_GetBindByName
     CALL_IMPL(OcilibStatementGetBindByName, stmt, name);
 }
 
-OCI_UInt32 OCI_API OCI_GetBindIndex
+OCI_Int32 OCI_API OCI_GetBindIndex
 (
     OCI_Statement* stmt,
     const otext  * name

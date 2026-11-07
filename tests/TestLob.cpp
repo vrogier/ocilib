@@ -587,7 +587,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto fetched = OCI_GetLob(rs, 1);
+        const auto fetched = OCI_GetLob(rs, 0);
         ASSERT_NE(nullptr, fetched);
         ASSERT_EQ((OCI_UInt32) OCI_CLOB, OCI_LobGetType(fetched));
 

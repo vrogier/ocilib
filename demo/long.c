@@ -36,7 +36,7 @@ int main(void)
 
     if (f)
     {
-        for (i = 1, n = SIZE_LST; i <= n; i++)
+        for (i = 0, n = SIZE_LST; i <= n; i++)
         {           
             fputc('A' + (i % CHAR_MAX), f);
         }
@@ -87,7 +87,7 @@ int main(void)
     /* read data by chunks of 2048 bytes*/
     while (OCI_FetchNext(rs))
     {
-        OCI_Long *lg = OCI_GetLong(rs, 1);
+        OCI_Long *lg = OCI_GetLong(rs, 0);
 
         while ((n = OCI_LongRead(lg, buffer, sizeof(buffer)))) {}
 

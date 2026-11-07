@@ -61,9 +61,9 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":tab_values"), reinterpret_cast<otext*>(tab_values), StringSize, ArraySize));
         ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":tab_results"), reinterpret_cast<otext*>(tab_results), StringSize, ArraySize));
 
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN));
         ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 2), OCI_BDM_IN));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 3), OCI_BDM_OUT));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 2), OCI_BDM_OUT));
 
         /* execute */
 

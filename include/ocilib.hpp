@@ -161,6 +161,7 @@ namespace ocilib
 #include "ocilibcpp/detail/core/HandleStore.hpp"
 #include "ocilibcpp/detail/core/SmartHandle.hpp"
 #include "ocilibcpp/detail/core/HandleHolder.hpp"
+#include "ocilibcpp/detail/core/IndexedIterator.hpp"
 
 /* Including support implementations  */
 
@@ -204,8 +205,11 @@ namespace ocilib
 #include "ocilibcpp/detail/Statement.hpp"
 #include "ocilibcpp/detail/Resultset.hpp"
 #include "ocilibcpp/detail/Row.hpp"
-#include "ocilibcpp/detail/ResultsetIterator.hpp"
+#include "ocilibcpp/detail/RowIterator.hpp"
+#include "ocilibcpp/detail/ResultsetRows.hpp"
 #include "ocilibcpp/detail/Column.hpp"
+#include "ocilibcpp/detail/ColumnIterator.hpp"
+#include "ocilibcpp/detail/ColumnView.hpp"
 #include "ocilibcpp/detail/Subscription.hpp"
 #include "ocilibcpp/detail/Event.hpp"
 #include "ocilibcpp/detail/Agent.hpp"

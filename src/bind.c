@@ -810,7 +810,7 @@ OCI_Bind* OcilibBindCreate
     {
         prev_index = OcilibBindGetIndex(stmt, name);
 
-        if (prev_index > 0)
+        if (prev_index >= 0)
         {
             if (!stmt->bind_reuse)
             {
@@ -818,7 +818,7 @@ OCI_Bind* OcilibBindCreate
             }
             else
             {
-                bnd = stmt->ubinds[prev_index-1];
+                bnd = stmt->ubinds[prev_index];
 
                 if (bnd->type != type)
                 {
@@ -1084,6 +1084,11 @@ OCI_Int32 OcilibBindGetIndex
                 index = -index;
             }
 
+        if (index > 0)
+        {
+            index--;
+        }
+
             break;
         }
     }
@@ -1114,7 +1119,7 @@ OCI_Boolean OcilibBindSetNullIndicator
 
     if (bnd->buffer.inds)
     {
-        bnd->buffer.inds[position - 1] = value;
+        bnd->buffer.inds[position] = value;
     }
 
     SET_SUCCESS();
@@ -1251,7 +1256,7 @@ OCI_Boolean OcilibBindSetDataSize
     OCI_UInt32 size
 )
 {
-    return OcilibBindSetDataSizeAtPos(bnd, 1, size);
+    return OcilibBindSetDataSizeAtPos(bnd, 0, size);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1272,7 +1277,7 @@ OCI_Boolean OcilibBindSetDataSizeAtPos
     );
 
     CHECK_PTR(OCI_IPC_BIND, bnd);
-    CHECK_BOUND(position, 1, bnd->buffer.count);
+    CHECK_INDEX(position, bnd->buffer.count);
     CHECK_MIN(size, 1);
 
     CHECK_NULL(bnd->buffer.lens);
@@ -1287,7 +1292,7 @@ OCI_Boolean OcilibBindSetDataSizeAtPos
         size *= (OCI_UInt32) sizeof(dbtext);
     }
 
-    ((ub2 *) bnd->buffer.lens)[position-1] = (ub2) size;
+    ((ub2 *) bnd->buffer.lens)[position] = (ub2) size;
 
     SET_SUCCESS();
 
@@ -1303,7 +1308,7 @@ OCI_UInt32 OcilibBindGetDataSize
     OCI_Bind *bnd
 )
 {
-    return OcilibBindGetDataSizeAtPos(bnd, 1);
+    return OcilibBindGetDataSizeAtPos(bnd, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1323,11 +1328,11 @@ OCI_UInt32 OcilibBindGetDataSizeAtPos
     );
 
     CHECK_PTR(OCI_IPC_BIND, bnd);
-    CHECK_BOUND(position, 1, bnd->buffer.count);
+    CHECK_INDEX(position, bnd->buffer.count);
 
     CHECK_NULL(bnd->buffer.lens);
 
-    OCI_UInt32 size = (OCI_UInt32)((ub2 *)bnd->buffer.lens)[position - 1];
+    OCI_UInt32 size = (OCI_UInt32)((ub2 *)bnd->buffer.lens)[position];
 
     if (OCI_CDT_TEXT == bnd->type)
     {
@@ -1361,7 +1366,7 @@ OCI_Boolean OcilibBindSetNullAtPos
     );
 
     CHECK_PTR(OCI_IPC_BIND, bnd);
-    CHECK_BOUND(position, 1, bnd->buffer.count);
+    CHECK_INDEX(position, bnd->buffer.count);
 
     CHECK(OcilibBindSetNullIndicator(bnd, position, OCI_IND_NULL));
 
@@ -1379,7 +1384,7 @@ OCI_Boolean OcilibBindSetNull
     OCI_Bind *bnd
 )
 {
-    return OcilibBindSetNullAtPos(bnd, 1);
+    return OcilibBindSetNullAtPos(bnd, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1399,7 +1404,7 @@ OCI_Boolean OcilibBindSetNotNullAtPos
     );
 
     CHECK_PTR(OCI_IPC_BIND, bnd);
-    CHECK_BOUND(position, 1, bnd->buffer.count);
+    CHECK_INDEX(position, bnd->buffer.count);
 
     CHECK(OcilibBindSetNullIndicator(bnd, position, OCI_IND_NOTNULL));
 
@@ -1417,7 +1422,7 @@ OCI_Boolean OcilibBindSetNotNull
     OCI_Bind *bnd
 )
 {
-    return OcilibBindSetNotNullAtPos(bnd, 1);
+    return OcilibBindSetNotNullAtPos(bnd, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1437,11 +1442,11 @@ OCI_Boolean OcilibBindIsNullAtPos
     );
 
     CHECK_PTR(OCI_IPC_BIND, bnd);
-    CHECK_BOUND(position, 1, bnd->buffer.count);
+    CHECK_INDEX(position, bnd->buffer.count);
 
     CHECK_NULL(bnd->buffer.inds);
 
-    SET_RETVAL(OCI_IND_NULL == bnd->buffer.inds[position - 1]);
+    SET_RETVAL(OCI_IND_NULL == bnd->buffer.inds[position]);
 
     EXIT_FUNC();
 }
@@ -1455,7 +1460,7 @@ OCI_Boolean OcilibBindIsNull
     OCI_Bind *bnd
 )
 {
-    return OcilibBindIsNullAtPos(bnd, 1);
+    return OcilibBindIsNullAtPos(bnd, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -71,7 +71,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetRowCount
     OCI_Resultset* rs
 );
 
-OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetCurrentRow
+OCI_SYM_LOCAL OCI_Int32 OcilibResultsetGetCurrentRow
 (
     OCI_Resultset* rs
 );
@@ -93,7 +93,7 @@ OCI_SYM_LOCAL OCI_Column* OcilibResultsetGetColumnByName
     const otext  * name
 );
 
-OCI_SYM_LOCAL OCI_UInt32 OcilibResultsetGetColumnIndex
+OCI_SYM_LOCAL OCI_Int32 OcilibResultsetGetColumnIndex
 (
     OCI_Resultset* rs,
     const otext  * name

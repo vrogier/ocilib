@@ -40,7 +40,7 @@ int main(void)
         printf("Iterating on resultset #%d\n", ++nb_rs);
         while (OCI_FetchNext(rs))
         {
-            printf("...%s\n", OCI_GetString(rs, 1));
+            printf("...%s\n", OCI_GetString(rs, 0));
         }
 
         rs = OCI_GetNextResultset(st);

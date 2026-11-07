@@ -35,7 +35,7 @@ int main(void)
     OCI_BindArraySetSize(st, ARRAY_SIZE);
     OCI_BindArrayOfDates(st, ":tab", NULL, 0);
 
-    tab = (OCI_Date **)OCI_BindGetData(OCI_GetBind(st, 1));
+    tab = (OCI_Date **)OCI_BindGetData(OCI_GetBind(st, 0));
 
     for (i = 0; i < ARRAY_SIZE; i++)
     {

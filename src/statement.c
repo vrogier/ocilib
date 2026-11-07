@@ -981,7 +981,7 @@ OCI_Boolean OcilibStatementFetchIntoUserVariables
 
         /* loop on column list for updating user given placeholders */
 
-        for (i = 1, n = OcilibResultsetGetColumnCount(rs); (i <= n) && res; i++)
+        for (i = 0, n = OcilibResultsetGetColumnCount(rs); (i < n) && res; i++)
         {
             OCI_Column *col = OcilibResultsetGetColumn(rs, i);
 
@@ -4515,9 +4515,9 @@ OCI_Bind * OcilibStatementGetBind
     );
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt);
-    CHECK_BOUND(index, 1, stmt->nb_ubinds);
+    CHECK_INDEX(index, stmt->nb_ubinds);
 
-    SET_RETVAL(stmt->ubinds[index - 1]);
+    SET_RETVAL(stmt->ubinds[index]);
 
     EXIT_FUNC();
 }
@@ -4544,12 +4544,12 @@ OCI_Bind * OcilibStatementGetBindByName
     CHECK_PTR(OCI_IPC_STRING,    name);
 
     index = OcilibBindGetIndex(stmt, name);
-    if (index <= 0)
+    if (index < 0)
     {
         THROW(OcilibExceptionItemNotFound, name, OCI_IPC_BIND);
     }
 
-    SET_RETVAL(stmt->ubinds[index - 1]);
+    SET_RETVAL(stmt->ubinds[index]);
 
     EXIT_FUNC();
 }
@@ -4558,7 +4558,7 @@ OCI_Bind * OcilibStatementGetBindByName
 * OcilibStatementGetBindIndex
 * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibStatementGetBindIndex
+OCI_Int32 OcilibStatementGetBindIndex
 (
     OCI_Statement *stmt,
     const otext   *name
@@ -4566,7 +4566,7 @@ OCI_UInt32 OcilibStatementGetBindIndex
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_UInt32, 0,
+        /* returns */ OCI_Int32, -1,
         /* context */ OCI_IPC_STATEMENT, stmt
     );
 
@@ -4576,9 +4576,8 @@ OCI_UInt32 OcilibStatementGetBindIndex
     CHECK_PTR(OCI_IPC_STRING,    name);
 
     index = OcilibBindGetIndex(stmt, name);
-    CHECK(index >= 0);
 
-    SET_RETVAL((OCI_UInt32) index);
+    SET_RETVAL(index);
 
     EXIT_FUNC();
 }

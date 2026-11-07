@@ -152,9 +152,9 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
     OCI_DirPathSetConvertMode(dp, force ? OCI_DCM_FORCE : OCI_DCM_DEFAULT);
 
     /* describe the target table */
-    OCI_DirPathSetColumn(dp, 1, "VAL_INT", SIZE_COL1, NULL);
-    OCI_DirPathSetColumn(dp, 2, "VAL_STR", SIZE_COL2, NULL);
-    OCI_DirPathSetColumn(dp, 3, "VAL_DATE", SIZE_COL3, "YYYYMMDD");
+    OCI_DirPathSetColumn(dp, 0, "VAL_INT", SIZE_COL1, NULL);
+    OCI_DirPathSetColumn(dp, 1, "VAL_STR", SIZE_COL2, NULL);
+    OCI_DirPathSetColumn(dp, 2, "VAL_DATE", SIZE_COL3, "YYYYMMDD");
 
     /* prepare the load */
     OCI_DirPathPrepare(dp);
@@ -168,15 +168,15 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
         OCI_DirPathReset(dp);
 
         /* set the values for the current load iteration */
-        for (j = 1; j <= nb_rows; j++)
+        for (j = 0; j < nb_rows; j++)
         {
             /* conversion and loading errors are performed on the first load for rows 5 and 8 */
             if (i == 0 && (j == 5 || j == 8) && gen_conv_error)
             {
                 /* generate a conversion error - not null clause violation on column val_int  */
+                OCI_DirPathSetEntry(dp, j, 0, NULL, 0, TRUE);
                 OCI_DirPathSetEntry(dp, j, 1, NULL, 0, TRUE);
                 OCI_DirPathSetEntry(dp, j, 2, NULL, 0, TRUE);
-                OCI_DirPathSetEntry(dp, j, 3, NULL, 0, TRUE);
             }
             else if (i == 0 && (j == 5 || j == 8) && gen_load_error)
             {
@@ -185,9 +185,9 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
                 sprintf(val2, "value %05d", j + (i*SIZE_ARRAY));
                 sprintf(val3, "%04d%02d%02d", (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
-                OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
-                OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
+                OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)strlen(val1), TRUE);
+                OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)strlen(val2), TRUE);
+                OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)strlen(val3), TRUE);
             }
             else
             {
@@ -196,9 +196,9 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
                 sprintf(val2, "value %05d", j + (i*SIZE_ARRAY));
                 sprintf(val3, "%04d%02d%02d", (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
-                OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
-                OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
+                OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)strlen(val1), TRUE);
+                OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)strlen(val2), TRUE);
+                OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)strlen(val3), TRUE);
             }
         }
 
@@ -226,9 +226,9 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
                     sprintf(val2, "value %05d", row);
                     sprintf(val3, "%04d%02d%02d", (row % 23) + 1 + 2000, (row % 11) + 1, (row % 23) + 1);
 
-                    OCI_DirPathSetEntry(dp, row, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
-                    OCI_DirPathSetEntry(dp, row, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
-                    OCI_DirPathSetEntry(dp, row, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
+                    OCI_DirPathSetEntry(dp, row, 0, val1, (OCI_UInt32)strlen(val1), TRUE);
+                    OCI_DirPathSetEntry(dp, row, 1, val2, (OCI_UInt32)strlen(val2), TRUE);
+                    OCI_DirPathSetEntry(dp, row, 2, val3, (OCI_UInt32)strlen(val3), TRUE);
 
                     nb_conv = 0;
                 }
@@ -242,7 +242,7 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
                     while (err_row != 0)
                     {
                         check_results(con, dp, nb_error == 0 ? 5 : 8, err_row, "erred converted row index (force mode)");
-                        check_results(con, dp, err_col, 1, "erred column index in force mode");
+                        check_results(con, dp, 0, err_col, "erred column index in force mode");
 
                         err_row = OCI_DirPathGetErrorRow(dp);
                         err_col = OCI_DirPathGetErrorColumn(dp);
@@ -265,15 +265,15 @@ void do_load(OCI_Connection *con, OCI_Boolean gen_conv_error, OCI_Boolean gen_lo
 
                 while (nb_conv < SIZE_ARRAY)
                 {
-                    for (j = 1; j <= nb_rows - nb_conv; j++)
+                    for (j = 0; j < nb_rows - nb_conv; j++)
                     {
                         sprintf(val1, "%04d", (j + nb_conv) + (i*SIZE_ARRAY));
                         sprintf(val2, "value %05d", (j + nb_conv) + (i*SIZE_ARRAY));
                         sprintf(val3, "%04d%02d%02d", ((j + nb_conv) % 23) + 1 + 2000, ((j + nb_conv) % 11) + 1, ((j + nb_conv) % 23) + 1);
 
-                        OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
-                        OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
-                        OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
+                        OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)strlen(val1), TRUE);
+                        OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)strlen(val2), TRUE);
+                        OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)strlen(val3), TRUE);
                     }
 
                     /* convert again */

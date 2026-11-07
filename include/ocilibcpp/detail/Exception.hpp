@@ -220,7 +220,7 @@ inline Connection Exception::GetConnection() const
     return Connection(_pConnection, nullptr, false);
 }
 
-inline UInt32 Exception::GetRow() const
+inline Int32 Exception::GetRow() const
 {
     return _row;
 }

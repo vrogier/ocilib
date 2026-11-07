@@ -4,9 +4,9 @@
 
 using namespace ocilib;
 
-void print_row(Resultset &rs)
+void print_row(const Row &row)
 {
-    std::cout << rs.Get<OCI_Int32>(1) << " - " << rs.Get<String>(2) << std::endl;
+    std::cout << row.Get<OCI_Int32>(0) << " - " << row.Get<String>(1) << std::endl;
 }
 
 int main()
@@ -32,28 +32,32 @@ int main()
         std::cout << "Total rows : " << rs.GetCount() << std::endl;
 
         rs.First();
-        print_row(rs);
+        print_row(rs.Rows()[rs.GetCurrentRow()]);
 
-        while (rs.Next())
+        for (auto&& row : rs.Rows())
         {
-            print_row(rs);
+            print_row(row);
         }
 
         while (rs.Prev())
         {
-            print_row(rs);
+            print_row(rs.Rows()[rs.GetCurrentRow()]);
         }
 
         rs.Seek(Resultset::SeekAbsolute, 30);
-        print_row(rs);
+        print_row(rs.Rows()[rs.GetCurrentRow()]);
 
-        while (rs.GetCurrentRow() < 60 && rs.Next())
+        for (auto&& row : rs.Rows())
         {
-            print_row(rs);
+            print_row(row);
+            if (rs.GetCurrentRow() >= 60)
+            {
+                break;
+            }
         }
 
         rs.Seek(Resultset::SeekRelative, -15);
-        print_row(rs);
+        print_row(rs.Rows()[rs.GetCurrentRow()]);
 
     }
     catch (const std::exception &ex)

@@ -49,7 +49,7 @@ namespace TestCppApi
         auto rs = st.GetResultset();
         rs.Next();
 
-        lng = rs.Get<Blong>(2);
+        lng = rs.Get<Blong>(1);
 
         auto selectLongContent = lng.GetContent();
 
@@ -177,7 +177,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto lg = OCI_GetLong(rs, 1);
+        const auto lg = OCI_GetLong(rs, 0);
         ASSERT_NE(nullptr, lg);
         ASSERT_EQ(OCI_CLONG, OCI_LongGetType(lg));
         ASSERT_NE(nullptr, OCI_LongGetBuffer(lg));

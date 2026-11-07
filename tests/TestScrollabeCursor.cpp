@@ -5,9 +5,9 @@ namespace TestCApi
 
     void TestRow(OCI_Resultset* rslt, OCI_UInt32 index)
     {
-        ASSERT_EQ(index, OCI_GetCurrentRow(rslt));
-        ASSERT_EQ(index, OCI_GetInt(rslt, 1));
-        ASSERT_EQ(String(OTEXT("Row ")) + TO_STRING(index), String(OCI_GetString(rslt, 2)));
+        ASSERT_EQ(static_cast<OCI_Int32>(index) - 1, OCI_GetCurrentRow(rslt));
+        ASSERT_EQ(index, OCI_GetInt(rslt, 0));
+        ASSERT_EQ(String(OTEXT("Row ")) + TO_STRING(index), String(OCI_GetString(rslt, 1)));
     }
 
     TEST(TestScrollableCursor, Fetch)
@@ -51,7 +51,7 @@ namespace TestCApi
 
         TestRow(rs, 1);
 
-        ASSERT_TRUE(OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, 30));
+        ASSERT_TRUE(OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, 29));
         TestRow(rs, 30);
 
         ASSERT_TRUE(OCI_FetchSeek(rs, OCI_SFD_RELATIVE, -25));

@@ -76,7 +76,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto fetched = OCI_GetJson(rs, 1);
+        const auto fetched = OCI_GetJson(rs, 0);
         ASSERT_NE(nullptr, fetched);
         const auto fetchedByName = OCI_GetJsonByName(rs, OTEXT("VALUE"));
         ASSERT_NE(nullptr, fetchedByName);
@@ -147,7 +147,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto out = OCI_GetJson(rs, 1);
+        const auto out = OCI_GetJson(rs, 0);
         ASSERT_NE(nullptr, out);
 
         String text = GetJsonText(out);

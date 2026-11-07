@@ -13,7 +13,7 @@ namespace TestCppApi
         stmt.Execute(OTEXT("SELECT 1 FROM dual"));
         Resultset rs = stmt.GetResultset();
         ASSERT_TRUE(rs.Next());
-        ASSERT_EQ(1, rs.Get<OCI_Int32>(1));
+        ASSERT_EQ(1, rs.Get<OCI_Int32>(0));
 
         stmt.Execute(OTEXT("SELECT 2 FROM dual"));
         ASSERT_TRUE(rs.IsNull());

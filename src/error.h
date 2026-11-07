@@ -124,7 +124,7 @@ OCI_SYM_LOCAL OCI_Statement* OcilibErrorGetStatement
     OCI_Error* err
 );
 
-OCI_SYM_LOCAL OCI_UInt32 OcilibErrorGetRow
+OCI_SYM_LOCAL OCI_Int32 OcilibErrorGetRow
 (
     OCI_Error* err
 );

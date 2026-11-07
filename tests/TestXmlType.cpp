@@ -41,7 +41,7 @@ namespace TestCApi
         const auto rst = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rst);
 
-        const auto col = OCI_GetColumn(rst, 1);
+        const auto col = OCI_GetColumn(rst, 0);
         ASSERT_NE(nullptr, col);
 
         ASSERT_EQ(String(OTEXT("XML")), String(OCI_ColumnGetName(col)));
@@ -83,21 +83,21 @@ namespace TestCApi
         auto expected1 = String(OTEXT("<person firstname=\"john\" lastname=\"doe\"></person>"));
         auto expected2 = String(OTEXT("<person firstname=\"vince\" lastname=\"rogier\"></person>"));
 
-        auto xmlType1 = OCI_GetXmlType(rst, 1);
+        auto xmlType1 = OCI_GetXmlType(rst, 0);
         ASSERT_NE(nullptr, xmlType1);
 
         ASSERT_EQ(expected1.size(), OCI_XmlTypeGetContentSize(xmlType1));
         ASSERT_EQ(expected1, String(OCI_XmlTypeGetContent(xmlType1)));
 
-        ASSERT_EQ(expected1, String(OCI_GetString(rst, 1)));
+        ASSERT_EQ(expected1, String(OCI_GetString(rst, 0)));
 
-        auto xmlType2 = OCI_GetXmlType(rst, 2);
+        auto xmlType2 = OCI_GetXmlType(rst, 1);
         ASSERT_NE(nullptr, xmlType2);
 
         ASSERT_EQ(expected2.size(), OCI_XmlTypeGetContentSize(xmlType2));
         ASSERT_EQ(expected2, String(OCI_XmlTypeGetContent(xmlType2)));
 
-        ASSERT_EQ(expected2, String(OCI_GetString(rst, 2)));
+        ASSERT_EQ(expected2, String(OCI_GetString(rst, 1)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -127,10 +127,10 @@ namespace TestCApi
         auto expectedLast = String(OTEXT("<person index=\"2\"></person>"));
 
         ASSERT_TRUE(OCI_FetchLast(rst));
-        ASSERT_EQ(expectedLast, String(OCI_GetString(rst, 1)));
+        ASSERT_EQ(expectedLast, String(OCI_GetString(rst, 0)));
 
         ASSERT_TRUE(OCI_FetchFirst(rst));
-        ASSERT_EQ(expectedFirst, String(OCI_GetString(rst, 1)));
+        ASSERT_EQ(expectedFirst, String(OCI_GetString(rst, 0)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -145,7 +145,7 @@ namespace TestCApi
     {
         ASSERT_EQ(nullptr, OCI_XmlTypeGetContent(nullptr));
         ASSERT_EQ(0u, OCI_XmlTypeGetContentSize(nullptr));
-        ASSERT_EQ(nullptr, OCI_GetXmlType(nullptr, 1));
+        ASSERT_EQ(nullptr, OCI_GetXmlType(nullptr, 0));
         ASSERT_EQ(nullptr, OCI_GetXmlTypeByName(nullptr, nullptr));
     }
 }

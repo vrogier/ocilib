@@ -23,7 +23,7 @@ int main()
 
         std::cout << std::setiosflags(std::ios::left);
 
-        for (OCI_Int32 i = 1, n = table.GetColumnCount(); i <= n; ++i)
+        for (OCI_Int32 i = 0, n = table.GetColumnCount(); i < n; ++i)
         {
             Column col = table.GetColumn(i);
 

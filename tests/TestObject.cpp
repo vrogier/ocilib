@@ -284,7 +284,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto ref = OCI_GetRef(rs, 1);
+        const auto ref = OCI_GetRef(rs, 0);
         ASSERT_NE(nullptr, ref);
 
         const auto obj = OCI_RefGetObject(ref);
@@ -330,7 +330,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto obj = OCI_GetObject(rs, 1);
+        const auto obj = OCI_GetObject(rs, 0);
         ASSERT_NE(nullptr, obj);
 
         const auto typinf = OCI_ObjectGetTypeInfo(obj);
@@ -466,7 +466,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto ref = OCI_GetRef(rs, 1);
+        const auto ref = OCI_GetRef(rs, 0);
         ASSERT_NE(nullptr, ref);
         ASSERT_FALSE(OCI_RefIsNull(ref));
 

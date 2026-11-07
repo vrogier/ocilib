@@ -19,15 +19,15 @@ namespace TestCApi
         const auto dp = OCI_DirPathCreate(typinf, nullptr, 2, 10);
         ASSERT_NE(nullptr, dp);
 
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_int"), 12, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_str"), 50, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 0, OTEXT("val_int"), 12, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"), 50, nullptr));
 
         ASSERT_TRUE(OCI_DirPathPrepare(dp));
 
         const OCI_UInt32 nb_rows = OCI_DirPathGetMaxRows(dp);
         ASSERT_NE(0u, nb_rows);
 
-        for (OCI_Int32 r = 1; r <= static_cast<OCI_Int32>(nb_rows); ++r)
+        for (OCI_Int32 r = 0; r < static_cast<OCI_Int32>(nb_rows); ++r)
         {
             otext v1[16];
             otext v2[64];
@@ -35,8 +35,8 @@ namespace TestCApi
             osprintf(v1, OTEXT("%d"), r);
             osprintf(v2, OTEXT("name_%d"), r);
 
-            ASSERT_TRUE(OCI_DirPathSetEntry(dp, static_cast<OCI_UInt32>(r), 1, v1, (OCI_UInt32) ostrlen(v1), TRUE));
-            ASSERT_TRUE(OCI_DirPathSetEntry(dp, static_cast<OCI_UInt32>(r), 2, v2, (OCI_UInt32) ostrlen(v2), TRUE));
+            ASSERT_TRUE(OCI_DirPathSetEntry(dp, static_cast<OCI_UInt32>(r), 0, v1, (OCI_UInt32) ostrlen(v1), TRUE));
+            ASSERT_TRUE(OCI_DirPathSetEntry(dp, static_cast<OCI_UInt32>(r), 1, v2, (OCI_UInt32) ostrlen(v2), TRUE));
         }
 
         ASSERT_TRUE(OCI_DirPathSetCurrentRows(dp, nb_rows));
@@ -71,17 +71,17 @@ namespace TestCApi
         const auto dp = OCI_DirPathCreate(typinf, nullptr, 7, 4);
         ASSERT_NE(nullptr, dp);
 
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_num"), 12, OTEXT("99999D99")));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_str"), 50, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 3, OTEXT("val_raw"), 16, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 4, OTEXT("val_blob"), 64, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 5, OTEXT("val_date"), 20, OTEXT("YYYY-MM-DD")));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 6, OTEXT("val_lraw"), 16, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 0, OTEXT("val_num"), 12, OTEXT("99999D99")));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"), 50, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_raw"), 16, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 3, OTEXT("val_blob"), 64, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 4, OTEXT("val_date"), 20, OTEXT("YYYY-MM-DD")));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 5, OTEXT("val_lraw"), 16, nullptr));
 
         /* unsupported datatype and unknown column name throw */
 
-        ASSERT_FALSE(OCI_DirPathSetColumn(dp, 7, OTEXT("val_bool"), 8, nullptr));
-        ASSERT_FALSE(OCI_DirPathSetColumn(dp, 8, OTEXT("no_such_col"), 8, nullptr));
+        ASSERT_FALSE(OCI_DirPathSetColumn(dp, 6, OTEXT("val_bool"), 8, nullptr));
+        ASSERT_FALSE(OCI_DirPathSetColumn(dp, 6, OTEXT("no_such_col"), 8, nullptr));
 
         ASSERT_TRUE(OCI_DirPathFree(dp));
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
@@ -127,11 +127,11 @@ namespace TestCApi
 
         /* an unknown column name goes through the ColNotFound throw */
 
-        ASSERT_FALSE(OCI_DirPathSetColumn(dp, 1, OTEXT("no_such_col"), 10, nullptr));
+        ASSERT_FALSE(OCI_DirPathSetColumn(dp, 0, OTEXT("no_such_col"), 10, nullptr));
 
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_num"), 12, OTEXT("99999D99")));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_str"), 50, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 3, OTEXT("val_date"), 20, OTEXT("YYYY-MM-DD")));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 0, OTEXT("val_num"), 12, OTEXT("99999D99")));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"), 50, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_date"), 20, OTEXT("YYYY-MM-DD")));
 
         if (OCI_DirPathPrepare(dp))
         {
@@ -142,7 +142,7 @@ namespace TestCApi
             OCI_DirPathSave(dp);
             OCI_DirPathFlushRow(dp);
 
-            for (OCI_UInt32 r = 1; r <= 16; r++)
+            for (OCI_UInt32 r = 0; r < 16; r++)
             {
                 otext vnum[16];
                 otext vstr[64];
@@ -150,16 +150,16 @@ namespace TestCApi
                 osprintf(vnum, OTEXT("%d.50"), r);
                 osprintf(vstr, OTEXT("some_text_value_for_row_%d_padding"), r);
 
-                OCI_DirPathSetEntry(dp, r, 1, vnum, (OCI_UInt32) ostrlen(vnum), TRUE);
-                OCI_DirPathSetEntry(dp, r, 2, vstr, (OCI_UInt32) ostrlen(vstr), TRUE);
-                OCI_DirPathSetEntry(dp, r, 3, OTEXT("2024-01-15"), 10, TRUE);
+                OCI_DirPathSetEntry(dp, r, 0, vnum, (OCI_UInt32) ostrlen(vnum), TRUE);
+                OCI_DirPathSetEntry(dp, r, 1, vstr, (OCI_UInt32) ostrlen(vstr), TRUE);
+                OCI_DirPathSetEntry(dp, r, 2, OTEXT("2024-01-15"), 10, TRUE);
             }
 
             /* NULL value, partial flag and oversized value arms of SetEntry() */
 
-            OCI_DirPathSetEntry(dp, 1, 2, nullptr, 0, TRUE);
-            OCI_DirPathSetEntry(dp, 2, 2, OTEXT("partial"), 7, FALSE);
-            OCI_DirPathSetEntry(dp, 3, 2, OTEXT("a_very_long_string_that_exceeds_the_column_maxsize_for_sure"), 64, TRUE);
+            OCI_DirPathSetEntry(dp, 0, 1, nullptr, 0, TRUE);
+            OCI_DirPathSetEntry(dp, 2, 1, OTEXT("partial"), 7, FALSE);
+            OCI_DirPathSetEntry(dp, 3, 1, OTEXT("a_very_long_string_that_exceeds_the_column_maxsize_for_sure"), 64, TRUE);
 
             ASSERT_TRUE(OCI_DirPathSetCurrentRows(dp, 16));
             ASSERT_EQ(16u, OCI_DirPathGetCurrentRows(dp));
@@ -210,7 +210,7 @@ namespace TestCApi
 
         const auto dp = OCI_DirPathCreate(typinf, nullptr, 1, 1);
         ASSERT_NE(nullptr, dp);
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"), 50, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 0, OTEXT("val_str"), 50, nullptr));
         ASSERT_TRUE(OCI_DirPathPrepare(dp));
 
         const auto conv = OCI_DirPathConvert(dp);
@@ -227,7 +227,7 @@ namespace TestCApi
 
         const auto dp2 = OCI_DirPathCreate(typinf, nullptr, 1, 1);
         ASSERT_NE(nullptr, dp2);
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp2, 1, OTEXT("val_str"), 50, nullptr));
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp2, 0, OTEXT("val_str"), 50, nullptr));
         ASSERT_TRUE(OCI_DirPathPrepare(dp2));
         ASSERT_TRUE(OCI_DirPathAbort(dp2));
         ASSERT_TRUE(OCI_DirPathFree(dp2));

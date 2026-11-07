@@ -49,7 +49,7 @@ OCI_Define * OcilibDefineGet
 
     if ((OCI_DESCRIBE_ONLY != rs->stmt->exec_mode) && (OCI_PARSE_ONLY != rs->stmt->exec_mode))
     {
-        def =  &rs->defs[index-1];
+        def =  &rs->defs[index];
     }
 
     SET_RETVAL(def);
@@ -84,7 +84,7 @@ OCI_Int32 OcilibDefineGetIndex
 
         for (ub4 i = 0; i < rs->nb_defs; i++)
         {
-            CHECK(OcilibHashAddInt(rs->map, rs->defs[i].col.name, (OCI_Int32)(i + 1)));
+            CHECK(OcilibHashAddInt(rs->map, rs->defs[i].col.name, (OCI_Int32)i));
         }
     }
 

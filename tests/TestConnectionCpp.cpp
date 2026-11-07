@@ -55,7 +55,7 @@ namespace TestCppApi
         stmt.Execute(OTEXT("select count(*) from TestConnCpp"));
         auto rs = stmt.GetResultset();
         ASSERT_TRUE(rs.Next());
-        ASSERT_EQ(0, rs.Get<OCI_Int32>(1));
+        ASSERT_EQ(0, rs.Get<OCI_Int32>(0));
 
         conn.Commit();
         stmt.Execute(OTEXT("drop table TestConnCpp"));

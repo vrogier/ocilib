@@ -50,9 +50,9 @@ int main(void)
     OCI_BindArrayOfStrings(st, ":tab_values", (char*)tab_values, SIZE_VALUE, SIZE_ARRAY);
     OCI_BindArrayOfStrings(st, ":tab_results", (char*)tab_results, SIZE_VALUE, SIZE_ARRAY);
 
+    OCI_BindSetDirection(OCI_GetBind(st, 0), OCI_BDM_IN);
     OCI_BindSetDirection(OCI_GetBind(st, 1), OCI_BDM_IN);
-    OCI_BindSetDirection(OCI_GetBind(st, 2), OCI_BDM_IN);
-    OCI_BindSetDirection(OCI_GetBind(st, 3), OCI_BDM_OUT);
+    OCI_BindSetDirection(OCI_GetBind(st, 2), OCI_BDM_OUT);
 
     /* execute */
 

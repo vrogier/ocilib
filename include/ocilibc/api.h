@@ -624,15 +624,15 @@ OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_ErrorGetStatement
  * @param err - Error handle
  *
  * @warning
- * Row indices start at 1.
+ * Row indices start at 0.
  *
  * @return
- * The 1-based index of the row that caused the error, or 0 if the error is not
+ * The 0-based index of the row that caused the error, or -1 if the error is not
  * related to an array DML operation.
  *
  */
 
-OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_ErrorGetRow
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_ErrorGetRow
 (
     OCI_Error* err
 );
@@ -2915,10 +2915,10 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetSqlIdentifier
  * @param stmt - Statement handle
  *
  * @note
- * Positions are 1-based.
+ * Positions are 0-based.
  *
  * @return
- * The 1-based character position of the error, or 0 if no parsing error occurred.
+ * The 0-based character position of the error, or -1 if no parsing error occurred.
  *
  */
 
@@ -4524,7 +4524,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetBindCount
  * Return the bind handle at the given index in the internal array of bind handles
  *
  * @param stmt  - Statement handle
- * @param index - Bind position (1-based)
+ * @param index - Bind position (0-based)
  *
  * @note
  * Bind handles are created sequentially. For example, the third call to an
@@ -4575,14 +4575,14 @@ OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_GetBindByName
  * The bind name is case-insensitive.
  *
  * @note
- * Bind indexes are 1-based in OCILIB.
+ * Bind indexes are 0-based in OCILIB.
  *
  * @return
  * The bind index on success, or 0 if the bind does not exist or if the statement is NULL.
  *
  */
 
-OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetBindIndex
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_GetBindIndex
 (
     OCI_Statement* stmt,
     const otext  * name
@@ -4836,7 +4836,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetDataSize
  * the bind input array
  *
  * @param bnd      - Bind handle
- * @param position - Position in the array (1-based)
+ * @param position - Position in the array (0-based)
  * @param size     - Data size
  *
  * @note
@@ -4892,7 +4892,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_BindGetDataSize
  * the bind input array
  *
  * @param bnd      - Bind handle
- * @param position - Position in the array (1-based)
+ * @param position - Position in the array (0-based)
  *
  * @note
  * See OCI_BindSetDataSize() for supported data types.
@@ -4950,7 +4950,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetNull
  * This must be done before calling OCI_Execute().
  *
  * @warning
- * Position is 1-based.
+ * Position is 0-based.
  *
  * @note
  * For handle-based data types (non-scalar types), OCILIB performs an extra
@@ -5005,7 +5005,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindSetNotNull
  * This must be done before calling OCI_Execute().
  *
  * @warning
- * Position is 1-based.
+ * Position is 0-based.
  *
  * @note
  * For handle-based data types (non-scalar types), OCILIB performs an extra
@@ -5044,7 +5044,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_BindIsNull
  * is marked as NULL
  *
  * @param bnd      - Bind handle
- * @param position - Position in the array (1-based)
+ * @param position - Position in the array (0-based)
  *
  * @return
  * TRUE if the value at the given position is null, otherwise FALSE.
@@ -5488,16 +5488,16 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetRowCount
  * @param rs - Result set handle
  *
  * @note
- * - OCI_GetCurrentRow() returns the current row number starting from 1.
- * - If the result set has not been fetched or is empty, it returns 0.
- * - If the result set has been fully fetched, it returns the last fetched row number.
+ * - OCI_GetCurrentRow() returns the current row index starting from 0.
+ * - If the result set has not been fetched or is empty, it returns -1.
+ * - If the result set has been fully fetched, it returns the last fetched row index.
  *
  * @return
- * The current row number (1-based), or 0 as described above.
+ * The current row index (0-based), or -1 as described above.
  *
  */
 
-OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetCurrentRow
+OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_GetCurrentRow
 (
     OCI_Resultset* rs
 );
@@ -5523,7 +5523,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetColumnCount
  * Return the column object handle at the given index in the result set
  *
  * @param rs    - Result set handle
- * @param index - Column position (1-based)
+ * @param index - Column index (0-based)
  *
  * @return
  * The column handle on success, or NULL if the index is out of bounds.
@@ -5570,7 +5570,7 @@ OCI_SYM_PUBLIC OCI_Column* OCI_API OCI_GetColumnByName
  * The column name is case-insensitive.
  *
  * @note
- * Column indexes are 1-based in OCILIB.
+ * Column indexes are 0-based in OCILIB.
  *
  * @return
  * The column index on success, or 0 if not found.
@@ -6037,7 +6037,7 @@ OCI_SYM_PUBLIC OCI_SubType OCI_API OCI_ColumnGetSubType
  * result set) to retrieve when calling OCI_GetStruct()
  *
  * @param rs    - Result set handle
- * @param index - Column position (1-based)
+ * @param index - Column index (0-based)
  * @param type  - Numeric type
  *
  * @note
@@ -6163,7 +6163,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_GetStruct
 * @param index - Column position
 *
 * @note
-* Column position starts at 1.
+* Column position is 0-based.
 *
 * @return
 * The column current row value or 0 if index is out of bounds
@@ -6205,7 +6205,7 @@ OCI_SYM_PUBLIC OCI_Number* OCI_API OCI_GetNumberByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or 0 if index is out of bounds
@@ -6247,7 +6247,7 @@ OCI_SYM_PUBLIC OCI_Int16 OCI_API OCI_GetShortByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or 0 if index is out of bounds
@@ -6289,7 +6289,7 @@ OCI_SYM_PUBLIC OCI_UInt16 OCI_API OCI_GetUnsignedShortByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or 0 if index is out of bounds
@@ -6331,7 +6331,7 @@ OCI_SYM_PUBLIC OCI_Int32 OCI_API OCI_GetIntByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or 0 if index is out of bounds
@@ -6373,7 +6373,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetUnsignedIntByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or 0 if index is out of bounds
@@ -6415,7 +6415,7 @@ OCI_SYM_PUBLIC OCI_Int64 OCI_API OCI_GetBigIntByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or 0 if index is out of bounds
@@ -6457,7 +6457,7 @@ OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_GetUnsignedBigIntByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @note
  * OCI_GetString() performs an implicit conversion from the
@@ -6542,7 +6542,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_GetStringByName
  * @param len    - Maximum size of the buffer in bytes
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The number of bytes copied into the buffer on success, or 0 on failure.
@@ -6590,7 +6590,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_GetRawByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or 0.0 if index is out of bounds
@@ -6632,7 +6632,7 @@ OCI_SYM_PUBLIC OCI_Double OCI_API OCI_GetDoubleByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or 0.0 if index is out of bounds
@@ -6674,7 +6674,7 @@ OCI_SYM_PUBLIC OCI_Float OCI_API OCI_GetFloatByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -6715,7 +6715,7 @@ OCI_SYM_PUBLIC OCI_Date* OCI_API OCI_GetDateByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -6756,7 +6756,7 @@ OCI_SYM_PUBLIC OCI_Timestamp* OCI_API OCI_GetTimestampByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -6797,7 +6797,7 @@ OCI_SYM_PUBLIC OCI_Interval* OCI_API OCI_GetIntervalByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -6838,7 +6838,7 @@ OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_GetStatementByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -6879,7 +6879,7 @@ OCI_SYM_PUBLIC OCI_Lob* OCI_API OCI_GetLobByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -6918,7 +6918,7 @@ OCI_SYM_PUBLIC OCI_Json* OCI_API OCI_GetJsonByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -6959,7 +6959,7 @@ OCI_SYM_PUBLIC OCI_File* OCI_API OCI_GetFileByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -7000,7 +7000,7 @@ OCI_SYM_PUBLIC OCI_Object* OCI_API OCI_GetObjectByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -7041,7 +7041,7 @@ OCI_SYM_PUBLIC OCI_Coll* OCI_API OCI_GetCollByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -7082,7 +7082,7 @@ OCI_SYM_PUBLIC OCI_Ref* OCI_API OCI_GetRefByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -7121,7 +7121,7 @@ OCI_SYM_PUBLIC OCI_XmlType* OCI_API OCI_GetXmlTypeByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -7160,7 +7160,7 @@ OCI_SYM_PUBLIC OCI_Vector* OCI_API OCI_GetVectorByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row value or NULL if index is out of bounds
@@ -7201,7 +7201,7 @@ OCI_SYM_PUBLIC OCI_Long* OCI_API OCI_GetLongByName
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * TRUE if the value is null, otherwise FALSE.
@@ -7222,7 +7222,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_IsNull
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @warning
  * For binds of type OCI_CDT_TEXT (strings), the returned value is expressed in
@@ -7303,7 +7303,7 @@ OCI_SYM_PUBLIC OCI_Statement* OCI_API OCI_ResultsetGetStatement
  * @param index - Column position
  *
  * @note
- * Column position starts at 1.
+ * Column position is 0-based.
  *
  * @return
  * The column current row data length, or 0 if the index is out of bounds.
@@ -7707,7 +7707,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollClear
  * @param index - Index of the destination element
  *
  * @note
- * Collection indexes start at position 1.
+ * Collection indexes start at position 0.
  *
  * @return
  * The element handle on success, or NULL on failure.
@@ -7730,7 +7730,7 @@ OCI_SYM_PUBLIC OCI_Elem* OCI_API OCI_CollGetElem
  * @param elem  - Source element handle to assign
  *
  * @note
- * Collection indexes start at position 1.
+ * Collection indexes start at position 0.
  *
  * @return
  * TRUE on success, otherwise FALSE.
@@ -7802,7 +7802,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollToText
  * @param index - Index of the element to delete
  *
  * @note
- * Collection indexes start at position 1.
+ * Collection indexes start at position 0.
  *
  * @warning
  * OCI_CollDeleteElem() is only valid for nested tables.
@@ -14607,7 +14607,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_TypeInfoGetColumnCount
  * Return the column object handle at the given index in the table
  *
  * @param typinf - Type info handle
- * @param index  - Column position (starts at 1)
+ * @param index  - Column index (0-based)
  *
  * @return
  * - Column handle on success
@@ -15489,7 +15489,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_DirPathPrepare
  * @param complete  - Is the entry content fully provided?
  *
  * @note
- * Row and column indexes start at 1.
+ * Row and column indexes start at 0.
  *
  * @note
  * The 'size' parameter is expressed in number of:
@@ -15958,7 +15958,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetAffectedRows
  * @param dp - Direct path Handle
  *
  * @warning
- * Direct path column indexes start at 1.
+ * Direct path column indexes start at 0.
  *
  * @note
  * Errors may happen while data is converted to direct path stream format
@@ -15992,7 +15992,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_DirPathGetErrorColumn
  * @param dp - Direct path Handle
  *
  * @warning
- * Direct path row indexes start at 1.
+ * Direct path row indexes start at 0.
  *
  * @note
  * Errors may happen:
@@ -20365,7 +20365,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_JsonNodeGetFieldCount
  * Return the name of a JSON object field by index
  *
  * @param node  - JSON object node handle
- * @param index - Field index (1-based)
+ * @param index - Field index (0-based)
  *
  * @return Field name, or NULL on error
  */
@@ -20402,7 +20402,7 @@ OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeGetFieldByName
  * Return a JSON object field by index
  *
  * @param node  - JSON object node handle
- * @param index - Field index (1-based)
+ * @param index - Field index (0-based)
  *
  * @return Field node, or NULL on error
  */
@@ -20432,7 +20432,7 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_JsonNodeGetItemCount
  * Return a JSON array item by index
  *
  * @param node  - JSON array node handle
- * @param index - Item index (1-based)
+ * @param index - Item index (0-based)
  *
  * @return Item node, or NULL on error
  */
@@ -20710,7 +20710,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetField
  * Set a JSON array item by index
  *
  * @param arr   - JSON array node handle
- * @param index - Item index (1-based)
+ * @param index - Item index (0-based)
  * @param value - Item value
  *
  * @return TRUE on success, FALSE otherwise
@@ -20744,7 +20744,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeAppendItem
  * Insert a JSON node at a given position in a JSON array node
  *
  * @param arr   - JSON array node handle
- * @param index - Position at which to insert the item (1-based). Index may
+ * @param index - Position at which to insert the item (0-based). Index may
  *                be equal to item count + 1 to append at the end
  * @param value - JSON node handle to insert; it must belong to the same
  *                JSON document and must not already be linked to a parent
@@ -20767,7 +20767,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeInsertItem
  * Remove an item from a JSON array node
  *
  * @param arr   - JSON array node handle
- * @param index - Index of the item to remove (1-based)
+ * @param index - Index of the item to remove (0-based)
  *
  * @return TRUE on success, FALSE otherwise
  */
@@ -20803,7 +20803,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeHasField
  * Remove a range of items from a JSON array node
  *
  * @param arr   - JSON array node handle
- * @param start - Index of the first item to remove (1-based)
+ * @param start - Index of the first item to remove (0-based)
  * @param count - Number of items to remove
  *
  * @return The number of items actually removed.

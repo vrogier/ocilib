@@ -405,7 +405,7 @@ OCI_Elem * OcilibCollectionGetElement
         coll->con->err,
         OCICollGetElem,
         coll->con->env->handle, coll->con->err, coll->handle,
-        (sb4)index - 1, (boolean*)  &exists, &data,
+        (sb4)index, (boolean*)  &exists, &data,
         (dvoid**)(dvoid*)&ind
     );
 
@@ -448,7 +448,7 @@ OCI_Boolean OcilibCollectionSetElement
         coll->con->err,
         OCICollAssignElem,
         coll->con->env->handle, coll->con->err,
-        (sb4) index-1, elem->handle,
+        (sb4)index, elem->handle,
         elem->pind, coll->handle
     );
 
@@ -556,7 +556,7 @@ OCI_Boolean OcilibCollectionRemoveElement
             coll->con->err,
             OCITableDelete,
             coll->con->env->handle, coll->con->err,
-            (sb4) index-1, coll->handle
+            (sb4)index, coll->handle
         );
     }
 
@@ -650,7 +650,7 @@ OCI_Boolean OcilibCollectionToString
 
     count = OcilibCollectionGetSize(coll);
 
-    for (OCI_UInt32 i = 1; i <= count; i++)
+    for (OCI_UInt32 i = 0; i < count; i++)
     {
         OCI_Elem* elem = OcilibCollectionGetElement(coll, i);
 
@@ -770,7 +770,7 @@ OCI_Boolean OcilibCollectionToString
             CHECK(NULL == err || OCI_UNKNOWN == err->type);
         }
 
-        if (i < count)
+        if (i + 1 < count)
         {
             len += OcilibStringAddToBuffer(str, len, OTEXT(", "), 2, FALSE);
         }

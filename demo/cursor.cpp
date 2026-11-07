@@ -22,14 +22,14 @@ int main()
 
         Resultset rs = st.GetResultset();
 
-        while (rs++)
+        for (auto&& row : rs.Rows())
         {
-            Statement st2 = rs.Get<Statement>(2);
+            Statement st2 = row.Get<Statement>(1);
             Resultset rs2 = st2.GetResultset();
 
-            while (rs2++)
+            for (auto&& row2 : rs2.Rows())
             {
-                std::cout << "Table : " << rs.Get<String>(1) << ", Date : " << rs2.Get<String>(1) << std::endl;
+                std::cout << "Table : " << row.Get<String>(0) << ", Date : " << row2.Get<String>(0) << std::endl;
             }
         }
 

@@ -28,12 +28,12 @@ int main(void)
 
     while (OCI_FetchNext(rs))
     {
-        OCI_Statement *st2 = OCI_GetStatement(rs, 2);
+        OCI_Statement *st2 = OCI_GetStatement(rs, 1);
         OCI_Resultset *rs2 = OCI_GetResultset(st2);
 
         while (OCI_FetchNext(rs2))
         {
-            printf("index: %d, date: %s\n",  OCI_GetInt(rs, 1), OCI_GetString(rs2, 1));
+            printf("index: %d, date: %s\n",  OCI_GetInt(rs, 0), OCI_GetString(rs2, 0));
         }
     }
 

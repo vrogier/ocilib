@@ -33,7 +33,7 @@ int main(void)
     OCI_Execute(st);
     OCI_Resultset * rs = OCI_GetResultset(st);
     OCI_FetchNext(rs);
-    printf("code [%d], name [%s], rowid [%s]", OCI_GetInt(rs, 1), OCI_GetString(rs, 2), OCI_GetString(rs, 3));
+    printf("code [%d], name [%s], rowid [%s]", OCI_GetInt(rs, 0), OCI_GetString(rs, 1), OCI_GetString(rs, 2));
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);

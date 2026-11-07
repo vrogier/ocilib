@@ -207,6 +207,7 @@ namespace ocilib
         template<class T> class HandleControl;
         class HandleStore;
         template<class T> class HandleHolder;
+        template<class D, class T, class V> class IndexedIterator;
 
         using Handle = HandleControlBase;
 

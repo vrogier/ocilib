@@ -19,11 +19,11 @@ namespace TestCppApi
         ASSERT_EQ(2u, typeInfo.GetColumnCount());
         ASSERT_TRUE(typeInfo.IsFinalType());
 
-        Column col = typeInfo.GetColumn(1);
+        Column col = typeInfo.GetColumn(0);
         ASSERT_FALSE(col.GetName().empty());
         ASSERT_TRUE(col.GetType() == TypeNumeric);
 
-        col = typeInfo.GetColumn(2);
+        col = typeInfo.GetColumn(1);
         ASSERT_FALSE(col.GetName().empty());
         ASSERT_TRUE(col.GetType() == TypeString);
 

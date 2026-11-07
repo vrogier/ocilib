@@ -35,7 +35,7 @@ namespace TestCApi
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(a));
         OCI_JsonNodeFree(a);
 
-        OCI_JsonNode* b = OCI_JsonNodeGetFieldByIndex(root, 1);
+        OCI_JsonNode* b = OCI_JsonNodeGetFieldByIndex(root, 0);
         ASSERT_NE(nullptr, b);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(b));
         OCI_JsonNodeFree(b);
@@ -71,7 +71,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonNodeSetField(root, OTEXT("only"), field));
         OCI_JsonNodeFree(field);
 
-        const otext* name = OCI_JsonNodeGetFieldName(root, 1);
+        const otext* name = OCI_JsonNodeGetFieldName(root, 0);
         ASSERT_NE(nullptr, name);
         ASSERT_EQ(String(OTEXT("only")), String(name));
 

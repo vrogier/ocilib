@@ -52,7 +52,7 @@ int main(void)
 
     while (OCI_FetchNext(rs))
     {
-        dump_ref(OCI_GetRef(rs, 1));
+        dump_ref(OCI_GetRef(rs, 0));
     }
 
     printf("\n\n=> bind a local ref object to a PL/SQL statement\n\n");

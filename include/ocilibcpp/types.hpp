@@ -462,14 +462,14 @@ namespace ocilib
          * Return the row index which caused an error during statement execution
          *
          * @warning
-         * Row index start at 1.
+         * Row index is 0-based, or -1 if not related to an array DML row.
          *
          * @return
-         *  - 0 if the error is not related to array DML
+         *  - -1 if the error is not related to array DML
          *  - otherwise the index of the given row which caused the error
          *
          */
-        [[nodiscard]] UInt32 GetRow() const;
+        [[nodiscard]] Int32 GetRow() const;
 
         /**
         * @brief
@@ -503,7 +503,7 @@ namespace ocilib
         char* _what;
         OCI_Statement* _pStatement;
         OCI_Connection* _pConnection;
-        UInt32 _row;
+        Int32 _row;
         ExceptionType _type;
         ExceptionCategory _category;
         UInt32 _code;
@@ -4703,7 +4703,7 @@ namespace ocilib
         * @param index  - Column index
         *
         * @note
-        * Column position starts at 1.
+        * Column position is 0-based.
         *
         * @note
         * - For table and views, the returned column object describes a table/view column
@@ -4711,6 +4711,25 @@ namespace ocilib
         *
         */
         [[nodiscard]] Column GetColumn(UInt32 index) const;
+
+        /**
+        * @brief
+        * Return the index of the column with the given name
+        *
+        * @param name - Column name
+        *
+        * @return
+        * The column index (starting at 1) or 0 if no column has the given name.
+        *
+        */
+        [[nodiscard]] Int32 GetColumnIndex(const String& name) const;
+
+        /**
+        * @brief
+        * Return a view over the column descriptors of the type
+        *
+        */
+        TypeInfoColumns Columns();
 
         /**
         * @brief
@@ -5744,7 +5763,7 @@ namespace ocilib
         * @brief
         * Return the name of a JSON object field at the given index
         *
-        * @param index - Field index (starts at 1)
+        * @param index - Field index (0-based)
         *
         * @return Field name
         *
@@ -5766,7 +5785,7 @@ namespace ocilib
         * @brief
         * Return a JSON object field by index
         *
-        * @param index - Field index (starts at 1)
+        * @param index - Field index (0-based)
         *
         * @return The field JsonNode
         *
@@ -5800,7 +5819,7 @@ namespace ocilib
         * @brief
         * Return a JSON array item by index
         *
-        * @param index - Item index (starts at 1)
+        * @param index - Item index (0-based)
         *
         * @return The item JsonNode
         *
@@ -5989,7 +6008,7 @@ namespace ocilib
         * @brief
         * Set an item of a JSON array node
         *
-        * @param index - Item index (starts at 1)
+        * @param index - Item index (0-based)
         * @param value - New item value
         *
         */
@@ -6018,7 +6037,7 @@ namespace ocilib
         * @brief
         * Remove an item from a JSON array node
         *
-        * @param index - Item index (starts at 1)
+        * @param index - Item index (0-based)
         *
         */
         void RemoveItem(UInt32 index);
@@ -6027,7 +6046,7 @@ namespace ocilib
         * @brief
         * Remove a range of items from a JSON array node
         *
-        * @param start - Index of the first item to remove (1-based)
+        * @param start - Index of the first item to remove (0-based)
         * @param count - Number of items to remove
         *
         * @return The number of items actually removed
@@ -6376,7 +6395,7 @@ namespace ocilib
         * @param index - Index of the element
         *
         *  @note
-        * Collection Index start at 1
+        * Collection Index is 0-based
         *
         */
         [[nodiscard]] bool IsElementNull(UInt32 index) const;
@@ -6388,7 +6407,7 @@ namespace ocilib
         * @param index - Index of the element
         *
         *  @note
-        * Collection Index start at 1
+        * Collection Index is 0-based
         *
         */
         void SetElementNull(UInt32 index);
@@ -7279,13 +7298,13 @@ namespace ocilib
         * The bind name is case insensitive
         *
         * @note
-        * Bind indexes start with 1 in OCILIB
+        * Bind indexes are 0-based in OCILIB
         *
         * @return
-        * Bind index on success or zero if the bind does not exists
+        * Bind index on success or -1 if the bind does not exists
         *
         */
-        [[nodiscard]] UInt32 GetBindIndex(const String& name) const;
+        [[nodiscard]] Int32 GetBindIndex(const String& name) const;
 
         /**
         * @brief
@@ -7301,7 +7320,7 @@ namespace ocilib
         * @param index - Bind position
         *
         * @warning
-        * Index starts at 1.
+        * Index is 0-based.
         *
         * @note
         * Bind handle are created sequentially. For example, the third call to a
@@ -7866,7 +7885,8 @@ namespace ocilib
 
         Resultset* _rs;
 
-        friend class ResultsetIterator;
+        friend class RowIterator;
+        friend class ResultsetRows;
     };
 
     /**
@@ -7893,7 +7913,7 @@ namespace ocilib
      * (OCI-10002).
      *
      */
-    class ResultsetIterator
+    class RowIterator
     {
     public:
 
@@ -7915,21 +7935,21 @@ namespace ocilib
         * Fetch the next row
         *
         */
-        ResultsetIterator& operator ++ ();
+        RowIterator& operator ++ ();
 
         /**
         * @brief
         * Fetch the next row (postfix)
         *
         */
-        ResultsetIterator operator ++ (Int32);
+        RowIterator operator ++ (Int32);
 
         /**
         * @brief
         * Fetch the previous row (scrollable resultsets only)
         *
         */
-        ResultsetIterator& operator -- ();
+        RowIterator& operator -- ();
 
         /**
         * @brief
@@ -7939,7 +7959,7 @@ namespace ocilib
         * forward-only resultsets
         *
         */
-        ResultsetIterator operator -- (Int32);
+        RowIterator operator -- (Int32);
 
         /**
         * @brief
@@ -7949,7 +7969,7 @@ namespace ocilib
         * forward-only resultsets
         *
         */
-        ResultsetIterator& operator += (Int32 offset);
+        RowIterator& operator += (Int32 offset);
 
         /**
         * @brief
@@ -7959,7 +7979,7 @@ namespace ocilib
         * forward-only resultsets
         *
         */
-        ResultsetIterator& operator -= (Int32 offset);
+        RowIterator& operator -= (Int32 offset);
 
         /**
         * @brief
@@ -7976,23 +7996,23 @@ namespace ocilib
         * Compare two iterators - past-the-end iterators compare equal
         *
         */
-        bool operator == (const ResultsetIterator& other) const;
+        bool operator == (const RowIterator& other) const;
 
         /**
         * @brief
         * Inequality test
         *
         */
-        bool operator != (const ResultsetIterator& other) const;
+        bool operator != (const RowIterator& other) const;
 
     private:
 
-        ResultsetIterator(Resultset* resultset, bool eof);
+        RowIterator(Resultset* resultset, bool eof);
 
         Resultset* _rs;
         bool       _eof;
 
-        friend class Resultset;
+        friend class ResultsetRows;
     };
 
     /**
@@ -8050,7 +8070,7 @@ namespace ocilib
         * @param index - Column position
         *
         * @note
-        * Column position starts at 1.
+        * Column position is 0-based.
         *
         * @note
         * Get<String> performs an implicit text conversion for non-string columns
@@ -8074,7 +8094,7 @@ namespace ocilib
         * @param value - value to fill
         *
         * @note
-        * Column position starts at 1.
+        * Column position is 0-based.
         *
         */
         template<class T>
@@ -8298,12 +8318,12 @@ namespace ocilib
         * Retrieve the current row index
         *
         * @note
-        * - GetCurrentRow() returns the current row number starting from 1
-        * - If the resultset has not been fetched or if the resultset is empty, it returns 0
-        * - If the resultset has been fully fetched, it returns the last fetched row number
+        * - GetCurrentRow() returns the current row index starting from 0
+        * - If the resultset has not been fetched or if the resultset is empty, it returns -1
+        * - If the resultset has been fully fetched, it returns the last fetched row index
         *
         */
-        [[nodiscard]] UInt32 GetCurrentRow() const;
+        [[nodiscard]] Int32 GetCurrentRow() const;
 
         /**
         * @brief
@@ -8315,10 +8335,10 @@ namespace ocilib
         * The column name is case insensitive
         *
         * @note
-        * Column position starts at 1.
+        * Column position is 0-based.
         *
         */
-        [[nodiscard]] UInt32 GetColumnIndex(const String& name) const;
+        [[nodiscard]] Int32 GetColumnIndex(const String& name) const;
 
         /**
         * @brief
@@ -8334,7 +8354,7 @@ namespace ocilib
         * @param index  - Column index
         *
         * @note
-        * Column position starts at 1.
+        * Column position is 0-based.
         *
         */
         [[nodiscard]] Column GetColumn(UInt32 index) const;
@@ -8358,7 +8378,7 @@ namespace ocilib
         * @param index  - Column index
         *
         * @note
-        * Column position starts at 1.
+        * Column position is 0-based.
         *
         */
         [[nodiscard]] bool IsColumnNull(UInt32 index) const;
@@ -8411,22 +8431,22 @@ namespace ocilib
 
         /**
         * @brief
-        * Return an input iterator positioned on the first row of the resultset
+        * Return a view over the rows of the resultset
         *
         * @note
-        * begin() performs the first Next() call; the range-for is then
-        * equivalent to while (Next()).
+        * ResultsetRows::begin() performs the first Next() call; the range-for is
+        * then equivalent to while (Next()).
         * On forward-only resultsets the iteration is single-pass.
         *
         */
-        ResultsetIterator begin();
+        ResultsetRows Rows();
 
         /**
         * @brief
-        * Return the past-the-end iterator sentinel
+        * Return a view over the column descriptors of the resultset
         *
         */
-        ResultsetIterator end();
+        ResultsetColumns Columns();
 
     private:
 
@@ -8651,6 +8671,184 @@ namespace ocilib
     private:
 
         Column(OCI_Column* pColumn, core::Handle* parent);
+    };
+
+    /**
+     * @brief
+     * Random-access iterator over the column descriptors of a resultset or
+     * type description.
+     *
+     * Positions are 0-based: the first column is at position 0 and
+     * dereference returns the column at position pos + 1 of the underlying
+     * 0-based API.
+     *
+     */
+    template<class T>
+    class ColumnIterator : public core::IndexedIterator<ColumnIterator<T>, T, Column>
+    {
+    public:
+
+        typedef core::IndexedIterator<ColumnIterator<T>, T, Column> Base;
+
+        ColumnIterator() = default;
+
+        /**
+         * @brief
+         * Return the column at the given 0-based position
+         *
+         */
+        [[nodiscard]] Column deref(UInt32 pos) const;
+
+    private:
+
+        ColumnIterator(T* owner, typename Base::difference_type pos) : Base(owner, pos) {}
+
+        template<class>
+        friend class ColumnView;
+    };
+
+    /**
+     * @brief
+     * Read-only view over the column descriptors of a resultset or a type
+     * description.
+     *
+     * Index access (operator[]) and iterator positions are 0-based;
+     * methods taking an index (GetColumn) stay 0-based.
+     *
+     */
+    template<class T>
+    class ColumnView
+    {
+    public:
+
+        typedef ColumnIterator<T> iterator;
+
+        /**
+         * @brief
+         * Return an iterator on the first column (position 0)
+         *
+         */
+        [[nodiscard]] iterator begin() const;
+
+        /**
+         * @brief
+         * Return the past-the-end iterator sentinel
+         *
+         */
+        [[nodiscard]] iterator end() const;
+
+        /**
+         * @brief
+         * Return the number of columns
+         *
+         */
+        [[nodiscard]] UInt32 Size() const;
+
+        /**
+         * @brief
+         * Return the column at the given 0-based index
+         *
+         */
+        [[nodiscard]] Column operator[](UInt32 index) const;
+
+        /**
+         * @brief
+         * Return the column with the given name
+         *
+         */
+        [[nodiscard]] Column operator[](const String& name) const;
+
+        /**
+         * @brief
+         * Return the column at the given 0-based index, bounds-checked
+         *
+         */
+        [[nodiscard]] Column At(UInt32 index) const;
+
+        /**
+         * @brief
+         * Return whether a column with the given name exists
+         *
+         */
+        [[nodiscard]] bool Contains(const String& name) const;
+
+        /**
+         * @brief
+         * Return the 0-based index of the column with the given name
+         *
+         * @return
+         * The 0-based index or -1 if no column has the given name.
+         *
+         */
+        [[nodiscard]] Int32 IndexOf(const String& name) const;
+
+    private:
+
+        explicit ColumnView(T* owner);
+
+        T* _owner;
+
+        friend class Resultset;
+        friend class TypeInfo;
+    };
+
+    /**
+     * @brief
+     * View over the rows of a Resultset
+     *
+     * begin() returns a single-pass input iterator (the iteration position is
+     * shared state on the resultset); operator[] performs a 0-based absolute
+     * seek on scrollable resultsets.
+     *
+     */
+    class ResultsetRows
+    {
+    public:
+
+        /**
+         * @brief
+         * Return an input iterator positioned on the first row
+         *
+         * @note
+         * begin() performs the first Next() call; the range-for is then
+         * equivalent to while (Next()). On forward-only resultsets the
+         * iteration is single-pass.
+         *
+         */
+        [[nodiscard]] RowIterator begin();
+
+        /**
+         * @brief
+         * Return the past-the-end iterator sentinel
+         *
+         */
+        [[nodiscard]] RowIterator end();
+
+        /**
+         * @brief
+         * Return the number of rows fetched so far
+         *
+         */
+        [[nodiscard]] UInt32 Size() const;
+
+        /**
+         * @brief
+         * Return the row at the given 0-based index
+         *
+         * @warning
+         * Scrollable resultsets only - throws Exception (OCI-10002) on
+         * forward-only resultsets.
+         *
+         */
+        [[nodiscard]] Row operator[](Int32 index) const;
+
+    private:
+
+        explicit ResultsetRows(Resultset* resultset);
+
+        Resultset* _rs;
+
+        friend class Resultset;
     };
 
     /**

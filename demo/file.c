@@ -59,7 +59,7 @@ int main(void)
 
     while (OCI_FetchNext(rs))
     {
-        file = OCI_GetFile(rs, 2);
+        file = OCI_GetFile(rs, 1);
 
         OCI_FileOpen(file);
 

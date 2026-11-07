@@ -32,7 +32,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":name"), name, 50));
         ASSERT_TRUE(OCI_Execute(stmt));
 
-        const auto bnd_id = OCI_GetBind(stmt, 1);
+        const auto bnd_id = OCI_GetBind(stmt, 0);
         const auto bnd_name = OCI_GetBindByName(stmt, OTEXT(":name"));
         ASSERT_NE(nullptr, bnd_id);
         ASSERT_NE(nullptr, bnd_name);
@@ -60,7 +60,7 @@ namespace TestCApi
         const auto rset = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rset);
         ASSERT_TRUE(OCI_FetchNext(rset));
-        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rset, 1)));
+        ASSERT_EQ(String(OTEXT("hello")), String(OCI_GetString(rset, 0)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -331,7 +331,7 @@ namespace TestCApi
         /* NULL data input bind in internal mode: covers the non-VNU numeric arm */
 
         ASSERT_NE(nullptr, OCI_BindDouble(stmt, OTEXT(":d2"), NULL));
-        ASSERT_EQ(1u, OCI_GetBindIndex(stmt, OTEXT(":d2")));
+        ASSERT_EQ(0, OCI_GetBindIndex(stmt, OTEXT(":d2")));
 
         ASSERT_TRUE(OCI_RegisterInt(stmt, OTEXT(":i")));
         ASSERT_TRUE(OCI_RegisterBigInt(stmt, OTEXT(":bi")));
@@ -346,10 +346,10 @@ namespace TestCApi
 
         /* registered binds are stored as negative indexes in the map */
 
-        ASSERT_EQ(1u, OCI_GetBindIndex(stmt, OTEXT(":i")));
-        ASSERT_EQ(4u, OCI_GetBindIndex(stmt, OTEXT(":s")));
-        ASSERT_EQ(10u, OCI_GetBindIndex(stmt, OTEXT(":iv")));
-        ASSERT_EQ(0u, OCI_GetBindIndex(stmt, OTEXT(":missing")));
+        ASSERT_EQ(0, OCI_GetBindIndex(stmt, OTEXT(":i")));
+        ASSERT_EQ(3, OCI_GetBindIndex(stmt, OTEXT(":s")));
+        ASSERT_EQ(9, OCI_GetBindIndex(stmt, OTEXT(":iv")));
+        ASSERT_EQ(-1, OCI_GetBindIndex(stmt, OTEXT(":missing")));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
@@ -542,7 +542,7 @@ namespace TestCApi
         /* same name + same type: bind is reused, internal buffer reallocated */
 
         ASSERT_NE(nullptr, OCI_BindBigInt(stmt, OTEXT(":x"), &bi));
-        ASSERT_EQ(1u, OCI_GetBindIndex(stmt, OTEXT(":x")));
+        ASSERT_EQ(0, OCI_GetBindIndex(stmt, OTEXT(":x")));
 
         /* same name + another numeric code: reuse path without allocated buffer */
 
@@ -621,12 +621,12 @@ namespace TestCApi
 
         /* freshly bound text: stored length equals the bind buffer size minus padding */
 
-        const auto fresh_size = OCI_BindGetDataSizeAtPos(bnd, 1);
+        const auto fresh_size = OCI_BindGetDataSizeAtPos(bnd, 0);
         ASSERT_EQ(20u, fresh_size);
 
         /* setting the data size to the full buffer size hits the text padding branch */
 
-        ASSERT_TRUE(OCI_BindSetDataSizeAtPos(bnd, 1, OCI_BindGetDataSize(bnd)));
+        ASSERT_TRUE(OCI_BindSetDataSizeAtPos(bnd, 0, OCI_BindGetDataSize(bnd)));
 
         ASSERT_TRUE(OCI_BindSetDataSize(bnd, 3));
         ASSERT_EQ(3u, OCI_BindGetDataSize(bnd));

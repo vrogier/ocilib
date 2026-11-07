@@ -64,8 +64,8 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        ASSERT_EQ(2, OCI_GetInt(rs, 1));
-        ASSERT_EQ(String(OTEXT("name 2")), OCI_GetString(rs, 2));
+        ASSERT_EQ(2, OCI_GetInt(rs, 0));
+        ASSERT_EQ(String(OTEXT("name 2")), OCI_GetString(rs, 1));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

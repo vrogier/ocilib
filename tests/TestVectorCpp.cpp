@@ -52,13 +52,13 @@ namespace TestCppApi
         Connection con(env, DBS, USR, PWD);
         TypeInfo tif(con,  OTEXT("TestDescribeVector"), TypeInfo::Table);
 
-        CheckColumnFullType(1, tif, OTEXT("V1"), OTEXT("VECTOR(*, *)"), TypeVector, Vector::Flex, 0);
-        CheckColumnFullType(2, tif, OTEXT("V2"), OTEXT("VECTOR(64, *)"), TypeVector, Vector::Flex,64);
-        CheckColumnFullType(3, tif, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), TypeVector, Vector::Int8, 0);
-        CheckColumnFullType(4, tif, OTEXT("V4"), OTEXT("VECTOR(128, INT8)"), TypeVector, Vector::Int8, 128);
-        CheckColumnFullType(5, tif, OTEXT("V5"), OTEXT("VECTOR(256, FLOAT32)"), TypeVector, Vector::Float32, 256);
-        CheckColumnFullType(6, tif, OTEXT("V6"), OTEXT("VECTOR(256, FLOAT64)"), TypeVector, Vector::Float64, 256);
-        CheckColumnFullType(7, tif, OTEXT("V7"), OTEXT("VECTOR(512, BINARY)"), TypeVector, Vector::Binary, 512);
+        CheckColumnFullType(0, tif, OTEXT("V1"), OTEXT("VECTOR(*, *)"), TypeVector, Vector::Flex, 0);
+        CheckColumnFullType(1, tif, OTEXT("V2"), OTEXT("VECTOR(64, *)"), TypeVector, Vector::Flex,64);
+        CheckColumnFullType(2, tif, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), TypeVector, Vector::Int8, 0);
+        CheckColumnFullType(3, tif, OTEXT("V4"), OTEXT("VECTOR(128, INT8)"), TypeVector, Vector::Int8, 128);
+        CheckColumnFullType(4, tif, OTEXT("V5"), OTEXT("VECTOR(256, FLOAT32)"), TypeVector, Vector::Float32, 256);
+        CheckColumnFullType(5, tif, OTEXT("V6"), OTEXT("VECTOR(256, FLOAT64)"), TypeVector, Vector::Float64, 256);
+        CheckColumnFullType(6, tif, OTEXT("V7"), OTEXT("VECTOR(512, BINARY)"), TypeVector, Vector::Binary, 512);
 
         
 
@@ -184,7 +184,7 @@ namespace TestCppApi
 
         auto rs = stmt.GetResultset();
         rs.Next();
-        vect = rs.Get<Vector>(1);
+        vect = rs.Get<Vector>(0);
 
         ASSERT_EQ(4, vect.GetDimensionCount());
         ASSERT_EQ(Vector::Float32, vect.GetFormat());
@@ -216,7 +216,7 @@ namespace TestCppApi
 
         auto rs = stmt.GetResultset();
         rs.Next();
-        auto vect = rs.Get<Vector>(1);
+        auto vect = rs.Get<Vector>(0);
 
         ASSERT_EQ(4, vect.GetDimensionCount());
         ASSERT_EQ(Vector::Float32, vect.GetFormat());
@@ -247,7 +247,7 @@ namespace TestCppApi
         auto rs = stmt.GetResultset();
         rs.Next();
 
-        ASSERT_EQ(String(OTEXT("[1,2,3,4]")), rs.Get<String>(1));
+        ASSERT_EQ(String(OTEXT("[1,2,3,4]")), rs.Get<String>(0));
 
         ExecDML(OTEXT("DROP TABLE  TestFetchVectorAsString"));
     }
@@ -269,7 +269,7 @@ namespace TestCppApi
         auto rs = stmt.GetResultset();
         rs.Next();
 
-        ASSERT_EQ(String(OTEXT("[1,2,3,4]")),  rs.Get<String>(1));
+        ASSERT_EQ(String(OTEXT("[1,2,3,4]")),  rs.Get<String>(0));
 
         ExecDML(OTEXT("DROP TABLE TestRegisterVector"));
     }

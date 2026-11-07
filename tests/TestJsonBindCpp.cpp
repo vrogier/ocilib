@@ -37,7 +37,7 @@ namespace TestCppApi
         Resultset rs = stmt.GetResultset();
         ASSERT_TRUE(rs.Next());
 
-        Json fetched = rs.Get<Json>(1);
+        Json fetched = rs.Get<Json>(0);
         ASSERT_FALSE(fetched.IsNull());
         ASSERT_NE(String::npos, fetched.ToString().find(OTEXT("cpp")));
 
@@ -90,7 +90,7 @@ namespace TestCppApi
         Resultset rs = stmt.GetResultset();
         ASSERT_TRUE(rs.Next());
 
-        Json out = rs.Get<Json>(1);
+        Json out = rs.Get<Json>(0);
         ASSERT_FALSE(out.IsNull());
         ASSERT_NE(String::npos, out.ToString().find(OTEXT("updated")));
 

@@ -39,7 +39,7 @@ int main(void)
         char *str = "- ABC must have replaced 3 first chars";
         OCI_UInt32 char_count = 0, byte_count = 0;
 
-        lob1 = OCI_GetLob(rs, 2);
+        lob1 = OCI_GetLob(rs, 1);
         lob2 = OCI_LobCreate(cn, OCI_CLOB);
 
         char_count = 3;
@@ -61,7 +61,7 @@ int main(void)
         n = char_count;
         temp[n] = 0;
 
-        printf("code: %i, obj : %s\n", OCI_GetInt(rs, 1), temp);
+        printf("code: %i, obj : %s\n", OCI_GetInt(rs, 0), temp);
 
         OCI_LobFree(lob2);
     }

@@ -44,7 +44,7 @@ namespace TestCApi
 
         ASSERT_NE(nullptr, env);
 
-        const otext*  str = OCI_GetLocaleString(env, 999);
+        const otext*  str = OCI_GetLocaleString(env, 998);
         ASSERT_EQ(nullptr, str);
 
     }

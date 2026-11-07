@@ -35,7 +35,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
         ASSERT_TRUE(OCI_TimestampFree(tmsp));
@@ -66,7 +66,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto lg = OCI_GetLong(rs, 1);
+        const auto lg = OCI_GetLong(rs, 0);
         ASSERT_NE(nullptr, lg);
         ASSERT_GT(OCI_LongGetSize(lg), 0u);
 

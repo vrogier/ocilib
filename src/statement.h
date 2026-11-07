@@ -781,7 +781,7 @@ OCI_SYM_LOCAL OCI_Bind * OcilibStatementGetBindByName
     const otext  * name
 );
 
-OCI_SYM_LOCAL OCI_UInt32 OcilibStatementGetBindIndex
+OCI_SYM_LOCAL OCI_Int32 OcilibStatementGetBindIndex
 (
     OCI_Statement* stmt,
     const otext  * name

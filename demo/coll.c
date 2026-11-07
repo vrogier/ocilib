@@ -54,9 +54,9 @@ void fetch_coll(OCI_Connection *cn, otext * table_name)
 
     while (OCI_FetchNext(rs))
     {
-        printf("#%s\n", OCI_GetString(rs, 1));
+        printf("#%s\n", OCI_GetString(rs, 0));
 
-        print_coll(OCI_GetColl(rs, 2));
+        print_coll(OCI_GetColl(rs, 1));
     }
 
     OCI_StatementFree(st);

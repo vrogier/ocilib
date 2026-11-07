@@ -22,9 +22,9 @@ int main()
         st.Execute("select * from products");
 
         Resultset rs = st.GetResultset();
-        while (rs++)
+        for (auto&& row : rs.Rows())
         {
-            std::cout << "code:" << rs.Get<String>(1) << " name:" << rs.Get<String>(2) << std::endl;
+            std::cout << "code:" << row.Get<String>(0) << " name:" << row.Get<String>(1) << std::endl;
         }
 
         std::cout << "=> Total fetched rows : " << rs.GetCount() << std::endl;

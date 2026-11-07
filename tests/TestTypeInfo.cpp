@@ -21,7 +21,7 @@ namespace TestCApi
         ASSERT_EQ(2u, OCI_TypeInfoGetColumnCount(typinf));
         ASSERT_TRUE(OCI_TypeInfoIsFinalType(typinf));
 
-        auto col = OCI_TypeInfoGetColumn(typinf, 1);
+        auto col = OCI_TypeInfoGetColumn(typinf, 0);
         ASSERT_NE(nullptr, col);
         ASSERT_NE(nullptr, OCI_ColumnGetName(col));
 

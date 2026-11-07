@@ -25,7 +25,7 @@ namespace TestCppApi
         verify.Execute(OTEXT("select count(*) from TestBindCpp_Array where id in (10, 20, 30)"));
         Resultset rs = verify.GetResultset();
         ASSERT_TRUE(rs.Next());
-        ASSERT_EQ(3, rs.Get<OCI_Int32>(1));
+        ASSERT_EQ(3, rs.Get<OCI_Int32>(0));
 
         ExecDML(OTEXT("drop table TestBindCpp_Array"));
     }
@@ -53,7 +53,7 @@ namespace TestCppApi
         verify.Execute(OTEXT("select count(*) from TestBindCpp_ArrayString where name in ('alice','bob','charlie')"));
         Resultset rs = verify.GetResultset();
         ASSERT_TRUE(rs.Next());
-        ASSERT_EQ(3, rs.Get<OCI_Int32>(1));
+        ASSERT_EQ(3, rs.Get<OCI_Int32>(0));
 
         ExecDML(OTEXT("drop table TestBindCpp_ArrayString"));
     }

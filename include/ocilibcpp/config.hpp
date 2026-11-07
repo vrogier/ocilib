@@ -174,7 +174,15 @@ class SodaCollCursor;
 class SodaDocCursor;
 class ShardingKey;
 class Row;
-class ResultsetIterator;
+class RowIterator;
+class ResultsetRows;
+template<class T>
+class ColumnIterator;
+template<class T>
+class ColumnView;
+
+using ResultsetColumns = ColumnView<Resultset>;
+using TypeInfoColumns  = ColumnView<TypeInfo>;
 
 
 /**

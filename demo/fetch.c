@@ -29,7 +29,7 @@ int main(void)
 
     while (OCI_FetchNext(rs))
     {
-        printf("code: %i, name %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
+        printf("code: %i, name %s\n", OCI_GetInt(rs, 0), OCI_GetString(rs, 1));
     }
 
     printf("\n%d row(s) fetched\n", OCI_GetRowCount(rs));

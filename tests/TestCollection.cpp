@@ -32,9 +32,9 @@ namespace TestCApi
             nbRows++;
 
             String category = OTEXT("category ") + TO_STRING(nbRows);
-            ASSERT_EQ(category, String(OCI_GetString(rset, 1)));
+            ASSERT_EQ(category, String(OCI_GetString(rset, 0)));
 
-            const auto coll = OCI_GetColl(rset, 2);
+            const auto coll = OCI_GetColl(rset, 1);
             ASSERT_NE(nullptr, coll);
 
             ASSERT_EQ(expectedItems, OCI_CollGetCount(coll));
@@ -220,7 +220,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 1);
+        const auto coll = OCI_GetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         ASSERT_EQ(3u, OCI_CollGetSize(coll));
@@ -237,7 +237,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_IterFree(iter));
 
-        auto direct = OCI_CollGetElem(coll, 2);
+        auto direct = OCI_CollGetElem(coll, 1);
         ASSERT_NE(nullptr, direct);
         ASSERT_EQ(2, OCI_ElemGetInt(direct));
         ASSERT_FALSE(OCI_ElemIsNull(direct));
@@ -272,7 +272,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 1);
+        const auto coll = OCI_GetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext collText[512];
@@ -280,7 +280,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_CollToText(coll, &collTextSize, collText));
         ASSERT_GT(collTextSize, 0u);
 
-        auto elem = OCI_CollGetElem(coll, 1);
+        auto elem = OCI_CollGetElem(coll, 0);
         ASSERT_NE(nullptr, elem);
         const otext* str = OCI_ElemGetString(elem);
         ASSERT_NE(nullptr, str);
@@ -338,36 +338,36 @@ namespace TestCApi
         ASSERT_EQ(2u, OCI_CollGetSize(coll));
         ASSERT_EQ(2u, OCI_CollGetCount(coll));
 
-        auto e1 = OCI_CollGetElem(coll, 1);
+        auto e1 = OCI_CollGetElem(coll, 0);
         ASSERT_NE(nullptr, e1);
         ASSERT_EQ(10, OCI_ElemGetInt(e1));
 
-        auto e2 = OCI_CollGetElem(coll, 2);
+        auto e2 = OCI_CollGetElem(coll, 1);
         ASSERT_NE(nullptr, e2);
         ASSERT_EQ(20, OCI_ElemGetInt(e2));
 
         ASSERT_TRUE(OCI_ElemSetInt(elem, 30));
-        ASSERT_TRUE(OCI_CollSetElem(coll, 1, elem));
-        e1 = OCI_CollGetElem(coll, 1);
+        ASSERT_TRUE(OCI_CollSetElem(coll, 0, elem));
+        e1 = OCI_CollGetElem(coll, 0);
         ASSERT_EQ(30, OCI_ElemGetInt(e1));
 
-        auto elemRef = OCI_CollGetElem(coll, 1);
+        auto elemRef = OCI_CollGetElem(coll, 0);
         ASSERT_NE(nullptr, elemRef);
-        elemRef = OCI_CollGetElem(coll, 2);
+        elemRef = OCI_CollGetElem(coll, 1);
         ASSERT_EQ(20, OCI_ElemGetInt(elemRef));
 
         const auto coll2 = OCI_CollCreate(typinf);
         ASSERT_NE(nullptr, coll2);
         ASSERT_TRUE(OCI_CollAssign(coll2, coll));
         ASSERT_EQ(2u, OCI_CollGetCount(coll2));
-        ASSERT_EQ(20, OCI_ElemGetInt(OCI_CollGetElem(coll2, 2)));
+        ASSERT_EQ(20, OCI_ElemGetInt(OCI_CollGetElem(coll2, 1)));
 
         otext text[512];
         OCI_UInt32 size = 512;
         ASSERT_TRUE(OCI_CollToText(coll, &size, text));
         ASSERT_GT(size, 0u);
 
-        ASSERT_TRUE(OCI_CollDeleteElem(coll, 1));
+        ASSERT_TRUE(OCI_CollDeleteElem(coll, 0));
         ASSERT_EQ(2u, OCI_CollGetCount(coll));
 
         ASSERT_TRUE(OCI_CollTrim(coll, 1));
@@ -457,7 +457,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 1);
+        const auto coll = OCI_GetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
@@ -491,7 +491,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 1);
+        const auto coll = OCI_GetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
@@ -525,7 +525,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 1);
+        const auto coll = OCI_GetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
@@ -558,7 +558,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 1);
+        const auto coll = OCI_GetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
@@ -591,7 +591,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 1);
+        const auto coll = OCI_GetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
@@ -624,7 +624,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 1);
+        const auto coll = OCI_GetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
@@ -693,7 +693,7 @@ namespace TestCApi
             ASSERT_NE(nullptr, rs);
             ASSERT_TRUE(OCI_FetchNext(rs));
 
-            const auto coll = OCI_GetColl(rs, 1);
+            const auto coll = OCI_GetColl(rs, 0);
             ASSERT_NE(nullptr, coll);
 
             otext text[1024];

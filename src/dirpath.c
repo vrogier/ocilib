@@ -515,7 +515,7 @@ OCI_Boolean OcilibDirPathSetColumn
     CHECK_PTR(OCI_IPC_DIRPATH, dp);
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED);
     CHECK_PTR(OCI_IPC_STRING, name);
-    CHECK_BOUND(index, 1, dp->nb_cols);
+    CHECK_INDEX(index, dp->nb_cols);
 
     /* check if column exists */
 
@@ -537,7 +537,7 @@ OCI_Boolean OcilibDirPathSetColumn
     /* set column information */
 
     col   = &dp->typinf->cols[i];
-    dpcol = &dp->cols[index-1];
+    dpcol = &dp->cols[index];
 
     /* default column attributes */
 
@@ -641,7 +641,7 @@ OCI_Boolean OcilibDirPathSetColumn
         (dvoid *) hlist, OCI_DTYPE_PARAM,
         dp->con->err,
         (dvoid** ) (dvoid *) &hattr,
-        (ub4) index
+        (ub4) (index + 1)
     );
 
     /* set column name */
@@ -876,10 +876,10 @@ OCI_Boolean OcilibDirPathSetEntry
 
     CHECK_PTR(OCI_IPC_DIRPATH, dp);
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_PREPARED);
-    CHECK_BOUND(index, 1, dp->nb_cols);
-    CHECK_BOUND(row,   1, dp->nb_cur);
+    CHECK_INDEX(index, dp->nb_cols);
+    CHECK_INDEX(row, dp->nb_cur);
 
-    dpcol = &dp->cols[index-1];
+    dpcol = &dp->cols[index];
     CHECK_NULL(dpcol);
 
     /* check size */
@@ -918,7 +918,7 @@ OCI_Boolean OcilibDirPathSetEntry
 
         /* get internal data cell */
 
-        ub1 *data = ((ub1 *) dpcol->data) + (OCI_Size) ((row-1) * dpcol->bufsize);
+        ub1 *data = ((ub1 *) dpcol->data) + (OCI_Size) (row * dpcol->bufsize);
 
         /* we need to pack the buffer if wchar_t is 4 bytes */
 
@@ -953,8 +953,8 @@ OCI_Boolean OcilibDirPathSetEntry
         }
     }
 
-    dpcol->lens[row-1]  = size;
-    dpcol->flags[row-1] = flag;
+    dpcol->lens[row]  = size;
+    dpcol->flags[row] = flag;
 
     SET_SUCCESS();
 
@@ -1609,7 +1609,7 @@ OCI_UInt32 OcilibDirPathGetErrorColumn
 
     CHECK(dp->idx_err_col < dp->nb_err);
 
-    SET_RETVAL((OCI_UInt32) dp->err_cols[dp->idx_err_col++] + 1);
+    SET_RETVAL((OCI_UInt32) dp->err_cols[dp->idx_err_col++]);
 
     EXIT_FUNC();
 }
@@ -1633,7 +1633,7 @@ OCI_UInt32 OcilibDirPathGetErrorRow
 
     CHECK(dp->idx_err_row < dp->nb_err);
 
-    SET_RETVAL((OCI_UInt32) dp->err_rows[dp->idx_err_row++] + 1);
+    SET_RETVAL((OCI_UInt32) dp->err_rows[dp->idx_err_row++]);
 
     EXIT_FUNC();
 }

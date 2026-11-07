@@ -182,7 +182,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto json = OCI_GetJson(rs, 1);
+        const auto json = OCI_GetJson(rs, 0);
         ASSERT_NE(nullptr, json);
 
         OCI_JsonNode* root = OCI_JsonGetRoot(json);
@@ -264,7 +264,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto json = OCI_GetJson(rs, 1);
+        const auto json = OCI_GetJson(rs, 0);
         ASSERT_NE(nullptr, json);
 
         OCI_JsonNode* root = OCI_JsonGetRoot(json);
@@ -344,8 +344,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, root);
         ASSERT_TRUE(OCI_JsonNodeSetField(root, OTEXT("name"), str));
 
-        ASSERT_EQ(String(OTEXT("name")), String(OCI_JsonNodeGetFieldName(root, 1)));
-        ASSERT_EQ(String(OTEXT("name")), String(OCI_JsonNodeGetFieldName(root, 1)));
+        ASSERT_EQ(String(OTEXT("name")), String(OCI_JsonNodeGetFieldName(root, 0)));
+        ASSERT_EQ(String(OTEXT("name")), String(OCI_JsonNodeGetFieldName(root, 0)));
 
         OCI_JsonNodeFree(str);
         OCI_JsonNodeFree(root);

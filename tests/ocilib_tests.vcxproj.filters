@@ -415,10 +415,13 @@
     <ClCompile Include="TestResultset.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
+    <ClCompile Include="TestColumnsViewCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="TestResultsetCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="TestResultsetIteratorCpp.cpp">
+    <ClCompile Include="TestRowIteratorCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestSoda.cpp">

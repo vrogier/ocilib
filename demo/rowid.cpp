@@ -25,15 +25,15 @@ int main()
         st.Execute("select rowid from products where code = 1");
         Resultset rs = st.GetResultset();
         rs.Next();
-        rowid = rs.Get<String>(1);
+        rowid = rs.Get<String>(0);
 
         st.Prepare("select code, name, rowid from products where rowid = :id");
         st.Bind(":id", rowid, 20, BindInfo::In);
         st.ExecutePrepared();
         rs = st.GetResultset();
-        rs.Next();
+        auto row = *rs.Rows().begin();
 
-        std::cout << "code  [" << rs.Get<OCI_Int32>(1) << "] name [" << rs.Get<String>(2) << "] rowid [" << rs.Get<String>(3) << "]" << std::endl;
+        std::cout << "code  [" << row.Get<OCI_Int32>(0) << "] name [" << row.Get<String>(1) << "] rowid [" << row.Get<String>(2) << "]" << std::endl;
     }
     catch (const std::exception &ex)
     {

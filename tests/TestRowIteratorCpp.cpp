@@ -11,7 +11,7 @@ namespace TestCppApi
                                          TO_STRING(count) + OTEXT(")"));
     }
 
-    TEST(TestResultsetIterator, IterateAllRowsByIndex)
+    TEST(TestRowIterator, IterateAllRowsByIndex)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -20,16 +20,16 @@ namespace TestCppApi
         auto rs = GetRowsResultset(st, 5);
 
         UInt32 count = 0;
-        for (auto&& row : rs)
+        for (auto&& row : rs.Rows())
         {
             ++count;
-            ASSERT_EQ(static_cast<int>(count), row.Get<int>(1));
+            ASSERT_EQ(static_cast<int>(count), row.Get<int>(0));
         }
 
         ASSERT_EQ(5u, count);
     }
 
-    TEST(TestResultsetIterator, IterateAllRowsByColumnName)
+    TEST(TestRowIterator, IterateAllRowsByColumnName)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -39,7 +39,7 @@ namespace TestCppApi
         auto rs = st.GetResultset();
 
         UInt32 count = 0;
-        for (auto&& row : rs)
+        for (auto&& row : rs.Rows())
         {
             ++count;
             ASSERT_EQ(String(OTEXT("Row ")) + TO_STRING(count), row.Get<String>(OTEXT("name")));
@@ -49,7 +49,7 @@ namespace TestCppApi
         ASSERT_EQ(3u, count);
     }
 
-    TEST(TestResultsetIterator, EmptyResultset)
+    TEST(TestRowIterator, EmptyResultset)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -59,16 +59,16 @@ namespace TestCppApi
         auto rs = st.GetResultset();
 
         UInt32 count = 0;
-        for (auto&& row : rs)
+        for (auto&& row : rs.Rows())
         {
             ++count;
         }
 
         ASSERT_EQ(0u, count);
-        ASSERT_TRUE(rs.begin() == rs.end());
+        ASSERT_TRUE(rs.Rows().begin() == rs.Rows().end());
     }
 
-    TEST(TestResultsetIterator, SingleRow)
+    TEST(TestRowIterator, SingleRow)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -76,14 +76,14 @@ namespace TestCppApi
         Statement st(con);
         auto rs = GetRowsResultset(st, 1);
 
-        auto it = rs.begin();
-        ASSERT_TRUE(it != rs.end());
-        ASSERT_EQ(1, (*it).Get<int>(1));
+        auto it = rs.Rows().begin();
+        ASSERT_TRUE(it != rs.Rows().end());
+        ASSERT_EQ(1, (*it).Get<int>(0));
         ++it;
-        ASSERT_TRUE(it == rs.end());
+        ASSERT_TRUE(it == rs.Rows().end());
     }
 
-    TEST(TestResultsetIterator, ScrollablePrev)
+    TEST(TestRowIterator, ScrollablePrev)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -92,15 +92,15 @@ namespace TestCppApi
         st.SetFetchMode(Statement::FetchScrollable);
         auto rs = GetRowsResultset(st, 5);
 
-        auto it = rs.begin();
+        auto it = rs.Rows().begin();
         ++it;
         ++it;
-        ASSERT_EQ(3, (*it).Get<int>(1));
+        ASSERT_EQ(3, (*it).Get<int>(0));
         --it;
-        ASSERT_EQ(2, (*it).Get<int>(1));
+        ASSERT_EQ(2, (*it).Get<int>(0));
     }
 
-    TEST(TestResultsetIterator, ScrollableRelativeSeek)
+    TEST(TestRowIterator, ScrollableRelativeSeek)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -109,14 +109,14 @@ namespace TestCppApi
         st.SetFetchMode(Statement::FetchScrollable);
         auto rs = GetRowsResultset(st, 20);
 
-        auto it = rs.begin();
+        auto it = rs.Rows().begin();
         it += 10;
-        ASSERT_EQ(11, (*it).Get<int>(1));
+        ASSERT_EQ(11, (*it).Get<int>(0));
         it -= 5;
-        ASSERT_EQ(6, (*it).Get<int>(1));
+        ASSERT_EQ(6, (*it).Get<int>(0));
     }
 
-    TEST(TestResultsetIterator, ScrollableSubscript)
+    TEST(TestRowIterator, ScrollableSubscript)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -125,11 +125,11 @@ namespace TestCppApi
         st.SetFetchMode(Statement::FetchScrollable);
         auto rs = GetRowsResultset(st, 10);
 
-        auto it = rs.begin();
-        ASSERT_EQ(4, it[3].Get<int>(1));
+        auto it = rs.Rows().begin();
+        ASSERT_EQ(4, it[3].Get<int>(0));
     }
 
-    TEST(TestResultsetIterator, ScrollableRangeFor)
+    TEST(TestRowIterator, ScrollableRangeFor)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -139,16 +139,16 @@ namespace TestCppApi
         auto rs = GetRowsResultset(st, 4);
 
         UInt32 count = 0;
-        for (auto&& row : rs)
+        for (auto&& row : rs.Rows())
         {
             ++count;
-            ASSERT_EQ(static_cast<int>(count), row.Get<int>(1));
+            ASSERT_EQ(static_cast<int>(count), row.Get<int>(0));
         }
 
         ASSERT_EQ(4u, count);
     }
 
-    TEST(TestResultsetIterator, NonScrollablePrevThrows)
+    TEST(TestRowIterator, NonScrollablePrevThrows)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -156,12 +156,12 @@ namespace TestCppApi
         Statement st(con);
         auto rs = GetRowsResultset(st, 5);
 
-        auto it = rs.begin();
+        auto it = rs.Rows().begin();
         ++it;
         ASSERT_THROW((void)(--it), Exception);
     }
 
-    TEST(TestResultsetIterator, NonScrollableSeekThrows)
+    TEST(TestRowIterator, NonScrollableSeekThrows)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -169,11 +169,11 @@ namespace TestCppApi
         Statement st(con);
         auto rs = GetRowsResultset(st, 5);
 
-        auto it = rs.begin();
+        auto it = rs.Rows().begin();
         ASSERT_THROW((void)(it += 2), Exception);
     }
 
-    TEST(TestResultsetIterator, NonScrollableSubscriptThrows)
+    TEST(TestRowIterator, NonScrollableSubscriptThrows)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -181,11 +181,11 @@ namespace TestCppApi
         Statement st(con);
         auto rs = GetRowsResultset(st, 5);
 
-        auto it = rs.begin();
+        auto it = rs.Rows().begin();
         ASSERT_THROW((void)(it[2]), Exception);
     }
 
-    TEST(TestResultsetIterator, GetStringViewByIndex)
+    TEST(TestRowIterator, GetStringViewByIndex)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -194,15 +194,15 @@ namespace TestCppApi
         auto rs = GetRowsResultset(st, 3);
 
         UInt32 count = 0;
-        for (auto&& row : rs)
+        for (auto&& row : rs.Rows())
         {
             ++count;
-            auto sv = row.Get<StringView>(2);
+            auto sv = row.Get<StringView>(1);
             ASSERT_EQ(ostring(OTEXT("Row ")) + TO_STRING(count), ostring(sv));
         }
     }
 
-    TEST(TestResultsetIterator, GetStringViewByName)
+    TEST(TestRowIterator, GetStringViewByName)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -211,12 +211,12 @@ namespace TestCppApi
         st.Execute(OTEXT("select 'abc' as name from dual"));
         auto rs = st.GetResultset();
 
-        auto it = rs.begin();
-        ASSERT_TRUE(it != rs.end());
+        auto it = rs.Rows().begin();
+        ASSERT_TRUE(it != rs.Rows().end());
         ASSERT_EQ(OTEXT("abc"), (*it).Get<StringView>(OTEXT("name")));
     }
 
-    TEST(TestResultsetIterator, GetStringViewNull)
+    TEST(TestRowIterator, GetStringViewNull)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -225,8 +225,8 @@ namespace TestCppApi
         st.Execute(OTEXT("select null as name from dual"));
         auto rs = st.GetResultset();
 
-        auto it = rs.begin();
-        ASSERT_TRUE(it != rs.end());
+        auto it = rs.Rows().begin();
+        ASSERT_TRUE(it != rs.Rows().end());
         ASSERT_TRUE((*it).Get<StringView>(OTEXT("name")).empty());
     }
 

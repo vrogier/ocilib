@@ -29,6 +29,7 @@ For the C++ layer (`ocilib.hpp`), see `migration-guide-cpp-api.md`.
 | 11 | New typed typedefs replace bare `unsigned int` parameters | None (source-compatible) |
 | 12 | `big_int`/`big_uint` → `OCI_Int64`/`OCI_UInt64` (aliases kept) | None (source-compatible) |
 | 13 | Error model split into error type + category + unified code | Low |
+| 14 | All index parameters switch from 1-based to **0-based**; index lookups return `OCI_Int32` with `-1` = miss | Medium–High (runtime, not compile-time) |
 
 **Overall estimate:** a typical application (connect → statement → fetch) migrates in
 **under an hour** — mostly mechanical edits caught by the compiler. Applications that
@@ -562,6 +563,41 @@ void err_handler(OCI_Error *err)
 > code that hard-coded the *numeric* values (`OCI_ERR_WARNING` was `3`;
 > `OCI_ERR_TYPE_WARNING` is `2`).
 
+## 10e. Step 13 — All indexes are now 0-based
+
+In v4 every index in the C API was 1-based. In v5 **all index parameters and
+index-returning functions are 0-based**, and lookups that can miss return
+`OCI_Int32` with **`-1`** as the "not found / no position" sentinel instead of
+`0`. Review every literal index and every index loop in your code.
+
+### Index parameters — now 0-based
+
+| API group | What changed |
+|-----------|--------------|
+| Resultset columns | `OCI_GetColumn(rs, i)`, `OCI_GetColumnByName` offset, `OCI_Get*(rs, i)` getters (`OCI_GetInt`, `OCI_GetString`, `OCI_IsNull`, `OCI_GetRaw`, `OCI_GetDataSize`, `OCI_GetDataLength`, `OCI_GetStruct`, …), `OCI_SetNull(rs, i)`, `OCI_SetDataSize`, `OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, i)` |
+| Type info columns | `OCI_TypeInfoGetColumn(typinf, i)` |
+| Binds | `OCI_GetBind(stmt, i)`; array element position `pos` of `OCI_BindSetNullAtPos`, `OCI_BindSetNotNullAtPos`, `OCI_BindIsNullAtPos`, `OCI_BindSetDataSizeAtPos`, `OCI_BindGetDataSizeAtPos` (scalar binds use position `0`) |
+| Collections | `OCI_CollGetElem`, `OCI_CollSetElem`, `OCI_CollDeleteElem` |
+| JSON DOM | `OCI_JsonNodeGetFieldName`, `OCI_JsonNodeGetFieldByIndex`, `OCI_JsonNodeGetItem`, `OCI_JsonNodeSetItem`, `OCI_JsonNodeInsertItem`, `OCI_JsonNodeRemoveItem`, `OCI_JsonNodeRemoveItems` |
+| Direct path | `OCI_DirPathSetColumn(dp, i,…)` and the row/column arguments of `OCI_DirPathSetEntry`/`GetEntry`/`GetEntryCount` |
+
+### Return values — new 0-based or `-1` semantics
+
+| v4 | v5 |
+|----|----|
+| `OCI_GetColumnIndex`, `OCI_GetBindIndex` — `unsigned int`, 1-based, `0` = miss | `OCI_Int32` — **0-based** index, **`-1`** = miss |
+| `OCI_GetCurrentRow` — 1-based, `0` = unfetched | `OCI_Int32` — **0-based**, **`-1`** = unfetched/empty |
+| `OCI_ErrorGetRow` — 1-based array-DML row, `0` = unrelated | `OCI_Int32` — **0-based**, **`-1`** = unrelated |
+| `OCI_DirPathGetErrorRow`, `OCI_DirPathGetErrorColumn` — 1-based | **0-based** (`0` remains the "no error" sentinel) |
+| `OCI_GetParseErrorPos` — 1-based | **0-based** character offset |
+
+> Note: some underlying OCI primitives (`OCICollGetElem`, `OCIParamGet`, batch
+> error rows, `OCI_ATTR_ROWID`-style parameters) keep their own conventions;
+> OCILIB translates internally, so application code should always think
+> 0-based.
+
+---
+
 ## 11. Unchanged signatures — changed behaviour
 
 > **Warning:** a migration is not only about signatures. Several functions kept
@@ -677,6 +713,13 @@ void err_handler(OCI_Error *err)
         OCI_GetColumn*, OCI_SetNull*, mts*/dts* string helpers, MT/DT, …)
         with the modern names — see §10.
 16. [ ] Audit OCI_CNT_ROWS notification handlers for the new row events.
+17. [ ] Rebase every index to 0-based (see §10e): resultset column indexes in
+        OCI_Get*/OCI_GetColumn, bind indexes/positions, collection indexes,
+        JSON item/field indexes, direct-path rows/columns, OCI_FetchSeek
+        absolute offsets — and every `for (i = 1; i <= n)` loop.
+18. [ ] Update lookups: OCI_GetColumnIndex / OCI_GetBindIndex /
+        OCI_GetCurrentRow / OCI_ErrorGetRow are OCI_Int32 with -1 = miss;
+        OCI_GetParseErrorPos is 0-based.
 ```
 
 ---

@@ -130,7 +130,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(123, OCI_GetInt(rs, 1));
+        ASSERT_EQ(123, OCI_GetInt(rs, 0));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -207,9 +207,9 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_BindInterval(stmt, OTEXT(":iv"), iv));
 
         ASSERT_EQ(14u, OCI_GetBindCount(stmt));
-        ASSERT_NE(nullptr, OCI_GetBind(stmt, 1));
+        ASSERT_NE(nullptr, OCI_GetBind(stmt, 0));
         ASSERT_NE(nullptr, OCI_GetBindByName(stmt, OTEXT(":i")));
-        ASSERT_EQ(1u, OCI_GetBindIndex(stmt, OTEXT(":i")));
+        ASSERT_EQ(0, OCI_GetBindIndex(stmt, OTEXT(":i")));
 
         ASSERT_TRUE(OCI_NumberFree(num));
         ASSERT_TRUE(OCI_DateFree(date));
@@ -348,13 +348,13 @@ namespace TestCApi
         const auto rs = OCI_ExecuteAndGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
 
         // re-executing a statement that holds a resultset releases it first
         const auto rs2 = OCI_ExecuteStmtAndGetResultset(stmt, OTEXT("select 2 as n from dual"));
         ASSERT_NE(nullptr, rs2);
         ASSERT_TRUE(OCI_FetchNext(rs2));
-        ASSERT_EQ(2, OCI_GetInt(rs2, 1));
+        ASSERT_EQ(2, OCI_GetInt(rs2, 0));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -378,8 +378,8 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(7, OCI_GetInt(rs, 1));
-        ASSERT_EQ(String(OTEXT("txt")), String(OCI_GetString(rs, 2)));
+        ASSERT_EQ(7, OCI_GetInt(rs, 0));
+        ASSERT_EQ(String(OTEXT("txt")), String(OCI_GetString(rs, 1)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -652,7 +652,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(sub);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
     }
 
     TEST_F(TestStatementPlsqlBinds, ReexecuteResetsBoundStatement)
@@ -893,7 +893,7 @@ namespace TestCApi
         OCI_Int32 vals[3] = { 2, 0, 3 };
         ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":x"), vals, 0));
         // NULL indicator on the second element
-        ASSERT_TRUE(OCI_BindSetNullAtPos(OCI_GetBind(stmt, 1), 1));
+        ASSERT_TRUE(OCI_BindSetNullAtPos(OCI_GetBind(stmt, 0), 1));
 
         ASSERT_FALSE(OCI_Execute(stmt));
         ASSERT_GT(OCI_GetBatchErrorCount(stmt), 0u);

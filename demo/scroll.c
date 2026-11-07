@@ -34,33 +34,33 @@ int main(void)
 
     /* go to row 1 */
     OCI_FetchFirst(rs);
-    printf("%i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
+    printf("%i - %s\n", OCI_GetInt(rs, 0), OCI_GetString(rs, 1));
 
     /* enumerate from row 2 to row X */
     while (OCI_FetchNext(rs))
     {
-        printf("%i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
+        printf("%i - %s\n", OCI_GetInt(rs, 0), OCI_GetString(rs, 1));
     }
 
     /* enumerate from row X back to row 1 */
     while (OCI_FetchPrev(rs))
     {
-        printf("%i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
+        printf("%i - %s\n", OCI_GetInt(rs, 0), OCI_GetString(rs, 1));
     }
 
     /* print the 30th row */
     OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, 30);
-    printf("%i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
+    printf("%i - %s\n", OCI_GetInt(rs, 0), OCI_GetString(rs, 1));
 
     /* fetch next 30 rows */
     while ((OCI_GetCurrentRow(rs) < 60) && OCI_FetchNext(rs))
     {
-        printf("%0i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
+        printf("%0i - %s\n", OCI_GetInt(rs, 0), OCI_GetString(rs, 1));
     }
 
     /* move back to the 45th row */
     OCI_FetchSeek(rs, OCI_SFD_RELATIVE, -15);
-    printf("%i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
+    printf("%i - %s\n", OCI_GetInt(rs, 0), OCI_GetString(rs, 1));
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);

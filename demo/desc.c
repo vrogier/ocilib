@@ -28,7 +28,7 @@ int main(void)
 
     n = OCI_TypeInfoGetColumnCount(tbl);
 
-    for (i = 1; i <= n; i++)
+    for (i = 0; i < n; i++)
     {
         OCI_Column *col = OCI_TypeInfoGetColumn(tbl, i);
 

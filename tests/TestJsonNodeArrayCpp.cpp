@@ -26,15 +26,15 @@ namespace TestCppApi
 
         ASSERT_EQ(2u, arr.GetItemCount());
 
-        JsonNode i1 = arr.GetItem(1);
+        JsonNode i1 = arr.GetItem(0);
         ASSERT_EQ(Json::NodeString, i1.GetType());
         ASSERT_EQ(String(OTEXT("first")), i1.GetString());
 
-        JsonNode i2 = arr.GetItem(2);
+        JsonNode i2 = arr.GetItem(1);
         ASSERT_EQ(Json::NodeString, i2.GetType());
         ASSERT_EQ(String(OTEXT("second")), i2.GetString());
 
-        JsonNode v1 = arr.GetItem(1);
+        JsonNode v1 = arr.GetItem(0);
         ASSERT_EQ(Json::NodeString, v1.GetType());
         ASSERT_EQ(String(OTEXT("first")), v1.GetString());
 
@@ -58,17 +58,17 @@ namespace TestCppApi
         JsonNode child = json.CreateString(OTEXT("child"));
 
         ASSERT_THROW((void)(scalar.GetFieldByName(OTEXT("x"))), Exception);
-        ASSERT_THROW((void)(scalar.GetFieldByIndex(1)), Exception);
+        ASSERT_THROW((void)(scalar.GetFieldByIndex(0)), Exception);
         ASSERT_THROW((void)(scalar.GetFieldName(1)), Exception);
         ASSERT_THROW((void)(scalar.SetField(OTEXT("x"), child)), Exception);
 
-        ASSERT_THROW((void)(obj.GetItem(1)), Exception);
+        ASSERT_THROW((void)(obj.GetItem(0)), Exception);
         ASSERT_THROW((void)(obj.AppendItem(child)), Exception);
         ASSERT_THROW((void)(obj.SetItem(1, child)), Exception);
 
         ASSERT_THROW((void)(arr.SetField(OTEXT("x"), child)), Exception);
         ASSERT_THROW((void)(arr.GetFieldByName(OTEXT("x"))), Exception);
-        ASSERT_THROW((void)(arr.GetFieldByIndex(1)), Exception);
+        ASSERT_THROW((void)(arr.GetFieldByIndex(0)), Exception);
 
         JsonNode number = json.CreateNumber(Number(env, 1.0));
         ASSERT_THROW((void)(number.GetString()), Exception);
@@ -84,13 +84,13 @@ namespace TestCppApi
         JsonNode one = json.CreateString(OTEXT("only"));
         arr2.AppendItem(one);
 
-        ASSERT_THROW((void)(arr2.GetItem(100)), Exception);
+        ASSERT_THROW((void)(arr2.GetItem(99)), Exception);
         ASSERT_THROW((void)(arr2.SetItem(100, child)), Exception);
 
         JsonNode obj2 = json.CreateObject();
         obj2.SetField(OTEXT("f"), child);
 
-        ASSERT_THROW((void)(obj2.GetFieldByIndex(100)), Exception);
+        ASSERT_THROW((void)(obj2.GetFieldByIndex(99)), Exception);
         ASSERT_THROW((void)(obj2.GetFieldName(100)), Exception);
     }
 
@@ -114,8 +114,8 @@ namespace TestCppApi
         UInt32 removed = arr.RemoveItems(2, 2);
         ASSERT_EQ(2u, removed);
         ASSERT_EQ(2u, arr.GetItemCount());
-        ASSERT_EQ(String(OTEXT("a")), arr.GetItem(1).GetString());
-        ASSERT_EQ(String(OTEXT("d")), arr.GetItem(2).GetString());
+        ASSERT_EQ(String(OTEXT("a")), arr.GetItem(0).GetString());
+        ASSERT_EQ(String(OTEXT("d")), arr.GetItem(1).GetString());
     }
 
     TEST(TestJsonNodeArrayCpp, RemoveItemsOutOfRange)

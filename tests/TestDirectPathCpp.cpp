@@ -51,9 +51,9 @@ namespace TestCppApi
         dp.SetNoLog(true);
         dp.SetParallel(true);
 
-        dp.SetColumn(1, OTEXT("val_int"), ColSize1);
-        dp.SetColumn(2, OTEXT("val_str"), ColSize2);
-        dp.SetColumn(3, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD"));
+        dp.SetColumn(0, OTEXT("val_int"), ColSize1);
+        dp.SetColumn(1, OTEXT("val_str"), ColSize2);
+        dp.SetColumn(2, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD"));
 
         dp.Prepare();
 
@@ -67,15 +67,15 @@ namespace TestCppApi
         {
             dp.Reset();
 
-            for (OCI_UInt32 j = 1; j <= dp.GetMaxRows(); j++)
+            for (OCI_UInt32 j = 0; j < dp.GetMaxRows(); j++)
             {
                 osprintf(val1, OTEXT("%04d"), i + (i * 100));
                 osprintf(val2, OTEXT("value %05d"), j + (i * 100));
                 osprintf(val3, OTEXT("%04d%02d%02d"), (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                dp.SetEntry(j, 1, String(val1));
-                dp.SetEntry(j, 2, String(val2));
-                dp.SetEntry(j, 3, String(val3));
+                dp.SetEntry(j, 0, String(val1));
+                dp.SetEntry(j, 1, String(val2));
+                dp.SetEntry(j, 2, String(val3));
             }
 
             DirectPath::Result res = dp.Convert();

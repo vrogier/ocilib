@@ -24,16 +24,16 @@ namespace TestCApi
         while (OCI_FetchNext(rset))
         {
             index++;
-            ASSERT_EQ(index, OCI_GetInt(rset, 1));
+            ASSERT_EQ(index, OCI_GetInt(rset, 0));
 
-            const auto stmt2 = OCI_GetStatement(rset, 2);
+            const auto stmt2 = OCI_GetStatement(rset, 1);
             ASSERT_NE(nullptr, stmt2);
             const auto rset2 = OCI_GetResultset(stmt2);
             ASSERT_NE(nullptr, stmt2);
 
             while (OCI_FetchNext(rset2))
             {
-                const auto date = OCI_GetDate(rset2, 1);
+                const auto date = OCI_GetDate(rset2, 0);
                 ASSERT_NE(nullptr, date);
 
                 otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
@@ -69,36 +69,36 @@ namespace TestCApi
 
         ASSERT_EQ(5, OCI_GetColumnCount(rset));
 
-        ASSERT_NE(nullptr, OCI_GetColumn(rset, 1));
+        ASSERT_NE(nullptr, OCI_GetColumn(rset, 0));
         ASSERT_NE(nullptr, OCI_GetColumnByName(rset, OTEXT("RN")));
-        ASSERT_EQ(1, OCI_GetColumnIndex(rset, OTEXT("RN")));
-        ASSERT_EQ(0, OCI_GetColumnIndex(rset, OTEXT("NOT_A_COLUMN")));
+        ASSERT_EQ(0, OCI_GetColumnIndex(rset, OTEXT("RN")));
+        ASSERT_EQ(-1, OCI_GetColumnIndex(rset, OTEXT("NOT_A_COLUMN")));
 
         OCI_Int32 row = 0;
         while (OCI_FetchNext(rset))
         {
             row++;
 
-            ASSERT_EQ(row, OCI_GetInt(rset, 1));
-            ASSERT_EQ(String(TO_STRING(row)), String(OCI_GetString(rset, 1)));
+            ASSERT_EQ(row, OCI_GetInt(rset, 0));
+            ASSERT_EQ(String(TO_STRING(row)), String(OCI_GetString(rset, 0)));
 
-            ASSERT_TRUE(OCI_IsNull(rset, 2));
+            ASSERT_TRUE(OCI_IsNull(rset, 1));
             ASSERT_TRUE(OCI_IsNullByName(rset, OTEXT("NULLABLE")));
-            ASSERT_EQ(0, OCI_GetDataSize(rset, 2));
+            ASSERT_EQ(0, OCI_GetDataSize(rset, 1));
             ASSERT_EQ(0, OCI_GetDataSizeByName(rset, OTEXT("NULLABLE")));
 
-            ASSERT_FALSE(OCI_IsNull(rset, 3));
-            ASSERT_EQ(2, OCI_GetDataSize(rset, 3));
-            ASSERT_EQ(2, OCI_GetDataLength(rset, 3));
+            ASSERT_FALSE(OCI_IsNull(rset, 2));
+            ASSERT_EQ(2, OCI_GetDataSize(rset, 2));
+            ASSERT_EQ(2, OCI_GetDataLength(rset, 2));
 
             unsigned char rawBuf[16] = { 0 };
-            ASSERT_EQ(2, OCI_GetRaw(rset, 3, rawBuf, sizeof(rawBuf)));
+            ASSERT_EQ(2, OCI_GetRaw(rset, 2, rawBuf, sizeof(rawBuf)));
             ASSERT_EQ(2, OCI_GetRawByName(rset, OTEXT("RAW_COL"), rawBuf, sizeof(rawBuf)));
             ASSERT_EQ(0xAB, rawBuf[0]);
             ASSERT_EQ(0xCD, rawBuf[1]);
 
-            ASSERT_EQ(String(OTEXT("text")), String(OCI_GetString(rset, 4)));
-            ASSERT_EQ(String(OTEXT("12345")), String(OCI_GetString(rset, 5)));
+            ASSERT_EQ(String(OTEXT("text")), String(OCI_GetString(rset, 3)));
+            ASSERT_EQ(String(OTEXT("12345")), String(OCI_GetString(rset, 4)));
         }
 
         ASSERT_EQ(3, row);

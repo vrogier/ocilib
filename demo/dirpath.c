@@ -47,9 +47,9 @@ int main(void)
 
     /* describe the target table */
 
-    OCI_DirPathSetColumn(dp, 1, "val_int", SIZE_COL1, NULL);
-    OCI_DirPathSetColumn(dp, 2, "val_str", SIZE_COL2, NULL);
-    OCI_DirPathSetColumn(dp, 3, "val_date", SIZE_COL3, "YYYYMMDD");
+    OCI_DirPathSetColumn(dp, 0, "val_int", SIZE_COL1, NULL);
+    OCI_DirPathSetColumn(dp, 1, "val_str", SIZE_COL2, NULL);
+    OCI_DirPathSetColumn(dp, 2, "val_date", SIZE_COL3, "YYYYMMDD");
 
     /* prepare the load */
 
@@ -61,7 +61,7 @@ int main(void)
     {
         OCI_DirPathReset(dp);
 
-        for (j = 1; j <= nb_rows; j++)
+        for (j = 0; j < nb_rows; j++)
         {
             /* fill test values */
 
@@ -69,9 +69,9 @@ int main(void)
             sprintf(val2, "value %05d", j + (i * 100));
             sprintf(val3, "%04d%02d%02d", (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-            OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32)strlen(val1), TRUE);
-            OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32)strlen(val2), TRUE);
-            OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32)strlen(val3), TRUE);
+            OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)strlen(val1), TRUE);
+            OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)strlen(val2), TRUE);
+            OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)strlen(val3), TRUE);
         }
 
         /* load data to the server */

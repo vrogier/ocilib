@@ -45,7 +45,7 @@ int main(void)
 
     OCI_Resultset  * rs = OCI_GetResultset(st);
 
-    OCI_SetStructNumericType(rs, 1, OCI_NUM_INT);
+    OCI_SetStructNumericType(rs, 0, OCI_NUM_INT);
 
     while (OCI_FetchNext(rs))
     {

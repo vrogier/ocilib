@@ -30,7 +30,7 @@ namespace TestCApi
         while (OCI_FetchNext(rslt))
         {
             index++;
-            ASSERT_EQ(index + 10, OCI_GetInt(rslt, 1));
+            ASSERT_EQ(index + 10, OCI_GetInt(rslt, 0));
         }
 
         ASSERT_EQ(2, OCI_GetAffectedRows(stmt));
@@ -41,7 +41,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rslt);
 
         ASSERT_TRUE(OCI_FetchNext(rslt));
-        ASSERT_EQ(2, OCI_GetInt(rslt, 1));
+        ASSERT_EQ(2, OCI_GetInt(rslt, 0));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

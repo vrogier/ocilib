@@ -25,67 +25,67 @@
 namespace ocilib
 {
 
-    inline ResultsetIterator::ResultsetIterator(Resultset* resultset, bool eof)
+    inline RowIterator::RowIterator(Resultset* resultset, bool eof)
         : _rs(resultset), _eof(eof)
     {
     }
 
-    inline Row ResultsetIterator::operator * () const
+    inline Row RowIterator::operator * () const
     {
         return Row(_rs);
     }
 
-    inline ResultsetIterator& ResultsetIterator::operator ++ ()
+    inline RowIterator& RowIterator::operator ++ ()
     {
         _eof = !_rs->Next();
         return *this;
     }
 
-    inline ResultsetIterator ResultsetIterator::operator ++ (Int32)
+    inline RowIterator RowIterator::operator ++ (Int32)
     {
-        ResultsetIterator other = *this;
+        RowIterator other = *this;
         _eof = !_rs->Next();
         return other;
     }
 
-    inline ResultsetIterator& ResultsetIterator::operator -- ()
+    inline RowIterator& RowIterator::operator -- ()
     {
         _eof = !_rs->Prev();
         return *this;
     }
 
-    inline ResultsetIterator ResultsetIterator::operator -- (Int32)
+    inline RowIterator RowIterator::operator -- (Int32)
     {
-        ResultsetIterator other = *this;
+        RowIterator other = *this;
         _rs->Prev();
         return other;
     }
 
-    inline ResultsetIterator& ResultsetIterator::operator += (Int32 offset)
+    inline RowIterator& RowIterator::operator += (Int32 offset)
     {
         _rs->Seek(Resultset::SeekRelative, offset);
         _eof = false;
         return *this;
     }
 
-    inline ResultsetIterator& ResultsetIterator::operator -= (Int32 offset)
+    inline RowIterator& RowIterator::operator -= (Int32 offset)
     {
         _rs->Seek(Resultset::SeekRelative, -offset);
         return *this;
     }
 
-    inline Row ResultsetIterator::operator [] (Int32 offset) const
+    inline Row RowIterator::operator [] (Int32 offset) const
     {
         _rs->Seek(Resultset::SeekRelative, offset);
         return Row(_rs);
     }
 
-    inline bool ResultsetIterator::operator == (const ResultsetIterator& other) const
+    inline bool RowIterator::operator == (const RowIterator& other) const
     {
         return (_eof && other._eof) || (_eof == other._eof && _rs == other._rs);
     }
 
-    inline bool ResultsetIterator::operator != (const ResultsetIterator& other) const
+    inline bool RowIterator::operator != (const RowIterator& other) const
     {
         return !(*this == other);
     }

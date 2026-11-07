@@ -25,7 +25,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 1));
+        ASSERT_EQ(1, OCI_GetInt(rs, 0));
 
         ExecDML(OTEXT("drop table TestMemoryPrefetch"));
 

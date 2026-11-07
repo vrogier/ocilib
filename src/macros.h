@@ -277,6 +277,8 @@ ocilib_exit_label:                  \
         }                                                          \
         while (0)
 
+#define CHECK_INDEX(v, n)                                                                                                                do                                                                 {                                                                      if ((v) >= (n))                                                    {                                                                      THROW(OcilibExceptionOutOfBounds, (OCI_Int32)(v));             }                                                              }                                                                  while (0)
+
 #define CHECK_MIN(v, m)                                  \
                                                          \
         do                                               \

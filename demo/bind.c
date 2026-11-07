@@ -17,7 +17,7 @@ void get_product_name(OCI_Int32 requested_code)
     OCI_Execute(st);
     OCI_Resultset * rs = OCI_GetResultset(st);
     OCI_FetchNext(rs);
-    printf("product name for product code %d is %s\n", code, OCI_GetString(rs, 1));
+    printf("product name for product code %d is %s\n", code, OCI_GetString(rs, 0));
 }
 
 int main(void)

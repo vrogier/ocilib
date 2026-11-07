@@ -77,6 +77,24 @@ namespace ocilib
         return Column(core::Check(OCI_TypeInfoGetColumn(*this, index)), GetHandle());
     }
 
+    inline Int32 TypeInfo::GetColumnIndex(const String& name) const
+    {
+        const UInt32 count = GetColumnCount();
+        for (UInt32 i = 0; i < count; i++)
+        {
+            if (GetColumn(i).GetName() == name)
+            {
+                return static_cast<Int32>(i);
+            }
+        }
+        return -1;
+    }
+
+    inline TypeInfoColumns TypeInfo::Columns()
+    {
+        return TypeInfoColumns(this);
+    }
+
     inline OCI_Boolean TypeInfo::IsFinalType() const
     {
         return (core::Check(OCI_TypeInfoIsFinalType(*this)) == TRUE);

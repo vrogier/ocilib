@@ -27,6 +27,8 @@ For the C layer (`ocilib.h`), see `migration-guide-c-api.md`.
 | 8 | C++17 baseline required | None–Low |
 | 9 | XA session mode removed | Low |
 | 10 | `Exception` model split: `GetType()` = error type, new `GetCategory()`, code getters → `GetCode()` | Low |
+| 11 | **All** indexes switch from 1-based to **0-based**: `coll[i]`/`node[i]`, iterators, and every index-taking method; index lookups return `Int32` with `-1` = miss | Medium–High |
+| 12 | New views `rs.Rows()`, `rs.Columns()`, `ti.Columns()` — `Row`-based access + column descriptors | None (additive) |
 
 **Overall estimate:** a typical app migrates in **under an hour**; the work is
 mechanical and compiler-driven. Heavy users of `ocilib::Thread`/`Mutex` or apps that
@@ -364,6 +366,134 @@ catch (Exception& e)
 }
 ```
 
+## 6d. Step 5d — `[]` and iterators switch to 0-based; new `Rows()`/`Columns()` views
+
+### 6d.1 Breaking — all indexes switch to 0-based
+
+In v4, every index in the C++ API was 1-based, like the C API. In v5, **all
+indexes are 0-based uniformly** — `operator[]`, iterators, and every
+index-taking method (`Get`, `GetItem`, `GetFieldByIndex`, `GetColumn`, `Seek`,
+`SetEntry`, …). Name-lookup and position accessors that can miss now return
+`Int32` with `-1` meaning "not found / no position" instead of `0`.
+
+```cpp
+/* ---- v4 ---- */
+for (OCI_UInt32 i = 1, n = coll.GetSize(); i <= n; ++i)
+    process(coll[i]);                     // coll[1] = first element
+JsonNode item = node[1];                  // node[1] = first JSON item
+auto it = coll.begin();                   // position 1
+for (; it != coll.end(); ++it) { /* ... */ }
+
+/* ---- v5 ---- */
+for (OCI_UInt32 i = 0, n = coll.GetSize(); i < n; ++i)
+    process(coll[i]);                     // coll[0] = first element
+JsonNode item = node[0];                  // node[0] = first JSON item
+auto it = coll.begin();                   // position 0 — end() is now GetCount()
+for (; it != coll.end(); ++it) { /* ... */ }  // unchanged — iterators self-adjust
+```
+
+### Exact rules
+
+| v4 | v5 |
+|----|----|
+| `coll[i]`, `node[i]` — `i` 1-based | same syntax, `i` **0-based** |
+| `Collection<T>::begin()`/`end()` — positions 1 / `count+1` | positions **0** / `count` |
+| `JsonNode::begin()`/`end()` — positions 1 / `count+1` | positions **0** / `count` |
+| `coll[i]`/`node[i]` loops written `i = 1; i <= n` | rewrite `i = 0; i < n` — or better, a range-for |
+| `coll.GetElem(i)`, `coll.IsElementNull(i)`, `node.GetItem(i)`, `node.GetFieldByIndex(i)`, `node.GetFieldName(i)`, `node.SetItem(i)`/`InsertItem(i)`/`RemoveItem(i)`, `row.Get(i)`, `rs.GetColumn(i)`, `rs.Seek(SeekAbsolute, i)`, `ti.GetColumn(i)` — `i` 1-based | same methods — `i` now **0-based** (absolute seeks take the row index directly; `InsertItem` accepts `count` to append) |
+| `stmt.GetBind(i)`, `stmt.BindToResultSet`, `BindInfo` array positions (`SetNullAtPos`, `SetDataSizeAtPos`, `GetDataSizeAtPos`, `IsNullAtPos`), `dp.SetColumn(i,…)`, `dp.SetEntry(row,col,…)` — 1-based | same — all **0-based** |
+| `rs.GetColumnIndex(name)`, `ti.GetColumnIndex(name)`, `stmt.GetBindIndex(name)` — 1-based, `0` = not found | `Int32` result — **0-based** index, **`-1`** = not found |
+| `rs.GetCurrentRow()` — 1-based, `0` = not fetched | `Int32` result — **0-based** row, **`-1`** if not fetched/empty |
+| `ex.GetRow()` — 1-based array-DML row, `0` = N/A | `Int32` result — **0-based** row, **`-1`** if unrelated |
+
+### 6d.2 Additive — `rs.Rows()`, `rs.Columns()`, `ti.Columns()` and `Row`-based access
+
+v4's `while (rs++)`/`rs.Next()`/`rs.Get<T>(i)` still compiles and works —
+`Resultset` keeps its navigation methods and direct getters. v5 *adds* a
+`Row` view + column views; the new idiom keeps data access on `row`:
+
+```cpp
+/* v4 idiom — index updated to 0-based */
+while (rs++)
+    ocout << rs.Get<String>(0) << oendl;
+
+/* v5 idiom — row-based access */
+for (auto&& row : rs.Rows())
+    ocout << row.Get<String>(0) << oendl;
+
+auto row = *rs.Rows().begin();            // first row
+Row  r   = rs.Rows()[2];                  // 0-based absolute seek — scrollable
+                                          // only; throws OCI-10002 forward-only
+rows.Size();                              // rows fetched so far
+
+auto cols = rs.Columns();                 // ResultsetColumns — descriptor view
+cols.Size();                              // column count
+Column c = cols[0];                       // 0-based — first column (== GetColumn(0))
+Column n = cols["ENAME"];
+cols.At(0); cols.Contains("ENAME"); cols.IndexOf("ENAME"); // 0-based / -1
+for (auto&& col : cols) { /* ColumnIterator — random access, 0-based */ }
+
+TypeInfo ti(con, "EMP", TypeInfo::Table);
+for (auto&& col : ti.Columns()) { /* TypeInfoColumns — same surface */ }
+```
+
+| New member | Purpose |
+|------------|---------|
+| `rs.Rows()` → `ResultsetRows` | `begin()`/`end()` (`RowIterator`), `Size()`, `rows[i]` (0-based seek) |
+| `rs.Columns()` → `ResultsetColumns` | `begin()`/`end()` (`ColumnIterator`), `Size()`, `[i]`/`["name"]` (0-based), `At`, `Contains`, `IndexOf` (−1 miss) |
+| `ti.Columns()` → `TypeInfoColumns` | same view on type columns |
+| `ti.GetColumnIndex(name)` | 0-based column index, -1 = not found |
+| `Row` | proxy for the current row — `Get<T>(i)`/`Get<T>(name)`/`GetOptional<T>` |
+
+#### The `Row` proxy
+
+`Row` is a lightweight proxy bound to the resultset's *current* row — it owns
+no data and is cheap to copy. It is produced by dereferencing a `RowIterator`
+(`*it`) or by `rows[i]`:
+
+```cpp
+for (auto&& row : rs.Rows())
+{
+    String name       = row.Get<String>(0);            // 0-based column index
+    int    salary     = row.Get<int>(OTEXT("SAL"));    // by column name
+    auto   comm       = row.GetOptional<int>(OTEXT("COMM")); // std::optional —
+                                                  // std::nullopt on SQL NULL
+}
+```
+
+| `Row` member | Notes |
+|--------------|-------|
+| `Get<T>(UInt32 index)` | column value by 0-based index — same typed getters as `Resultset::Get<T>` |
+| `Get<T>(const String& name)` | column value by name |
+| `GetOptional<T>(index)` / `GetOptional<T>(name)` | `std::optional<T>`; `std::nullopt` on SQL NULL |
+
+#### `ResultsetRows` / `RowIterator`
+
+- `rs.Rows()` is a **view**, not a copy — iterating it fetches rows through the
+  underlying `Resultset`, which must outlive the view.
+- `begin()` performs the first `Next()`; `end()` is the past-the-end sentinel.
+  `RowIterator` is an input iterator: `*it` → `Row`, `++` → `Next()`.
+- Scrollable resultsets also get `--`, `+=`, `-=` on the iterator and
+  `rows[i]` absolute seek (0-based). All seek operations throw `Exception`
+  (OCI-10002) on forward-only resultsets.
+- `rows.Size()` = number of rows fetched so far (`GetCurrentRow()+1`), i.e.
+  the rows already consumed — not a total count for forward-only resultsets.
+
+#### `ColumnView` / `ColumnIterator` — `rs.Columns()` and `ti.Columns()`
+
+`rs.Columns()` (`ResultsetColumns`) and `ti.Columns()` (`TypeInfoColumns`)
+share the same `ColumnView<T>` surface over `Column` descriptors:
+
+- `Size()` — column count
+- `cols[i]` / `cols.At(i)` — column by 0-based index (`At` bounds-checks)
+- `cols["name"]` — column by name (throws if absent — check `Contains` first)
+- `Contains(name)` → `bool`; `IndexOf(name)` → 0-based index or `-1`
+- `begin()`/`end()` → `ColumnIterator` (random access, 0-based), yielding
+  `Column` objects with the usual `GetName`/`GetType`/`GetSQLType`/size/precision/
+  scale/nullable accessors
+
+---
+
 ## 7. Step 6 — XA removal
 
 `Environment::SessionXA` / `OCI_SESSION_XA` is gone. Remove it from session flags; XA
@@ -449,8 +579,14 @@ Do not rely on the compiler alone — these compile fine but behave differently:
         OracleError/OcilibError → GetCategory(); OracleWarning →
         GetType() == Exception::Warning; GetOracleErrorCode() /
         GetInternalErrorCode() → GetCode().
-11. [ ] Recompile with C++17+; fix remaining errors.
-12. [ ] Audit ChangeType::Row notification handlers for new row events.
+11. [ ] Rebase all index code to 0-based (see §6d): coll[i]/node[i] loops
+        (i=1;i<=n → i=0;i<n), plus Get/GetItem/GetElem/GetFieldByIndex/
+        GetFieldName/GetColumn/GetBind/Seek/SetItem/InsertItem/RemoveItem/
+        SetColumn/SetEntry and BindInfo *AtPos calls; lookups now return
+        Int32 with -1 = miss (GetColumnIndex/GetBindIndex/GetCurrentRow/
+        ex.GetRow()); optionally move row access to rs.Rows()/row.Get.
+13. [ ] Recompile with C++17+; fix remaining errors.
+14. [ ] Audit ChangeType::Row notification handlers for new row events.
 ```
 
 ---

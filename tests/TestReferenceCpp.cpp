@@ -29,7 +29,7 @@ namespace TestCppApi
 
         while (rst.Next())
         {
-            auto ref = rst.Get<Reference>(1);
+            auto ref = rst.Get<Reference>(0);
             auto s = ref.ToString();
             ASSERT_TRUE(s.size() > 0);
         }

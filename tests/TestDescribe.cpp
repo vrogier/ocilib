@@ -57,16 +57,16 @@ namespace TestCApi
 
         ASSERT_EQ(typepPropCount, OCI_TypeInfoGetColumnCount(typinf));
 
-        CheckColumnType(1, typinf, OTEXT("VAL_INT"), OTEXT("NUMBER"), OCI_CDT_NUMERIC);
-        CheckColumnType(2, typinf, OTEXT("VAL_FLT"), OTEXT("FLOAT"), OCI_CDT_NUMERIC);
-        CheckColumnType(3, typinf, OTEXT("VAL_STR"), OTEXT("VARCHAR2"), OCI_CDT_TEXT);
-        CheckColumnType(4, typinf, OTEXT("VAL_DATE"), OTEXT("DATE"), OCI_CDT_DATETIME);
-        CheckColumnType(5, typinf, OTEXT("VAL_TSMP"), OTEXT("TIMESTAMP"), OCI_CDT_TIMESTAMP);
-        CheckColumnType(6, typinf, OTEXT("VAL_ITV"), OTEXT("INTERVAL YEAR TO MONTH"), OCI_CDT_INTERVAL);
-        CheckColumnType(7, typinf, OTEXT("VAL_LOB"), OTEXT("CLOB"), OCI_CDT_LOB);
-        CheckColumnType(8, typinf, OTEXT("VAL_FILE"), OTEXT("BINARY FILE LOB"), OCI_CDT_FILE);
-        CheckColumnType(9, typinf, OTEXT("VAL_RAW"), OTEXT("RAW"), OCI_CDT_RAW);
-        CheckColumnType(10, typinf, OTEXT("VAL_OBJ"), OTEXT("TESTDESCRIBESUBTYPE"), OCI_CDT_OBJECT);
+        CheckColumnType(0, typinf, OTEXT("VAL_INT"), OTEXT("NUMBER"), OCI_CDT_NUMERIC);
+        CheckColumnType(1, typinf, OTEXT("VAL_FLT"), OTEXT("FLOAT"), OCI_CDT_NUMERIC);
+        CheckColumnType(2, typinf, OTEXT("VAL_STR"), OTEXT("VARCHAR2"), OCI_CDT_TEXT);
+        CheckColumnType(3, typinf, OTEXT("VAL_DATE"), OTEXT("DATE"), OCI_CDT_DATETIME);
+        CheckColumnType(4, typinf, OTEXT("VAL_TSMP"), OTEXT("TIMESTAMP"), OCI_CDT_TIMESTAMP);
+        CheckColumnType(5, typinf, OTEXT("VAL_ITV"), OTEXT("INTERVAL YEAR TO MONTH"), OCI_CDT_INTERVAL);
+        CheckColumnType(6, typinf, OTEXT("VAL_LOB"), OTEXT("CLOB"), OCI_CDT_LOB);
+        CheckColumnType(7, typinf, OTEXT("VAL_FILE"), OTEXT("BINARY FILE LOB"), OCI_CDT_FILE);
+        CheckColumnType(8, typinf, OTEXT("VAL_RAW"), OTEXT("RAW"), OCI_CDT_RAW);
+        CheckColumnType(9, typinf, OTEXT("VAL_OBJ"), OTEXT("TESTDESCRIBESUBTYPE"), OCI_CDT_OBJECT);
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
@@ -113,22 +113,22 @@ namespace TestCApi
 
         ASSERT_EQ(typepPropCount, OCI_TypeInfoGetColumnCount(typinf));
 
-        CheckColumnType(1, typinf, OTEXT("VAL_INT"), OTEXT("NUMBER"), OCI_CDT_NUMERIC);
-        CheckColumnType(2, typinf, OTEXT("VAL_FLT"), OTEXT("FLOAT"), OCI_CDT_NUMERIC);
-        CheckColumnType(3, typinf, OTEXT("VAL_STR"), OTEXT("VARCHAR2"), OCI_CDT_TEXT);
-        CheckColumnType(4, typinf, OTEXT("VAL_DATE"), OTEXT("DATE"), OCI_CDT_DATETIME);
-        CheckColumnType(5, typinf, OTEXT("VAL_TSMP"), OTEXT("TIMESTAMP"), OCI_CDT_TIMESTAMP);
-        CheckColumnType(6, typinf, OTEXT("VAL_ITV"), OTEXT("INTERVAL YEAR TO MONTH"), OCI_CDT_INTERVAL);
-        CheckColumnType(7, typinf, OTEXT("VAL_LOB"), OTEXT("CLOB"), OCI_CDT_LOB);
-        CheckColumnType(8, typinf, OTEXT("VAL_FILE"), OTEXT("BINARY FILE LOB"), OCI_CDT_FILE);
-        CheckColumnType(9, typinf, OTEXT("VAL_RAW"), OTEXT("RAW"), OCI_CDT_RAW);
-        CheckColumnType(10, typinf, OTEXT("VAL_OBJ"), OTEXT("TESTDESCRIBETABLESUBTYPE"), OCI_CDT_OBJECT);
+        CheckColumnType(0, typinf, OTEXT("VAL_INT"), OTEXT("NUMBER"), OCI_CDT_NUMERIC);
+        CheckColumnType(1, typinf, OTEXT("VAL_FLT"), OTEXT("FLOAT"), OCI_CDT_NUMERIC);
+        CheckColumnType(2, typinf, OTEXT("VAL_STR"), OTEXT("VARCHAR2"), OCI_CDT_TEXT);
+        CheckColumnType(3, typinf, OTEXT("VAL_DATE"), OTEXT("DATE"), OCI_CDT_DATETIME);
+        CheckColumnType(4, typinf, OTEXT("VAL_TSMP"), OTEXT("TIMESTAMP"), OCI_CDT_TIMESTAMP);
+        CheckColumnType(5, typinf, OTEXT("VAL_ITV"), OTEXT("INTERVAL YEAR TO MONTH"), OCI_CDT_INTERVAL);
+        CheckColumnType(6, typinf, OTEXT("VAL_LOB"), OTEXT("CLOB"), OCI_CDT_LOB);
+        CheckColumnType(7, typinf, OTEXT("VAL_FILE"), OTEXT("BINARY FILE LOB"), OCI_CDT_FILE);
+        CheckColumnType(8, typinf, OTEXT("VAL_RAW"), OTEXT("RAW"), OCI_CDT_RAW);
+        CheckColumnType(9, typinf, OTEXT("VAL_OBJ"), OTEXT("TESTDESCRIBETABLESUBTYPE"), OCI_CDT_OBJECT);
 
-        const auto col1 = OCI_TypeInfoGetColumn(typinf, 1);
+        const auto col1 = OCI_TypeInfoGetColumn(typinf, 0);
         ASSERT_NE(nullptr, col1);
         ASSERT_EQ(FALSE, OCI_ColumnGetNullable(col1));
 
-        const auto col2 = OCI_TypeInfoGetColumn(typinf, 2);
+        const auto col2 = OCI_TypeInfoGetColumn(typinf, 1);
         ASSERT_NE(nullptr, col2);
         ASSERT_EQ(TRUE, OCI_ColumnGetNullable(col2));
 

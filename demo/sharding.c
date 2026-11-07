@@ -43,9 +43,6 @@ int main(void)
 
     if (cn)
     {
-        printf("shard group id  : %u\n", OCI_ConnectionGetShardGroupId(cn));
-        printf("shard instances : %u\n", OCI_ConnectionGetShardInstances(cn));
-
         OCI_Statement *st = OCI_StatementCreate(cn);
         OCI_ExecuteStmt(st, OTEXT("select cust_id, name, region from customers where rownum <= 5"));
 
@@ -53,7 +50,7 @@ int main(void)
         while (OCI_FetchNext(rs))
         {
             printf("cust_id=%s name=%s region=%s\n",
-                   OCI_GetString(rs, 1), OCI_GetString(rs, 2), OCI_GetString(rs, 3));
+                   OCI_GetString(rs, 0), OCI_GetString(rs, 1), OCI_GetString(rs, 2));
         }
 
         OCI_StatementFree(st);

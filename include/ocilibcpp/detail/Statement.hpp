@@ -230,7 +230,7 @@ namespace ocilib
         return (core::Check(OCI_IsRebindingAllowed(*this)) == TRUE);
     }
 
-    inline UInt32 Statement::GetBindIndex(const String& name) const
+    inline Int32 Statement::GetBindIndex(const String& name) const
     {
         return core::Check(OCI_GetBindIndex(*this, name.c_str()));
     }

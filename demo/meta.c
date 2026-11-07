@@ -28,7 +28,7 @@ int main(void)
     OCI_Resultset * rs = OCI_GetResultset(st);
     n = OCI_GetColumnCount(rs);
 
-    for (i = 1; i <= n; i++)
+    for (i = 0; i < n; i++)
     {
         OCI_Column *col = OCI_GetColumn(rs, i);
 

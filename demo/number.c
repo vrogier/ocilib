@@ -53,8 +53,8 @@ int main(void)
     rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        OCI_Number  *n = OCI_GetNumber(rs, 1);
-        const otext *s = OCI_GetString(rs, 1);
+        OCI_Number  *n = OCI_GetNumber(rs, 0);
+        const otext *s = OCI_GetString(rs, 0);
 
         OCI_NumberToText(n, NULL, sizeof(buf), buf);
 
@@ -73,7 +73,7 @@ int main(void)
     OCI_Prepare(st, "begin :1 := :1 *2 ; end;");
     OCI_SetBindAllocation(st, OCI_BAM_INTERNAL);
     OCI_BindNumber(st, ":1", NULL);
-    nt = OCI_BindGetData(OCI_GetBind(st, 1));
+    nt = OCI_BindGetData(OCI_GetBind(st, 0));
     OCI_NumberFromText(nt, "1234.4321", NULL);
     OCI_Execute(st);
     OCI_NumberToText(nt, NULL, sizeof(buf), buf);
@@ -87,7 +87,7 @@ int main(void)
     rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        printf("%s\n", OCI_GetString(rs, 1));
+        printf("%s\n", OCI_GetString(rs, 0));
     }
 
     // testing Collections
@@ -99,7 +99,7 @@ int main(void)
     OCI_CollAppend(cl, el);
     printf("%d\n", OCI_CollGetCount(cl));
 
-    for (i = 1, n = OCI_CollGetCount(cl); i <= n; i++)
+    for (i = 0, n = OCI_CollGetCount(cl); i <= n; i++)
     {
         OCI_Elem   *e = OCI_CollGetElem(cl, i);
         OCI_Number *n = OCI_ElemGetNumber(e);
@@ -122,8 +122,8 @@ int main(void)
     rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        printf("pos infinite = [%s]\n", OCI_GetString(rs, 1));
-        printf("neg infinite = [%s]\n", OCI_GetString(rs, 2));
+        printf("pos infinite = [%s]\n", OCI_GetString(rs, 0));
+        printf("neg infinite = [%s]\n", OCI_GetString(rs, 1));
     }
 
     // Testing array of numbers

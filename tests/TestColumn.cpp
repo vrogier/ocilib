@@ -22,7 +22,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_EQ(2u, OCI_GetColumnCount(rs));
 
-        auto col = OCI_GetColumn(rs, 1);
+        auto col = OCI_GetColumn(rs, 0);
         ASSERT_NE(nullptr, col);
         ASSERT_NE(nullptr, OCI_ColumnGetName(col));
         ASSERT_EQ(OCI_CDT_NUMERIC, OCI_ColumnGetType(col));
@@ -83,11 +83,11 @@ namespace TestCApi
         (
             stmt, OTEXT("SELECT * FROM TestColCharTypes"),
             {
-                {1, OTEXT("CHAR"),      OCI_CDT_TEXT},
-                {2, OTEXT("NCHAR"),     OCI_CDT_TEXT},
-                {3, OTEXT("VARCHAR2"),  OCI_CDT_TEXT},
-                {4, OTEXT("NVARCHAR2"), OCI_CDT_TEXT},
-                {5, OTEXT("VARCHAR2"),  OCI_CDT_TEXT},
+                {0, OTEXT("CHAR"),      OCI_CDT_TEXT},
+                {1, OTEXT("NCHAR"),     OCI_CDT_TEXT},
+                {2, OTEXT("VARCHAR2"),  OCI_CDT_TEXT},
+                {3, OTEXT("NVARCHAR2"), OCI_CDT_TEXT},
+                {4, OTEXT("VARCHAR2"),  OCI_CDT_TEXT},
             }
         );
 
@@ -117,19 +117,19 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        auto col = OCI_GetColumn(rs, 1);
+        auto col = OCI_GetColumn(rs, 0);
         ASSERT_EQ(OCI_CSF_DEFAULT, OCI_ColumnGetCharsetForm(col));
         ASSERT_EQ(FALSE, OCI_ColumnGetCharUsed(col));
 
-        col = OCI_GetColumn(rs, 2);
+        col = OCI_GetColumn(rs, 1);
         ASSERT_EQ(OCI_CSF_NATIONAL, OCI_ColumnGetCharsetForm(col));
 
-        col = OCI_GetColumn(rs, 3);
+        col = OCI_GetColumn(rs, 2);
         ASSERT_EQ(OCI_CSF_DEFAULT, OCI_ColumnGetCharsetForm(col));
         ASSERT_EQ(TRUE, OCI_ColumnGetCharUsed(col));
         ASSERT_EQ(30u, OCI_ColumnGetSize(col));
 
-        col = OCI_GetColumn(rs, 4);
+        col = OCI_GetColumn(rs, 3);
         ASSERT_EQ(OCI_CSF_NONE, OCI_ColumnGetCharsetForm(col));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -157,30 +157,30 @@ namespace TestCApi
         (
             stmt, OTEXT("SELECT * FROM TestColNumTypes"),
             {
+                {0, OTEXT("NUMBER"),        OCI_CDT_NUMERIC},
                 {1, OTEXT("NUMBER"),        OCI_CDT_NUMERIC},
                 {2, OTEXT("NUMBER"),        OCI_CDT_NUMERIC},
-                {3, OTEXT("NUMBER"),        OCI_CDT_NUMERIC},
-                {4, OTEXT("FLOAT"),         OCI_CDT_NUMERIC},
-                {5, OTEXT("BINARY FLOAT"),  OCI_CDT_NUMERIC},
-                {6, OTEXT("BINARY DOUBLE"), OCI_CDT_NUMERIC},
+                {3, OTEXT("FLOAT"),         OCI_CDT_NUMERIC},
+                {4, OTEXT("BINARY FLOAT"),  OCI_CDT_NUMERIC},
+                {5, OTEXT("BINARY DOUBLE"), OCI_CDT_NUMERIC},
             }
         );
 
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        auto col = OCI_GetColumn(rs, 2);
+        auto col = OCI_GetColumn(rs, 1);
         ASSERT_EQ(10, OCI_ColumnGetPrecision(col));
         ASSERT_EQ(0, OCI_ColumnGetScale(col));
 
-        col = OCI_GetColumn(rs, 3);
+        col = OCI_GetColumn(rs, 2);
         ASSERT_EQ(10, OCI_ColumnGetPrecision(col));
         ASSERT_EQ(3, OCI_ColumnGetScale(col));
 
-        col = OCI_GetColumn(rs, 5);
+        col = OCI_GetColumn(rs, 4);
         ASSERT_EQ(OCI_NUM_FLOAT, OCI_ColumnGetSubType(col));
 
-        col = OCI_GetColumn(rs, 6);
+        col = OCI_GetColumn(rs, 5);
         ASSERT_EQ(OCI_NUM_DOUBLE, OCI_ColumnGetSubType(col));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -209,36 +209,36 @@ namespace TestCApi
         (
             stmt, OTEXT("SELECT * FROM TestColDateTypes"),
             {
-                {1, OTEXT("DATE"),                            OCI_CDT_DATETIME},
-                {2, OTEXT("TIMESTAMP"),                       OCI_CDT_TIMESTAMP},
-                {3, OTEXT("TIMESTAMP WITH TIME ZONE"),        OCI_CDT_TIMESTAMP},
-                {4, OTEXT("TIMESTAMP WITH LOCAL TIME ZONE"),  OCI_CDT_TIMESTAMP},
-                {5, OTEXT("INTERVAL YEAR TO MONTH"),          OCI_CDT_INTERVAL},
-                {6, OTEXT("INTERVAL DAY TO SECOND"),          OCI_CDT_INTERVAL},
+                {0, OTEXT("DATE"),                            OCI_CDT_DATETIME},
+                {1, OTEXT("TIMESTAMP"),                       OCI_CDT_TIMESTAMP},
+                {2, OTEXT("TIMESTAMP WITH TIME ZONE"),        OCI_CDT_TIMESTAMP},
+                {3, OTEXT("TIMESTAMP WITH LOCAL TIME ZONE"),  OCI_CDT_TIMESTAMP},
+                {4, OTEXT("INTERVAL YEAR TO MONTH"),          OCI_CDT_INTERVAL},
+                {5, OTEXT("INTERVAL DAY TO SECOND"),          OCI_CDT_INTERVAL},
             }
         );
 
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        auto col = OCI_GetColumn(rs, 2);
+        auto col = OCI_GetColumn(rs, 1);
         ASSERT_EQ(6, OCI_ColumnGetFractionalPrecision(col));
         ASSERT_EQ(0, OCI_ColumnGetLeadingPrecision(col));
         ASSERT_EQ(OCI_TIMESTAMP, OCI_ColumnGetSubType(col));
 
-        col = OCI_GetColumn(rs, 3);
+        col = OCI_GetColumn(rs, 2);
         ASSERT_EQ(3, OCI_ColumnGetFractionalPrecision(col));
         ASSERT_EQ(OCI_TIMESTAMP_TZ, OCI_ColumnGetSubType(col));
 
-        col = OCI_GetColumn(rs, 4);
+        col = OCI_GetColumn(rs, 3);
         ASSERT_EQ(2, OCI_ColumnGetFractionalPrecision(col));
         ASSERT_EQ(OCI_TIMESTAMP_LTZ, OCI_ColumnGetSubType(col));
 
-        col = OCI_GetColumn(rs, 5);
+        col = OCI_GetColumn(rs, 4);
         ASSERT_EQ(4, OCI_ColumnGetLeadingPrecision(col));
         ASSERT_EQ(OCI_INTERVAL_YM, OCI_ColumnGetSubType(col));
 
-        col = OCI_GetColumn(rs, 6);
+        col = OCI_GetColumn(rs, 5);
         ASSERT_EQ(2, OCI_ColumnGetLeadingPrecision(col));
         ASSERT_EQ(3, OCI_ColumnGetFractionalPrecision(col));
         ASSERT_EQ(OCI_INTERVAL_DS, OCI_ColumnGetSubType(col));
@@ -268,24 +268,24 @@ namespace TestCApi
         (
             stmt, OTEXT("SELECT * FROM TestColLobTypes"),
             {
-                {1, OTEXT("CLOB"),            OCI_CDT_LOB},
-                {2, OTEXT("NCLOB"),           OCI_CDT_LOB},
-                {3, OTEXT("BLOB"),            OCI_CDT_LOB},
-                {4, OTEXT("BINARY FILE LOB"), OCI_CDT_FILE},
-                {5, OTEXT("RAW"),             OCI_CDT_RAW},
-                {6, OTEXT("LONG RAW"),        OCI_CDT_LONG},
-                {7, OTEXT("ROWID"),           OCI_CDT_TEXT},
+                {0, OTEXT("CLOB"),            OCI_CDT_LOB},
+                {1, OTEXT("NCLOB"),           OCI_CDT_LOB},
+                {2, OTEXT("BLOB"),            OCI_CDT_LOB},
+                {3, OTEXT("BINARY FILE LOB"), OCI_CDT_FILE},
+                {4, OTEXT("RAW"),             OCI_CDT_RAW},
+                {5, OTEXT("LONG RAW"),        OCI_CDT_LONG},
+                {6, OTEXT("ROWID"),           OCI_CDT_TEXT},
             }
         );
 
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        ASSERT_EQ(OCI_CLOB, OCI_ColumnGetSubType(OCI_GetColumn(rs, 1)));
-        ASSERT_EQ(OCI_NCLOB, OCI_ColumnGetSubType(OCI_GetColumn(rs, 2)));
-        ASSERT_EQ(OCI_BLOB, OCI_ColumnGetSubType(OCI_GetColumn(rs, 3)));
-        ASSERT_EQ(OCI_BFILE, OCI_ColumnGetSubType(OCI_GetColumn(rs, 4)));
-        ASSERT_EQ(OCI_BLONG, OCI_ColumnGetSubType(OCI_GetColumn(rs, 6)));
+        ASSERT_EQ(OCI_CLOB, OCI_ColumnGetSubType(OCI_GetColumn(rs, 0)));
+        ASSERT_EQ(OCI_NCLOB, OCI_ColumnGetSubType(OCI_GetColumn(rs, 1)));
+        ASSERT_EQ(OCI_BLOB, OCI_ColumnGetSubType(OCI_GetColumn(rs, 2)));
+        ASSERT_EQ(OCI_BFILE, OCI_ColumnGetSubType(OCI_GetColumn(rs, 3)));
+        ASSERT_EQ(OCI_BLONG, OCI_ColumnGetSubType(OCI_GetColumn(rs, 5)));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
@@ -311,7 +311,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        const auto col = OCI_GetColumn(rs, 1);
+        const auto col = OCI_GetColumn(rs, 0);
         ASSERT_NE(nullptr, col);
         ASSERT_EQ(OCI_CDT_XMLTYPE, OCI_ColumnGetType(col));
         ASSERT_EQ(String(OTEXT("XMLTYPE")), String(OCI_ColumnGetSQLType(col)));
@@ -350,7 +350,7 @@ namespace TestCApi
         auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        auto col = OCI_GetColumn(rs, 1);
+        auto col = OCI_GetColumn(rs, 0);
         ASSERT_TRUE(OCI_ColumnGetPropertyFlags(col) & OCI_CPF_IS_IDENTITY);
         ASSERT_TRUE(OCI_ColumnGetPropertyFlags(col) & OCI_CPF_IS_GEN_ALWAYS);
 
@@ -359,7 +359,7 @@ namespace TestCApi
         rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        col = OCI_GetColumn(rs, 1);
+        col = OCI_GetColumn(rs, 0);
         ASSERT_TRUE(OCI_ColumnGetPropertyFlags(col) & OCI_CPF_IS_IDENTITY);
         ASSERT_TRUE(OCI_ColumnGetPropertyFlags(col) & OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL);
 
@@ -390,7 +390,7 @@ namespace TestCApi
         auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        auto col = OCI_GetColumn(rs, 2);
+        auto col = OCI_GetColumn(rs, 1);
         ASSERT_NE(nullptr, col);
         ASSERT_EQ(OCI_CDT_LONG, OCI_ColumnGetType(col));
         ASSERT_EQ(OCI_CLONG, OCI_ColumnGetSubType(col));
@@ -408,7 +408,7 @@ namespace TestCApi
         rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        col = OCI_GetColumn(rs, 2);
+        col = OCI_GetColumn(rs, 1);
         ASSERT_NE(nullptr, col);
         ASSERT_EQ(OCI_CDT_TEXT, OCI_ColumnGetType(col));
 
@@ -434,7 +434,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        const auto col = OCI_GetColumn(rs, 1);
+        const auto col = OCI_GetColumn(rs, 0);
         ASSERT_NE(nullptr, col);
         ASSERT_EQ(OCI_CDT_CURSOR, OCI_ColumnGetType(col));
         ASSERT_EQ(String(OTEXT("RESULTSET")), String(OCI_ColumnGetSQLType(col)));
@@ -470,19 +470,19 @@ namespace TestCApi
 
         otext buffer[OCI_SIZE_BUFFER];
 
-        auto col = OCI_GetColumn(rs, 1);
+        auto col = OCI_GetColumn(rs, 0);
         ASSERT_EQ(OCI_CDT_OBJECT, OCI_ColumnGetType(col));
         ASSERT_EQ(ToUpper(String(OTEXT("TestColObj"))), ToUpper(String(OCI_ColumnGetSQLType(col))));
         ASSERT_NE(nullptr, OCI_ColumnGetTypeInfo(col));
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
 
-        col = OCI_GetColumn(rs, 2);
+        col = OCI_GetColumn(rs, 1);
         ASSERT_EQ(OCI_CDT_REF, OCI_ColumnGetType(col));
         ASSERT_EQ(String(OTEXT("REF")), String(OCI_ColumnGetSQLType(col)));
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
         ASSERT_NE(nullptr, OCI_ColumnGetTypeInfo(col));
 
-        col = OCI_GetColumn(rs, 3);
+        col = OCI_GetColumn(rs, 2);
         ASSERT_EQ(OCI_CDT_COLLECTION, OCI_ColumnGetType(col));
         ASSERT_EQ(ToUpper(String(OTEXT("TestColObjTab"))), ToUpper(String(OCI_ColumnGetSQLType(col))));
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
@@ -525,13 +525,13 @@ namespace TestCApi
         (
             stmt, OTEXT("SELECT * FROM TestCol23Types"),
             {
-                {1, OTEXT("?"),              OCI_CDT_JSON},
-                {2, OTEXT("PL/SQL BOOLEAN"), OCI_CDT_BOOLEAN},
+                {0, OTEXT("?"),              OCI_CDT_JSON},
+                {1, OTEXT("PL/SQL BOOLEAN"), OCI_CDT_BOOLEAN},
+                {2, OTEXT("VECTOR"),         OCI_CDT_VECTOR},
                 {3, OTEXT("VECTOR"),         OCI_CDT_VECTOR},
                 {4, OTEXT("VECTOR"),         OCI_CDT_VECTOR},
                 {5, OTEXT("VECTOR"),         OCI_CDT_VECTOR},
-                {6, OTEXT("VECTOR"),         OCI_CDT_VECTOR},
-                {7, OTEXT("VARCHAR2"),       OCI_CDT_TEXT},
+                {6, OTEXT("VARCHAR2"),       OCI_CDT_TEXT},
             }
         );
 
@@ -540,25 +540,25 @@ namespace TestCApi
 
         otext buffer[OCI_SIZE_BUFFER];
 
-        auto col = OCI_GetColumn(rs, 3);
+        auto col = OCI_GetColumn(rs, 2);
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
         ASSERT_EQ(String(OTEXT("VECTOR(4, FLOAT32)")), String(buffer));
         ASSERT_EQ(4u, OCI_ColumnGetDimension(col));
 
-        col = OCI_GetColumn(rs, 4);
+        col = OCI_GetColumn(rs, 3);
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
         ASSERT_EQ(String(OTEXT("VECTOR(8, FLOAT64)")), String(buffer));
 
-        col = OCI_GetColumn(rs, 5);
+        col = OCI_GetColumn(rs, 4);
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
         ASSERT_EQ(String(OTEXT("VECTOR(16, INT8)")), String(buffer));
 
-        col = OCI_GetColumn(rs, 6);
+        col = OCI_GetColumn(rs, 5);
         ASSERT_GT(OCI_ColumnGetFullSQLType(col, buffer, sizeof(buffer) / sizeof(otext)), 0u);
         ASSERT_EQ(String(OTEXT("VECTOR(*, *)")), String(buffer));
         ASSERT_EQ(0u, OCI_ColumnGetDimension(col));
 
-        col = OCI_GetColumn(rs, 7);
+        col = OCI_GetColumn(rs, 6);
         ASSERT_NE(OCI_CCI_NONE, OCI_ColumnGetCollationID(col));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -588,7 +588,7 @@ namespace TestCApi
         const auto rs = OCI_GetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        ASSERT_TRUE(OCI_SetStructNumericType(rs, 1, OCI_NUM_INT));
+        ASSERT_TRUE(OCI_SetStructNumericType(rs, 0, OCI_NUM_INT));
 
         struct Row { OCI_Int64 id; OCI_Float fval; OCI_Double dval; };
         struct RowInd { OCI_Boolean id; OCI_Boolean fval; OCI_Boolean dval; };
@@ -637,7 +637,7 @@ namespace TestCApi
         /* OcilibColumnMapInfo / OcilibColumnGetAttributeInfo /
            OcilibColumnGetSqlType / OcilibColumnGetFullSqlType /
            OcilibColumnVectorFormat internals via public column getters */
-        for (OCI_UInt32 i = 1; i <= OCI_GetColumnCount(rs); ++i)
+        for (OCI_UInt32 i = 0; i < OCI_GetColumnCount(rs); ++i)
         {
             const auto col = OCI_GetColumn(rs, i);
             ASSERT_NE(nullptr, col);

@@ -22,7 +22,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, rs);
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 1);
+        const auto coll = OCI_GetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         const auto iter = OCI_IterCreate(coll);

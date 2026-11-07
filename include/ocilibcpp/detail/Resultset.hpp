@@ -64,12 +64,12 @@ inline UInt32 Resultset::GetCount() const
     return core::Check(OCI_GetRowCount(*this));
 }
 
-inline UInt32 Resultset::GetCurrentRow() const
+inline Int32 Resultset::GetCurrentRow() const
 {
     return core::Check(OCI_GetCurrentRow(*this));
 }
 
-inline UInt32 Resultset::GetColumnIndex(const String& name) const
+inline Int32 Resultset::GetColumnIndex(const String& name) const
 {
     return core::Check(OCI_GetColumnIndex(*this, name.c_str()));
 }
@@ -124,14 +124,14 @@ inline bool Resultset::operator -= (Int32 offset)
     return Seek(SeekRelative, -offset);
 }
 
-inline ResultsetIterator Resultset::begin()
+inline ResultsetRows Resultset::Rows()
 {
-    return ResultsetIterator(this, !Next());
+    return ResultsetRows(this);
 }
 
-inline ResultsetIterator Resultset::end()
+inline ResultsetColumns Resultset::Columns()
 {
-    return ResultsetIterator(this, true);
+    return ResultsetColumns(this);
 }
 
 template<class T>

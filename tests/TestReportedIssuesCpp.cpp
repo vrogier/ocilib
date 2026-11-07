@@ -153,7 +153,7 @@ namespace TestCppApi
             auto resultset = stmt.GetResultset();
             while (resultset.Next())
             {
-                isNull = resultset.IsColumnNull(1);
+                isNull = resultset.IsColumnNull(0);
                 counter++;
             }
         }
@@ -220,7 +220,7 @@ namespace TestCppApi
 
             stmt.Prepare(OTEXT("select * from dual where 1 > :value"));
             stmt.Bind( OTEXT(":value"), value, BindInfo::In);
-            auto bind = stmt.GetBind(1);
+            auto bind = stmt.GetBind(0);
             bind.SetCharsetForm(CharsetFormValues::CharsetFormNational);
             stmt.ExecutePrepared();
         }
@@ -290,7 +290,7 @@ namespace TestCppApi
 
         auto rs = st.GetResultset();
 
-        auto col = rs.GetColumn(1);
+        auto col = rs.GetColumn(0);
         ASSERT_EQ(String(OTEXT("XMLTYPE")), col.GetSQLType());
         ASSERT_EQ(String(OTEXT("XMLTYPE")), col.GetFullSQLType());
         ASSERT_EQ(DataTypeValues::TypeXmlType, col.GetType());
@@ -409,7 +409,7 @@ namespace TestCppApi
             Connection conn(env, DBS, USR, PWD);
 
             static std::vector<OCI_Int64> values;
-            for (OCI_Size i = 1; i <= expectedCount; ++i)
+            for (OCI_Size i = 0; i < expectedCount; ++i)
             {
                 values.push_back(1234567890000 + i);
             }
@@ -425,7 +425,7 @@ namespace TestCppApi
             auto rs = stmt.GetResultset();
             while (rs++)
             {
-                ASSERT_EQ(values[insertedCount], rs.Get<OCI_Int64>(1));
+                ASSERT_EQ(values[insertedCount], rs.Get<OCI_Int64>(0));
                 insertedCount++;
             }
         }

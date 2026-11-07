@@ -56,7 +56,7 @@ int main(void)
     OCI_Resultset * rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        sale = OCI_GetObject(rs, 1);
+        sale = OCI_GetObject(rs, 0);
         vendor = OCI_ObjectGetObject(sale, "VENDOR");
 
         printf("Sale %d - %s vendor %s\n", OCI_ObjectGetInt(sale, "CODE"), OCI_ObjectGetString(sale, "NAME"), OCI_ObjectGetString(vendor, "NAME"));

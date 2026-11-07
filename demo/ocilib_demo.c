@@ -439,10 +439,10 @@ void test_format(void)
 
     while (OCI_FetchNext(rs))
     {
-        print_frmt("> code : %i", OCI_GetInt(rs, 1));
-        print_text(", action : "); print_ostr(OCI_GetString(rs, 2));
-        print_frmt(", price : %g", OCI_GetDouble(rs,3));
-        print_text(", date : "); print_ostr(OCI_GetString(rs, 4));
+        print_frmt("> code : %i", OCI_GetInt(rs, 0));
+        print_text(", action : "); print_ostr(OCI_GetString(rs, 1));
+        print_frmt(", price : %g", OCI_GetDouble(rs,2));
+        print_text(", date : "); print_ostr(OCI_GetString(rs, 3));
         print_text("\n");
    }
 
@@ -502,7 +502,7 @@ void test_fetch(void)
     n  = OCI_GetColumnCount(rs);
 
     /* print resultset columns info */
-    for(i = 1; i <= n; i++)
+    for(i = 0; i < n; i++)
     {
         OCI_Column *col = OCI_GetColumn(rs, i);
 
@@ -516,10 +516,10 @@ void test_fetch(void)
     /* print resultset content */
     while (OCI_FetchNext(rs))
     {
-        print_frmt("> code : %i", OCI_GetInt(rs, 1));
-        print_text(", action : "); print_ostr(OCI_GetString(rs, 2));
-        print_frmt(", price : %g", OCI_GetDouble(rs,3));
-        print_text(", date : "); print_ostr(OCI_GetString(rs, 4));
+        print_frmt("> code : %i", OCI_GetInt(rs, 0));
+        print_text(", action : "); print_ostr(OCI_GetString(rs, 1));
+        print_frmt(", price : %g", OCI_GetDouble(rs,2));
+        print_text(", date : "); print_ostr(OCI_GetString(rs, 3));
         print_text("\n");
     }
 
@@ -546,10 +546,10 @@ void test_bind1(void)
     /* print resultset content */
     while (OCI_FetchNext(rs))
     {
-        print_frmt("> code : %i", OCI_GetInt(rs, 1));
-        print_text(", action : "); print_ostr(OCI_GetString(rs, 2));
-        print_frmt(", price : %g", OCI_GetDouble(rs,3));
-        print_text(", date : "); print_ostr(OCI_GetString(rs, 4));
+        print_frmt("> code : %i", OCI_GetInt(rs, 0));
+        print_text(", action : "); print_ostr(OCI_GetString(rs, 1));
+        print_frmt(", price : %g", OCI_GetDouble(rs,2));
+        print_text(", date : "); print_ostr(OCI_GetString(rs, 3));
         print_text("\n");
     }
 
@@ -705,7 +705,7 @@ void test_piecewise_fetch(void)
     /* read data by chunks of 2048 bytes*/
     while (OCI_FetchNext(rs))
     {
-        OCI_Long * lg = OCI_GetLong(rs, 1);
+        OCI_Long * lg = OCI_GetLong(rs, 0);
 
         while ((n = OCI_LongRead(lg, buffer, sizeof(buffer)))) {}
 
@@ -723,7 +723,7 @@ void test_piecewise_fetch(void)
 
     while (OCI_FetchNext(rs))
     {
-        const otext *long_str = OCI_GetString(rs, 1);
+        const otext *long_str = OCI_GetString(rs, 0);
 
         print_ostr(long_str);
         print_frmt("\n%d bytes read\n", (OCI_Int32) ostrlen(long_str));
@@ -750,7 +750,7 @@ void test_lob(void)
     {
         OCI_UInt32 char_count, byte_count;
 
-        OCI_Lob *lob  = OCI_GetLob(rs, 2);
+        OCI_Lob *lob  = OCI_GetLob(rs, 1);
 
         char_count = 7;
         byte_count = 0;
@@ -766,7 +766,7 @@ void test_lob(void)
         OCI_LobRead(lob, temp, &char_count, &byte_count);
         temp[char_count] = 0;
 
-        print_frmt("> code    : %i", OCI_GetInt(rs, 1));
+        print_frmt("> code    : %i", OCI_GetInt(rs, 0));
         print_text(", content : "); print_ostr(temp);
         print_text("\n");
     }
@@ -791,13 +791,13 @@ void test_nested_table(void)
 
     while (OCI_FetchNext(rs))
     {
-        OCI_Statement *st2 = OCI_GetStatement(rs, 2);
+        OCI_Statement *st2 = OCI_GetStatement(rs, 1);
         OCI_Resultset *rs2 = OCI_GetResultset(st2);
 
         while (OCI_FetchNext(rs2))
         {
-            print_text("> article : "); print_ostr(OCI_GetString(rs, 1));
-            print_text(", date : ");    print_ostr(OCI_GetString(rs2, 1));
+            print_text("> article : "); print_ostr(OCI_GetString(rs, 0));
+            print_text(", date : ");    print_ostr(OCI_GetString(rs2, 0));
             print_text("\n");
         }
     }
@@ -822,10 +822,10 @@ void test_ref_cursor(void)
     /* print resultset content */
     while (OCI_FetchNext(rs))
     {
-        print_frmt("> code : %i", OCI_GetInt(rs, 1));
-        print_text(", action : "); print_ostr(OCI_GetString(rs, 2));
-        print_frmt(", price : %g", OCI_GetDouble(rs,3));
-        print_text(", date : "); print_ostr(OCI_GetString(rs, 4));
+        print_frmt("> code : %i", OCI_GetInt(rs, 0));
+        print_text(", action : "); print_ostr(OCI_GetString(rs, 1));
+        print_frmt(", price : %g", OCI_GetDouble(rs,2));
+        print_text(", date : "); print_ostr(OCI_GetString(rs, 3));
         print_text("\n");
     }
 
@@ -1007,7 +1007,7 @@ void test_describe(void)
 
         n = OCI_TypeInfoGetColumnCount(tbl);
 
-        for(i = 1; i <= n; i++)
+        for(i = 0; i < n; i++)
         {
             OCI_Column   * col = OCI_TypeInfoGetColumn(tbl, i);
 
@@ -1043,7 +1043,7 @@ void test_describe(void)
 
         n = OCI_TypeInfoGetColumnCount(tbl);
 
-        for(i = 1; i <= n; i++)
+        for(i = 0; i < n; i++)
         {
             OCI_Column *col = OCI_TypeInfoGetColumn(tbl, i);
 
@@ -1085,7 +1085,7 @@ void test_returning(void)
     {
         OCI_UInt32 char_count, byte_count;
 
-        OCI_Lob * lob = OCI_GetLob(rs, 2);
+        OCI_Lob * lob = OCI_GetLob(rs, 1);
 
         char_count = 10;
         byte_count = 0;
@@ -1097,7 +1097,7 @@ void test_returning(void)
         OCI_LobRead(lob, temp, &char_count, &byte_count);
         temp[char_count] = 0;
 
-        print_frmt("> code : %i - ", OCI_GetInt(rs, 1));
+        print_frmt("> code : %i - ", OCI_GetInt(rs, 0));
         print_ostr(temp);
         print_text("\n");
    }
@@ -1338,7 +1338,7 @@ void test_object_fetch(void)
     /* print resultset content */
     while (OCI_FetchNext(rs))
     {
-        OCI_Object *obj  = OCI_GetObject(rs, 1);
+        OCI_Object *obj  = OCI_GetObject(rs, 0);
 
         print_frmt("val_int        : %i\n",  OCI_ObjectGetInt(obj, OTEXT("VAL_INT")));
         print_frmt("val_dbl        : %g\n",  OCI_ObjectGetFloat(obj, OTEXT("VAL_DBL")));
@@ -1408,7 +1408,7 @@ void test_object_fetch_string(void)
     /* print resultset content */
     while (OCI_FetchNext(rs))
     {
-        print_ostr(OCI_GetString(rs, 1));
+        print_ostr(OCI_GetString(rs, 0));
         print_text("\n");
     }
 }
@@ -1436,35 +1436,35 @@ void test_scrollable_cursor(void)
         print_text("... Go to row 1\n");
         if (OCI_FetchFirst(rs))
         {
-            print_ostr(OCI_GetString(rs, 1));
+            print_ostr(OCI_GetString(rs, 0));
             print_text("\n");
         }
 
         print_frmt("... Enumerate from row 2 to row %u\n", OCI_GetRowCount(rs));
         while (OCI_FetchNext(rs))
         {
-            print_ostr(OCI_GetString(rs, 1));
+            print_ostr(OCI_GetString(rs, 0));
             print_text("\n");
         }
 
         print_frmt("... Enumerate from row %u back to row 1\n", OCI_GetRowCount(rs)-1);
         while (OCI_FetchPrev(rs))
         {
-            print_ostr(OCI_GetString(rs, 1));
+            print_ostr(OCI_GetString(rs, 0));
             print_text("\n");
         }
 
         print_text("... Go to the 3th row\n");
         if (OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE,  3))
         {
-            print_ostr(OCI_GetString(rs, 1));
+            print_ostr(OCI_GetString(rs, 0));
             print_text("\n");
         }
 
         print_text("... Fetch the next 2 rows\n");
         while ((OCI_GetCurrentRow(rs) < 5) && OCI_FetchNext(rs))
         {
-            print_ostr(OCI_GetString(rs, 1));
+            print_ostr(OCI_GetString(rs, 0));
             print_text("\n");
         }
 
@@ -1523,12 +1523,12 @@ void test_collection(void)
 
     while (OCI_FetchNext(rs))
     {
-        coll = OCI_GetColl(rs, 2);
+        coll = OCI_GetColl(rs, 1);
 
         iter = OCI_IterCreate(coll);
         elem = OCI_IterGetNext(iter);
 
-        print_frmt("\nDepartment ID #%d\n\n", OCI_GetInt(rs, 1));
+        print_frmt("\nDepartment ID #%d\n\n", OCI_GetInt(rs, 0));
 
         while (elem != NULL)
         {
@@ -1566,13 +1566,13 @@ void test_collection(void)
 
     while (OCI_FetchNext(rs))
     {
-        coll = OCI_GetColl(rs, 2);
+        coll = OCI_GetColl(rs, 1);
 
-        print_frmt("\nDepartment ID #%d\n\n", OCI_GetInt(rs, 1));
+        print_frmt("\nDepartment ID #%d\n\n", OCI_GetInt(rs, 0));
 
         n = OCI_CollGetSize(coll);
 
-        for(i = 1; i <= n; i++)
+        for(i = 0; i < n; i++)
         {
             elem = OCI_CollGetElem(coll, i);
 
@@ -1599,7 +1599,7 @@ void test_ref(void)
 
     while (OCI_FetchNext(rs))
     {
-        ref = OCI_GetRef(rs, 1);
+        ref = OCI_GetRef(rs, 0);
 
         OCI_Object * obj = OCI_RefGetObject(ref);
 
@@ -1674,9 +1674,9 @@ void test_directpath(void)
 
         /* describe the target table */
 
-        res = res && OCI_DirPathSetColumn(dp, 1, OTEXT("VAL_INT"),  SIZE_COL1, NULL);
-        res = res && OCI_DirPathSetColumn(dp, 2, OTEXT("VAL_STR"),  SIZE_COL2, NULL);
-        res = res && OCI_DirPathSetColumn(dp, 3, OTEXT("VAL_DATE"), SIZE_COL3, OTEXT("YYYYMMDD"));
+        res = res && OCI_DirPathSetColumn(dp, 0, OTEXT("VAL_INT"),  SIZE_COL1, NULL);
+        res = res && OCI_DirPathSetColumn(dp, 1, OTEXT("VAL_STR"),  SIZE_COL2, NULL);
+        res = res && OCI_DirPathSetColumn(dp, 2, OTEXT("VAL_DATE"), SIZE_COL3, OTEXT("YYYYMMDD"));
 
         /* prepare the load */
 
@@ -1690,7 +1690,7 @@ void test_directpath(void)
             {
                 OCI_DirPathReset(dp);
 
-                for (j = 1; j <= nb_rows && res; j++)
+                for (j = 0; j < nb_rows && res; j++)
                 {
                     /* fill test values */
 
@@ -1700,9 +1700,9 @@ void test_directpath(void)
                                                                      (j%11)+1,
                                                                      (j%23)+1);
 
-                    res = res && OCI_DirPathSetEntry(dp, j, 1, val1, (OCI_UInt32) ostrlen(val1), TRUE);
-                    res = res && OCI_DirPathSetEntry(dp, j, 2, val2, (OCI_UInt32) ostrlen(val2), TRUE);
-                    res = res && OCI_DirPathSetEntry(dp, j, 3, val3, (OCI_UInt32) ostrlen(val3), TRUE);
+                    res = res && OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32) ostrlen(val1), TRUE);
+                    res = res && OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32) ostrlen(val2), TRUE);
+                    res = res && OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32) ostrlen(val3), TRUE);
                 }
 
                /* load data to the server */
@@ -1787,8 +1787,8 @@ void test_number()
     rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        OCI_Number  *num = OCI_GetNumber(rs, 1);
-        const otext *buf = OCI_GetString(rs, 1);
+        OCI_Number  *num = OCI_GetNumber(rs, 0);
+        const otext *buf = OCI_GetString(rs, 0);
 
         OCI_NumberToText(num, NULL, SIZE_STR, str);
 
@@ -1811,7 +1811,7 @@ void test_number()
     OCI_Prepare(st, OTEXT("begin :1 := :1 *2 ; end;"));
     OCI_SetBindAllocation(st, OCI_BAM_INTERNAL);
     OCI_BindNumber(st, OTEXT(":1"), NULL);
-    nt = OCI_BindGetData(OCI_GetBind(st, 1));
+    nt = OCI_BindGetData(OCI_GetBind(st, 0));
     OCI_NumberFromText(nt, OTEXT("1234.4321"), NULL);
     OCI_Execute(st);
     OCI_NumberToText(nt, NULL, SIZE_STR, str);
@@ -1826,7 +1826,7 @@ void test_number()
     rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        print_ostr(OCI_GetString(rs, 1));
+        print_ostr(OCI_GetString(rs, 0));
         print_text("\n");
     }
 
@@ -1838,7 +1838,7 @@ void test_number()
     OCI_ElemSetNumber(el, nm);
     OCI_CollAppend(cl, el);
 
-    for (i = 1, n = OCI_CollGetCount(cl); i <= n; i++)
+    for (i = 0, n = OCI_CollGetCount(cl); i < n; i++)
     {
         OCI_Elem   *e = OCI_CollGetElem(cl, i);
         OCI_Number *num = OCI_ElemGetNumber(e);
@@ -1865,11 +1865,11 @@ void test_number()
     while (OCI_FetchNext(rs))
     {
         print_text("pos infinite = ");
-        print_ostr(OCI_GetString(rs, 1));
+        print_ostr(OCI_GetString(rs, 0));
         print_text("\n");
 
         print_text("neg infinite = ");
-        print_ostr(OCI_GetString(rs, 2));
+        print_ostr(OCI_GetString(rs, 1));
         print_text("\n");
     }
 

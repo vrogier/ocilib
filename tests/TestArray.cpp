@@ -70,7 +70,7 @@ namespace TestCApi
             osprintf(tab_str[i], OTEXT("Name %d"), i + 1);
         }
 
-        const auto bnd = OCI_GetBind(stmt, 1);
+        const auto bnd = OCI_GetBind(stmt, 0);
         ASSERT_NE(nullptr, bnd);
 
         ASSERT_TRUE(OCI_BindSetNullAtPos(bnd, 3));
@@ -119,11 +119,11 @@ namespace TestCApi
         auto sysdate = OCI_DateCreate(env);
         ASSERT_NE(nullptr, sysdate);
 
-        auto tab_int = static_cast<OCI_Int32*>(OCI_BindGetData(OCI_GetBind(stmt, 1)));
+        auto tab_int = static_cast<OCI_Int32*>(OCI_BindGetData(OCI_GetBind(stmt, 0)));
         ASSERT_NE(nullptr, tab_int);
-        auto tab_str = static_cast<otext*>(OCI_BindGetData(OCI_GetBind(stmt, 2)));
+        auto tab_str = static_cast<otext*>(OCI_BindGetData(OCI_GetBind(stmt, 1)));
         ASSERT_NE(nullptr, tab_str);
-        auto tab_date = static_cast<OCI_Date**>(OCI_BindGetData(OCI_GetBind(stmt, 3)));
+        auto tab_date = static_cast<OCI_Date**>(OCI_BindGetData(OCI_GetBind(stmt, 2)));
         ASSERT_NE(nullptr, tab_date);
 
         for (OCI_Int32 i = 0; i < ARRAY_SIZE; i++)
@@ -147,9 +147,9 @@ namespace TestCApi
         {
             count++;
             String str = OTEXT("Name ") + TO_STRING(count);
-            ASSERT_EQ(count, OCI_GetInt(rslt, 1));
-            ASSERT_EQ(str, OCI_GetString(rslt, 2));
-            ASSERT_EQ(0, OCI_DateCompare(sysdate, OCI_GetDate(rslt, 3)));
+            ASSERT_EQ(count, OCI_GetInt(rslt, 0));
+            ASSERT_EQ(str, OCI_GetString(rslt, 1));
+            ASSERT_EQ(0, OCI_DateCompare(sysdate, OCI_GetDate(rslt, 2)));
         }
 
         ASSERT_EQ(ARRAY_SIZE, count);

@@ -19,7 +19,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_ErrorGetLocation(err));
         ASSERT_NE(nullptr, OCI_ErrorGetConnection(err));
         ASSERT_EQ(nullptr, OCI_ErrorGetStatement(err));
-        ASSERT_EQ(0u, OCI_ErrorGetRow(err));
+        ASSERT_EQ(-1, OCI_ErrorGetRow(err));
 
     }
 

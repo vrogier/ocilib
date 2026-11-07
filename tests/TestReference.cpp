@@ -77,7 +77,7 @@ namespace TestCApi
 
         while (OCI_FetchNext(rslt))
         {
-            const auto ref1 = OCI_GetRef(rslt, 1);
+            const auto ref1 = OCI_GetRef(rslt, 0);
             ASSERT_TRUE(OCI_RefAssign(ref2, ref1));
         }
 
@@ -122,7 +122,7 @@ namespace TestCApi
 
         while (OCI_FetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 1);
+            const auto ref = OCI_GetRef(rslt, 0);
             const auto obj = OCI_RefGetObject(ref);
             ASSERT_TRUE(nullptr != obj);
         }
@@ -190,7 +190,7 @@ namespace TestCApi
 
         while (OCI_FetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 1);
+            const auto ref = OCI_GetRef(rslt, 0);
             ASSERT_FALSE(OCI_RefIsNull(ref));
         }
 
@@ -215,7 +215,7 @@ namespace TestCApi
 
         while (OCI_FetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 1);
+            const auto ref = OCI_GetRef(rslt, 0);
             const auto length = OCI_RefGetHexSize(ref);
             ASSERT_TRUE(length > 0);
             otext buffer[128] = {};
@@ -269,7 +269,7 @@ namespace TestCApi
 
         while (OCI_FetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 1);
+            const auto ref = OCI_GetRef(rslt, 0);
             ASSERT_FALSE(OCI_RefIsNull(ref));
             ASSERT_TRUE(OCI_RefSetNull(ref));
             ASSERT_TRUE(OCI_RefIsNull(ref));
@@ -296,7 +296,7 @@ namespace TestCApi
 
         while (OCI_FetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 1);
+            const auto ref = OCI_GetRef(rslt, 0);
             ASSERT_TRUE(nullptr != ref);
         }
 
@@ -321,7 +321,7 @@ namespace TestCApi
 
         while (OCI_FetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 1);
+            const auto ref = OCI_GetRef(rslt, 0);
             ASSERT_TRUE(nullptr != ref);
 
             const auto stmt2 = OCI_StatementCreate(conn);
@@ -330,7 +330,7 @@ namespace TestCApi
             ASSERT_TRUE(OCI_Execute(stmt2));
             const auto rslt2 = OCI_GetResultset(stmt2);
             ASSERT_TRUE(OCI_FetchNext(rslt2));
-            ASSERT_EQ(1, OCI_GetInt(rslt2, 1));
+            ASSERT_EQ(1, OCI_GetInt(rslt2, 0));
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -359,7 +359,7 @@ namespace TestCApi
         const auto rslt = OCI_GetResultset(stmt);
         ASSERT_TRUE(OCI_FetchNext(rslt));
 
-        const auto ref = OCI_GetRef(rslt, 1);
+        const auto ref = OCI_GetRef(rslt, 0);
         ASSERT_TRUE(nullptr != ref);
         const auto obj = OCI_RefGetObject(ref);
         ASSERT_TRUE(nullptr != obj);
@@ -391,7 +391,7 @@ namespace TestCApi
 
         while (OCI_FetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 1);
+            const auto ref = OCI_GetRef(rslt, 0);
             const auto obj = OCI_RefGetObject(ref);
             ASSERT_TRUE(nullptr != obj);
             ASSERT_FALSE(OCI_RefIsNull(ref));

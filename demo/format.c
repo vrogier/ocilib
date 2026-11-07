@@ -34,7 +34,7 @@ int main(void)
     OCI_Resultset  * rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        printf("article : %s\n", OCI_GetString(rs, 1));
+        printf("article : %s\n", OCI_GetString(rs, 0));
     }
 
     /* sql immediate (parse, exec, one fetch) ------------------------------- */

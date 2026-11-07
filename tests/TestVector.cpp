@@ -57,13 +57,13 @@ namespace TestCApi
         const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestDescribeVector"), OCI_TIF_TABLE);
         ASSERT_NE(nullptr, typinf);
 
-        CheckColumnFullType(1, typinf, OTEXT("V1"), OTEXT("VECTOR(*, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX, 0);
-        CheckColumnFullType(2, typinf, OTEXT("V2"), OTEXT("VECTOR(64, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX, 64);
-        CheckColumnFullType(3, typinf, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8, 0);
-        CheckColumnFullType(4, typinf, OTEXT("V4"), OTEXT("VECTOR(128, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8, 128);
-        CheckColumnFullType(5, typinf, OTEXT("V5"), OTEXT("VECTOR(256, FLOAT32)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT32, 256);
-        CheckColumnFullType(6, typinf, OTEXT("V6"), OTEXT("VECTOR(256, FLOAT64)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT64, 256);
-        CheckColumnFullType(7, typinf, OTEXT("V7"), OTEXT("VECTOR(512, BINARY)"), OCI_CDT_VECTOR, OCI_VEC_BINARY, 512);
+        CheckColumnFullType(0, typinf, OTEXT("V1"), OTEXT("VECTOR(*, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX, 0);
+        CheckColumnFullType(1, typinf, OTEXT("V2"), OTEXT("VECTOR(64, *)"), OCI_CDT_VECTOR, OCI_VEC_FLEX, 64);
+        CheckColumnFullType(2, typinf, OTEXT("V3"), OTEXT("VECTOR(*, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8, 0);
+        CheckColumnFullType(3, typinf, OTEXT("V4"), OTEXT("VECTOR(128, INT8)"), OCI_CDT_VECTOR, OCI_VEC_INT8, 128);
+        CheckColumnFullType(4, typinf, OTEXT("V5"), OTEXT("VECTOR(256, FLOAT32)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT32, 256);
+        CheckColumnFullType(5, typinf, OTEXT("V6"), OTEXT("VECTOR(256, FLOAT64)"), OCI_CDT_VECTOR, OCI_VEC_FLOAT64, 256);
+        CheckColumnFullType(6, typinf, OTEXT("V7"), OTEXT("VECTOR(512, BINARY)"), OCI_CDT_VECTOR, OCI_VEC_BINARY, 512);
 
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -250,7 +250,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        vect = OCI_GetVector(rs, 1);
+        vect = OCI_GetVector(rs, 0);
         ASSERT_NE(nullptr, vect);
 
         OCI_UInt32 dimensions = 0;
@@ -297,7 +297,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        auto vect = OCI_GetVector(rs, 1);
+        auto vect = OCI_GetVector(rs, 0);
         ASSERT_NE(nullptr, vect);
 
         OCI_UInt32 dimensions = 0;
@@ -344,7 +344,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_FetchNext(rs));
 
-        auto str = OCI_GetString(rs, 1);
+        auto str = OCI_GetString(rs, 0);
 
         ASSERT_EQ(String(OTEXT("[1,2,3,4]")), String(str));
 
@@ -379,7 +379,7 @@ namespace TestCApi
 
           ASSERT_TRUE(OCI_FetchNext(rslt));
 
-        auto str = OCI_GetString(rslt, 1);
+        auto str = OCI_GetString(rslt, 0);
 
         ASSERT_EQ(String(OTEXT("[1,2,3,4]")), str);
 

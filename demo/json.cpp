@@ -21,8 +21,8 @@ void PrintNode(const JsonNode& node, OCI_Int32 depth)
             const OCI_UInt32 n = node.GetFieldCount();
             for (OCI_UInt32 i = 0; i < n; ++i)
             {
-                std::cout << indent << "  \"" << node.GetFieldName(i + 1) << "\": ";
-                PrintNode(node.GetFieldByIndex(i + 1), depth + 2);
+                std::cout << indent << "  \"" << node.GetFieldName(i) << "\": ";
+                PrintNode(node.GetFieldByIndex(i), depth + 2);
             }
 
             std::cout << indent << "}\n";
@@ -95,7 +95,7 @@ int main()
 
         /* serialize the document back to text */
 
-        std::cout << "serialized: " << json.ToText() << std::endl;
+        std::cout << "serialized: " << json.ToString(Json::Pretty) << std::endl;
     }
     catch (const std::exception &ex)
     {

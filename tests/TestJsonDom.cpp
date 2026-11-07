@@ -94,12 +94,12 @@ namespace TestCApi
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(name));
         ASSERT_EQ(String(OTEXT("test")), String(OCI_JsonNodeGetString(name, nullptr)));
 
-        OCI_JsonNode* items = OCI_JsonNodeGetFieldByIndex(root, 2);
+        OCI_JsonNode* items = OCI_JsonNodeGetFieldByIndex(root, 1);
         ASSERT_NE(nullptr, items);
         ASSERT_EQ(OCI_JNT_ARRAY, OCI_JsonNodeGetType(items));
         ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(items));
 
-        OCI_JsonNode* item2 = OCI_JsonNodeGetItem(items, 2);
+        OCI_JsonNode* item2 = OCI_JsonNodeGetItem(items, 1);
         ASSERT_NE(nullptr, item2);
         ASSERT_EQ(OCI_JNT_NUMBER, OCI_JsonNodeGetType(item2));
 
@@ -320,7 +320,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonNodeSetItem(arr, 1, item3str));
         ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(arr));
 
-        OCI_JsonNode* verifyItem = OCI_JsonNodeGetItem(arr, 2);
+        OCI_JsonNode* verifyItem = OCI_JsonNodeGetItem(arr, 1);
         ASSERT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(verifyItem));
         ASSERT_EQ(String(OTEXT("three")), String(OCI_JsonNodeGetString(verifyItem, nullptr)));
         OCI_JsonNodeFree(verifyItem);
@@ -390,14 +390,14 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonNodeInsertItem(arr, 1, s2));
         OCI_JsonNodeFree(s2);
         ASSERT_EQ(4u, OCI_JsonNodeGetItemCount(arr));
-        OCI_JsonNode* chk = OCI_JsonNodeGetItem(arr, 2);
+        OCI_JsonNode* chk = OCI_JsonNodeGetItem(arr, 1);
         ASSERT_EQ(String(OTEXT("inserted")), String(OCI_JsonNodeGetString(chk, nullptr)));
         OCI_JsonNodeFree(chk);
         ASSERT_TRUE(OCI_JsonNodeRemoveItem(arr, 2));
         ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(arr));
 
         /* GetParent */
-        OCI_JsonNode* it = OCI_JsonNodeGetItem(arr, 1);
+        OCI_JsonNode* it = OCI_JsonNodeGetItem(arr, 0);
         ASSERT_NE(nullptr, it);
         OCI_JsonNode* par = OCI_JsonNodeGetParent(it);
         ASSERT_NE(nullptr, par);

@@ -21,9 +21,9 @@ void print_node(OCI_JsonNode *node, OCI_Int32 depth)
             n = OCI_JsonNodeGetFieldCount(node);
             for (i = 0; i < n; i++)
             {
-                OCI_JsonNode *field = OCI_JsonNodeGetFieldByIndex(node, i + 1);
+                OCI_JsonNode *field = OCI_JsonNodeGetFieldByIndex(node, i + 0);
 
-                printf("%*s\"%s\": ", depth + 2, "", OCI_JsonNodeGetFieldName(node, i + 1));
+                printf("%*s\"%s\": ", depth + 2, "", OCI_JsonNodeGetFieldName(node, i));
                 print_node(field, depth + 2);
                 OCI_JsonNodeFree(field);
             }
@@ -36,7 +36,7 @@ void print_node(OCI_JsonNode *node, OCI_Int32 depth)
             n = OCI_JsonNodeGetItemCount(node);
             for (i = 0; i < n; i++)
             {
-                OCI_JsonNode *item = OCI_JsonNodeGetItem(node, i + 1);
+                OCI_JsonNode *item = OCI_JsonNodeGetItem(node, i + 0);
 
                 printf("%*s", depth + 2, "");
                 print_node(item, depth + 2);
