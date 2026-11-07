@@ -186,6 +186,7 @@ testlog.manifest
 /.vs
 *.recipe
 *.txt
+!doc/tutorials/requirements.txt
 
 # misc. VS files
 *.lock
