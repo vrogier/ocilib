@@ -22,12 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
- // ReSharper disable CppClangTidyHicppUseEqualsDefault
- // ReSharper disable CppClangTidyModernizeUseEqualsDefault
- // ReSharper disable CppClangTidyHicppUseAuto
- // ReSharper disable CppClangTidyModernizeUseAuto
- // ReSharper disable CppClangTidyMiscMisplacedConst
-
 namespace ocilib
 {
 
@@ -55,7 +49,8 @@ namespace ocilib
     template<>
     inline String Lob<String, LobCharacter>::Read(UInt32 length)
     {
-        std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
+        std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(
+            OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
 
         UInt32 charCount = length;
         UInt32 byteCount = 0;
@@ -71,7 +66,8 @@ namespace ocilib
     template<>
     inline String Lob<String, LobNationalCharacter>::Read(UInt32 length)
     {
-        std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
+        std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(
+            OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
 
         UInt32 charCount = length;
         UInt32 byteCount = 0;
@@ -106,9 +102,9 @@ namespace ocilib
             return 0;
         }
 
-        UInt32 res = 0;
-        UInt32 charCount = 0;
-        UInt32 byteCount = static_cast<UInt32>(content.size() * sizeof(typename T::value_type));
+        UInt32           res = 0;
+        UInt32           charCount = 0;
+        UInt32           byteCount = static_cast<UInt32>(content.size() * sizeof(typename T::value_type));
         const AnyPointer buffer = static_cast<AnyPointer>(const_cast<typename T::value_type*>(&content[0]));
 
         if (core::Check(OCI_LobWrite(*this, buffer, &charCount, &byteCount)))
@@ -152,7 +148,7 @@ namespace ocilib
     template<class T, Int32 U>
     Lob<T, U> Lob<T, U>::Clone() const
     {
-        Lob result;
+        Lob        result;
         Connection connection = GetConnection();
 
         result.AcquireAllocated
@@ -210,11 +206,11 @@ namespace ocilib
         core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : GetHandle();
 
         return Connection
-        (
-            core::Check(OCI_LobGetConnection(*this)),
-            connectionParent,
-            false
-        );
+               (
+                   core::Check(OCI_LobGetConnection(*this)),
+                   connectionParent,
+                   false
+               );
     }
 
     template<class T, Int32 U>

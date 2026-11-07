@@ -86,7 +86,7 @@ namespace ocilib
         {
             bool operator()(OCI_Long* handle, AnyPointer) const { return OCI_LongFree(handle); }
         };
-    
+
         template<> struct HandleDeleter<OCI_File*>
         {
             bool operator()(OCI_File* handle, AnyPointer) const { return OCI_FileFree(handle); }
@@ -130,7 +130,7 @@ namespace ocilib
         template<> struct HandleDeleter<OCI_Statement*>
         {
             bool operator()(OCI_Statement* handle, AnyPointer) const { return OCI_StatementFree(handle); }
-        };     
+        };
 
         template<> struct HandleDeleter<OCI_Subscription*>
         {

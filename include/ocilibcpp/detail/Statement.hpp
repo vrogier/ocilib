@@ -22,24 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
- // ReSharper disable CppUseAuto
- // ReSharper disable CppParameterMayBeConst
- // ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
- // ReSharper disable CppClangTidyModernizeReturnBracedInitList
- // ReSharper disable CppClangTidyModernizePassByValue
- // ReSharper disable CppClangTidyHicppUseAuto
- // ReSharper disable CppClangTidyModernizeUseAuto
- // ReSharper disable CppClangTidyReadabilityInconsistentDeclarationParameterName
- // ReSharper disable CppClangTidyPerformanceUnnecessaryValueParam
- // ReSharper disable CppClangTidyHicppUseEqualsDefault
- // ReSharper disable CppClangTidyModernizeLoopConvert
- // ReSharper disable CppClangTidyModernizeUseEmplace
- // ReSharper disable CppClangTidyModernizeUseEqualsDefault
- // ReSharper disable CppClangTidyHicppUseEmplace
- // ReSharper disable CppClangTidyCertOop54Cpp
- // ReSharper disable CppClangTidyMiscMisplacedConst
- // ReSharper disable CppClangTidyBugproneUnhandledSelfAssignment
-
 namespace ocilib
 {
 
@@ -154,7 +136,7 @@ namespace ocilib
     }
 
     template<typename T>
-    UInt32  Statement::Fetch(T callback)
+    UInt32 Statement::Fetch(T callback)
     {
         UInt32 res = 0;
 
@@ -321,106 +303,106 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, bool>)
         {
-        support::BindTypeAdaptor<bool>* bnd = core::OnAllocate(new support::BindTypeAdaptor<bool>(*this, name, mode, value));
+            support::BindTypeAdaptor<bool>* bnd = core::OnAllocate(new support::BindTypeAdaptor<bool>(*this, name, mode, value));
 
-        OCI_Bind* res = OCI_BindBoolean(*this, name.c_str(), static_cast<OCI_Boolean*>(*bnd));
+            OCI_Bind* res = OCI_BindBoolean(*this, name.c_str(), static_cast<OCI_Boolean*>(*bnd));
 
-        if (res)
-        {
-            support::BindsHolder* bindsHolder = GetBindsHolder(true);
-            bindsHolder->AddBindObject(bnd);
-            BindInfo(res, GetHandle()).SetDirection(mode);
-        }
-        else
-        {
-            delete core::OnDeallocate(bnd);
-        }
+            if (res)
+            {
+                support::BindsHolder* bindsHolder = GetBindsHolder(true);
+                bindsHolder->AddBindObject(bnd);
+                BindInfo(res, GetHandle()).SetDirection(mode);
+            }
+            else
+            {
+                delete core::OnDeallocate(bnd);
+            }
 
-        return BindInfo(core::Check(res), GetHandle());
+            return BindInfo(core::Check(res), GetHandle());
         }
         else if constexpr (std::is_same_v<T, Int16>)
         {
-        return Bind1(OCI_BindShort, name, value, mode);
+            return Bind1(OCI_BindShort, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, UInt16>)
         {
-        return Bind1(OCI_BindUnsignedShort, name, value, mode);
+            return Bind1(OCI_BindUnsignedShort, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Int32>)
         {
-        return Bind1(OCI_BindInt, name, value, mode);
+            return Bind1(OCI_BindInt, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, UInt32>)
         {
-        return Bind1(OCI_BindUnsignedInt, name, value, mode);
+            return Bind1(OCI_BindUnsignedInt, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Int64>)
         {
-        return Bind1(OCI_BindBigInt, name, value, mode);
+            return Bind1(OCI_BindBigInt, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, UInt64>)
         {
-        return Bind1(OCI_BindUnsignedBigInt, name, value, mode);
+            return Bind1(OCI_BindUnsignedBigInt, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Float>)
         {
-        return Bind1(OCI_BindFloat, name, value, mode);
+            return Bind1(OCI_BindFloat, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Double>)
         {
-        return Bind1(OCI_BindDouble, name, value, mode);
+            return Bind1(OCI_BindDouble, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Number>)
         {
-        return Bind2(OCI_BindNumber, name, value, mode);
+            return Bind2(OCI_BindNumber, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Date>)
         {
-        return Bind2(OCI_BindDate, name, value, mode);
+            return Bind2(OCI_BindDate, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Timestamp>)
         {
-        return Bind2(OCI_BindTimestamp, name, value, mode);
+            return Bind2(OCI_BindTimestamp, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Interval>)
         {
-        return Bind2(OCI_BindInterval, name, value, mode);
+            return Bind2(OCI_BindInterval, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Clob>)
         {
-        return Bind2(OCI_BindLob, name, value, mode);
+            return Bind2(OCI_BindLob, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, NClob>)
         {
-        return Bind2(OCI_BindLob, name, value, mode);
+            return Bind2(OCI_BindLob, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Blob>)
         {
-        return Bind2(OCI_BindLob, name, value, mode);
+            return Bind2(OCI_BindLob, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, File>)
         {
-        return Bind2(OCI_BindFile, name, value, mode);
+            return Bind2(OCI_BindFile, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Object>)
         {
-        return Bind2(OCI_BindObject, name, value, mode);
+            return Bind2(OCI_BindObject, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Reference>)
         {
-        return Bind2(OCI_BindRef, name, value, mode);
+            return Bind2(OCI_BindRef, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Vector>)
         {
-        return Bind2(OCI_BindVector, name, value, mode);
+            return Bind2(OCI_BindVector, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Statement>)
         {
-        return Bind2(OCI_BindStatement, name, value, mode);
+            return Bind2(OCI_BindStatement, name, value, mode);
         }
         else if constexpr (std::is_same_v<T, Json>)
         {
-        return Bind2(OCI_BindJson, name, value, mode);
+            return Bind2(OCI_BindJson, name, value, mode);
         }
         else
         {
@@ -433,89 +415,89 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, Clong> && std::is_same_v<U, UInt32>)
         {
-        BindInfo info(core::Check(OCI_BindLong(*this, name.c_str(), value, maxSize)), GetHandle());
-        if (!info.IsNull())
-        {
-            info.SetDirection(mode);
-        }
-        return info;
+            BindInfo info(core::Check(OCI_BindLong(*this, name.c_str(), value, maxSize)), GetHandle());
+            if (!info.IsNull())
+            {
+                info.SetDirection(mode);
+            }
+            return info;
         }
         else if constexpr (std::is_same_v<T, Clong> && std::is_same_v<U, Int32>)
         {
-        return Bind<Clong, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
+            return Bind<Clong, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
         }
         else if constexpr (std::is_same_v<T, Blong> && std::is_same_v<U, UInt32>)
         {
-        BindInfo info(core::Check(OCI_BindLong(*this, name.c_str(), value, maxSize)), GetHandle());
-        if (!info.IsNull())
-        {
-            info.SetDirection(mode);
-        }
-        return info;
+            BindInfo info(core::Check(OCI_BindLong(*this, name.c_str(), value, maxSize)), GetHandle());
+            if (!info.IsNull())
+            {
+                info.SetDirection(mode);
+            }
+            return info;
         }
         else if constexpr (std::is_same_v<T, Blong> && std::is_same_v<U, Int32>)
         {
-        return Bind<Blong, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
+            return Bind<Blong, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
         }
         else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, UInt32>)
         {
-        if (maxSize == 0)
-        {
-            maxSize = static_cast<UInt32>(value.size());
-        }
+            if (maxSize == 0)
+            {
+                maxSize = static_cast<UInt32>(value.size());
+            }
 
-        value.reserve(maxSize);
+            value.reserve(maxSize);
 
-        support::BindObjectAdaptor<String>* bnd = core::OnAllocate(new support::BindObjectAdaptor<String>(*this, name, mode, value, maxSize + 1));
+            support::BindObjectAdaptor<String>* bnd = core::OnAllocate(new support::BindObjectAdaptor<String>(*this, name, mode, value, maxSize + 1));
 
-        OCI_Bind* res = OCI_BindString(*this, name.c_str(), static_cast<otext*>(*bnd), maxSize);
+            OCI_Bind* res = OCI_BindString(*this, name.c_str(), static_cast<otext*>(*bnd), maxSize);
 
-        if (res)
-        {
-            support::BindsHolder* bindsHolder = GetBindsHolder(true);
-            bindsHolder->AddBindObject(bnd);
-            BindInfo(res, GetHandle()).SetDirection(mode);
-        }
-        else
-        {
-            delete core::OnDeallocate(bnd);
-        }
+            if (res)
+            {
+                support::BindsHolder* bindsHolder = GetBindsHolder(true);
+                bindsHolder->AddBindObject(bnd);
+                BindInfo(res, GetHandle()).SetDirection(mode);
+            }
+            else
+            {
+                delete core::OnDeallocate(bnd);
+            }
 
-        return BindInfo(core::Check(res), GetHandle());
+            return BindInfo(core::Check(res), GetHandle());
         }
         else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, Int32>)
         {
-        return Bind<String, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
+            return Bind<String, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
         }
         else if constexpr (std::is_same_v<T, Raw> && std::is_same_v<U, UInt32>)
         {
-        if (maxSize == 0)
-        {
-            maxSize = static_cast<UInt32>(value.size());
-        }
+            if (maxSize == 0)
+            {
+                maxSize = static_cast<UInt32>(value.size());
+            }
 
-        value.reserve(maxSize);
+            value.reserve(maxSize);
 
-        support::BindObjectAdaptor<Raw>* bnd = core::OnAllocate(new support::BindObjectAdaptor<Raw>(*this, name, mode, value, maxSize));
+            support::BindObjectAdaptor<Raw>* bnd = core::OnAllocate(new support::BindObjectAdaptor<Raw>(*this, name, mode, value, maxSize));
 
-        OCI_Bind* res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char*>(*bnd), maxSize);
+            OCI_Bind* res = OCI_BindRaw(*this, name.c_str(), static_cast<unsigned char*>(*bnd), maxSize);
 
-        if (res)
-        {
-            support::BindsHolder* bindsHolder = GetBindsHolder(true);
-            bindsHolder->AddBindObject(bnd);
-            BindInfo(res, GetHandle()).SetDirection(mode);
-        }
-        else
-        {
-            delete core::OnDeallocate(bnd);
-        }
+            if (res)
+            {
+                support::BindsHolder* bindsHolder = GetBindsHolder(true);
+                bindsHolder->AddBindObject(bnd);
+                BindInfo(res, GetHandle()).SetDirection(mode);
+            }
+            else
+            {
+                delete core::OnDeallocate(bnd);
+            }
 
-        return BindInfo(core::Check(res), GetHandle());
+            return BindInfo(core::Check(res), GetHandle());
         }
         else if constexpr (std::is_same_v<T, Raw> && std::is_same_v<U, Int32>)
         {
-        return Bind<Raw, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
+            return Bind<Raw, UInt32>(name, value, static_cast<UInt32>(maxSize), mode);
         }
         else
         {
@@ -528,63 +510,63 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, Int16>)
         {
-        return BindVector1(OCI_BindArrayOfShorts, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfShorts, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, UInt16>)
         {
-        return BindVector1(OCI_BindArrayOfUnsignedShorts, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfUnsignedShorts, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, Int32>)
         {
-        return BindVector1(OCI_BindArrayOfInts, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfInts, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, UInt32>)
         {
-        return BindVector1(OCI_BindArrayOfUnsignedInts, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfUnsignedInts, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, Int64>)
         {
-        return BindVector1(OCI_BindArrayOfBigInts, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfBigInts, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, UInt64>)
         {
-        return BindVector1(OCI_BindArrayOfUnsignedBigInts, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfUnsignedBigInts, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, Float>)
         {
-        return BindVector1(OCI_BindArrayOfFloats, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfFloats, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, Double>)
         {
-        return BindVector1(OCI_BindArrayOfDoubles, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfDoubles, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, Date>)
         {
-        return BindVector1(OCI_BindArrayOfDates, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfDates, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, Number>)
         {
-        return BindVector1(OCI_BindArrayOfNumbers, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfNumbers, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, Json>)
         {
-        return BindVector1(OCI_BindArrayOfJsons, name, values, mode, type);
+            return BindVector1(OCI_BindArrayOfJsons, name, values, mode, type);
         }
         else if constexpr (std::is_same_v<T, Clob>)
         {
-        return BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<UInt32>(OCI_CLOB), type);
+            return BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<UInt32>(OCI_CLOB), type);
         }
         else if constexpr (std::is_same_v<T, NClob>)
         {
-        return BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<UInt32>(OCI_NCLOB), type);
+            return BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<UInt32>(OCI_NCLOB), type);
         }
         else if constexpr (std::is_same_v<T, Blob>)
         {
-        return BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<UInt32>(OCI_BLOB), type);
+            return BindVector2(OCI_BindArrayOfLobs, name, values, mode, static_cast<UInt32>(OCI_BLOB), type);
         }
         else if constexpr (std::is_same_v<T, File>)
         {
-        return BindVector2(OCI_BindArrayOfFiles, name, values, mode, static_cast<UInt32>(OCI_BFILE), type);
+            return BindVector2(OCI_BindArrayOfFiles, name, values, mode, static_cast<UInt32>(OCI_BFILE), type);
         }
         else
         {
@@ -597,15 +579,15 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, Object>)
         {
-        return BindVector2(OCI_BindArrayOfObjects, name, values, mode, static_cast<OCI_TypeInfo*>(typeInfo), type);
+            return BindVector2(OCI_BindArrayOfObjects, name, values, mode, static_cast<OCI_TypeInfo*>(typeInfo), type);
         }
         else if constexpr (std::is_same_v<T, Reference>)
         {
-        return BindVector2(OCI_BindArrayOfRefs, name, values, mode, static_cast<OCI_TypeInfo*>(typeInfo), type);
+            return BindVector2(OCI_BindArrayOfRefs, name, values, mode, static_cast<OCI_TypeInfo*>(typeInfo), type);
         }
         else
         {
-        return BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo*>(typeInfo), GetArraysize(type, values));
+            return BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo*>(typeInfo), GetArraysize(type, values));
         }
     }
 
@@ -614,63 +596,63 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, Timestamp> && std::is_same_v<U, Timestamp::TimestampTypeValues>)
         {
-        return BindVector2(OCI_BindArrayOfTimestamps, name, values, mode, extraInfo, type);
+            return BindVector2(OCI_BindArrayOfTimestamps, name, values, mode, extraInfo, type);
         }
         else if constexpr (std::is_same_v<T, Timestamp> && std::is_same_v<U, Timestamp::TimestampType>)
         {
-        return Bind<Timestamp, Timestamp::TimestampTypeValues>(name, values, extraInfo.GetValue(), mode, type);
+            return Bind<Timestamp, Timestamp::TimestampTypeValues>(name, values, extraInfo.GetValue(), mode, type);
         }
         else if constexpr (std::is_same_v<T, Interval> && std::is_same_v<U, Interval::IntervalTypeValues>)
         {
-        return BindVector2(OCI_BindArrayOfIntervals, name, values, mode, extraInfo, type);
+            return BindVector2(OCI_BindArrayOfIntervals, name, values, mode, extraInfo, type);
         }
         else if constexpr (std::is_same_v<T, Interval> && std::is_same_v<U, Interval::IntervalType>)
         {
-        return Bind<Interval, Interval::IntervalTypeValues>(name, values, extraInfo.GetValue(), mode, type);
+            return Bind<Interval, Interval::IntervalTypeValues>(name, values, extraInfo.GetValue(), mode, type);
         }
         else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, UInt32>)
         {
-        support::BindArray* bnd = core::OnAllocate(new support::BindArray(*this, name, mode));
-        bnd->SetVector<String>(values, type == BindInfo::AsPlSqlTable, extraInfo + 1);
+            support::BindArray* bnd = core::OnAllocate(new support::BindArray(*this, name, mode));
+            bnd->SetVector<String>(values, type == BindInfo::AsPlSqlTable, extraInfo + 1);
 
-        OCI_Bind* res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<String>(), extraInfo, bnd->GetSizeForBindCall());
+            OCI_Bind* res = OCI_BindArrayOfStrings(*this, name.c_str(), bnd->GetData<String>(), extraInfo, bnd->GetSizeForBindCall());
 
-        if (res)
-        {
-            support::BindsHolder* bindsHolder = GetBindsHolder(true);
-            bindsHolder->AddBindObject(bnd);
-            BindInfo(res, GetHandle()).SetDirection(mode);
-        }
-        else
-        {
-            delete core::OnDeallocate(bnd);
-        }
+            if (res)
+            {
+                support::BindsHolder* bindsHolder = GetBindsHolder(true);
+                bindsHolder->AddBindObject(bnd);
+                BindInfo(res, GetHandle()).SetDirection(mode);
+            }
+            else
+            {
+                delete core::OnDeallocate(bnd);
+            }
 
-        return BindInfo(core::Check(res), GetHandle());
+            return BindInfo(core::Check(res), GetHandle());
         }
         else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, Int32>)
         {
-        return Bind<String, UInt32>(name, values, static_cast<UInt32>(extraInfo), mode, type);
+            return Bind<String, UInt32>(name, values, static_cast<UInt32>(extraInfo), mode, type);
         }
         else if constexpr (std::is_same_v<T, Raw> && std::is_same_v<U, UInt32>)
         {
-        support::BindArray* bnd = core::OnAllocate(new support::BindArray(*this, name, mode));
-        bnd->SetVector<Raw>(values, type == BindInfo::AsPlSqlTable, extraInfo);
+            support::BindArray* bnd = core::OnAllocate(new support::BindArray(*this, name, mode));
+            bnd->SetVector<Raw>(values, type == BindInfo::AsPlSqlTable, extraInfo);
 
-        OCI_Bind* res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), extraInfo, bnd->GetSizeForBindCall());
+            OCI_Bind* res = OCI_BindArrayOfRaws(*this, name.c_str(), bnd->GetData<Raw>(), extraInfo, bnd->GetSizeForBindCall());
 
-        if (res)
-        {
-            support::BindsHolder* bindsHolder = GetBindsHolder(true);
-            bindsHolder->AddBindObject(bnd);
-            BindInfo(res, GetHandle()).SetDirection(mode);
-        }
-        else
-        {
-            delete core::OnDeallocate(bnd);
-        }
+            if (res)
+            {
+                support::BindsHolder* bindsHolder = GetBindsHolder(true);
+                bindsHolder->AddBindObject(bnd);
+                BindInfo(res, GetHandle()).SetDirection(mode);
+            }
+            else
+            {
+                delete core::OnDeallocate(bnd);
+            }
 
-        return BindInfo(core::Check(res), GetHandle());
+            return BindInfo(core::Check(res), GetHandle());
         }
         else
         {
@@ -683,67 +665,67 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, UInt16>)
         {
-        core::Check(OCI_RegisterUnsignedShort(*this, name.c_str()));
+            core::Check(OCI_RegisterUnsignedShort(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, Int16>)
         {
-        core::Check(OCI_RegisterShort(*this, name.c_str()));
+            core::Check(OCI_RegisterShort(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, UInt32>)
         {
-        core::Check(OCI_RegisterUnsignedInt(*this, name.c_str()));
+            core::Check(OCI_RegisterUnsignedInt(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, Int32>)
         {
-        core::Check(OCI_RegisterInt(*this, name.c_str()));
+            core::Check(OCI_RegisterInt(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, UInt64>)
         {
-        core::Check(OCI_RegisterUnsignedBigInt(*this, name.c_str()));
+            core::Check(OCI_RegisterUnsignedBigInt(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, Int64>)
         {
-        core::Check(OCI_RegisterBigInt(*this, name.c_str()));
+            core::Check(OCI_RegisterBigInt(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, Float>)
         {
-        core::Check(OCI_RegisterFloat(*this, name.c_str()));
+            core::Check(OCI_RegisterFloat(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, Double>)
         {
-        core::Check(OCI_RegisterDouble(*this, name.c_str()));
+            core::Check(OCI_RegisterDouble(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, Number>)
         {
-        core::Check(OCI_RegisterNumber(*this, name.c_str()));
+            core::Check(OCI_RegisterNumber(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, Date>)
         {
-        core::Check(OCI_RegisterDate(*this, name.c_str()));
+            core::Check(OCI_RegisterDate(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, Clob>)
         {
-        core::Check(OCI_RegisterLob(*this, name.c_str(), OCI_CLOB));
+            core::Check(OCI_RegisterLob(*this, name.c_str(), OCI_CLOB));
         }
         else if constexpr (std::is_same_v<T, NClob>)
         {
-        core::Check(OCI_RegisterLob(*this, name.c_str(), OCI_NCLOB));
+            core::Check(OCI_RegisterLob(*this, name.c_str(), OCI_NCLOB));
         }
         else if constexpr (std::is_same_v<T, Blob>)
         {
-        core::Check(OCI_RegisterLob(*this, name.c_str(), OCI_BLOB));
+            core::Check(OCI_RegisterLob(*this, name.c_str(), OCI_BLOB));
         }
         else if constexpr (std::is_same_v<T, File>)
         {
-        core::Check(OCI_RegisterFile(*this, name.c_str(), OCI_BFILE));
+            core::Check(OCI_RegisterFile(*this, name.c_str(), OCI_BFILE));
         }
         else if constexpr (std::is_same_v<T, Vector>)
         {
-        core::Check(OCI_RegisterVector(*this, name.c_str()));
+            core::Check(OCI_RegisterVector(*this, name.c_str()));
         }
         else if constexpr (std::is_same_v<T, Json>)
         {
-        core::Check(OCI_RegisterJson(*this, name.c_str()));
+            core::Check(OCI_RegisterJson(*this, name.c_str()));
         }
         else
         {
@@ -756,11 +738,11 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, Object> && std::is_same_v<U, TypeInfo>)
         {
-        core::Check(OCI_RegisterObject(*this, name.c_str(), extraInfo));
+            core::Check(OCI_RegisterObject(*this, name.c_str(), extraInfo));
         }
         else if constexpr (std::is_same_v<T, Reference> && std::is_same_v<U, TypeInfo>)
         {
-        core::Check(OCI_RegisterRef(*this, name.c_str(), extraInfo));
+            core::Check(OCI_RegisterRef(*this, name.c_str(), extraInfo));
         }
         else
         {
@@ -773,82 +755,41 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, Timestamp> && std::is_same_v<U, Timestamp::TimestampTypeValues>)
         {
-        core::Check(OCI_RegisterTimestamp(*this, name.c_str(), extraInfo));
+            core::Check(OCI_RegisterTimestamp(*this, name.c_str(), extraInfo));
         }
         else if constexpr (std::is_same_v<T, Timestamp> && std::is_same_v<U, Timestamp::TimestampType>)
         {
-        Register<Timestamp, Timestamp::TimestampTypeValues>(name, extraInfo.GetValue());
+            Register<Timestamp, Timestamp::TimestampTypeValues>(name, extraInfo.GetValue());
         }
         else if constexpr (std::is_same_v<T, Interval> && std::is_same_v<U, Interval::IntervalTypeValues>)
         {
-        core::Check(OCI_RegisterInterval(*this, name.c_str(), extraInfo));
+            core::Check(OCI_RegisterInterval(*this, name.c_str(), extraInfo));
         }
         else if constexpr (std::is_same_v<T, Interval> && std::is_same_v<U, Interval::IntervalType>)
         {
-        Register<Interval, Interval::IntervalTypeValues>(name, extraInfo.GetValue());
+            Register<Interval, Interval::IntervalTypeValues>(name, extraInfo.GetValue());
         }
         else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, UInt32>)
         {
-        core::Check(OCI_RegisterString(*this, name.c_str(), extraInfo));
+            core::Check(OCI_RegisterString(*this, name.c_str(), extraInfo));
         }
         else if constexpr (std::is_same_v<T, String> && std::is_same_v<U, Int32>)
         {
-        Register<String, UInt32>(name, static_cast<UInt32>(extraInfo));
+            Register<String, UInt32>(name, static_cast<UInt32>(extraInfo));
         }
         else if constexpr (std::is_same_v<T, Raw> && std::is_same_v<U, UInt32>)
         {
-        core::Check(OCI_RegisterRaw(*this, name.c_str(), extraInfo));
+            core::Check(OCI_RegisterRaw(*this, name.c_str(), extraInfo));
         }
         else if constexpr (std::is_same_v<T, Raw> && std::is_same_v<U, Int32>)
         {
-        Register<Raw, UInt32>(name, static_cast<UInt32>(extraInfo));
+            Register<Raw, UInt32>(name, static_cast<UInt32>(extraInfo));
         }
         else
         {
             static_assert(!sizeof(T), "unsupported type");
         }
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     template<class T>
     BindInfo Statement::Bind(const String& name, Collection<T>& value, BindInfo::BindDirection mode)
@@ -861,51 +802,12 @@ namespace ocilib
         return info;
     }
 
-
-
-
-
-
-
-
-
-
-
     template<class T>
-    BindInfo Statement::Bind(const String& name, std::vector<Collection<T> >& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type)
+    BindInfo Statement::Bind(const String& name, std::vector<Collection<T> >& values, TypeInfo& typeInfo, BindInfo::BindDirection mode,
+                             BindInfo::VectorType type)
     {
         return BindVector2(OCI_BindArrayOfColls, name, values, mode, static_cast<OCI_TypeInfo*>(typeInfo), type);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     inline Statement::StatementType Statement::GetStatementType() const
     {
@@ -996,10 +898,10 @@ namespace ocilib
     {
         return core::MakeString(core::Check(OCI_GetSQLVerb(*this)));
     }
-    
+
     inline std::vector<String> Statement::GetParseBindNames() const
     {
-        UInt32 count = 0;
+        UInt32        count = 0;
         const otext** names = nullptr;
 
         core::Check(OCI_GetParseBindNames(*this, &count, &names));
@@ -1065,9 +967,9 @@ namespace ocilib
         if (auto ctrl = GetHandleControl())
         {
             ctrl->FreeChildren([](core::HandleControlBase* c)
-            {
-                return dynamic_cast<core::HandleControl<OCI_Resultset*>*>(c) != nullptr;
-            });
+                               {
+                                   return dynamic_cast<core::HandleControl<OCI_Resultset*>*>(c) != nullptr;
+                               });
         }
     }
 

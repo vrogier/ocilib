@@ -77,32 +77,32 @@ static void OcilibCheckContext
     OcilibErrorReset(OcilibErrorGet(NULL, TRUE, TRUE));
 }
 
-#define CALL_IMPL(impl, ...)                                                                       \
-        do {                                                                                       \
+#define CALL_IMPL(impl, ...)                                                                                           \
+        do {                                                                                                           \
             OCILIB_LOG_STEP_WITH_ENV(NULL, OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "ENTER", __func__, OTEXT("%s"), OTEXT("")); \
-            OcilibCheckContext();                                                                  \
-            return impl(__VA_ARGS__);                                                              \
+            OcilibCheckContext();                                                                                      \
+            return impl(__VA_ARGS__);                                                                                  \
         } while(0);
 
-#define CALL_IMPL_NO_ARGS(impl)                                                                    \
-        do {                                                                                       \
+#define CALL_IMPL_NO_ARGS(impl)                                                                                        \
+        do {                                                                                                           \
             OCILIB_LOG_STEP_WITH_ENV(NULL, OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "ENTER", __func__, OTEXT("%s"), OTEXT("")); \
-            OcilibCheckContext();                                                                  \
-            return impl();                                                                         \
+            OcilibCheckContext();                                                                                      \
+            return impl();                                                                                             \
         } while(0);
 
-#define CALL_IMPL_E(impl, env, ...)                                                                 \
-        do {                                                                                        \
+#define CALL_IMPL_E(impl, env, ...)                                                                                     \
+        do {                                                                                                            \
             OCILIB_LOG_STEP_WITH_ENV((env), OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "ENTER", __func__, OTEXT("%s"), OTEXT("")); \
-            OcilibCheckContext();                                                                   \
-            return impl(env, __VA_ARGS__);                                                          \
+            OcilibCheckContext();                                                                                       \
+            return impl(env, __VA_ARGS__);                                                                              \
         } while(0);
 
-#define CALL_IMPL_NO_ARGS_E(impl, env)                                                              \
-        do {                                                                                        \
+#define CALL_IMPL_NO_ARGS_E(impl, env)                                                                                  \
+        do {                                                                                                            \
             OCILIB_LOG_STEP_WITH_ENV((env), OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "ENTER", __func__, OTEXT("%s"), OTEXT("")); \
-            OcilibCheckContext();                                                                   \
-            return impl(env);                                                                       \
+            OcilibCheckContext();                                                                                       \
+            return impl(env);                                                                                           \
         } while(0);
 
 /* --------------------------------------------------------------------------------------------- *
@@ -665,7 +665,7 @@ OCI_Boolean OCI_API OCI_ShardingKeyReset
 OCI_Boolean OCI_API OCI_ShardingKeyAddString
 (
     OCI_ShardingKey* skey,
-    const otext* value
+    const otext    * value
 )
 {
     CALL_IMPL(OcilibShardingKeyAddString, skey, value);
@@ -674,7 +674,7 @@ OCI_Boolean OCI_API OCI_ShardingKeyAddString
 OCI_Boolean OCI_API OCI_ShardingKeyAddNumber
 (
     OCI_ShardingKey* skey,
-    OCI_Number* value
+    OCI_Number     * value
 )
 {
     CALL_IMPL(OcilibShardingKeyAddNumber, skey, value);
@@ -683,7 +683,7 @@ OCI_Boolean OCI_API OCI_ShardingKeyAddNumber
 OCI_Boolean OCI_API OCI_ShardingKeyAddDate
 (
     OCI_ShardingKey* skey,
-    OCI_Date* value
+    OCI_Date       * value
 )
 {
     CALL_IMPL(OcilibShardingKeyAddDate, skey, value);
@@ -692,7 +692,7 @@ OCI_Boolean OCI_API OCI_ShardingKeyAddDate
 OCI_Boolean OCI_API OCI_ShardingKeyAddTimestamp
 (
     OCI_ShardingKey* skey,
-    OCI_Timestamp* value
+    OCI_Timestamp  * value
 )
 {
     CALL_IMPL(OcilibShardingKeyAddTimestamp, skey, value);
@@ -701,7 +701,7 @@ OCI_Boolean OCI_API OCI_ShardingKeyAddTimestamp
 OCI_Boolean OCI_API OCI_ShardingKeyAddRaw
 (
     OCI_ShardingKey* skey,
-    const void* value,
+    const void     * value,
     OCI_UInt32       size
 )
 {
@@ -7442,7 +7442,7 @@ OCI_Boolean OCI_API OCI_SodaCollInsertMany
     OCI_SodaColl *coll,
     OCI_SodaDoc **docs,
     OCI_UInt32    count,
-    OCI_Boolean    refresh
+    OCI_Boolean   refresh
 )
 {
     CALL_IMPL(OcilibSodaCollInsertMany, coll, docs, count, refresh);

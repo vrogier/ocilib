@@ -22,63 +22,61 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyMiscMisplacedConst
-
 namespace ocilib
 {
 
-inline Enqueue::Enqueue(const TypeInfo &typeInfo, const String& queueName)
-{
-    Connection connection = typeInfo.GetConnection();
-    
-    AcquireAllocated
-    (
-        core::Check(OCI_EnqueueCreate(typeInfo, queueName.c_str())), 
-        connection.GetHandle()
-    );
-}
+    inline Enqueue::Enqueue(const TypeInfo &typeInfo, const String& queueName)
+    {
+        Connection connection = typeInfo.GetConnection();
 
-inline void Enqueue::Put(const Message &message)
-{
-    core::Check(OCI_EnqueuePut(*this, message));
-}
+        AcquireAllocated
+        (
+            core::Check(OCI_EnqueueCreate(typeInfo, queueName.c_str())),
+            connection.GetHandle()
+        );
+    }
 
-inline Enqueue::EnqueueVisibility Enqueue::GetVisibility() const
-{
-    return EnqueueVisibility(static_cast<EnqueueVisibility::Type>(core::Check(OCI_EnqueueGetVisibility(*this))));
-}
+    inline void Enqueue::Put(const Message &message)
+    {
+        core::Check(OCI_EnqueuePut(*this, message));
+    }
 
-inline void Enqueue::SetVisibility(EnqueueVisibility value)
-{
-    core::Check(OCI_EnqueueSetVisibility(*this, value));
-}
+    inline Enqueue::EnqueueVisibility Enqueue::GetVisibility() const
+    {
+        return EnqueueVisibility(static_cast<EnqueueVisibility::Type>(core::Check(OCI_EnqueueGetVisibility(*this))));
+    }
 
-inline Enqueue::EnqueueMode Enqueue::GetMode() const
-{
-    return EnqueueMode(static_cast<EnqueueMode::Type>(core::Check(OCI_EnqueueGetSequenceDeviation(*this))));
-}
+    inline void Enqueue::SetVisibility(EnqueueVisibility value)
+    {
+        core::Check(OCI_EnqueueSetVisibility(*this, value));
+    }
 
-inline void Enqueue::SetMode(EnqueueMode value)
-{
-    core::Check(OCI_EnqueueSetSequenceDeviation(*this, value));
-}
+    inline Enqueue::EnqueueMode Enqueue::GetMode() const
+    {
+        return EnqueueMode(static_cast<EnqueueMode::Type>(core::Check(OCI_EnqueueGetSequenceDeviation(*this))));
+    }
 
-inline Raw Enqueue::GetRelativeMsgID() const
-{
-    UInt32 size = OCI_SIZE_BUFFER;
+    inline void Enqueue::SetMode(EnqueueMode value)
+    {
+        core::Check(OCI_EnqueueSetSequenceDeviation(*this, value));
+    }
 
-    std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
+    inline Raw Enqueue::GetRelativeMsgID() const
+    {
+        UInt32 size = OCI_SIZE_BUFFER;
 
-    core::Check(OCI_EnqueueGetRelativeMsgID(*this, static_cast<AnyPointer>(buffer.data()), &size));
+        std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
 
-    return core::MakeRaw(buffer.data(), size);
-}
+        core::Check(OCI_EnqueueGetRelativeMsgID(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
-inline void Enqueue::SetRelativeMsgID(const Raw &value)
-{
-    const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0])) ;
+        return core::MakeRaw(buffer.data(), size);
+    }
 
-    core::Check(OCI_EnqueueSetRelativeMsgID(*this, data, static_cast<UInt32>(value.size())));
-}
+    inline void Enqueue::SetRelativeMsgID(const Raw &value)
+    {
+        const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0]));
+
+        core::Check(OCI_EnqueueSetRelativeMsgID(*this, data, static_cast<UInt32>(value.size())));
+    }
 
 }

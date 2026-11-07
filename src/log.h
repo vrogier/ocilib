@@ -43,11 +43,11 @@ OCI_SYM_LOCAL OCI_Boolean OcilibLogCleanup
 
 OCI_SYM_LOCAL void OcilibLogWrite
 (
-    OCI_LogCategory  category,
-    OCI_LogLevel     level,
-    const char      *step,
-    const char      *function,
-    const otext     *format,
+    OCI_LogCategory category,
+    OCI_LogLevel    level,
+    const char     *step,
+    const char     *function,
+    const otext    *format,
     ...
 ) OCI_ATTR_FORMAT(5, 6);
 

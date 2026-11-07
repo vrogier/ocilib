@@ -58,7 +58,7 @@ struct OCI_Logger
     OCI_Boolean     initialized;                        /* TRUE once the sink and lock are ready */
     OCI_Int32       ref_count;                            /* number of environments using the logger
                                                           */
-    otext            output_path[OCI_SIZE_BUFFER + 1]; /* cached path as otext */
+    otext output_path[OCI_SIZE_BUFFER + 1];            /* cached path as otext */
 
     /* The logger lock is a file-static mtx_t in log.c rather than a member:
        it must outlive every OCI_Environment and is created once via

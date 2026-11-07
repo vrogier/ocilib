@@ -24,8 +24,6 @@
 #include <string>
 #include <vector>
 
-// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
-
 /* Including C API declarations  */
 
 extern "C" {
@@ -61,7 +59,7 @@ namespace ocilib
  * - for UNICODE builds, String is equivalent to std::wstring
  *
  */
-typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> > String;
+    typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> > String;
 
 /**
  * @typedef ocilib::ostring
@@ -69,7 +67,7 @@ typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> 
  * Alias for String (kept for backward compatibility)
  *
  */
-typedef String ostring;
+    typedef String ostring;
 
 /**
  * @typedef ocilib::StringView
@@ -78,7 +76,7 @@ typedef String ostring;
  * Accepts String, const otext*, string literals and spans without allocation
  *
  */
-typedef std::basic_string_view<otext> StringView;
+    typedef std::basic_string_view<otext> StringView;
 
 /**
  * @typedef ocilib::AnyPointer
@@ -87,7 +85,7 @@ typedef std::basic_string_view<otext> StringView;
  * Alias for the generic void pointer
  *
  */
-typedef void * AnyPointer;
+    typedef void * AnyPointer;
 
 /**
 * @typedef ocilib::Raw
@@ -96,7 +94,7 @@ typedef void * AnyPointer;
 * C++ counterpart of SQL RAW data type
 *
 */
-typedef std::vector<unsigned char> Raw;
+    typedef std::vector<unsigned char> Raw;
 
 /**
 * @typedef ocilib::Int16
@@ -115,75 +113,74 @@ typedef std::vector<unsigned char> Raw;
 * Int64, UInt64, Float, Double and Size.
 *
 */
-typedef OCI_Int16  Int16;
-typedef OCI_UInt16 UInt16;
-typedef OCI_Int32  Int32;
-typedef OCI_UInt32 UInt32;
-typedef OCI_Int64  Int64;
-typedef OCI_UInt64 UInt64;
-typedef OCI_Float  Float;
-typedef OCI_Double Double;
-typedef OCI_Size   Size;
+    typedef OCI_Int16 Int16;
+    typedef OCI_UInt16 UInt16;
+    typedef OCI_Int32 Int32;
+    typedef OCI_UInt32 UInt32;
+    typedef OCI_Int64 Int64;
+    typedef OCI_UInt64 UInt64;
+    typedef OCI_Float Float;
+    typedef OCI_Double Double;
+    typedef OCI_Size Size;
 
 /* OCI_Environment* GetEnvironmentHandle(); */
 
 /* class forward declarations */
 
-class Exception;
-class Connection;
-class Transaction;
-class Environment;
-class Statement;
-class Resultset;
-class Date;
-class Timestamp;
-class Interval;
-class Number;
-class TypeInfo;
-class Reference;
-class XmType;
-class Object;
-template<class>
-class Element;
-template<class>
-class Iterator;
-template<class>
-class Collection;
-template<class, Int32>
-class Lob;
-class File;
-class Pool;
-template<class, Int32>
-class Long;
-class Column;
-class Subscription;
-class Event;
-class Agent;
-class Message;
-class Enqueue;
-class Dequeue;
-class Queue;
-class QueueTable;
-class DirectPath;
-class BindInfo;
-class SodaDb;
-class SodaColl;
-class SodaDoc;
-class SodaOptions;
-class SodaCollCursor;
-class SodaDocCursor;
-class ShardingKey;
-class Row;
-class RowIterator;
-class ResultsetRows;
-template<class T>
-class ColumnIterator;
-template<class T>
-class ColumnView;
+    class Exception;
+    class Connection;
+    class Transaction;
+    class Environment;
+    class Statement;
+    class Resultset;
+    class Date;
+    class Timestamp;
+    class Interval;
+    class Number;
+    class TypeInfo;
+    class Reference;
+    class XmType;
+    class Object;
+    template<class>
+    class Element;
+    template<class>
+    class Iterator;
+    template<class>
+    class Collection;
+    template<class, Int32>
+    class Lob;
+    class File;
+    class Pool;
+    template<class, Int32>
+    class Long;
+    class Column;
+    class Subscription;
+    class Event;
+    class Agent;
+    class Message;
+    class Enqueue;
+    class Dequeue;
+    class Queue;
+    class QueueTable;
+    class DirectPath;
+    class BindInfo;
+    class SodaDb;
+    class SodaColl;
+    class SodaDoc;
+    class SodaOptions;
+    class SodaCollCursor;
+    class SodaDocCursor;
+    class ShardingKey;
+    class Row;
+    class RowIterator;
+    class ResultsetRows;
+    template<class T>
+    class ColumnIterator;
+    template<class T>
+    class ColumnView;
 
-using ResultsetColumns = ColumnView<Resultset>;
-using TypeInfoColumns  = ColumnView<TypeInfo>;
-
+    using ResultsetColumns = ColumnView<Resultset>;
+    using TypeInfoColumns = ColumnView<TypeInfo>;
 
 /**
 * Catch silently any exception thrown in the given expression

@@ -22,10 +22,6 @@
 
 #include "ocilibcpp/support.hpp"
 
-// ReSharper disable CppClangTidyModernizePassByValue
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
     namespace support

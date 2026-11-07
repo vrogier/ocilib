@@ -673,7 +673,7 @@ OCI_Boolean OcilibCollectionToString
                 case OCI_CDT_TEXT:
                 {
                     OCI_CALL(data_size, OCIStringSize, coll->con->env->handle, elem->handle);
-                    data      = (void*)OcilibElementGetString(elem);
+                    data = (void*)OcilibElementGetString(elem);
                     break;
                 }
                 case OCI_CDT_NUMERIC:

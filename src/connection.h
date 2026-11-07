@@ -55,9 +55,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibConnectionAttach
 
 OCI_SYM_LOCAL OCI_Boolean OcilibConnectionLogon
 (
-    OCI_Connection* con,
-    const otext   * new_pwd,
-    const otext   * tag,
+    OCI_Connection * con,
+    const otext    * new_pwd,
+    const otext    * tag,
     OCI_ShardingKey* skey,
     OCI_ShardingKey* sskey
 );

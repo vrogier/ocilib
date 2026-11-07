@@ -81,5 +81,5 @@ namespace ocilib
         template<> struct BindResolver<Vector> : BindResolverHandleType<Vector, OCI_Vector*> {};
         template<> struct BindResolver<Json> : BindResolverHandleType<Json, OCI_Json*> {};
         template<> struct BindResolver<Statement> : BindResolverHandleType<Statement, OCI_Statement*> {};
-   }
+    }
 }

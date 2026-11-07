@@ -22,9 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
 
@@ -45,9 +42,9 @@ namespace ocilib
     inline SodaColl SodaDb::CreateCollection(const String& name, const String& metadata)
     {
         OCI_SodaColl* coll = core::Check
-        (
-            OCI_SodaDbCreateColl(*this, name.c_str(), metadata.empty() ? nullptr : metadata.c_str())
-        );
+                             (
+                                 OCI_SodaDbCreateColl(*this, name.c_str(), metadata.empty() ? nullptr : metadata.c_str())
+                             );
 
         return SodaColl(coll, GetHandle());
     }
@@ -55,9 +52,9 @@ namespace ocilib
     inline SodaColl SodaDb::OpenCollection(const String& name)
     {
         OCI_SodaColl* coll = core::Check
-        (
-            OCI_SodaDbOpenColl(*this, name.c_str())
-        );
+                             (
+                                 OCI_SodaDbOpenColl(*this, name.c_str())
+                             );
 
         return SodaColl(coll, GetHandle());
     }
@@ -65,9 +62,9 @@ namespace ocilib
     inline SodaCollCursor SodaDb::GetCollections(const String& startName)
     {
         OCI_SodaCollCursor* cursor = core::Check
-        (
-            OCI_SodaDbGetColls(*this, startName.empty() ? nullptr : startName.c_str())
-        );
+                                     (
+                                         OCI_SodaDbGetColls(*this, startName.empty() ? nullptr : startName.c_str())
+                                     );
 
         return SodaCollCursor(cursor, GetHandle());
     }
@@ -75,15 +72,15 @@ namespace ocilib
     inline SodaDoc SodaDb::CreateDocumentFromText(const String& content, const String& key)
     {
         OCI_SodaDoc* doc = core::Check
-        (
-            OCI_SodaDocCreateFromText
-            (
-                *this,
-                content.c_str(),
-                static_cast<UInt32>(content.size() * sizeof(otext)),
-                key.empty() ? nullptr : key.c_str()
-            )
-        );
+                           (
+                               OCI_SodaDocCreateFromText
+                               (
+                                   *this,
+                                   content.c_str(),
+                                   static_cast<UInt32>(content.size() * sizeof(otext)),
+                                   key.empty() ? nullptr : key.c_str()
+                               )
+                           );
 
         return SodaDoc(doc, GetHandle());
     }
@@ -91,22 +88,21 @@ namespace ocilib
     inline SodaDoc SodaDb::CreateDocumentFromJson(const Json& json, const String& key)
     {
         OCI_SodaDoc* doc = core::Check
-        (
-            OCI_SodaDocCreateFromJson
-            (
-                *this,
-                json,
-                key.empty() ? nullptr : key.c_str()
-            )
-        );
+                           (
+                               OCI_SodaDocCreateFromJson
+                               (
+                                   *this,
+                                   json,
+                                   key.empty() ? nullptr : key.c_str()
+                               )
+                           );
 
         return SodaDoc(doc, GetHandle());
     }
 
-
     inline std::vector<String> SodaDb::GetCollectionNames()
     {
-        UInt32 count = 0;
+        UInt32  count = 0;
         otext** names = core::Check(OCI_SodaDbGetCollectionNames(*this, &count));
 
         std::vector<String> result;

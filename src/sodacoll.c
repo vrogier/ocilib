@@ -485,16 +485,16 @@ OCI_SodaDocCursor* OcilibSodaCollFind
 
             for (;;)
             {
-                OCISodaDoc *dh      = NULL;
+                OCISodaDoc *dh = NULL;
                 sword       oci_ret;
 
                 OCI_CALL(oci_ret, OCISodaDocGetNext,
-                                          coll->sdb->con->handle,
-                                          oci_cur,
-                                          &dh,
-                                          coll->sdb->con->err,
-                                          OCI_DEFAULT
-                                      );
+                         coll->sdb->con->handle,
+                         oci_cur,
+                         &dh,
+                         coll->sdb->con->err,
+                         OCI_DEFAULT
+                         );
 
                 if (OCI_NO_DATA == oci_ret || NULL == dh)
                 {
@@ -666,13 +666,13 @@ OCI_SodaDoc* OcilibSodaCollFindOne
         }
 
         OCI_CALL(oci_ret, OCISodaFindOne, coll->sdb->con->handle,
-                      coll->handle,
-                      opthandle,
-                      (ub4)OCILIB_SODA_DOC_FLAGS(coll->sdb),
-                      &doc->handle,
-                      coll->sdb->con->err,
-                      OCI_DEFAULT
-                  );
+                 coll->handle,
+                 opthandle,
+                 (ub4)OCILIB_SODA_DOC_FLAGS(coll->sdb),
+                 &doc->handle,
+                 coll->sdb->con->err,
+                 OCI_DEFAULT
+                 );
 
         if (OCI_NO_DATA == oci_ret || NULL == doc->handle)
         {
@@ -739,14 +739,14 @@ OCI_SodaDoc* OcilibSodaCollFindOneByKey
     dbkey = OcilibStringGetDBString(coll->sdb->env, key, &dbkeylen);
 
     OCI_CALL(oci_ret, OCISodaFindOneWithKey, coll->sdb->con->handle,
-                  coll->handle,
-                  (const OraText*)dbkey,
-                  (ub4)dbkeylen,
-                  (ub4)OCILIB_SODA_DOC_FLAGS(coll->sdb),
-                  &handle,
-                  coll->sdb->con->err,
-                  OCI_DEFAULT
-              );
+             coll->handle,
+             (const OraText*)dbkey,
+             (ub4)dbkeylen,
+             (ub4)OCILIB_SODA_DOC_FLAGS(coll->sdb),
+             &handle,
+             coll->sdb->con->err,
+             OCI_DEFAULT
+             );
 
     if (OCI_NO_DATA == oci_ret)
     {
@@ -1455,12 +1455,12 @@ OCI_SodaDoc * OcilibSodaCollGetDataGuide
     CHECK_SODA_ENABLED(coll->sdb->con);
 
     OCI_CALL(oci_ret, OCISodaDataGuideGet, coll->sdb->con->handle,
-                  coll->handle,
-                  0,
-                  &handle,
-                  coll->sdb->con->err,
-                  OCI_DEFAULT
-              );
+             coll->handle,
+             0,
+             &handle,
+             coll->sdb->con->err,
+             OCI_DEFAULT
+             );
 
     if (OCI_NO_DATA == oci_ret)
     {
@@ -1519,7 +1519,7 @@ OCI_Boolean OcilibSodaCollSave
         /* OCISodaSaveAndGet() crashes on some client/server combinations;
            emulate with a lookup to refresh the document metadata in place */
 
-        const otext *key = OcilibSodaDocGetKey(doc);
+        const otext *key   = OcilibSodaDocGetKey(doc);
         OCI_SodaDoc *found = NULL;
 
         CHECK(NULL != key);
@@ -1644,8 +1644,8 @@ otext** OcilibSodaCollListIndexes
             sword ret;
 
             OCI_CALL(ret, OCIObjectFree, coll->sdb->env->handle,
-                                               coll->sdb->con->err,
-                                               (dvoid *)list, (ub2)0);
+                     coll->sdb->con->err,
+                     (dvoid *)list, (ub2)0);
         }
         if (NULL != names)
         {

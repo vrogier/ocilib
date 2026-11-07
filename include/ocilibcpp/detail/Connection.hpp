@@ -22,295 +22,290 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-// ReSharper disable CppClangTidyPerformanceUnnecessaryValueParam
-// ReSharper disable CppClangTidyHicppUseEmplace
-
 namespace ocilib
 {
 
-inline Connection::Connection()
-{
-
-}
-
-inline Connection::Connection(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey)
-{
-    Open(env, db, user, pwd, sessionFlags, skey, sskey);
-}
-
-inline Connection::Connection(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags)
-{
-    Open(env, db, user, pwd, sessionFlags);
-}
-
-inline Connection::Connection(OCI_Connection *con,  core::Handle *parent, bool allocated)
-{
-    if (allocated)
+    inline Connection::Connection()
     {
-        AcquireAllocated(con, parent);
+
     }
-    else
+
+    inline Connection::Connection(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags,
+                                  const ShardingKey& skey, const ShardingKey& sskey)
     {
-        AcquireTransient(con, parent);
+        Open(env, db, user, pwd, sessionFlags, skey, sskey);
     }
-}
 
-inline void Connection::Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags)
-{
-    AcquireAllocated
-    (
-        core::Check(OCI_ConnectionCreate(env.GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
-        env.GetEnvironmentHandle()
-    );
-}
-
-inline void Connection::Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey)
-{
-    AcquireAllocated
-    (
-        core::Check(OCI_ConnectionCreateSharded(env.GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(), skey, sskey)),
-        env.GetEnvironmentHandle()
-    );
-}
-
-inline void Connection::Close()
-{
-    Release();
-}
-
-inline void Connection::Commit()
-{
-    core::Check(OCI_Commit(*this));
-}
-
-inline void Connection::Rollback()
-{
-    core::Check(OCI_Rollback(*this));
-}
-
-inline void Connection::Break()
-{
-    core::Check(OCI_Break(*this));
-}
-
-inline void Connection::SetAutoCommit(bool enabled)
-{
-    core::Check(OCI_SetAutoCommit(*this, enabled));
-}
-
-inline bool Connection::GetAutoCommit() const
-{
-    return (core::Check(OCI_GetAutoCommit(*this)) == TRUE);
-}
-
-inline bool Connection::IsServerAlive() const
-{
-    return (core::Check(OCI_IsConnected(*this)) == TRUE);
-}
-
-inline bool Connection::PingServer() const
-{
-    return( core::Check(OCI_Ping(*this)) == TRUE);
-}
-
-
-
-inline String Connection::GetConnectionString() const
-{
-    return core::MakeString(core::Check(OCI_GetDatabase(*this)));
-}
-
-inline String Connection::GetUserName() const
-{
-    return core::MakeString(core::Check(OCI_GetUserName(*this)));
-}
-
-inline String Connection::GetPassword() const
-{
-    return core::MakeString(core::Check(OCI_GetPassword(*this)));
-}
-
-inline OracleVersion Connection::GetVersion() const
-{
-    return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetVersionConnection(*this))));
-}
-
-inline String Connection::GetServerVersion() const
-{
-    return core::MakeString(core::Check(OCI_GetVersionServer(*this)));
-}
-
-inline UInt32 Connection::GetServerMajorVersion() const
-{
-    return core::Check(OCI_GetServerMajorVersion(*this));
-}
-
-inline UInt32 Connection::GetServerMinorVersion() const
-{
-    return core::Check(OCI_GetServerMinorVersion(*this));
-}
-
-inline UInt32 Connection::GetServerRevisionVersion() const
-{
-    return core::Check(OCI_GetServerRevisionVersion(*this));
-}
-
-inline void Connection::ChangePassword(const String& newPwd)
-{
-    core::Check(OCI_SetPassword(*this, newPwd.c_str()));
-}
-
-inline String Connection::GetSessionTag() const
-{
-    return core::MakeString(core::Check(OCI_GetSessionTag(*this)));
-}
-
-inline void Connection::SetSessionTag(const String& tag)
-{
-    core::Check(OCI_SetSessionTag(*this, tag.c_str()));
-}
-
-inline Transaction Connection::GetTransaction() const
-{
-    return Transaction(core::Check(OCI_GetTransaction(*this)));
-}
-
-inline void Connection::SetTransaction(const Transaction &transaction)
-{
-    core::Check(OCI_SetTransaction(*this, transaction));
-}
-
-inline void Connection::EnableServerOutput(UInt32 bufsize, UInt32 arrsize, UInt32 lnsize)
-{
-    core::Check(OCI_ServerEnableOutput(*this, bufsize, arrsize, lnsize));
-}
-
-inline void Connection::DisableServerOutput()
-{
-    core::Check(OCI_ServerDisableOutput(*this));
-}
-
-inline bool Connection::GetServerOutput(String &line) const
-{
-    const otext * str = core::Check(OCI_ServerGetOutput(*this));
-
-    line = core::MakeString(str);
-
-    return (str != nullptr);
-}
-
-inline void Connection::GetServerOutput(std::vector<String> &lines) const
-{
-    const otext * str = core::Check(OCI_ServerGetOutput(*this));
-
-    while (str)
+    inline Connection::Connection(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags)
     {
-        lines.push_back(str);
-        str = core::Check(OCI_ServerGetOutput(*this));
+        Open(env, db, user, pwd, sessionFlags);
     }
-}
 
-inline void Connection::SetTrace(SessionTrace trace, const String& value)
-{
-    core::Check(OCI_SetTrace(*this, trace, value.c_str()));
-}
-
-inline String Connection::GetTrace(SessionTrace trace) const
-{
-    return core::MakeString(core::Check(OCI_GetTrace(*this, trace)));
-}
-
-inline String Connection::GetDatabase() const
-{
-    return core::MakeString(core::Check(OCI_GetDBName(*this)));
-}
-
-inline String Connection::GetInstance() const
-{
-    return core::Check(OCI_GetInstanceName(*this));
-}
-
-inline String Connection::GetService() const
-{
-    return core::MakeString(core::Check(OCI_GetServiceName(*this)));
-}
-
-inline String Connection::GetServer() const
-{
-    return core::Check(OCI_GetServerName(*this));
-}
-
-inline String Connection::GetDomain() const
-{
-    return core::MakeString(core::Check(OCI_GetDomainName(*this)));
-}
-
-inline Timestamp Connection::GetInstanceStartTime() const
-{
-    return Timestamp(core::Check(OCI_GetInstanceStartTime(*this)), GetHandle());
-}
-
-inline UInt32 Connection::GetStatementCacheSize() const
-{
-    return core::Check(OCI_GetStatementCacheSize(*this));
-}
-
-inline void Connection::SetStatementCacheSize(UInt32 value)
-{
-    core::Check(OCI_SetStatementCacheSize(*this, value));
-}
-
-inline UInt32 Connection::GetDefaultLobPrefetchSize() const
-{
-    return core::Check(OCI_GetDefaultLobPrefetchSize(*this));
-}
-
-inline void Connection::SetDefaultLobPrefetchSize(UInt32 value)
-{
-    core::Check(OCI_SetDefaultLobPrefetchSize(*this, value));
-}
-
-inline UInt32  Connection::GetMaxCursors() const
-{
-    return core::Check(OCI_GetMaxCursors(*this));
-}
-
-inline bool Connection::IsTAFCapable() const
-{
-    return (core::Check(OCI_IsTAFCapable(*this)) == TRUE);
-}
-
-inline void Connection::SetTAFHandler(TAFHandlerProc handler)
-{
-    core::Check(OCI_SetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != nullptr ? Environment::TAFHandler : nullptr)));
-
-    Environment* env = Environment::GetInstance(GetEnvironment());
-    if (env)
+    inline Connection::Connection(OCI_Connection *con,  core::Handle *parent, bool allocated)
     {
-        env->SetUserCallback<Connection::TAFHandlerProc>(static_cast<OCI_Connection*>(*this), handler);
+        if (allocated)
+        {
+            AcquireAllocated(con, parent);
+        }
+        else
+        {
+            AcquireTransient(con, parent);
+        }
     }
-}
 
-inline AnyPointer Connection::GetUserData()
-{
-    return core::Check(OCI_GetUserData(*this));
-}
+    inline void Connection::Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags)
+    {
+        AcquireAllocated
+        (
+            core::Check(OCI_ConnectionCreate(env.GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues())),
+            env.GetEnvironmentHandle()
+        );
+    }
 
-inline void Connection::SetUserData(AnyPointer value)
-{
-    core::Check(OCI_SetUserData(*this, value));
-}
+    inline void Connection::Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags,
+                                 const ShardingKey& skey, const ShardingKey& sskey)
+    {
+        AcquireAllocated
+        (
+            core::Check(OCI_ConnectionCreateSharded(env.GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), sessionFlags.GetValues(), skey, sskey)),
+            env.GetEnvironmentHandle()
+        );
+    }
 
-inline UInt32 Connection::GetTimeout(TimeoutType timeout)
-{
-    return core::Check(OCI_GetTimeout(*this, timeout));
-}
+    inline void Connection::Close()
+    {
+        Release();
+    }
 
-inline void Connection::SetTimeout(TimeoutType timeout, UInt32 value)
-{
-    core::Check(OCI_SetTimeout(*this, timeout, value));
-}
+    inline void Connection::Commit()
+    {
+        core::Check(OCI_Commit(*this));
+    }
+
+    inline void Connection::Rollback()
+    {
+        core::Check(OCI_Rollback(*this));
+    }
+
+    inline void Connection::Break()
+    {
+        core::Check(OCI_Break(*this));
+    }
+
+    inline void Connection::SetAutoCommit(bool enabled)
+    {
+        core::Check(OCI_SetAutoCommit(*this, enabled));
+    }
+
+    inline bool Connection::GetAutoCommit() const
+    {
+        return (core::Check(OCI_GetAutoCommit(*this)) == TRUE);
+    }
+
+    inline bool Connection::IsServerAlive() const
+    {
+        return (core::Check(OCI_IsConnected(*this)) == TRUE);
+    }
+
+    inline bool Connection::PingServer() const
+    {
+        return( core::Check(OCI_Ping(*this)) == TRUE);
+    }
+
+    inline String Connection::GetConnectionString() const
+    {
+        return core::MakeString(core::Check(OCI_GetDatabase(*this)));
+    }
+
+    inline String Connection::GetUserName() const
+    {
+        return core::MakeString(core::Check(OCI_GetUserName(*this)));
+    }
+
+    inline String Connection::GetPassword() const
+    {
+        return core::MakeString(core::Check(OCI_GetPassword(*this)));
+    }
+
+    inline OracleVersion Connection::GetVersion() const
+    {
+        return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetVersionConnection(*this))));
+    }
+
+    inline String Connection::GetServerVersion() const
+    {
+        return core::MakeString(core::Check(OCI_GetVersionServer(*this)));
+    }
+
+    inline UInt32 Connection::GetServerMajorVersion() const
+    {
+        return core::Check(OCI_GetServerMajorVersion(*this));
+    }
+
+    inline UInt32 Connection::GetServerMinorVersion() const
+    {
+        return core::Check(OCI_GetServerMinorVersion(*this));
+    }
+
+    inline UInt32 Connection::GetServerRevisionVersion() const
+    {
+        return core::Check(OCI_GetServerRevisionVersion(*this));
+    }
+
+    inline void Connection::ChangePassword(const String& newPwd)
+    {
+        core::Check(OCI_SetPassword(*this, newPwd.c_str()));
+    }
+
+    inline String Connection::GetSessionTag() const
+    {
+        return core::MakeString(core::Check(OCI_GetSessionTag(*this)));
+    }
+
+    inline void Connection::SetSessionTag(const String& tag)
+    {
+        core::Check(OCI_SetSessionTag(*this, tag.c_str()));
+    }
+
+    inline Transaction Connection::GetTransaction() const
+    {
+        return Transaction(core::Check(OCI_GetTransaction(*this)));
+    }
+
+    inline void Connection::SetTransaction(const Transaction &transaction)
+    {
+        core::Check(OCI_SetTransaction(*this, transaction));
+    }
+
+    inline void Connection::EnableServerOutput(UInt32 bufsize, UInt32 arrsize, UInt32 lnsize)
+    {
+        core::Check(OCI_ServerEnableOutput(*this, bufsize, arrsize, lnsize));
+    }
+
+    inline void Connection::DisableServerOutput()
+    {
+        core::Check(OCI_ServerDisableOutput(*this));
+    }
+
+    inline bool Connection::GetServerOutput(String &line) const
+    {
+        const otext * str = core::Check(OCI_ServerGetOutput(*this));
+
+        line = core::MakeString(str);
+
+        return (str != nullptr);
+    }
+
+    inline void Connection::GetServerOutput(std::vector<String> &lines) const
+    {
+        const otext * str = core::Check(OCI_ServerGetOutput(*this));
+
+        while (str)
+        {
+            lines.push_back(str);
+            str = core::Check(OCI_ServerGetOutput(*this));
+        }
+    }
+
+    inline void Connection::SetTrace(SessionTrace trace, const String& value)
+    {
+        core::Check(OCI_SetTrace(*this, trace, value.c_str()));
+    }
+
+    inline String Connection::GetTrace(SessionTrace trace) const
+    {
+        return core::MakeString(core::Check(OCI_GetTrace(*this, trace)));
+    }
+
+    inline String Connection::GetDatabase() const
+    {
+        return core::MakeString(core::Check(OCI_GetDBName(*this)));
+    }
+
+    inline String Connection::GetInstance() const
+    {
+        return core::Check(OCI_GetInstanceName(*this));
+    }
+
+    inline String Connection::GetService() const
+    {
+        return core::MakeString(core::Check(OCI_GetServiceName(*this)));
+    }
+
+    inline String Connection::GetServer() const
+    {
+        return core::Check(OCI_GetServerName(*this));
+    }
+
+    inline String Connection::GetDomain() const
+    {
+        return core::MakeString(core::Check(OCI_GetDomainName(*this)));
+    }
+
+    inline Timestamp Connection::GetInstanceStartTime() const
+    {
+        return Timestamp(core::Check(OCI_GetInstanceStartTime(*this)), GetHandle());
+    }
+
+    inline UInt32 Connection::GetStatementCacheSize() const
+    {
+        return core::Check(OCI_GetStatementCacheSize(*this));
+    }
+
+    inline void Connection::SetStatementCacheSize(UInt32 value)
+    {
+        core::Check(OCI_SetStatementCacheSize(*this, value));
+    }
+
+    inline UInt32 Connection::GetDefaultLobPrefetchSize() const
+    {
+        return core::Check(OCI_GetDefaultLobPrefetchSize(*this));
+    }
+
+    inline void Connection::SetDefaultLobPrefetchSize(UInt32 value)
+    {
+        core::Check(OCI_SetDefaultLobPrefetchSize(*this, value));
+    }
+
+    inline UInt32 Connection::GetMaxCursors() const
+    {
+        return core::Check(OCI_GetMaxCursors(*this));
+    }
+
+    inline bool Connection::IsTAFCapable() const
+    {
+        return (core::Check(OCI_IsTAFCapable(*this)) == TRUE);
+    }
+
+    inline void Connection::SetTAFHandler(TAFHandlerProc handler)
+    {
+        core::Check(OCI_SetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != nullptr ? Environment::TAFHandler : nullptr)));
+
+        Environment* env = Environment::GetInstance(GetEnvironment());
+        if (env)
+        {
+            env->SetUserCallback<Connection::TAFHandlerProc>(static_cast<OCI_Connection*>(*this), handler);
+        }
+    }
+
+    inline AnyPointer Connection::GetUserData()
+    {
+        return core::Check(OCI_GetUserData(*this));
+    }
+
+    inline void Connection::SetUserData(AnyPointer value)
+    {
+        core::Check(OCI_SetUserData(*this, value));
+    }
+
+    inline UInt32 Connection::GetTimeout(TimeoutType timeout)
+    {
+        return core::Check(OCI_GetTimeout(*this, timeout));
+    }
+
+    inline void Connection::SetTimeout(TimeoutType timeout, UInt32 value)
+    {
+        core::Check(OCI_SetTimeout(*this, timeout, value));
+    }
 
 }

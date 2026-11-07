@@ -25,38 +25,38 @@
 namespace ocilib
 {
 
-inline Agent::Agent(const Connection &connection, const String& name, const String& address)
-{
-    AcquireAllocated
-    (
-        core::Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())),
-        connection.GetHandle()
-    );
-}
+    inline Agent::Agent(const Connection &connection, const String& name, const String& address)
+    {
+        AcquireAllocated
+        (
+            core::Check(OCI_AgentCreate(connection, name.c_str(), address.c_str())),
+            connection.GetHandle()
+        );
+    }
 
-inline Agent::Agent(OCI_Agent *pAgent, core::Handle *parent)
-{
-    AcquireTransient(pAgent, parent);
-}
+    inline Agent::Agent(OCI_Agent *pAgent, core::Handle *parent)
+    {
+        AcquireTransient(pAgent, parent);
+    }
 
-inline String Agent::GetName() const
-{
-    return core::MakeString(core::Check(OCI_AgentGetName(*this)));
-}
+    inline String Agent::GetName() const
+    {
+        return core::MakeString(core::Check(OCI_AgentGetName(*this)));
+    }
 
-inline void Agent::SetName(const String& value)
-{
-    core::Check(OCI_AgentSetName(*this, value.c_str()));
-}
+    inline void Agent::SetName(const String& value)
+    {
+        core::Check(OCI_AgentSetName(*this, value.c_str()));
+    }
 
-inline String Agent::GetAddress() const
-{
-    return core::MakeString(core::Check(OCI_AgentGetAddress(*this)));
-}
+    inline String Agent::GetAddress() const
+    {
+        return core::MakeString(core::Check(OCI_AgentGetAddress(*this)));
+    }
 
-inline void Agent::SetAddress(const String& value)
-{
-    core::Check(OCI_AgentSetAddress(*this, value.c_str()));
-}
+    inline void Agent::SetAddress(const String& value)
+    {
+        core::Check(OCI_AgentSetAddress(*this, value.c_str()));
+    }
 
 }

@@ -22,60 +22,57 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
 
-inline ShardingKey::ShardingKey(Environment& env)
-{
-    AcquireAllocated
-    (
-        core::Check(OCI_ShardingKeyCreate(env.GetHandle())),
-        env.GetEnvironmentHandle()
-    );
-}
+    inline ShardingKey::ShardingKey(Environment& env)
+    {
+        AcquireAllocated
+        (
+            core::Check(OCI_ShardingKeyCreate(env.GetHandle())),
+            env.GetEnvironmentHandle()
+        );
+    }
 
-template<class T>
-inline void ShardingKey::AddColumn(const T& value)
-{
-    using U = std::decay_t<T>;
+    template<class T>
+    inline void ShardingKey::AddColumn(const T& value)
+    {
+        using U = std::decay_t<T>;
 
-    if constexpr      (std::is_same_v<U, String>)
-    {
-        core::Check(OCI_ShardingKeyAddString(*this, value.c_str()));
+        if constexpr      (std::is_same_v<U, String>)
+        {
+            core::Check(OCI_ShardingKeyAddString(*this, value.c_str()));
+        }
+        else if constexpr (std::is_same_v<U, Number>)
+        {
+            core::Check(OCI_ShardingKeyAddNumber(*this, value));
+        }
+        else if constexpr (std::is_same_v<U, Date>)
+        {
+            core::Check(OCI_ShardingKeyAddDate(*this, value));
+        }
+        else if constexpr (std::is_same_v<U, Timestamp>)
+        {
+            core::Check(OCI_ShardingKeyAddTimestamp(*this, value));
+        }
+        else if constexpr (std::is_same_v<U, std::vector<unsigned char> >)
+        {
+            core::Check(OCI_ShardingKeyAddRaw(*this, value.data(), static_cast<OCI_UInt32>(value.size())));
+        }
+        else
+        {
+            static_assert(!sizeof(U*), "Unsupported sharding key column type");
+        }
     }
-    else if constexpr (std::is_same_v<U, Number>)
-    {
-        core::Check(OCI_ShardingKeyAddNumber(*this, value));
-    }
-    else if constexpr (std::is_same_v<U, Date>)
-    {
-        core::Check(OCI_ShardingKeyAddDate(*this, value));
-    }
-    else if constexpr (std::is_same_v<U, Timestamp>)
-    {
-        core::Check(OCI_ShardingKeyAddTimestamp(*this, value));
-    }
-    else if constexpr (std::is_same_v<U, std::vector<unsigned char>>)
-    {
-        core::Check(OCI_ShardingKeyAddRaw(*this, value.data(), static_cast<OCI_UInt32>(value.size())));
-    }
-    else
-    {
-        static_assert(!sizeof(U*), "Unsupported sharding key column type");
-    }
-}
 
-inline void ShardingKey::Reset()
-{
-    core::Check(OCI_ShardingKeyReset(*this));
-}
+    inline void ShardingKey::Reset()
+    {
+        core::Check(OCI_ShardingKeyReset(*this));
+    }
 
-inline String ShardingKey::ToString() const
-{
-    return core::MakeString(core::Check(OCI_ShardingKeyToText(*this)));
-}
+    inline String ShardingKey::ToString() const
+    {
+        return core::MakeString(core::Check(OCI_ShardingKeyToText(*this)));
+    }
 
 }

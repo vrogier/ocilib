@@ -131,7 +131,10 @@ void OcilibThreadsTssDelete
 void OcilibThreadsCallOnce
 (
     once_flag *flag,
-    void (*func)(void)
+    void     (*func)
+    (
+        void
+    )
 )
 {
     pthread_once(flag, func);

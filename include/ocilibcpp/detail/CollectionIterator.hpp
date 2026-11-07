@@ -22,149 +22,147 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyCertOop54Cpp
-
 namespace ocilib
 {
 
-template<class T>
-CollectionIterator<T>::CollectionIterator() : _elem()
-{
-
-}
-
-template<class T>
-CollectionIterator<T>::CollectionIterator(CollectionType *collection, UInt32 pos) : _elem(collection, pos)
-{
-
-}
-
-template<class T>
-CollectionIterator<T>::CollectionIterator(const CollectionIterator& other) : _elem(other._elem)
-{
-
-}
-
-template<class T>
-CollectionIterator<T>& CollectionIterator<T>::operator = (const CollectionIterator& other)
-{
-    if (this != &other)
+    template<class T>
+    CollectionIterator<T>::CollectionIterator() : _elem()
     {
-        _elem._pos = other._elem._pos;
-        _elem._coll = other._elem._coll;
+
     }
 
-    return *this;
-}
+    template<class T>
+    CollectionIterator<T>::CollectionIterator(CollectionType *collection, UInt32 pos) : _elem(collection, pos)
+    {
 
-template<class T>
-CollectionIterator<T>& CollectionIterator<T>::operator += (difference_type value)
-{
-    _elem._pos += static_cast<UInt32>(value);
-    return *this;
-}
+    }
 
-template<class T>
-CollectionIterator<T>& CollectionIterator<T>::operator -= (difference_type value)
-{
-    _elem._pos -= static_cast<UInt32>(value);
-    return *this;
-}
+    template<class T>
+    CollectionIterator<T>::CollectionIterator(const CollectionIterator& other) : _elem(other._elem)
+    {
 
-template<class T>
-T& CollectionIterator<T>::operator*()
-{
-    return _elem;
-}
+    }
 
-template<class T>
-T* CollectionIterator<T>::operator->()
-{
-    return &_elem;
-}
+    template<class T>
+    CollectionIterator<T>& CollectionIterator<T>::operator = (const CollectionIterator& other)
+    {
+        if (this != &other)
+        {
+            _elem._pos = other._elem._pos;
+            _elem._coll = other._elem._coll;
+        }
 
-template<class T>
-CollectionIterator<T>& CollectionIterator<T>::operator--()
-{
-    --_elem._pos;
-    return *this;
-}
+        return *this;
+    }
 
-template<class T>
-CollectionIterator<T>& CollectionIterator<T>::operator++()
-{
-    ++*(const_cast<UInt32*>(&_elem._pos));
-    return *this;
-}
+    template<class T>
+    CollectionIterator<T>& CollectionIterator<T>::operator += (difference_type value)
+    {
+        _elem._pos += static_cast<UInt32>(value);
+        return *this;
+    }
 
-template<class T>
-CollectionIterator<T> CollectionIterator<T>::operator++(Int32)
-{
-    CollectionIterator res(_elem._coll, _elem._pos);
-    ++(*this);
-    return res;
-}
+    template<class T>
+    CollectionIterator<T>& CollectionIterator<T>::operator -= (difference_type value)
+    {
+        _elem._pos -= static_cast<UInt32>(value);
+        return *this;
+    }
 
-template<class T>
-CollectionIterator<T> CollectionIterator<T>::operator--(Int32)
-{
-    CollectionIterator res(_elem);
-    --(*this);
-    return res;
-}
+    template<class T>
+    T& CollectionIterator<T>::operator*()
+    {
+        return _elem;
+    }
 
-template<class T>
-CollectionIterator<T>  CollectionIterator<T>::operator + (difference_type value)
-{
-    return CollectionIterator(_elem._coll, _elem._pos + static_cast<UInt32>(value));
-}
+    template<class T>
+    T* CollectionIterator<T>::operator->()
+    {
+        return &_elem;
+    }
 
-template<class T>
-CollectionIterator<T> CollectionIterator<T>::operator - (difference_type value)
-{
-    return CollectionIterator(_elem._coll, _elem._pos - static_cast<UInt32>(value));
-}
+    template<class T>
+    CollectionIterator<T>& CollectionIterator<T>::operator--()
+    {
+        --_elem._pos;
+        return *this;
+    }
 
-template<class T>
-typename CollectionIterator<T>::difference_type CollectionIterator<T>::operator - (const CollectionIterator & other)
-{
-    return static_cast<difference_type>(_elem._pos - other._elem._pos);
-}
+    template<class T>
+    CollectionIterator<T>& CollectionIterator<T>::operator++()
+    {
+        ++*(const_cast<UInt32*>(&_elem._pos));
+        return *this;
+    }
 
-template<class T>
-bool CollectionIterator<T>::operator == (const CollectionIterator& other)
-{
-    return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(*_elem._coll)) == (static_cast<OCI_Coll *>(*other._elem._coll));
-}
+    template<class T>
+    CollectionIterator<T> CollectionIterator<T>::operator++(Int32)
+    {
+        CollectionIterator res(_elem._coll, _elem._pos);
+        ++(*this);
+        return res;
+    }
 
-template<class T>
-bool CollectionIterator<T>::operator != (const CollectionIterator& other)
-{
-    return !(*this == other);
-}
+    template<class T>
+    CollectionIterator<T> CollectionIterator<T>::operator--(Int32)
+    {
+        CollectionIterator res(_elem);
+        --(*this);
+        return res;
+    }
 
-template<class T>
-bool CollectionIterator<T>::operator > (const CollectionIterator& other)
-{
-    return _elem._pos > other._elem._pos;
-}
+    template<class T>
+    CollectionIterator<T>  CollectionIterator<T>::operator + (difference_type value)
+    {
+        return CollectionIterator(_elem._coll, _elem._pos + static_cast<UInt32>(value));
+    }
 
-template<class T>
-bool CollectionIterator<T>::operator < (const CollectionIterator& other)
-{
-    return _elem._pos < other._elem._pos;
-}
+    template<class T>
+    CollectionIterator<T> CollectionIterator<T>::operator - (difference_type value)
+    {
+        return CollectionIterator(_elem._coll, _elem._pos - static_cast<UInt32>(value));
+    }
 
-template<class T>
-bool CollectionIterator<T>::operator >= (const CollectionIterator& other)
-{
-    return _elem._pos >= other._elem._pos;
-}
+    template<class T>
+    typename CollectionIterator<T>::difference_type CollectionIterator<T>::operator - (const CollectionIterator & other)
+    {
+        return static_cast<difference_type>(_elem._pos - other._elem._pos);
+    }
 
-template<class T>
-bool CollectionIterator<T>::operator <= (const CollectionIterator& other)
-{
-    return _elem._pos <= other._elem._pos;
-}
+    template<class T>
+    bool CollectionIterator<T>::operator == (const CollectionIterator& other)
+    {
+        return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(*_elem._coll)) == (static_cast<OCI_Coll *>(*other._elem._coll));
+    }
+
+    template<class T>
+    bool CollectionIterator<T>::operator != (const CollectionIterator& other)
+    {
+        return !(*this == other);
+    }
+
+    template<class T>
+    bool CollectionIterator<T>::operator > (const CollectionIterator& other)
+    {
+        return _elem._pos > other._elem._pos;
+    }
+
+    template<class T>
+    bool CollectionIterator<T>::operator < (const CollectionIterator& other)
+    {
+        return _elem._pos < other._elem._pos;
+    }
+
+    template<class T>
+    bool CollectionIterator<T>::operator >= (const CollectionIterator& other)
+    {
+        return _elem._pos >= other._elem._pos;
+    }
+
+    template<class T>
+    bool CollectionIterator<T>::operator <= (const CollectionIterator& other)
+    {
+        return _elem._pos <= other._elem._pos;
+    }
 
 }

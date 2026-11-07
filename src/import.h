@@ -27,15 +27,9 @@
    By example, the file orid.h is not protected !
 */
 
-  #ifdef __cplusplus
-    #define OCI_EXTERN_C_OPEN  extern "C" {
-    #define OCI_EXTERN_C_CLOSE }
-  #else
-    #define OCI_EXTERN_C_OPEN
-    #define OCI_EXTERN_C_CLOSE
-  #endif /* __cplusplus */
-
-OCI_EXTERN_C_OPEN
+#ifdef __cplusplus
+extern "C" {
+#endif  /* __cplusplus */
 
   #include <oci.h>
   #include <orid.h>
@@ -47,7 +41,7 @@ OCI_EXTERN_C_OPEN
     #include <jzndom.h>
   #endif
 
-  /* the Json DOM API public names changed between OCI versions:
+/* the Json DOM API public names changed between OCI versions:
      map the legacy names used in the code to the newer ones      */
   #if defined(JsonDomCreateObject) && !defined(JsonDomNewObject)
     #define JsonDomNewObject(jd, sz)        JsonDomCreateObject(jd)
@@ -59,35 +53,34 @@ OCI_EXTERN_C_OPEN
     #define JsonDomPutItem(jd, ar, ix, nd)  JsonDomAddElement(jd, ar, nd, ix)
   #endif
 
-  /* the real jzndom.h exposes the same jznDomDoc method table but with
+/* the real jzndom.h exposes the same jznDomDoc method table but with
      different public macro names/arity than the vendored oci/jsondom.h.
      Map the helper forms used by OCILIB onto the underlying jznDomAPI
      methods so the same call sites compile in both import modes.       */
   #if defined(JsonDomGetFields)
     #undef JsonDomGetError
     #define JsonDomGetError(jd, jerr, clr) \
-        ((jd)->mthds_jznDomDoc->jznDomGetError((jd), (jerr), (clr)))
+            ((jd)->mthds_jznDomDoc->jznDomGetError((jd), (jerr), (clr)))
     #undef JsonDomInsertElements
     #define JsonDomInsertElements(jd, ary, pos, node) \
-        ((jd)->mthds_jznDomDoc->jznDomPutItem((jd), (ary), (node), (pos)))
+            ((jd)->mthds_jznDomDoc->jznDomPutItem((jd), (ary), (node), (pos)))
     #if !defined(JsonDomDeleteItem)
       #define JsonDomDeleteItem(jd, ary, pos) \
-          ((jd)->mthds_jznDomDoc->jznDomDeleteItem((jd), (ary), (pos)))
+              ((jd)->mthds_jznDomDoc->jznDomDeleteItem((jd), (ary), (pos)))
     #endif
     #if !defined(JsonDomDeleteItems)
       #define JsonDomDeleteItems(jd, ary, pos, num) \
-          ((jd)->mthds_jznDomDoc->jznDomDeleteItemBatch((jd), (ary), (pos), (num)))
+              ((jd)->mthds_jznDomDoc->jznDomDeleteItemBatch((jd), (ary), (pos), (num)))
     #endif
     #if !defined(JsonDomGetFieldPos)
       #define JsonDomGetFieldPos(jd, obj, fname, fnlen) \
-          ((jd)->mthds_jznDomDoc->jznDomGetFieldByName((jd), (obj), (fname), (fnlen)))
+              ((jd)->mthds_jznDomDoc->jznDomGetFieldByName((jd), (obj), (fname), (fnlen)))
     #endif
   #endif
 
-OCI_EXTERN_C_CLOSE
-
-  #undef OCI_EXTERN_C_OPEN
-  #undef OCI_EXTERN_C_CLOSE
+#ifdef  __cplusplus
+}
+#endif
 
   #ifdef _MSC_VER
     #pragma comment(lib, "oci.lib")

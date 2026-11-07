@@ -186,8 +186,8 @@ OCI_Agent * OcilibDequeueListen
     OCIAQAgent *handle = NULL;
 
     OCI_CALL(ret, OCIAQListen, dequeue->typinf->con->handle, dequeue->typinf->con->err,
-                                                       dequeue->agent_list, (ub4) dequeue->agent_count,
-                                                       (sb4) timeout, &handle, OCI_DEFAULT);
+             dequeue->agent_list, (ub4) dequeue->agent_count,
+             (sb4) timeout, &handle, OCI_DEFAULT);
 
     /* check returned error code */
 
@@ -196,7 +196,7 @@ OCI_Agent * OcilibDequeueListen
         OCI_ERROR_GET(dequeue->typinf->con->err, &code, NULL, 0);
 
         /* raise error only if the call has not been timed out */
-            
+
         if (OCI_ERR_AQ_LISTEN_TIMEOUT != code)
         {
             THROW(OcilibExceptionOCI, dequeue->typinf->con->err, ret);
@@ -286,9 +286,9 @@ OCI_Msg * OcilibDequeueGetMessage
         void* name = attempt_count == 1 ? (void*)dbstr : (void*) ansi_queue_name;
 
         OCI_CALL(ret, OCIAQDeq, dequeue->typinf->con->handle, dequeue->typinf->con->err,
-                                                       (OraText *)name, dequeue->handle, dequeue->msg->handle,
-                                                       dequeue->typinf->handle, &dequeue->msg->payload,
-                                                       (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
+                 (OraText *)name, dequeue->handle, dequeue->msg->handle,
+                 dequeue->typinf->handle, &dequeue->msg->payload,
+                 (void **) &p_ind, &dequeue->msg->id, OCI_DEFAULT);
 
         /* check returned error code */
 
@@ -528,10 +528,8 @@ OCI_Boolean OcilibDequeueGetRelativeMsgID
 
         OCI_CALL(rawptr, OCIRawPtr, dequeue->typinf->con->env->handle, value);
 
-        
         CHECK_NULL(rawptr);
 
-        
         memcpy(id, rawptr, (OCI_Size) (*len));
     }
     else

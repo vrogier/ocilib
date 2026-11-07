@@ -315,7 +315,7 @@ OCI_Boolean OcilibMemoryFreeHandle
     );
 
     CHECK_NULL(hndlp);
-   
+
     sword ret;
 
     OCI_CALL(ret, OCIHandleFree, hndlp, type);

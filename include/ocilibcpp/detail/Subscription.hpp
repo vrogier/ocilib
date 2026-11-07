@@ -22,9 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
- // ReSharper disable CppClangTidyHicppUseEqualsDefault
- // ReSharper disable CppClangTidyPerformanceUnnecessaryValueParam
-
 namespace ocilib
 {
 
@@ -38,7 +35,8 @@ namespace ocilib
         AcquireTransient(pSubscription, static_cast<core::Handle*>(nullptr));
     }
 
-    inline void Subscription::Register(const Connection& connection, const String& name, ChangeTypes changeTypes, NotifyHandlerProc handler, SubscriptionMode mode, UInt32 timeout)
+    inline void Subscription::Register(const Connection& connection, const String& name, ChangeTypes changeTypes, NotifyHandlerProc handler,
+                                       SubscriptionMode mode, UInt32 timeout)
     {
         AcquireAllocated
         (
@@ -75,7 +73,7 @@ namespace ocilib
     inline void Subscription::Watch(const String& sql)
     {
         Connection connection = GetConnection();
-        Statement st(core::Check(OCI_StatementCreate(connection)), connection.GetHandle());
+        Statement  st(core::Check(OCI_StatementCreate(connection)), connection.GetHandle());
 
         st.Execute(sql);
 
@@ -99,11 +97,11 @@ namespace ocilib
         core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : GetHandle();
 
         return Connection
-        (
-            core::Check(OCI_SubscriptionGetConnection(*this)),
-            connectionParent,
-            false
-        );
+               (
+                   core::Check(OCI_SubscriptionGetConnection(*this)),
+                   connectionParent,
+                   false
+               );
     }
 
 }

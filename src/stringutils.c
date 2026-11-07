@@ -376,11 +376,11 @@ void OcilibStringReleaseDBString
 dbtext* OcilibStringGetDBAnsiString
 (
     OCI_Environment* env,
-    const otext* src,
-    OCI_Int32* size
+    const otext    * src,
+    OCI_Int32      * size
 )
 {
-    dbtext* dst = NULL;
+    dbtext  * dst = NULL;
     OCI_Int32 len = 0;
 
     if (!src)
@@ -401,7 +401,7 @@ dbtext* OcilibStringGetDBAnsiString
     if (env && env->charset == OCI_CHAR_WIDE)
     {
         dst = (dbtext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(dbtext),
-            (OCI_Size)(len + 1), FALSE);
+                                         (OCI_Size)(len + 1), FALSE);
 
         if (NULL != dst)
         {
@@ -425,7 +425,7 @@ dbtext* OcilibStringGetDBAnsiString
 void OcilibStringReleaseDBAnsiString
 (
     OCI_Environment* env,
-    dbtext* str
+    dbtext         * str
 )
 {
     if (env && env->charset == OCI_CHAR_WIDE && NULL != str)

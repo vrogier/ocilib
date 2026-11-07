@@ -22,9 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
     inline Json::Json()
@@ -55,8 +52,8 @@ namespace ocilib
     inline void Json::LoadText(const otext* text, UInt32 length, JsonValidation validation, JsonEncoding encoding)
     {
         core::Check(OCI_JsonLoadText(*this, text, length,
-            static_cast<UInt32>(validation.GetValues()),
-            static_cast<UInt32>(encoding)));
+                                     static_cast<UInt32>(validation.GetValues()),
+                                     static_cast<UInt32>(encoding)));
     }
 
     inline void Json::LoadBinary(const void* data, UInt32 length)
@@ -71,7 +68,7 @@ namespace ocilib
 
     inline bool Json::Validate(const Json& schema, Json& errors) const
     {
-        OCI_Json* errdoc = NULL;
+        OCI_Json * errdoc = NULL;
         const bool valid = core::Check(OCI_JsonValidate(*this, schema, &errdoc));
 
         errors = errdoc;
@@ -88,14 +85,14 @@ namespace ocilib
         UInt32 size = 0;
 
         core::Check(OCI_JsonToText(*this, NULL, &size,
-            static_cast<UInt32>(print.GetValues())));
+                                   static_cast<UInt32>(print.GetValues())));
 
         UInt32 maxSize = size + 1;
         String result;
         result.resize(static_cast<Size>(maxSize));
 
         core::Check(OCI_JsonToText(*this, &result[0], &maxSize,
-            static_cast<UInt32>(print.GetValues())));
+                                   static_cast<UInt32>(print.GetValues())));
 
         result.resize(static_cast<Size>(maxSize));
 

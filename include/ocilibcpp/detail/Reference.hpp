@@ -22,92 +22,89 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
 
-inline Reference::Reference()
-{
-}
-
-inline Reference::Reference(const TypeInfo &typeInfo)
-{
-    Connection connection = typeInfo.GetConnection();
-    AcquireAllocated
-    (
-        core::Check(OCI_RefCreate(typeInfo)),
-        connection.GetHandle()
-    );
-}
-
-inline Reference::Reference(OCI_Ref *pRef, core::Handle *parent)
-{
-    AcquireTransient(pRef, parent);
-}
-
-inline TypeInfo Reference::GetTypeInfo() const
-{
-    OCI_TypeInfo* typeInfo = core::Check(OCI_RefGetTypeInfo(*this));
-
-    Connection connection
-    (
-        core::Check(OCI_TypeInfoGetConnection(typeInfo)),
-        GetHandle(),
-        false
-    );
-
-    return TypeInfo(typeInfo, connection.GetHandle());
-}
-
-inline Object Reference::GetObject() const
-{
-    return Object(core::Check(OCI_RefGetObject(*this)), GetHandle());
-}
-
-inline Reference Reference::Clone() const
-{
-    Reference result;
-    TypeInfo typeInfo = GetTypeInfo();
-    Connection connection = typeInfo.GetConnection();
-    result.AcquireAllocated
-    (
-        core::Check(OCI_RefCreate(typeInfo)),
-        connection.GetHandle()
-    );
-
-    core::Check(OCI_RefAssign(result, *this));
-
-    return result;
-}
-
-inline bool Reference::IsReferenceNull() const
-{
-    return (core::Check(OCI_RefIsNull(*this)) == TRUE);
-}
-
-inline void Reference::SetReferenceNull()
-{
-    core::Check(OCI_RefSetNull(*this));
-}
-
-inline String Reference::ToString() const
-{
-    if (!IsNull())
+    inline Reference::Reference()
     {
-        const UInt32 size = core::Check(OCI_RefGetHexSize(*this));
+    }
 
-        String result;
+    inline Reference::Reference(const TypeInfo &typeInfo)
+    {
+        Connection connection = typeInfo.GetConnection();
+        AcquireAllocated
+        (
+            core::Check(OCI_RefCreate(typeInfo)),
+            connection.GetHandle()
+        );
+    }
 
-        result.resize(static_cast<Size>(size));
+    inline Reference::Reference(OCI_Ref *pRef, core::Handle *parent)
+    {
+        AcquireTransient(pRef, parent);
+    }
 
-        core::Check(OCI_RefToText(*this, size, const_cast<otext*>(result.data())));
+    inline TypeInfo Reference::GetTypeInfo() const
+    {
+        OCI_TypeInfo* typeInfo = core::Check(OCI_RefGetTypeInfo(*this));
+
+        Connection connection
+        (
+            core::Check(OCI_TypeInfoGetConnection(typeInfo)),
+            GetHandle(),
+            false
+        );
+
+        return TypeInfo(typeInfo, connection.GetHandle());
+    }
+
+    inline Object Reference::GetObject() const
+    {
+        return Object(core::Check(OCI_RefGetObject(*this)), GetHandle());
+    }
+
+    inline Reference Reference::Clone() const
+    {
+        Reference  result;
+        TypeInfo   typeInfo = GetTypeInfo();
+        Connection connection = typeInfo.GetConnection();
+        result.AcquireAllocated
+        (
+            core::Check(OCI_RefCreate(typeInfo)),
+            connection.GetHandle()
+        );
+
+        core::Check(OCI_RefAssign(result, *this));
 
         return result;
     }
 
-    return OCI_STRING_NULL;
-}
+    inline bool Reference::IsReferenceNull() const
+    {
+        return (core::Check(OCI_RefIsNull(*this)) == TRUE);
+    }
+
+    inline void Reference::SetReferenceNull()
+    {
+        core::Check(OCI_RefSetNull(*this));
+    }
+
+    inline String Reference::ToString() const
+    {
+        if (!IsNull())
+        {
+            const UInt32 size = core::Check(OCI_RefGetHexSize(*this));
+
+            String result;
+
+            result.resize(static_cast<Size>(size));
+
+            core::Check(OCI_RefToText(*this, size, const_cast<otext*>(result.data())));
+
+            return result;
+        }
+
+        return OCI_STRING_NULL;
+    }
 
 }

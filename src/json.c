@@ -414,7 +414,6 @@ OCI_Boolean OcilibJsonToText
     CHECK_PTR(OCI_IPC_CONNECTION, json->con);
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
 
-
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
     do
@@ -926,7 +925,6 @@ OCI_Boolean OcilibJsonValidate
         json->con->err,
         OCI_DEFAULT
     );
-
 
     OCI_JsonNode *root  = OcilibJsonGetRoot(errdoc);
     OCI_JsonNode *vflag = (NULL == root)  ? NULL : OcilibJsonNodeGetFieldByName(root, OTEXT("valid"));

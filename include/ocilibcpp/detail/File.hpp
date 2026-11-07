@@ -22,9 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
- // ReSharper disable CppClangTidyHicppUseEqualsDefault
- // ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
 
@@ -110,11 +107,11 @@ namespace ocilib
         core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : GetHandle();
 
         return Connection
-        (
-            core::Check(OCI_FileGetConnection(*this)),
-            connectionParent,
-            false
-        );
+               (
+                   core::Check(OCI_FileGetConnection(*this)),
+                   connectionParent,
+                   false
+               );
     }
 
     inline bool File::Exists() const

@@ -27,14 +27,6 @@
 #include "ocilibcpp/core.hpp"
 #include "ocilibcpp/support.hpp"
 
- // ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
- // ReSharper disable CppClangTidyModernizeUseNodiscard
- // ReSharper disable CppClangTidyHicppSpecialMemberFunctions
- // ReSharper disable CppClangTidyReadabilityRedundantDeclaration
- // ReSharper disable CppFunctionIsNotImplemented
- // ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
- // ReSharper disable CppClassCanBeFinal
-
 namespace ocilib
 {
 
@@ -85,15 +77,15 @@ namespace ocilib
     enum DataTypeValues
     {
         /** NUMERIC */
-        TypeNumeric = OCI_CDT_NUMERIC,
+        TypeNumeric    = OCI_CDT_NUMERIC,
         /** DATE */
         TypeDate = OCI_CDT_DATETIME,
         /** TEXT */
-        TypeString = OCI_CDT_TEXT,
+        TypeString     = OCI_CDT_TEXT,
         /** LONG / LONG RAW */
         TypeLong = OCI_CDT_LONG,
         /** SQL CURSOR */
-        TypeStatement = OCI_CDT_CURSOR,
+        TypeStatement  = OCI_CDT_CURSOR,
         /** CLOB or BLOB */
         TypeLob = OCI_CDT_LOB,
         /** FILE */
@@ -101,21 +93,21 @@ namespace ocilib
         /** TIMESTAMP */
         TypeTimestamp = OCI_CDT_TIMESTAMP,
         /** INTERVAL */
-        TypeInterval = OCI_CDT_INTERVAL,
+        TypeInterval   = OCI_CDT_INTERVAL,
         /** RAW */
         TypeRaw = OCI_CDT_RAW,
         /** Object type */
-        TypeObject = OCI_CDT_OBJECT,
+        TypeObject     = OCI_CDT_OBJECT,
         /** Collection  */
         TypeCollection = OCI_CDT_COLLECTION,
         /** Object REF */
-        TypeReference = OCI_CDT_REF,
+        TypeReference  = OCI_CDT_REF,
         /** PL/SQL boolean */
-        TypeBoolean = OCI_CDT_BOOLEAN,
+        TypeBoolean    = OCI_CDT_BOOLEAN,
         /** XMLTYPE */
-        TypeXmlType = OCI_CDT_XMLTYPE,
+        TypeXmlType    = OCI_CDT_XMLTYPE,
         /** VECTOR */
-        TypeVector = OCI_CDT_VECTOR,
+        TypeVector     = OCI_CDT_VECTOR,
         /** JSON */
         TypeJson = OCI_CDT_JSON
     };
@@ -137,7 +129,7 @@ namespace ocilib
     enum NumericTypeValues
     {
         /** Signed Int16 */
-        NumericShort = OCI_NUM_SHORT,
+        NumericShort  = OCI_NUM_SHORT,
         /** Signed Integer */
         NumericInt = OCI_NUM_INT,
         /** Signed Big Integer (Integer or Long Integer depending on the compiler )*/
@@ -151,7 +143,7 @@ namespace ocilib
         /** Double  */
         NumericDouble = OCI_NUM_DOUBLE,
         /** Float */
-        NumericFloat = OCI_NUM_FLOAT,
+        NumericFloat  = OCI_NUM_FLOAT,
         /** Number */
         NumericNumber = OCI_NUM_NUMBER
     };
@@ -173,7 +165,7 @@ namespace ocilib
     enum CharsetFormValues
     {
         /** Database character set will be converted to the server national character set */
-        CharsetFormDefault = OCI_CSF_DEFAULT,
+        CharsetFormDefault  = OCI_CSF_DEFAULT,
         /** Client national character set will be converted to the server national character set */
         CharsetFormNational = OCI_CSF_NATIONAL
     };
@@ -231,7 +223,6 @@ namespace ocilib
     */
     typedef core::Enum<CollationIDValues> CollationID;
 
-
     /**
     * @brief
     * Seek Modes enumerated values
@@ -243,7 +234,8 @@ namespace ocilib
         SeekSet = OCI_SEEK_SET,
         /** Set the current position within the stream begin position */
         SeekEnd = OCI_SEEK_END,
-        /** Set the current position within the stream to the given value offset from the current position */
+        /** Set the current position within the stream to the given value offset from the current
+         * position */
         SeekOffset = OCI_SEEK_CUR
     };
 
@@ -264,7 +256,7 @@ namespace ocilib
     enum OpenModeValues
     {
         /** Stream is opened for read access */
-        ReadOnly = OCI_LOB_READONLY,
+        ReadOnly  = OCI_LOB_READONLY,
         /** Stream is opened for read / write access */
         ReadWrite = OCI_LOB_READWRITE
     };
@@ -362,9 +354,9 @@ namespace ocilib
      */
     class Exception : public std::exception
     {
-        template<class T>
-        friend T core::Check(T result);
-        friend class Statement;
+    template<class T>
+    friend T core::Check(T result);
+    friend class Statement;
 
     public:
 
@@ -376,7 +368,7 @@ namespace ocilib
         enum ExceptionTypeValues
         {
             /** Exception type: error */
-            Error   = OCI_ERR_TYPE_ERROR,
+            Error = OCI_ERR_TYPE_ERROR,
             /** Exception type: warning */
             Warning = OCI_ERR_TYPE_WARNING
         };
@@ -389,11 +381,11 @@ namespace ocilib
         enum ExceptionCategoryValues
         {
             /** Exception caused by an Oracle OCI layer error */
-            OracleError   = OCI_ERR_CAT_OCI,
+            OracleError = OCI_ERR_CAT_OCI,
             /** Exception caused by an Ocilib internal error */
-            OcilibError   = OCI_ERR_CAT_LIB,
+            OcilibError = OCI_ERR_CAT_LIB,
             /** Exception caused by an Oracle JSON DOM (JZN) error */
-            JsonError     = OCI_ERR_CAT_JZN
+            JsonError = OCI_ERR_CAT_JZN
         };
 
         /**
@@ -522,31 +514,31 @@ namespace ocilib
      */
     class Environment
     {
-        friend class Connection;
-        friend class Pool;
-        friend class ShardingKey;
-        friend class TypeInfo;
-        friend class Subscription;
-        friend class Dequeue;
-        friend class Date;
-        friend class Timestamp;
-        friend class Number;
-        friend class Interval;
-        friend class Agent;
-        friend class Transaction;
-        friend class Exception;
-        friend class File;
-        friend class Log;
-        friend class Statement;
-        friend class Object;
-        friend class Reference;
-        friend class Message;
-        friend class Event;
-        friend class Column;
-        template<class, Int32>
-        friend class Lob;
+    friend class Connection;
+    friend class Pool;
+    friend class ShardingKey;
+    friend class TypeInfo;
+    friend class Subscription;
+    friend class Dequeue;
+    friend class Date;
+    friend class Timestamp;
+    friend class Number;
+    friend class Interval;
+    friend class Agent;
+    friend class Transaction;
+    friend class Exception;
+    friend class File;
+    friend class Log;
+    friend class Statement;
+    friend class Object;
+    friend class Reference;
+    friend class Message;
+    friend class Event;
+    friend class Column;
+    template<class, Int32>
+    friend class Lob;
 
-        friend class core::HandleStore;
+    friend class core::HandleStore;
 
     public:
 
@@ -558,7 +550,7 @@ namespace ocilib
         enum EnvironmentFlagsValues
         {
             /** Default mode */
-            Default = OCI_ENV_DEFAULT,
+            Default  = OCI_ENV_DEFAULT,
             /** Enable support for multi-threading */
             Threaded = OCI_ENV_THREADED,
             /** Enable support for events related to subscriptions, HA and AQ notifications */
@@ -594,7 +586,7 @@ namespace ocilib
          *
          */
         Environment(EnvironmentFlags mode = Environment::Default, const String& libpath = OTEXT(""));
-  
+
         /**
         * @brief
         * Clean up all resources allocated by the environment
@@ -610,7 +602,6 @@ namespace ocilib
         */
         ~Environment();
 
-
         /**
         * @brief
         * HA Event sources enumerated values
@@ -625,7 +616,7 @@ namespace ocilib
             /** The event has been generated by an Oracle Node */
             SourceNode = OCI_HES_NODE,
             /** The event has been generated by an Oracle service */
-            SourceService = OCI_HES_SERVICE,
+            SourceService  = OCI_HES_SERVICE,
             /** The event has been generated by an Oracle service member */
             SourceServiceMember = OCI_HES_SERVICE_MEMBER,
             /** The event has been generated by an Oracle ASM instance */
@@ -719,19 +710,19 @@ namespace ocilib
             /** Default session mode */
             SessionDefault = OCI_SESSION_DEFAULT,
             /** the user is authenticated for SYSDBA access. */
-            SessionSysDba = OCI_SESSION_SYSDBA,
+            SessionSysDba  = OCI_SESSION_SYSDBA,
             /** the user is authenticated for SYSOPER access */
             SessionSysOper = OCI_SESSION_SYSOPER,
             /** the user is authenticated for SYSASM access */
-            SessionSysAsm = OCI_SESSION_SYSASM,
+            SessionSysAsm  = OCI_SESSION_SYSASM,
             /** the user is authenticated for SYSBKP access */
-            SessionSysBkp = OCI_SESSION_SYSBKP,
+            SessionSysBkp  = OCI_SESSION_SYSBKP,
             /** the user is authenticated for SYSDGD access */
-            SessionSysDgD = OCI_SESSION_SYSDGD,
+            SessionSysDgD  = OCI_SESSION_SYSDGD,
             /** the user is authenticated for SYSKMT access */
-            SessionSysKmt = OCI_SESSION_SYSKMT,
+            SessionSysKmt  = OCI_SESSION_SYSKMT,
             /** the user is authenticated for SYSRAC access */
-            SessionSysRac = OCI_SESSION_SYSRAC,
+            SessionSysRac  = OCI_SESSION_SYSRAC,
             /** the user is authenticated for PRELIM_AUTH access */
             SessionPreAuth = OCI_SESSION_PRELIM_AUTH
         };
@@ -753,13 +744,13 @@ namespace ocilib
         enum StartModeValues
         {
             /** Start the instance without mounting and opening it */
-            StartOnly = OCI_DB_SPM_START,
+            StartOnly  = OCI_DB_SPM_START,
             /** Mount (only) the instance */
             StartMount = OCI_DB_SPM_MOUNT,
             /** Open (only)  the instance */
-            StartOpen = OCI_DB_SPM_OPEN,
+            StartOpen  = OCI_DB_SPM_OPEN,
             /** Start, mount and open the instance */
-            StartFull = OCI_DB_SPM_FULL
+            StartFull  = OCI_DB_SPM_FULL
         };
 
         /**
@@ -779,10 +770,12 @@ namespace ocilib
         enum StartFlagsValues
         {
             /** Default start flags */
-            StartDefault = OCI_DB_SPF_DEFAULT,
-            /** Shuts down a running instance (if needed) using ABORT command and starts a new instance */
+            StartDefault  = OCI_DB_SPF_DEFAULT,
+            /** Shuts down a running instance (if needed) using ABORT command and starts a new
+             * instance */
             StartForce = OCI_DB_SPF_FORCE,
-            /** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION privileges */
+            /** Allows database access only to users with both CREATE SESSION and RESTRICTED SESSION
+             * privileges */
             StartRestrict = OCI_DB_SPF_RESTRICT
         };
 
@@ -803,13 +796,13 @@ namespace ocilib
         enum ShutdownModeValues
         {
             /** Shutdown the instance */
-            ShutdownOnly = OCI_DB_SDM_SHUTDOWN,
+            ShutdownOnly  = OCI_DB_SDM_SHUTDOWN,
             /** Close (only) the instance */
             ShutdownClose = OCI_DB_SDM_CLOSE,
             /** Dismount (only)  the instance */
             ShutdownDismount = OCI_DB_SDM_DISMOUNT,
             /** Shutdown, close and dismount the instance */
-            ShutdownFull = OCI_DB_SDM_FULL
+            ShutdownFull  = OCI_DB_SDM_FULL
         };
 
         /**
@@ -830,17 +823,21 @@ namespace ocilib
         {
             /**  - Further connects are prohibited.
               *  - Waits for users to disconnect from the database */
-            ShutdowntDefault = OCI_DB_SDF_DEFAULT,
+            ShutdowntDefault   = OCI_DB_SDF_DEFAULT,
+
             /**  - Further connects are prohibited
               *  - No new transactions are allowed. */
             ShutdowTrans = OCI_DB_SDF_TRANS,
+
             /**  - Further connects are prohibited
               *  - No new transactions are allowed.
               *  - Waits for active transactions to complete */
             ShutdownTransLocal = OCI_DB_SDF_TRANS_LOCAL,
+
             /**  - Does not wait for current calls to complete or users to disconnect from the database.
               *  - All uncommitted transactions are terminated and rolled back */
-            ShutdownImmediate = OCI_DB_SDF_IMMEDIATE,
+            ShutdownImmediate  = OCI_DB_SDF_IMMEDIATE,
+
             /**  - Does not wait for current calls to complete or users to disconnect from the database.
               *  - All uncommitted transactions are terminated and are not rolled back.
               *  - This is the fastest possible way to shut down the database, but the next
@@ -865,76 +862,76 @@ namespace ocilib
         */
         enum LocaleCodeValues
         {
-            LocaleDayname1 = OCI_LSI_DAYNAME1,
-            LocaleDayname2 = OCI_LSI_DAYNAME2,
-            LocaleDayname3 = OCI_LSI_DAYNAME3,
-            LocaleDayname4 = OCI_LSI_DAYNAME4,
-            LocaleDayname5 = OCI_LSI_DAYNAME5,
-            LocaleDayname6 = OCI_LSI_DAYNAME6,
-            LocaleDayname7 = OCI_LSI_DAYNAME7,
-            LocaleAbdayname1 = OCI_LSI_ABDAYNAME1,
-            LocaleAbdayname2 = OCI_LSI_ABDAYNAME2,
-            LocaleAbdayname3 = OCI_LSI_ABDAYNAME3,
-            LocaleAbdayname4 = OCI_LSI_ABDAYNAME4,
-            LocaleAbdayname5 = OCI_LSI_ABDAYNAME5,
-            LocaleAbdayname6 = OCI_LSI_ABDAYNAME6,
-            LocaleAbdayname7 = OCI_LSI_ABDAYNAME7,
-            LocaleMonthname1 = OCI_LSI_MONTHNAME1,
-            LocaleMonthname2 = OCI_LSI_MONTHNAME2,
-            LocaleMonthname3 = OCI_LSI_MONTHNAME3,
-            LocaleMonthname4 = OCI_LSI_MONTHNAME4,
-            LocaleMonthname5 = OCI_LSI_MONTHNAME5,
-            LocaleMonthname6 = OCI_LSI_MONTHNAME6,
-            LocaleMonthname7 = OCI_LSI_MONTHNAME7,
-            LocaleMonthname8 = OCI_LSI_MONTHNAME8,
-            LocaleMonthname9 = OCI_LSI_MONTHNAME9,
-            LocaleMonthname10 = OCI_LSI_MONTHNAME10,
-            LocaleMonthname11 = OCI_LSI_MONTHNAME11,
-            LocaleMonthname12 = OCI_LSI_MONTHNAME12,
-            LocaleAbmonthname1 = OCI_LSI_ABMONTHNAME1,
-            LocaleAbmonthname2 = OCI_LSI_ABMONTHNAME2,
-            LocaleAbmonthname3 = OCI_LSI_ABMONTHNAME3,
-            LocaleAbmonthname4 = OCI_LSI_ABMONTHNAME4,
-            LocaleAbmonthname5 = OCI_LSI_ABMONTHNAME5,
-            LocaleAbmonthname6 = OCI_LSI_ABMONTHNAME6,
-            LocaleAbmonthname7 = OCI_LSI_ABMONTHNAME7,
-            LocaleAbmonthname8 = OCI_LSI_ABMONTHNAME8,
-            LocaleAbmonthname9 = OCI_LSI_ABMONTHNAME9,
-            LocaleAbmonthname10 = OCI_LSI_ABMONTHNAME10,
-            LocaleAbmonthname11 = OCI_LSI_ABMONTHNAME11,
-            LocaleAbmonthname12 = OCI_LSI_ABMONTHNAME12,
+            LocaleDayname1       = OCI_LSI_DAYNAME1,
+            LocaleDayname2       = OCI_LSI_DAYNAME2,
+            LocaleDayname3       = OCI_LSI_DAYNAME3,
+            LocaleDayname4       = OCI_LSI_DAYNAME4,
+            LocaleDayname5       = OCI_LSI_DAYNAME5,
+            LocaleDayname6       = OCI_LSI_DAYNAME6,
+            LocaleDayname7       = OCI_LSI_DAYNAME7,
+            LocaleAbdayname1     = OCI_LSI_ABDAYNAME1,
+            LocaleAbdayname2     = OCI_LSI_ABDAYNAME2,
+            LocaleAbdayname3     = OCI_LSI_ABDAYNAME3,
+            LocaleAbdayname4     = OCI_LSI_ABDAYNAME4,
+            LocaleAbdayname5     = OCI_LSI_ABDAYNAME5,
+            LocaleAbdayname6     = OCI_LSI_ABDAYNAME6,
+            LocaleAbdayname7     = OCI_LSI_ABDAYNAME7,
+            LocaleMonthname1     = OCI_LSI_MONTHNAME1,
+            LocaleMonthname2     = OCI_LSI_MONTHNAME2,
+            LocaleMonthname3     = OCI_LSI_MONTHNAME3,
+            LocaleMonthname4     = OCI_LSI_MONTHNAME4,
+            LocaleMonthname5     = OCI_LSI_MONTHNAME5,
+            LocaleMonthname6     = OCI_LSI_MONTHNAME6,
+            LocaleMonthname7     = OCI_LSI_MONTHNAME7,
+            LocaleMonthname8     = OCI_LSI_MONTHNAME8,
+            LocaleMonthname9     = OCI_LSI_MONTHNAME9,
+            LocaleMonthname10    = OCI_LSI_MONTHNAME10,
+            LocaleMonthname11    = OCI_LSI_MONTHNAME11,
+            LocaleMonthname12    = OCI_LSI_MONTHNAME12,
+            LocaleAbmonthname1   = OCI_LSI_ABMONTHNAME1,
+            LocaleAbmonthname2   = OCI_LSI_ABMONTHNAME2,
+            LocaleAbmonthname3   = OCI_LSI_ABMONTHNAME3,
+            LocaleAbmonthname4   = OCI_LSI_ABMONTHNAME4,
+            LocaleAbmonthname5   = OCI_LSI_ABMONTHNAME5,
+            LocaleAbmonthname6   = OCI_LSI_ABMONTHNAME6,
+            LocaleAbmonthname7   = OCI_LSI_ABMONTHNAME7,
+            LocaleAbmonthname8   = OCI_LSI_ABMONTHNAME8,
+            LocaleAbmonthname9   = OCI_LSI_ABMONTHNAME9,
+            LocaleAbmonthname10  = OCI_LSI_ABMONTHNAME10,
+            LocaleAbmonthname11  = OCI_LSI_ABMONTHNAME11,
+            LocaleAbmonthname12  = OCI_LSI_ABMONTHNAME12,
             LocaleYes = OCI_LSI_YES,
             LocaleNo = OCI_LSI_NO,
             LocaleAm = OCI_LSI_AM,
             LocalePm = OCI_LSI_PM,
             LocaleAd = OCI_LSI_AD,
             LocaleBc = OCI_LSI_BC,
-            LocaleDecimal = OCI_LSI_DECIMAL,
+            LocaleDecimal        = OCI_LSI_DECIMAL,
             LocaleGroup = OCI_LSI_GROUP,
             LocaleDebit = OCI_LSI_DEBIT,
             LocaleCredit = OCI_LSI_CREDIT,
-            LocaleDateformat = OCI_LSI_DATEFORMAT,
+            LocaleDateformat     = OCI_LSI_DATEFORMAT,
             LocaleInt = OCI_LSI_INT_CURRENCY,
             LocaleLoc = OCI_LSI_LOC_CURRENCY,
-            LocaleLanguage = OCI_LSI_LANGUAGE,
-            LocaleAblanguage = OCI_LSI_ABLANGUAGE,
-            LocaleTerritory = OCI_LSI_TERRITORY,
-            LocaleCharacterSEt = OCI_LSI_CHARACTER_SET,
+            LocaleLanguage       = OCI_LSI_LANGUAGE,
+            LocaleAblanguage     = OCI_LSI_ABLANGUAGE,
+            LocaleTerritory      = OCI_LSI_TERRITORY,
+            LocaleCharacterSEt   = OCI_LSI_CHARACTER_SET,
             LocaleLinguisticName = OCI_LSI_LINGUISTIC_NAME,
-            LocaleCalendar = OCI_LSI_CALENDAR,
-            LocaleDualCurrency = OCI_LSI_DUAL_CURRENCY,
-            LocaleWritingdir = OCI_LSI_WRITINGDIR,
-            LocaleAbterritory = OCI_LSI_ABTERRITORY,
-            LocaleDdateformat = OCI_LSI_DDATEFORMAT,
-            LocaleDtimeformat = OCI_LSI_DTIMEFORMAT,
-            LocaleSfdateformat = OCI_LSI_SFDATEFORMAT,
-            LocaleSftimeformat = OCI_LSI_SFTIMEFORMAT,
-            LocaleNumgrouping = OCI_LSI_NUMGROUPING,
-            LocaleListsep = OCI_LSI_LISTSEP,
-            LocaleMondecimal = OCI_LSI_MONDECIMAL,
-            LocaleMongroup = OCI_LSI_MONGROUP,
-            LocaleMongrouping = OCI_LSI_MONGROUPING,
-            LocaleIntCurrenySep = OCI_LSI_INT_CURRENCYSEP
+            LocaleCalendar       = OCI_LSI_CALENDAR,
+            LocaleDualCurrency   = OCI_LSI_DUAL_CURRENCY,
+            LocaleWritingdir     = OCI_LSI_WRITINGDIR,
+            LocaleAbterritory    = OCI_LSI_ABTERRITORY,
+            LocaleDdateformat    = OCI_LSI_DDATEFORMAT,
+            LocaleDtimeformat    = OCI_LSI_DTIMEFORMAT,
+            LocaleSfdateformat   = OCI_LSI_SFDATEFORMAT,
+            LocaleSftimeformat   = OCI_LSI_SFTIMEFORMAT,
+            LocaleNumgrouping    = OCI_LSI_NUMGROUPING,
+            LocaleListsep        = OCI_LSI_LISTSEP,
+            LocaleMondecimal     = OCI_LSI_MONDECIMAL,
+            LocaleMongroup       = OCI_LSI_MONGROUP,
+            LocaleMongrouping    = OCI_LSI_MONGROUPING,
+            LocaleIntCurrenySep  = OCI_LSI_INT_CURRENCYSEP
         };
 
         /**
@@ -945,7 +942,7 @@ namespace ocilib
         *
         */
         typedef core::Enum<LocaleCodeValues> LocaleCode;
-        
+
         /**
         * @typedef HAHandlerProc
         *
@@ -953,7 +950,7 @@ namespace ocilib
         * User callback for HA event notifications
         *
         */
-        typedef void(*HAHandlerProc) (Connection& con, HAEventSource eventSource, HAEventType eventType, Timestamp& time);
+        typedef void (*HAHandlerProc) (Connection& con, HAEventSource eventSource, HAEventType eventType, Timestamp& time);
 
         /**
          * @brief
@@ -1151,11 +1148,8 @@ namespace ocilib
          * If the client side spfile is not provided, the database is started with its server-side spfile.
          *
          */
-        void StartDatabase(const String& db, const String& user, const String& pwd,
-            Environment::StartFlags startFlags,
-            Environment::StartMode startMode,
-            Environment::SessionFlags sessionFlags = SessionSysDba,
-            const String& spfile = OTEXT(""));
+        void StartDatabase(const String& db, const String& user, const String& pwd,Environment::StartFlags startFlags,Environment::StartMode startMode,
+                           Environment::SessionFlags sessionFlags = SessionSysDba,const String& spfile = OTEXT(""));
 
         /**
          * @brief
@@ -1182,10 +1176,8 @@ namespace ocilib
          * If the param 'db' is empty then a connection to the default local DB is done.
          *
          */
-        void ShutdownDatabase(const String& db, const String& user, const String& pwd,
-            Environment::ShutdownFlags shutdownFlags,
-            Environment::ShutdownMode shutdownMode,
-            Environment::SessionFlags sessionFlags = SessionSysDba);
+        void ShutdownDatabase(const String& db, const String& user, const String& pwd,Environment::ShutdownFlags shutdownFlags,
+                              Environment::ShutdownMode shutdownMode,Environment::SessionFlags sessionFlags = SessionSysDba);
 
         /**
          * @brief
@@ -1247,7 +1239,7 @@ namespace ocilib
 
         class EnvironmentHandle : core::HandleHolder<OCI_Environment*>
         {
-            friend class Environment;
+        friend class Environment;
         };
 
         static void HAHandler(OCI_Connection* pConnection, UInt32 source, UInt32 event, OCI_Timestamp* pTimestamp);
@@ -1285,7 +1277,7 @@ namespace ocilib
         [[nodiscard]] core::Handle* GetEnvironmentHandle() const;
 
         std::mutex _callbacksMutex;
-        std::unordered_map<AnyPointer, std::unique_ptr<CallbackBase>> _callbacks;
+        std::unordered_map<AnyPointer, std::unique_ptr<CallbackBase> > _callbacks;
         EnvironmentHandle _handle;
         EnvironmentFlags _mode;
         UInt32 _charMaxSize;
@@ -1351,9 +1343,8 @@ namespace ocilib
          * it calls Open() with the given parameters
          *
          */
-        Pool(const Environment& env, const String& db, const String& user, const String& pwd, Pool::PoolType poolType,
-            UInt32 minSize, UInt32 maxSize, UInt32 increment = 1,
-            Environment::SessionFlags sessionFlags = Environment::SessionDefault);
+        Pool(const Environment& env, const String& db, const String& user, const String& pwd, Pool::PoolType poolType,UInt32 minSize, UInt32 maxSize,
+             UInt32 increment = 1,Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
         /**
          * @brief
@@ -1374,9 +1365,8 @@ namespace ocilib
          * If the param 'db' is empty then a connection to the default local DB is done
          *
          */
-        void Open(const Environment& env, const String& db, const String& user, const String& pwd, Pool::PoolType poolType,
-            UInt32 minSize, UInt32 maxSize, UInt32 increment = 1,
-            Environment::SessionFlags sessionFlags = Environment::SessionDefault);
+        void Open(const Environment& env, const String& db, const String& user, const String& pwd, Pool::PoolType poolType,UInt32 minSize, UInt32 maxSize,
+                  UInt32 increment = 1,Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
         /**
          * @brief
@@ -1550,32 +1540,32 @@ namespace ocilib
      */
     class Connection : public core::HandleHolder<OCI_Connection*>
     {
-        friend class Environment;
-        friend class Exception;
-        friend class Statement;
-        friend class File;
-        friend class Timestamp;
-        friend class Pool;
-        friend class Object;
-        friend class TypeInfo;
-        friend class Reference;
-        friend class Resultset;
-        friend class Subscription;
-        friend class Agent;
-        friend class Dequeue;
-        friend class Enqueue;
-        friend class Column;
-        friend class Message;
-        friend class Transaction;
-        friend class DirectPath;
-        friend class Vector;
-        friend class SodaDb;
-        friend class SodaColl;
+    friend class Environment;
+    friend class Exception;
+    friend class Statement;
+    friend class File;
+    friend class Timestamp;
+    friend class Pool;
+    friend class Object;
+    friend class TypeInfo;
+    friend class Reference;
+    friend class Resultset;
+    friend class Subscription;
+    friend class Agent;
+    friend class Dequeue;
+    friend class Enqueue;
+    friend class Column;
+    friend class Message;
+    friend class Transaction;
+    friend class DirectPath;
+    friend class Vector;
+    friend class SodaDb;
+    friend class SodaColl;
 
-        template<class, Int32>
-        friend class Lob;
-        template<class>
-        friend class Collection;
+    template<class, Int32>
+    friend class Lob;
+    template<class>
+    friend class Collection;
     public:
 
         /**
@@ -1590,11 +1580,13 @@ namespace ocilib
              *   - Requires Oracle 12cR1 client
              */
             TimeoutSend = OCI_NTO_SEND,
+
             /**
              *   - Time to wait for read operations completion from the database server
              *   - Requires Oracle 12cR1 client
              */
             TimeoutReceive = OCI_NTO_RECEIVE,
+
             /**
              *   - Time to wait for a database round-trip to complete ( Client processing is not taken into account)
              *   - Requires Oracle 18c client
@@ -1621,7 +1613,7 @@ namespace ocilib
             /** User has requested only session failover */
             FailoverRequestSession = OCI_FOT_SESSION,
             /** User has requested select failover as well */
-            FailoverRequestSelect = OCI_FOT_SELECT
+            FailoverRequestSelect  = OCI_FOT_SELECT
         };
 
         /**
@@ -1644,7 +1636,8 @@ namespace ocilib
             FailoverEventEnd = OCI_FOE_END,
             /** Failover was unsuccessful. Retrying is not allowed */
             FailoverEventAbort = OCI_FOE_ABORT,
-            /** Multiple authentication and failover has occurred after the original authentication. User has been re authenticated */
+            /** Multiple authentication and failover has occurred after the original authentication.
+             * User has been re authenticated */
             FailoverEventReauthentificate = OCI_FOE_REAUTH,
             /** Failover has detected a lost connection and failover is starting */
             FailoverEventBegin = OCI_FOE_BEGIN,
@@ -1690,13 +1683,17 @@ namespace ocilib
          */
         enum SessionTraceValues
         {
-            /** Specifies the user defined identifier in the session. It's recorded in the column CLIENT_IDENTIFIER of the system view V$SESSION */
+            /** Specifies the user defined identifier in the session. It's recorded in the column
+             * CLIENT_IDENTIFIER of the system view V$SESSION */
             TraceIdentity = OCI_TRC_IDENTITY,
-            /** Name of the current module in the client application. It's recorded in the column MODULE of the system view V$SESSION */
+            /** Name of the current module in the client application. It's recorded in the column
+             * MODULE of the system view V$SESSION */
             TraceModule = OCI_TRC_MODULE,
-            /** Name of the current action within the current module. It's recorded in the column ACTION of the system view V$SESSION */
+            /** Name of the current action within the current module. It's recorded in the column
+             * ACTION of the system view V$SESSION */
             TraceAction = OCI_TRC_ACTION,
-            /** Client application additional information. It's recorded in the column CLIENT_INFO of the system view V$SESSION */
+            /** Client application additional information. It's recorded in the column CLIENT_INFO
+             * of the system view V$SESSION */
             TraceDetail = OCI_TRC_DETAIL
         };
 
@@ -1716,7 +1713,7 @@ namespace ocilib
         * User callback for TAF event notifications
         *
         */
-        typedef FailoverResult(*TAFHandlerProc) (Connection& con, FailoverRequest failoverRequest, FailoverEvent failoverEvent);
+        typedef FailoverResult (*TAFHandlerProc) (Connection& con, FailoverRequest failoverRequest, FailoverEvent failoverEvent);
 
         /**
          * @brief
@@ -1739,7 +1736,8 @@ namespace ocilib
          * it calls Open() with the given parameters
          *
          */
-        Connection(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
+        Connection(const Environment& env, const String& db, const String& user, const String& pwd,
+                   Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
         /**
          * @brief
@@ -1758,11 +1756,9 @@ namespace ocilib
          * Requires Oracle 12cR2 or above.
          *
          */
-        Connection(const Environment& env, const String& db, const String& user, const String& pwd,
-            Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey);
+        Connection(const Environment& env, const String& db, const String& user, const String& pwd,Environment::SessionFlags sessionFlags,
+                   const ShardingKey& skey, const ShardingKey& sskey);
 
-        
-        
         /**
          * @brief
          * Create a physical connection to an Oracle database server
@@ -1783,7 +1779,8 @@ namespace ocilib
          * No transaction is created for connections retrieved from session pools.
          *
          */
-        void Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags = Environment::SessionDefault);
+        void Open(const Environment& env, const String& db, const String& user, const String& pwd,
+                  Environment::SessionFlags sessionFlags = Environment::SessionDefault);
 
         /**
          * @brief
@@ -1799,7 +1796,8 @@ namespace ocilib
          * @param sskey        - Super sharding key
          *
          */
-        void Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags, const ShardingKey& skey, const ShardingKey& sskey);
+        void Open(const Environment& env, const String& db, const String& user, const String& pwd, Environment::SessionFlags sessionFlags,
+                  const ShardingKey& skey, const ShardingKey& sskey);
 
         /**
          * @brief
@@ -2327,7 +2325,7 @@ namespace ocilib
      */
     class Transaction : public core::HandleHolder<OCI_Transaction*>
     {
-        friend class Connection;
+    friend class Connection;
 
     public:
 
@@ -2338,7 +2336,7 @@ namespace ocilib
          */
         enum TransactionFlagsValues
         {
-            Unknown = OCI_UNKNOWN,
+            Unknown   = OCI_UNKNOWN,
             /** (Global) Specifies tightly coupled and migratable branch */
             New = OCI_TRS_NEW,
             /** (Global) Specifies a tightly coupled branch */
@@ -2346,7 +2344,7 @@ namespace ocilib
             /** (Global) Specifies a loosely coupled branch */
             Loose = OCI_TRS_LOOSE,
             /** (Global and local) start a read-only transaction */
-            ReadOnly = OCI_TRS_READONLY,
+            ReadOnly  = OCI_TRS_READONLY,
             /** (Global and local) start a read-write transaction */
             ReadWrite = OCI_TRS_READWRITE,
             /** (Global and local) start a serializable transaction */
@@ -2446,13 +2444,13 @@ namespace ocilib
     */
     class Number : public core::HandleHolder<OCI_Number*>, public core::Streamable
     {
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class JsonNode;
-        friend class Object;
-        template<class>
-        friend class Collection;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class JsonNode;
+    friend class Object;
+    template<class>
+    friend class Collection;
 
     public:
 
@@ -2483,7 +2481,6 @@ namespace ocilib
         */
         template<class T, core::SupportedNumericT<T>* = nullptr>
         Number(const Environment& env, const T& value);
-
 
         /**
         * @brief
@@ -2667,14 +2664,14 @@ namespace ocilib
      */
     class Date : public core::HandleHolder<OCI_Date*>, public core::Streamable
     {
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class JsonNode;
-        friend class Object;
-        template<class>
-        friend class Collection;
-        friend class Message;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class JsonNode;
+    friend class Object;
+    template<class>
+    friend class Collection;
+    friend class Message;
 
     public:
 
@@ -3129,14 +3126,14 @@ namespace ocilib
      */
     class Interval : public core::HandleHolder<OCI_Interval*>, public core::Streamable
     {
-        friend class Environment;
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class JsonNode;
-        friend class Object;
-        template<class>
-        friend class Collection;
+    friend class Environment;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class JsonNode;
+    friend class Object;
+    template<class>
+    friend class Collection;
 
     public:
 
@@ -3568,15 +3565,15 @@ namespace ocilib
      */
     class Timestamp : public core::HandleHolder<OCI_Timestamp*>, public core::Streamable
     {
-        friend class Environment;
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class JsonNode;
-        friend class Object;
-        friend class Connection;
-        template<class>
-        friend class Collection;
+    friend class Environment;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class JsonNode;
+    friend class Object;
+    friend class Connection;
+    template<class>
+    friend class Collection;
 
     public:
 
@@ -4101,12 +4098,12 @@ namespace ocilib
     template<class T, Int32 U>
     class Lob : public core::HandleHolder<OCI_Lob*>
     {
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class Object;
-        template<class>
-        friend class Collection;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class Object;
+    template<class>
+    friend class Collection;
 
     public:
 
@@ -4423,12 +4420,12 @@ namespace ocilib
      */
     class File : public core::HandleHolder<OCI_File*>
     {
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class Object;
-        template<class>
-        friend class Collection;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class Object;
+    template<class>
+    friend class Collection;
 
     public:
 
@@ -4612,11 +4609,11 @@ namespace ocilib
      */
     class TypeInfo : public core::HandleHolder<OCI_TypeInfo*>
     {
-        friend class Object;
-        friend class Reference;
-        template<class>
-        friend class Collection;
-        friend class Column;
+    friend class Object;
+    friend class Reference;
+    template<class>
+    friend class Collection;
+    friend class Column;
     public:
 
         /**
@@ -4629,9 +4626,9 @@ namespace ocilib
             /** Database Table information */
             Table = OCI_TIF_TABLE,
             /** Database View information */
-            View = OCI_TIF_VIEW,
+            View  = OCI_TIF_VIEW,
             /** Database type information */
-            Type = OCI_TIF_TYPE
+            Type  = OCI_TIF_TYPE
         };
 
         /**
@@ -4781,13 +4778,13 @@ namespace ocilib
      */
     class Object : public core::HandleHolder<OCI_Object*>, public core::Streamable
     {
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class Reference;
-        template<class>
-        friend class Collection;
-        friend class Message;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class Reference;
+    template<class>
+    friend class Collection;
+    friend class Message;
 
     public:
 
@@ -4801,7 +4798,7 @@ namespace ocilib
             /** The object is persistent in the database */
             Persistent = OCI_OBJ_PERSISTENT,
             /** The object is Transient */
-            Transient = OCI_OBJ_TRANSIENT,
+            Transient  = OCI_OBJ_TRANSIENT,
             /** The object is a value member of another object */
             Value = OCI_OBJ_VALUE
         };
@@ -4981,12 +4978,12 @@ namespace ocilib
      */
     class Reference : public core::HandleHolder<OCI_Ref*>, public core::Streamable
     {
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class Object;
-        template<class>
-        friend class Collection;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class Object;
+    template<class>
+    friend class Collection;
 
     public:
 
@@ -5068,7 +5065,7 @@ namespace ocilib
      */
     class XmlType : public core::HandleHolder<OCI_XmlType*>, public core::Streamable
     {
-        friend class Resultset;
+    friend class Resultset;
 
     public:
 
@@ -5093,7 +5090,7 @@ namespace ocilib
       */
     class Vector : public core::HandleHolder<OCI_Vector*>, public core::Streamable
     {
-        friend class Resultset;
+    friend class Resultset;
 
     public:
 
@@ -5256,11 +5253,11 @@ namespace ocilib
     */
     class Json : public core::HandleHolder<OCI_Json*>, public core::Streamable
     {
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class JsonNode;
-        friend class SodaDoc;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class JsonNode;
+    friend class SodaDoc;
 
     public:
 
@@ -5272,25 +5269,25 @@ namespace ocilib
         enum JsonTypeValues
         {
             /** Null JSON value */
-            NodeNull = OCI_JNT_NULL,
+            NodeNull      = OCI_JNT_NULL,
             /** JSON object */
-            NodeObject = OCI_JNT_OBJECT,
+            NodeObject    = OCI_JNT_OBJECT,
             /** JSON array */
-            NodeArray = OCI_JNT_ARRAY,
+            NodeArray     = OCI_JNT_ARRAY,
             /** JSON string */
-            NodeString = OCI_JNT_STRING,
+            NodeString    = OCI_JNT_STRING,
             /** JSON number */
-            NodeNumber = OCI_JNT_NUMBER,
+            NodeNumber    = OCI_JNT_NUMBER,
             /** JSON boolean */
-            NodeBoolean = OCI_JNT_BOOLEAN,
+            NodeBoolean   = OCI_JNT_BOOLEAN,
             /** JSON binary */
-            NodeBinary = OCI_JNT_BINARY,
+            NodeBinary    = OCI_JNT_BINARY,
             /** JSON date */
-            NodeDate = OCI_JNT_DATE,
+            NodeDate      = OCI_JNT_DATE,
             /** JSON timestamp */
             NodeTimestamp = OCI_JNT_TIMESTAMP,
             /** JSON interval */
-            NodeInterval = OCI_JNT_INTERVAL
+            NodeInterval  = OCI_JNT_INTERVAL
         };
 
         /**
@@ -5319,7 +5316,7 @@ namespace ocilib
             AllowMixedcaseKeywords = OCI_JTV_ALLOW_MIXEDCASE_KEYWORDS,
             AllowScalarDocuments = OCI_JTV_ALLOW_SCALAR_DOCUMENTS,
             AllowLeadingBom = OCI_JTV_ALLOW_LEADING_BOM,
-            AllowAll = OCI_JTV_ALLOW_ALL
+            AllowAll  = OCI_JTV_ALLOW_ALL
         };
 
         /**
@@ -5338,8 +5335,8 @@ namespace ocilib
         */
         enum JsonEncodingValues
         {
-            Detect = OCI_JTE_DETECT,
-            Direct = OCI_JTE_DIRECT,
+            Detect  = OCI_JTE_DETECT,
+            Direct  = OCI_JTE_DIRECT,
             Convert = OCI_JTE_CONVERT,
             Utf16 = OCI_JTE_UTF16,
             Utf16Swap = OCI_JTE_UTF16_SWAP,
@@ -5365,12 +5362,12 @@ namespace ocilib
         enum JsonPrintValues
         {
             Pretty = OCI_JTP_PRETTY,
-            Ascii = OCI_JTP_ASCII,
+            Ascii  = OCI_JTP_ASCII,
             NumFormat = OCI_JTP_NUMFORMAT,
             InternalBuf = OCI_JTP_INTERNAL_BUF,
             NlsCharset = OCI_JTP_NLS_CHARSET,
             Replacement = OCI_JTP_REPLACEMENT,
-            Ejson = OCI_JTP_EJSON,
+            Ejson  = OCI_JTP_EJSON,
             BsonPatterns = OCI_JTP_BSON_PATTERNS,
             Test = OCI_JTP_TEST
         };
@@ -5708,7 +5705,7 @@ namespace ocilib
     private:
 
         const JsonNode* _node;
-        UInt32          _index;
+        UInt32 _index;
     };
 
     /**
@@ -5720,7 +5717,7 @@ namespace ocilib
     */
     class JsonNode : public core::HandleHolder<OCI_JsonNode*>
     {
-        friend class Json;
+    friend class Json;
 
     public:
 
@@ -5804,7 +5801,7 @@ namespace ocilib
         *
         */
         [[nodiscard]] JsonNode GetField(const String& name) const;
-      
+
         /**
         * @brief
         * Return a JSON object field by index
@@ -6189,7 +6186,6 @@ namespace ocilib
         JsonNode(OCI_JsonNode* pNode, core::Handle* parent = nullptr);
     };
 
-
     /**
     * @brief
     * Class used for handling transient collection value.
@@ -6201,8 +6197,8 @@ namespace ocilib
     template<class T>
     class CollectionElement
     {
-        template<class>
-        friend class CollectionIterator;
+    template<class>
+    friend class CollectionIterator;
 
     public:
 
@@ -6293,14 +6289,14 @@ namespace ocilib
     template<class T>
     class Collection : public core::HandleHolder<OCI_Coll*>, public core::Streamable
     {
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
-        friend class Object;
-        template<class>
-        friend class CollectionIterator;
-        template<class>
-        friend class Collection;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
+    friend class Object;
+    template<class>
+    friend class CollectionIterator;
+    template<class>
+    friend class Collection;
 
     public:
 
@@ -6562,9 +6558,9 @@ namespace ocilib
     template<class T, Int32 U>
     class Long : public core::HandleHolder<OCI_Long*>
     {
-        friend class Statement;
-        friend class Resultset;
-        friend class support::BindArray;
+    friend class Statement;
+    friend class Resultset;
+    friend class support::BindArray;
 
     public:
 
@@ -6646,7 +6642,7 @@ namespace ocilib
      */
     class BindInfo : public core::HandleHolder<OCI_Bind*>
     {
-        friend class Statement;
+    friend class Statement;
 
     public:
 
@@ -6658,10 +6654,11 @@ namespace ocilib
         enum BindDirectionValues
         {
             /** Input bind variable (will be not modified as it is an input value for the server) */
-            In = OCI_BDM_IN,
+            In  = OCI_BDM_IN,
             /** Output bind variable (will be modified  as it is an output value by the server ) */
             Out = OCI_BDM_OUT,
-            /** Input / Output bind variable (can be modified as it is an input value that can be modified by the server) */
+            /** Input / Output bind variable (can be modified as it is an input value that can be
+             * modified by the server) */
             InOut = OCI_BDM_IN_OUT
         };
 
@@ -6835,13 +6832,13 @@ namespace ocilib
     */
     class Statement : public core::HandleHolder<OCI_Statement*>
     {
-        friend class Exception;
-        friend class Resultset;
-        template<class, Int32>
-        friend class Long;
-        friend class BindInfo;
-        friend class BindObject;
-        friend class Subscription;
+    friend class Exception;
+    friend class Resultset;
+    template<class, Int32>
+    friend class Long;
+    friend class BindInfo;
+    friend class BindObject;
+    friend class Subscription;
 
     public:
 
@@ -6853,27 +6850,27 @@ namespace ocilib
         enum StatementTypeValues
         {
             /** SELECT statement */
-            TypeSelect = OCI_CST_SELECT,
+            TypeSelect  = OCI_CST_SELECT,
             /** UPDATE statement */
-            TypeUpdate = OCI_CST_UPDATE,
+            TypeUpdate  = OCI_CST_UPDATE,
             /** DELETE statement */
-            TypeDelete = OCI_CST_DELETE,
+            TypeDelete  = OCI_CST_DELETE,
             /** INSERT statement */
-            TypeInsert = OCI_CST_INSERT,
+            TypeInsert  = OCI_CST_INSERT,
             /** CREATE statement */
-            TypeCreate = OCI_CST_CREATE,
+            TypeCreate  = OCI_CST_CREATE,
             /** DROP statement */
             TypeDrop = OCI_CST_DROP,
             /** ALTER statement */
-            TypeAlter = OCI_CST_ALTER,
+            TypeAlter   = OCI_CST_ALTER,
             /** BEGIN statement */
-            TypeBegin = OCI_CST_BEGIN,
+            TypeBegin   = OCI_CST_BEGIN,
             /** DECLARE statement */
             TypeDeclare = OCI_CST_DECLARE,
             /** CALL statement */
             TypeCall = OCI_CST_CALL,
             /** MERGE statement */
-            TypeMerge = OCI_CST_MERGE
+            TypeMerge   = OCI_CST_MERGE
         };
 
         /**
@@ -7451,7 +7448,8 @@ namespace ocilib
         *
         */
         template<class T>
-        BindInfo Bind(const String& name, std::vector<T>& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
+        BindInfo Bind(const String& name, std::vector<T>& values, TypeInfo& typeInfo, BindInfo::BindDirection mode,
+                      BindInfo::VectorType type = BindInfo::AsArray);
 
         /**
         * @brief
@@ -7467,7 +7465,8 @@ namespace ocilib
         *
         */
         template<class T>
-        BindInfo Bind(const String& name, std::vector<Collection<T> >& values, TypeInfo& typeInfo, BindInfo::BindDirection mode, BindInfo::VectorType type = BindInfo::AsArray);
+        BindInfo Bind(const String& name, std::vector<Collection<T> >& values, TypeInfo& typeInfo, BindInfo::BindDirection mode,
+                      BindInfo::VectorType type = BindInfo::AsArray);
 
         /**
         * @brief
@@ -7820,21 +7819,21 @@ namespace ocilib
      * This class wraps the OCILIB object handle OCI_Resultset and its related methods
      *
      */
-        /**
-     * @brief
-     * Proxy object representing the current row of a Resultset during iteration
-     *
-     * A Row forwards Get<T> calls to the underlying Resultset.
-     *
-     * @warning
-     * A Row is a lightweight proxy into the Resultset's current cursor
-     * position - not an independent row value. It is only valid while the
-     * cursor sits on that row; the next fetch (Next()/Prev()/Seek()/operator++)
-     * releases the column data and advances the position. Do not retain Row
-     * objects past the iteration step that produced them - copy out the
-     * column values you need with Get<T>() instead.
-     *
-     */
+    /**
+ * @brief
+ * Proxy object representing the current row of a Resultset during iteration
+ *
+ * A Row forwards Get<T> calls to the underlying Resultset.
+ *
+ * @warning
+ * A Row is a lightweight proxy into the Resultset's current cursor
+ * position - not an independent row value. It is only valid while the
+ * cursor sits on that row; the next fetch (Next()/Prev()/Seek()/operator++)
+ * releases the column data and advances the position. Do not retain Row
+ * objects past the iteration step that produced them - copy out the
+ * column values you need with Get<T>() instead.
+ *
+ */
     class Row
     {
     public:
@@ -7924,10 +7923,10 @@ namespace ocilib
     public:
 
         typedef std::input_iterator_tag iterator_category;
-        typedef Row                   value_type;
-        typedef std::ptrdiff_t        difference_type;
-        typedef void                  pointer;
-        typedef Row                   reference;
+        typedef Row value_type;
+        typedef std::ptrdiff_t difference_type;
+        typedef void pointer;
+        typedef Row reference;
 
         /**
         * @brief
@@ -8016,7 +8015,7 @@ namespace ocilib
         RowIterator(Resultset* resultset, bool eof);
 
         Resultset* _rs;
-        bool       _eof;
+        bool _eof;
 
         friend class ResultsetRows;
     };
@@ -8030,7 +8029,7 @@ namespace ocilib
      */
     class Resultset : public core::HandleHolder<OCI_Resultset*>
     {
-        friend class Statement;
+    friend class Statement;
     public:
 
         /**
@@ -8042,7 +8041,8 @@ namespace ocilib
         {
             /** Seek is performed using a given absolute offset. The statement must be scrollable */
             SeekAbsolute = OCI_SFD_ABSOLUTE,
-            /** Seek is performed using a given relative offset from the current position. The statement must be scrollable */
+            /** Seek is performed using a given relative offset from the current position. The
+             * statement must be scrollable */
             SeekRelative = OCI_SFD_RELATIVE
         };
 
@@ -8054,7 +8054,7 @@ namespace ocilib
         *
         */
         typedef core::Enum<SeekModeValues> SeekMode;
- 
+
         /**
         * @brief
         * Default constructor
@@ -8459,7 +8459,6 @@ namespace ocilib
         Resultset(OCI_Resultset* resultset, core::Handle* parent);
     };
 
-
     /**
      * @brief
      * Encapsulate a Resultset column or object member properties
@@ -8469,8 +8468,8 @@ namespace ocilib
      */
     class Column : public core::HandleHolder<OCI_Column*>
     {
-        friend class TypeInfo;
-        friend class Resultset;
+    friend class TypeInfo;
+    friend class Resultset;
 
     public:
 
@@ -8483,19 +8482,24 @@ namespace ocilib
         {
             /** The column has no flags or the OCI client does not support it */
             NoFlags = OCI_CPF_NONE,
+
             /** - If Set, the column is an IDENTITY column
             - Otherwise, it is not an IDENTITY column */
             IsIdentity = OCI_CPF_IS_IDENTITY,
+
             /** Only valid when IsIdentity is set:
             - If set, means that the value is "ALWAYS GENERATED"
             - Otherwise means that the value is "GENERATED BY" */
             IsGeneratedAlways = OCI_CPF_IS_GEN_ALWAYS,
+
             /** Only valid when IsIdentity is set:
             - If set, means that the value is generated by default on NULL */
             IsGeneratedByDefaultOnNull = OCI_CPF_IS_GEN_BY_DEFAULT_ON_NULL,
-            /**  If set, Column is an implicitly generated logical partitioning column for container_map enabled object */
+            /**  If set, Column is an implicitly generated logical partitioning column for
+             * container_map enabled object */
             IsLogicalPartitioning = OCI_CPF_IS_LPART,
-            /**  If set, Column is a CON_ID column implicitly generated by CONTAINERS() or is an ORIGIN_CON_ID column implicitly generated for Extended Data Link */
+            /**  If set, Column is a CON_ID column implicitly generated by CONTAINERS() or is an
+             * ORIGIN_CON_ID column implicitly generated for Extended Data Link */
             IsGeneratedByContainers = OCI_CPF_IS_CONID
         };
 
@@ -8614,7 +8618,6 @@ namespace ocilib
         *
         */
         [[nodiscard]] Int32 GetLeadingPrecision() const;
-
 
         /**
         * @brief
@@ -8869,7 +8872,7 @@ namespace ocilib
     */
     class Subscription : public core::HandleHolder<OCI_Subscription*>
     {
-        friend class Event;
+    friend class Event;
 
     public:
 
@@ -8917,6 +8920,7 @@ namespace ocilib
         {
             /** Server initiates the notification listener connection */
             ModeDefault = OCI_SRM_DEFAULT,
+
             /** Client initiates the notification listener connection (Oracle client 12c and above).
                 Warning: Oracle client bug (not an OCILIB bug) — fails inside the Oracle client in
                 UNICODE (OCI_CHARSET_WIDE) builds; ANSI builds work. Verified with Oracle 23ai;
@@ -8959,7 +8963,8 @@ namespace ocilib
         * Requires Oracle Client 10gR2 or above
         *
         */
-        void Register(const Connection& connection, const String& name, ChangeTypes changeTypes, NotifyHandlerProc handler, SubscriptionMode mode = ModeValues::ModeDefault, UInt32 timeout = 0);
+        void Register(const Connection& connection, const String& name, ChangeTypes changeTypes, NotifyHandlerProc handler,
+                      SubscriptionMode mode = ModeValues::ModeDefault, UInt32 timeout = 0);
 
         /**
         * @brief
@@ -9025,8 +9030,8 @@ namespace ocilib
     */
     class Event : public core::HandleHolder<OCI_Event*>
     {
-        friend class Subscription;
-        friend class Environment;
+    friend class Subscription;
+    friend class Environment;
 
     public:
 
@@ -9044,7 +9049,7 @@ namespace ocilib
             /** A database has been shut down (RAC) */
             DatabaseShutdownAny = OCI_ENT_SHUTDOWN_ANY,
             /** A database has been dropped */
-            DatabaseDrop = OCI_ENT_DROP_DATABASE,
+            DatabaseDrop  = OCI_ENT_DROP_DATABASE,
             /** The notification is timed out */
             Unregister = OCI_ENT_DEREGISTER,
             /** A database object has been modified */
@@ -9070,15 +9075,15 @@ namespace ocilib
             /** An insert has been performed */
             ObjectInserted = OCI_ONT_INSERT,
             /** An update has been performed */
-            ObjectUpdated = OCI_ONT_UPDATE,
+            ObjectUpdated  = OCI_ONT_UPDATE,
             /** A delete has been performed */
-            ObjectDeleted = OCI_ONT_DELETE,
+            ObjectDeleted  = OCI_ONT_DELETE,
             /** An alter has been performed */
-            ObjectAltered = OCI_ONT_ALTER,
+            ObjectAltered  = OCI_ONT_ALTER,
             /** A drop has been performed */
-            ObjectDropped = OCI_ONT_DROP,
+            ObjectDropped  = OCI_ONT_DROP,
             /** Generic undefined action * */
-            ObjectGeneric = OCI_ONT_GENERIC
+            ObjectGeneric  = OCI_ONT_GENERIC
         };
 
         /**
@@ -9152,8 +9157,8 @@ namespace ocilib
     */
     class Agent : public core::HandleHolder<OCI_Agent*>
     {
-        friend class Message;
-        friend class Dequeue;
+    friend class Message;
+    friend class Dequeue;
 
     public:
 
@@ -9242,7 +9247,7 @@ namespace ocilib
     */
     class Message : public core::HandleHolder<OCI_Msg*>
     {
-        friend class Dequeue;
+    friend class Dequeue;
 
     public:
 
@@ -9603,7 +9608,7 @@ namespace ocilib
             /** Enqueue message before another message */
             Before = OCI_ASD_BEFORE,
             /** Enqueue message before all messages */
-            OnTop = OCI_ASD_TOP
+            OnTop  = OCI_ASD_TOP
         };
 
         /**
@@ -9625,7 +9630,7 @@ namespace ocilib
             /** Enqueue is an independent transaction */
             Immediate = OCI_AMV_IMMEDIATE,
             /** Enqueue is part of current transaction */
-            OnCommit = OCI_AMV_ON_COMMIT
+            OnCommit  = OCI_AMV_ON_COMMIT
         };
 
         /**
@@ -9758,7 +9763,7 @@ namespace ocilib
     */
     class Dequeue : public core::HandleHolder<OCI_Dequeue*>
     {
-        friend class Environment;
+    friend class Environment;
 
     public:
 
@@ -9779,11 +9784,11 @@ namespace ocilib
         enum DequeueModeValues
         {
             /** Read message without acquiring a lock */
-            Browse = OCI_ADM_BROWSE,
+            Browse  = OCI_ADM_BROWSE,
             /** Read and obtain write lock on message */
-            Locked = OCI_ADM_LOCKED,
+            Locked  = OCI_ADM_LOCKED,
             /** Read the message and delete it */
-            Remove = OCI_ADM_REMOVE,
+            Remove  = OCI_ADM_REMOVE,
             /** Confirm receipt of the message, but do not deliver the actual message content */
             Confirm = OCI_ADM_REMOVE_NODATA
         };
@@ -9807,7 +9812,7 @@ namespace ocilib
             /** Dequeue is an independent transaction */
             Immediate = OCI_AMV_IMMEDIATE,
             /** Dequeue is part of current transaction */
-            OnCommit = OCI_AMV_ON_COMMIT
+            OnCommit  = OCI_AMV_ON_COMMIT
         };
 
         /**
@@ -9829,7 +9834,8 @@ namespace ocilib
             /** Retrieves the first message which is available */
             FirstMessage = OCI_ADN_FIRST_MSG,
             /** Retrieves the next message which is available */
-            NextMessage = OCI_ADN_NEXT_MSG,
+            NextMessage  = OCI_ADN_NEXT_MSG,
+
             /** Skips the remainder of the current transaction  group (if any)
              and retrieves the first message of the next transaction group.*/
             NextTransaction = OCI_ADN_NEXT_TRANSACTION
@@ -10167,9 +10173,8 @@ namespace ocilib
          * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
          *
          */
-        static void Create(const Connection& connection, const String& queue, const String& table, QueueType type = NormalQueue,
-            UInt32 maxRetries = 0, UInt32 retryDelay = 0, UInt32 retentionTime = 0,
-            bool dependencyTracking = false, const String& comment = OTEXT(""));
+        static void Create(const Connection& connection, const String& queue, const String& table, QueueType type = NormalQueue,UInt32 maxRetries = 0,
+                           UInt32 retryDelay = 0, UInt32 retentionTime = 0,bool dependencyTracking = false, const String& comment = OTEXT(""));
 
         /**
          * @brief
@@ -10191,9 +10196,8 @@ namespace ocilib
          * Refer to Oracle Streams - Advanced Queuing User's Guide for more details
          *
          */
-        static void Alter(const Connection& connection, const String& queue,
-            UInt32 maxRetries = 0, UInt32 retryDelay = 0,
-            UInt32 retentionTime = 0, const String& comment = OTEXT(""));
+        static void Alter(const Connection& connection, const String& queue,UInt32 maxRetries = 0, UInt32 retryDelay = 0,UInt32 retentionTime = 0,
+                          const String& comment = OTEXT(""));
 
         /**
          * @brief
@@ -10271,6 +10275,7 @@ namespace ocilib
         {
             /** Each message is treated individually */
             None = OCI_AGM_NONE,
+
             /** All messages enqueued in one transaction are considered part of
                 the same group and can be dequeued as a group of related messages */
             Transactionnal = OCI_AGM_TRANSACTIONNAL
@@ -10345,10 +10350,8 @@ namespace ocilib
          *
          */
         static void Create(const Connection& connection, const String& table, const String& payloadType, bool multipleConsumers,
-            const String& storageClause = OTEXT(""), const String& sortList = OTEXT(""),
-            GroupingMode groupingMode = None, const String& comment = OTEXT(""),
-            UInt32 primaryInstance = 0, UInt32 secondaryInstance = 0,
-            const String& compatible = OTEXT(""));
+                           const String& storageClause = OTEXT(""), const String& sortList = OTEXT(""),GroupingMode groupingMode = None,
+                           const String& comment = OTEXT(""),UInt32 primaryInstance = 0, UInt32 secondaryInstance = 0,const String& compatible = OTEXT(""));
 
         /**
         * @brief
@@ -10484,7 +10487,7 @@ namespace ocilib
             /** The internal stream is full*/
             ResultFull = OCI_DPR_FULL,
             /** A column has not been fully filled yet */
-            ResultPartial = OCI_DPR_PARTIAL,
+            ResultPartial  = OCI_DPR_PARTIAL,
             /** No data was found to convert/load */
             ResultEmpty = OCI_DPR_EMPTY
         };
@@ -10519,7 +10522,7 @@ namespace ocilib
          * of rows used for the given direct path operation.
          *
          */
-        DirectPath(const TypeInfo& typeInfo, UInt32 nbCols, UInt32  nbRows, const String& partition = OTEXT(""));
+        DirectPath(const TypeInfo& typeInfo, UInt32 nbCols, UInt32 nbRows, const String& partition = OTEXT(""));
 
         /**
          * @brief
@@ -10889,7 +10892,6 @@ namespace ocilib
         [[nodiscard]] Int32 GetErrorRow();
     };
 
-
     /**
      * @brief
      * SODA (Simple Oracle Document Access) document
@@ -10899,9 +10901,9 @@ namespace ocilib
      */
     class SodaDoc : public core::HandleHolder<OCI_SodaDoc*>
     {
-        friend class SodaDb;
-        friend class SodaColl;
-        friend class SodaDocCursor;
+    friend class SodaDb;
+    friend class SodaColl;
+    friend class SodaDocCursor;
 
     public:
 
@@ -10983,7 +10985,7 @@ namespace ocilib
      */
     class SodaOptions : public core::HandleHolder<OCI_SodaOptions*>
     {
-        friend class SodaColl;
+    friend class SodaColl;
 
     public:
 
@@ -11082,7 +11084,7 @@ namespace ocilib
      */
     class SodaDb : public core::HandleHolder<OCI_SodaDb*>
     {
-        friend class SodaOptions;
+    friend class SodaOptions;
 
     public:
 
@@ -11163,8 +11165,8 @@ namespace ocilib
      */
     class SodaColl : public core::HandleHolder<OCI_SodaColl*>
     {
-        friend class SodaDb;
-        friend class SodaCollCursor;
+    friend class SodaDb;
+    friend class SodaCollCursor;
 
     public:
 
@@ -11291,7 +11293,6 @@ namespace ocilib
          */
         void ReplaceOne(const SodaOptions& options, SodaDoc& doc, bool refresh = false);
 
-        
         /**
          * @brief
          * Replace one document by key in the collection
@@ -11304,7 +11305,6 @@ namespace ocilib
          */
         void ReplaceOneByKey(const String& key, SodaDoc& doc, bool refresh = false);
 
-        
         /**
          * @brief
          * Remove documents from the collection
@@ -11328,7 +11328,7 @@ namespace ocilib
          *                  its server-assigned attributes (key, version, timestamps)
          */
         void InsertMany(std::vector<SodaDoc>& docs, bool refresh = false);
-        
+
         /**
          * @brief
          * Create an index on the collection from a JSON index specification
@@ -11383,7 +11383,7 @@ namespace ocilib
          *
          */
         void Save(SodaDoc& doc, bool refresh = false);
-        
+
     };
 
     /**
@@ -11395,7 +11395,7 @@ namespace ocilib
      */
     class SodaCollCursor : public core::HandleHolder<OCI_SodaCollCursor*>
     {
-        friend class SodaDb;
+    friend class SodaDb;
 
     public:
 
@@ -11423,26 +11423,26 @@ namespace ocilib
          */
         class iterator
         {
-            friend class SodaCollCursor;
+        friend class SodaCollCursor;
 
-            SodaCollCursor* _cursor;
-            SodaColl        _coll;
+        SodaCollCursor* _cursor;
+        SodaColl _coll;
 
-            explicit iterator(SodaCollCursor* cursor) : _cursor(cursor) { ++(*this); }
+        explicit iterator(SodaCollCursor* cursor) : _cursor(cursor) { ++(*this); }
 
         public:
 
             typedef std::input_iterator_tag iterator_category;
-            typedef SodaColl                value_type;
-            typedef std::ptrdiff_t          difference_type;
+            typedef SodaColl value_type;
+            typedef std::ptrdiff_t difference_type;
             typedef SodaColl*               pointer;
             typedef SodaColl&               reference;
 
             iterator() : _cursor(NULL) {}
             iterator& operator++();
             iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-            reference operator*()  { return _coll; }
-            pointer   operator->() { return &_coll; }
+            reference operator*() { return _coll; }
+            pointer operator->() { return &_coll; }
             bool operator==(const iterator& rhs) const { return _cursor == rhs._cursor; }
             bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
         };
@@ -11459,7 +11459,7 @@ namespace ocilib
          * Return the past-the-end iterator
          *
          */
-        iterator end()   { return iterator(); }
+        iterator end() { return iterator(); }
     };
 
     /**
@@ -11471,7 +11471,7 @@ namespace ocilib
      */
     class SodaDocCursor : public core::HandleHolder<OCI_SodaDocCursor*>
     {
-        friend class SodaColl;
+    friend class SodaColl;
 
     public:
 
@@ -11499,26 +11499,26 @@ namespace ocilib
          */
         class iterator
         {
-            friend class SodaDocCursor;
+        friend class SodaDocCursor;
 
-            SodaDocCursor* _cursor;
-            SodaDoc        _doc;
+        SodaDocCursor* _cursor;
+        SodaDoc _doc;
 
-            explicit iterator(SodaDocCursor* cursor) : _cursor(cursor) { ++(*this); }
+        explicit iterator(SodaDocCursor* cursor) : _cursor(cursor) { ++(*this); }
 
         public:
 
             typedef std::input_iterator_tag iterator_category;
-            typedef SodaDoc                 value_type;
-            typedef std::ptrdiff_t          difference_type;
+            typedef SodaDoc value_type;
+            typedef std::ptrdiff_t difference_type;
             typedef SodaDoc*                pointer;
             typedef SodaDoc&                reference;
 
             iterator() : _cursor(NULL) {}
             iterator& operator++();
             iterator operator++(int) { iterator tmp = *this; ++(*this); return tmp; }
-            reference operator*()  { return _doc; }
-            pointer   operator->() { return &_doc; }
+            reference operator*() { return _doc; }
+            pointer operator->() { return &_doc; }
             bool operator==(const iterator& rhs) const { return _cursor == rhs._cursor; }
             bool operator!=(const iterator& rhs) const { return !(*this == rhs); }
         };
@@ -11535,7 +11535,7 @@ namespace ocilib
          * Return the past-the-end iterator
          *
          */
-        iterator end()   { return iterator(); }
+        iterator end() { return iterator(); }
     };
 
     /**
@@ -11596,17 +11596,16 @@ namespace ocilib
         [[nodiscard]] String ToString() const;
     };
 
-
-#define OCILIB_DEFINE_FLAG_OPERATORS(T) \
+#define OCILIB_DEFINE_FLAG_OPERATORS(T)                                                               \
         inline core::Flags<T> operator | (T a, T b) { return core::Flags<T>(a) | core::Flags<T>(b); } \
 
-        OCILIB_DEFINE_FLAG_OPERATORS(Environment::EnvironmentFlagsValues)
-        OCILIB_DEFINE_FLAG_OPERATORS(Environment::SessionFlagsValues)
-        OCILIB_DEFINE_FLAG_OPERATORS(Environment::StartFlagsValues)
-        OCILIB_DEFINE_FLAG_OPERATORS(Environment::StartModeValues)
-        OCILIB_DEFINE_FLAG_OPERATORS(Environment::ShutdownModeValues)
-        OCILIB_DEFINE_FLAG_OPERATORS(Environment::ShutdownFlagsValues)
-        OCILIB_DEFINE_FLAG_OPERATORS(Transaction::TransactionFlagsValues)
-        OCILIB_DEFINE_FLAG_OPERATORS(Column::PropertyFlagsValues)
-        OCILIB_DEFINE_FLAG_OPERATORS(Subscription::ChangeTypesValues)
+    OCILIB_DEFINE_FLAG_OPERATORS(Environment::EnvironmentFlagsValues)
+    OCILIB_DEFINE_FLAG_OPERATORS(Environment::SessionFlagsValues)
+    OCILIB_DEFINE_FLAG_OPERATORS(Environment::StartFlagsValues)
+    OCILIB_DEFINE_FLAG_OPERATORS(Environment::StartModeValues)
+    OCILIB_DEFINE_FLAG_OPERATORS(Environment::ShutdownModeValues)
+    OCILIB_DEFINE_FLAG_OPERATORS(Environment::ShutdownFlagsValues)
+    OCILIB_DEFINE_FLAG_OPERATORS(Transaction::TransactionFlagsValues)
+    OCILIB_DEFINE_FLAG_OPERATORS(Column::PropertyFlagsValues)
+    OCILIB_DEFINE_FLAG_OPERATORS(Subscription::ChangeTypesValues)
 }

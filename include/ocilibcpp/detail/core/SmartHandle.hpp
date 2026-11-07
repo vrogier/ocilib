@@ -53,7 +53,7 @@ namespace ocilib
 
         inline void HandleControlBase::FreeChildren()
         {
-            std::vector<std::shared_ptr<HandleControlBase>> children;
+            std::vector<std::shared_ptr<HandleControlBase> > children;
 
             {
                 std::lock_guard<std::mutex> lock(_childrenMutex);
@@ -125,7 +125,7 @@ namespace ocilib
 
             if (h && _allocated)
             {
-                OCI_Environment* env = OCI_HandleGetEnvironment(h);
+                OCI_Environment         * env = OCI_HandleGetEnvironment(h);
                 support::HandleDeleter<T> deleter;
                 deleter(h, env);
             }
@@ -155,7 +155,7 @@ namespace ocilib
         }
 
         template<class T>
-        inline std::shared_ptr<HandleControl<T>> HandleStore::Find(AnyPointer handle)
+        inline std::shared_ptr<HandleControl<T> > HandleStore::Find(AnyPointer handle)
         {
             std::lock_guard<std::mutex> lock(_mutex);
 
@@ -174,12 +174,12 @@ namespace ocilib
                 return nullptr;
             }
 
-            return std::dynamic_pointer_cast<HandleControl<T>>(base);
+            return std::dynamic_pointer_cast<HandleControl<T> >(base);
         }
 
         inline void HandleControlBase::FreeChildren(const std::function<bool(HandleControlBase*)>& predicate)
         {
-            std::vector<std::shared_ptr<HandleControlBase>> children;
+            std::vector<std::shared_ptr<HandleControlBase> > children;
 
             {
                 std::lock_guard<std::mutex> lock(_childrenMutex);

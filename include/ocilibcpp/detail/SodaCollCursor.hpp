@@ -22,9 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
 
@@ -40,13 +37,12 @@ namespace ocilib
     inline SodaColl SodaCollCursor::GetNext()
     {
         OCI_SodaColl* coll = core::Check
-        (
-            OCI_SodaCollCursorGetNext(*this)
-        );
+                             (
+                                 OCI_SodaCollCursorGetNext(*this)
+                             );
 
         return SodaColl(coll, GetHandle());
     }
-
 
     inline SodaCollCursor::iterator& SodaCollCursor::iterator::operator++()
     {

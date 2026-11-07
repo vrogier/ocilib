@@ -2320,10 +2320,6 @@ OCI_SYM_PUBLIC OCI_Connection* OCI_API OCI_PoolGetConnectionSharded
     OCI_ShardingKey *sskey
 );
 
-
-
-
-
 /**
  * @} OcilibCApiSharding
  */

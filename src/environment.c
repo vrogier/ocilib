@@ -1437,31 +1437,31 @@ OCI_Environment * OcilibEnvironmentCreate
 #endif
 
         OCI_CALL(ret, OCIEnvNlsCreate, &env->handle, nls_mode,
-                                        (dvoid *) env,
-                                        OcilibMemoryAllocOracleCallback,
-                                        OcilibMemoryReallocOracleCallback,
-                                        OcilibMemoryFreeOracleCallback,
-                                        (OCI_Size) 0, (dvoid **) NULL,
-                                        charset,
-                                        charset);
+                 (dvoid *) env,
+                 OcilibMemoryAllocOracleCallback,
+                 OcilibMemoryReallocOracleCallback,
+                 OcilibMemoryFreeOracleCallback,
+                 (OCI_Size) 0, (dvoid **) NULL,
+                 charset,
+                 charset);
 
     }
     else if (env->version_runtime >= OCI_8_1)
     {
         OCI_CALL(ret, OCIEnvCreate, &env->handle, oci_mode,
-                                     (dvoid *) env,
-                                     OcilibMemoryAllocOracleCallback,
-                                     OcilibMemoryReallocOracleCallback,
-                                     OcilibMemoryFreeOracleCallback,
-                                     (OCI_Size) 0, (dvoid **) NULL);
+                 (dvoid *) env,
+                 OcilibMemoryAllocOracleCallback,
+                 OcilibMemoryReallocOracleCallback,
+                 OcilibMemoryFreeOracleCallback,
+                 (OCI_Size) 0, (dvoid **) NULL);
     }
     else if (env->version_runtime == OCI_8_0)
     {
         OCI_CALL(ret, OCIInitialize, oci_mode,
-                                      (dvoid *) env,
-                                      OcilibMemoryAllocOracleCallback,
-                                      OcilibMemoryReallocOracleCallback,
-                                      OcilibMemoryFreeOracleCallback);
+                 (dvoid *) env,
+                 OcilibMemoryAllocOracleCallback,
+                 OcilibMemoryReallocOracleCallback,
+                 OcilibMemoryFreeOracleCallback);
 
         if (OCI_SUCCESSFUL(ret))
         {

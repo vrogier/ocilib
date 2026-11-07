@@ -22,20 +22,14 @@
 
 #include "ocilibcpp/core.hpp"
 
-// ReSharper disable CppClangTidyModernizeUseNodiscard
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
-// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
-// ReSharper disable CppClangTidyModernizePassByValue
-
 namespace ocilib
 {
     /**
      * @namespace ocilib::support
-     * @brief OCILIB internal support classes 
+     * @brief OCILIB internal support classes
      *
      */
-     
+
     namespace support
     {
         /**
@@ -44,10 +38,10 @@ namespace ocilib
         */
         template<class T> struct BindResolver {};
 
-       /**
-        * @brief Internal usage.
-        * Base class for implementing bind translations for C++ objects and their counter parts in the C API
-        */ 
+        /**
+         * @brief Internal usage.
+         * Base class for implementing bind translations for C++ objects and their counter parts in the C API
+         */
         class BindObject
         {
         public:
@@ -72,10 +66,10 @@ namespace ocilib
             UInt32 _mode;
         };
 
-       /**
-        * @brief Internal usage.
-        * Class implementing bind translations between C++ vectors and C API arrays
-        */ 
+        /**
+         * @brief Internal usage.
+         * Class implementing bind translations between C++ vectors and C API arrays
+         */
         class BindArray : public BindObject
         {
         public:
@@ -110,7 +104,7 @@ namespace ocilib
             };
 
             template<class T>
-            class BindArrayObject : public  AbstractBindArrayObject
+            class BindArrayObject : public AbstractBindArrayObject
             {
             public:
 
@@ -122,7 +116,7 @@ namespace ocilib
                 virtual ~BindArrayObject() noexcept;
                 void SetInData() override;
                 void SetOutData() override;
-                String GetName()const  override;
+                String GetName()const override;
                 bool IsHandleObject() const override;
                 UInt32 GetSize() const override;
                 UInt32 GetSizeForBindCall() const override;
@@ -148,14 +142,14 @@ namespace ocilib
             AbstractBindArrayObject* _object;
         };
 
-       /**
-        * @brief Internal usage.
-        * Class implementing bind adapters between C++ class and C API types
-        */ 
+        /**
+         * @brief Internal usage.
+         * Class implementing bind adapters between C++ class and C API types
+         */
         template<class T>
         class BindObjectAdaptor : public BindObject
         {
-            friend class Statement;
+        friend class Statement;
 
         public:
 
@@ -174,17 +168,17 @@ namespace ocilib
 
             ObjectType& _object;
             NativeType* _data;
-            UInt32   _size;
+            UInt32 _size;
         };
-        
-       /**
-        * @brief Internal usage.
-        * Class implementing bind adapters between C++ types and C API types when C++ types do not exist in C 
-        */ 
+
+        /**
+         * @brief Internal usage.
+         * Class implementing bind adapters between C++ types and C API types when C++ types do not exist in C
+         */
         template<class T>
         class BindTypeAdaptor : public BindObject
         {
-            friend class Statement;
+        friend class Statement;
 
         public:
 
@@ -205,10 +199,10 @@ namespace ocilib
             NativeType* _data;
         };
 
-       /**
-        * @brief Internal usage.
-        * Class owning bind objects allowing to set/get C data prior/after a statement execution
-        */ 
+        /**
+         * @brief Internal usage.
+         * Class owning bind objects allowing to set/get C data prior/after a statement execution
+         */
         class BindsHolder
         {
         public:

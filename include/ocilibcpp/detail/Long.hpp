@@ -25,54 +25,55 @@
 namespace ocilib
 {
 
-template<class T, Int32 U>
-Long<T, U>::Long()
-{
-}
-
-template<class T, Int32 U>
-Long<T, U>::Long(const Statement &statement)
-{
-    AcquireAllocated
-    (
-        core::Check(OCI_LongCreate(statement, U)),
-        statement.GetHandle()
-    );
-}
-
-template<class T, Int32 U>
-Long<T, U>::Long(OCI_Long *pLong, core::Handle* parent)
-{
-    AcquireTransient(pLong, parent);
-}
-
-template<class T, Int32 U>
-UInt32 Long<T, U>::Write(const T& content)
-{
-    if (content.empty())
+    template<class T, Int32 U>
+    Long<T, U>::Long()
     {
-        return 0;
     }
 
-    return core::Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename T::value_type*>(&content[0])), static_cast<UInt32>(content.size())));
-}
+    template<class T, Int32 U>
+    Long<T, U>::Long(const Statement &statement)
+    {
+        AcquireAllocated
+        (
+            core::Check(OCI_LongCreate(statement, U)),
+            statement.GetHandle()
+        );
+    }
 
-template<class T, Int32 U>
-UInt32 Long<T, U>::GetLength() const
-{
-    return core::Check(OCI_LongGetSize(*this));
-}
+    template<class T, Int32 U>
+    Long<T, U>::Long(OCI_Long *pLong, core::Handle* parent)
+    {
+        AcquireTransient(pLong, parent);
+    }
 
-template<>
-inline String Long<String, LongCharacter>::GetContent() const
-{
-    return core::MakeString(static_cast<const otext *>(core::Check(OCI_LongGetBuffer(*this))));
-}
+    template<class T, Int32 U>
+    UInt32 Long<T, U>::Write(const T& content)
+    {
+        if (content.empty())
+        {
+            return 0;
+        }
 
-template<>
-inline Raw Long<Raw, LongBinary>::GetContent() const
-{
-    return core::MakeRaw(core::Check(OCI_LongGetBuffer(*this)), GetLength());
-}
+        return core::Check(OCI_LongWrite(*this, static_cast<AnyPointer>(const_cast<typename T::value_type*>(&content[0])),
+                                         static_cast<UInt32>(content.size())));
+    }
+
+    template<class T, Int32 U>
+    UInt32 Long<T, U>::GetLength() const
+    {
+        return core::Check(OCI_LongGetSize(*this));
+    }
+
+    template<>
+    inline String Long<String, LongCharacter>::GetContent() const
+    {
+        return core::MakeString(static_cast<const otext *>(core::Check(OCI_LongGetBuffer(*this))));
+    }
+
+    template<>
+    inline Raw Long<Raw, LongBinary>::GetContent() const
+    {
+        return core::MakeRaw(core::Check(OCI_LongGetBuffer(*this)), GetLength());
+    }
 
 }

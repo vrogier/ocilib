@@ -691,6 +691,7 @@ typedef OCI_UInt32 OCI_FailoverEvent;         /* OCI_FOE_*                      
 typedef OCI_UInt32 OCI_HAEventSource;         /* OCI_HES_*                            */
 typedef OCI_UInt32 OCI_HAEventType;           /* OCI_HET_*                            */
 typedef OCI_UInt32 OCI_PointerType;           /* OCI_IPC_*                            */
+
 /*
  * Logging — level + category are configured via environment variables:
  *   OCILIB_LOG            = ERROR | WARN | INFO | DEBUG | TRACE  (default: off)

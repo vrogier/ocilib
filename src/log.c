@@ -483,7 +483,7 @@ static OCI_Boolean OcilibLogInitializeUnlocked(void)
 
         if (cat_str)
         {
-            char cat_buf[128];
+            char  cat_buf[128];
             char *token, *next;
 
             snprintf(cat_buf, sizeof(cat_buf), "%s", cat_str);
@@ -587,11 +587,11 @@ OCI_Boolean OcilibLogCleanup(void)
 
 void OcilibLogWrite
 (
-    OCI_LogCategory  category,
-    OCI_LogLevel     level,
-    const char      *step,
-    const char      *function,
-    const otext     *format,
+    OCI_LogCategory category,
+    OCI_LogLevel    level,
+    const char     *step,
+    const char     *function,
+    const otext    *format,
     ...
 )
 {

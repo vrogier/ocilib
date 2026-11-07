@@ -128,14 +128,14 @@
 
 /* labels */
 
-#define LABEL_CLEANUP(exp)                                      \
-                                                                \
-ocilib_cleanup_label:                                           \
-        if (NULL != ocilib_call_context.source_ptr)             \
-        {                                                       \
-            exp;                                                \
-        }                                                       \
-        goto ocilib_exit_label;                                 \
+#define LABEL_CLEANUP(exp)                          \
+                                                    \
+ocilib_cleanup_label:                               \
+        if (NULL != ocilib_call_context.source_ptr) \
+        {                                           \
+            exp;                                    \
+        }                                           \
+        goto ocilib_exit_label;                     \
 
 /* return to the caller */
 
@@ -280,7 +280,13 @@ ocilib_exit_label:                  \
         }                                                          \
         while (0)
 
-#define CHECK_INDEX(v, n)                                                                                                                do                                                                 {                                                                      if ((v) >= (n))                                                    {                                                                      THROW(OcilibExceptionOutOfBounds, (OCI_Int32)(v));             }                                                              }                                                                  while (0)
+#define CHECK_INDEX(v,                                                                                                                          \
+                    n)                                                                                                                do        \
+        {                                                                      if ((v) >=                                                       \
+                                                                                   (n))                                                    {    \
+                                                                                   THROW(OcilibExceptionOutOfBounds, (OCI_Int32)(v));           \
+                                                                               }                                                              } \
+        while (0)
 
 #define CHECK_MIN(v, m)                                  \
                                                          \
@@ -638,25 +644,25 @@ ocilib_exit_label:                  \
 
 #define IS_STRING_VALID(s) ((s) && ((s)[0]))
 
-#define OCI_CALL(ret, func, ...)                                                \
-                                                                                \
-        do                                                                      \
-        {                                                                       \
-            CHECK_NULL(ocilib_call_context.env);                                \
-            CHECK_NULL(ocilib_call_context.env->api);                           \
-            OCILIB_LOG_STEP_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,  \
+#define OCI_CALL(ret, func, ...)                                                             \
+                                                                                             \
+        do                                                                                   \
+        {                                                                                    \
+            CHECK_NULL(ocilib_call_context.env);                                             \
+            CHECK_NULL(ocilib_call_context.env->api);                                        \
+            OCILIB_LOG_STEP_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,               \
                                      OCI_LOG_TRACE, "ENTER", #func, OTEXT("%s"), OTEXT("")); \
-            (ret) = ocilib_call_context.env->api->func(__VA_ARGS__);            \
-            OCILIB_LOG_STEP_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,  \
-                                     OCI_LOG_TRACE, "LEAVE", #func,             \
-                                     OTEXT("(ret=%p)"), (void *)(size_t)(ret)); \
-        }                                                                       \
+            (ret) = ocilib_call_context.env->api->func(__VA_ARGS__);                         \
+            OCILIB_LOG_STEP_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,               \
+                                     OCI_LOG_TRACE, "LEAVE", #func,                          \
+                                     OTEXT("(ret=%p)"), (void *)(size_t)(ret));              \
+        }                                                                                    \
         while (0)
 
-#define OCI_ERROR_GET(errhp, code, buf, buflen)                                    \
-        (ocilib_call_context.env->api->OCIErrorGet((dvoid *) (errhp), (ub4) 1,     \
-            (OraText *) NULL, (sb4 *) (code), (OraText *) (buf), (ub4) (buflen),   \
-            (ub4) OCI_HTYPE_ERROR))
+#define OCI_ERROR_GET(errhp, code, buf, buflen)                                                                         \
+        (ocilib_call_context.env->api->OCIErrorGet((dvoid *) (errhp), (ub4) 1,                                          \
+                                                   (OraText *) NULL, (sb4 *) (code), (OraText *) (buf), (ub4) (buflen), \
+                                                   (ub4) OCI_HTYPE_ERROR))
 
 #define CHECK_OCI(oci_err, func, ...)                                           \
                                                                                 \

@@ -33,10 +33,10 @@ namespace ocilib
     {
         struct MemoryAllocation
         {
-            void* Address;
+            void      * Address;
             const char* Name;
-            Size ByteSize;
-            Size Count;
+            Size        ByteSize;
+            Size        Count;
         };
 
         class MemoryDebugInfo
@@ -55,9 +55,9 @@ namespace ocilib
             void OnDeallocate(T* address)
             {
                 auto it = std::find_if(std::begin(Allocations), std::end(Allocations), [address](const auto& alloc)
-                {
-                    return alloc.Address == address;
-                });
+                                       {
+                                           return alloc.Address == address;
+                                       });
                 if (it != std::end(Allocations))
                 {
                     Allocations.erase(it);
@@ -73,17 +73,17 @@ namespace ocilib
                 for (auto& alloc : Allocations)
                 {
                     std::cout << "=> Address " << alloc.Address
-                        << " - Size " << alloc.Count
-                        << " - Count " << alloc.ByteSize
-                        << " - Type " << alloc.Name
-                        << std::endl;
+                              << " - Size " << alloc.Count
+                              << " - Count " << alloc.ByteSize
+                              << " - Type " << alloc.Name
+                              << std::endl;
                 }
 
                 #ifdef OCILIBPP_DEBUG_MEMORY_THROW
 
                 throw std::runtime_error("Unfreed memory in ocilib cpp");
 
-                #endif 
+                #endif
             }
         };
 

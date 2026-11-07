@@ -25,114 +25,114 @@
 namespace ocilib
 {
 
-inline Column::Column(OCI_Column *pColumn, core::Handle *parent)
-{
-    AcquireTransient(pColumn, parent);
-}
+    inline Column::Column(OCI_Column *pColumn, core::Handle *parent)
+    {
+        AcquireTransient(pColumn, parent);
+    }
 
-inline String Column::GetName() const
-{
-    return core::MakeString(core::Check(OCI_ColumnGetName(*this)));
-}
+    inline String Column::GetName() const
+    {
+        return core::MakeString(core::Check(OCI_ColumnGetName(*this)));
+    }
 
-inline String Column::GetSQLType() const
-{
-    return core::MakeString(core::Check(OCI_ColumnGetSQLType(*this)));
-}
+    inline String Column::GetSQLType() const
+    {
+        return core::MakeString(core::Check(OCI_ColumnGetSQLType(*this)));
+    }
 
-inline String Column::GetFullSQLType() const
-{
-    const UInt32 size = OCI_SIZE_BUFFER;
+    inline String Column::GetFullSQLType() const
+    {
+        const UInt32 size = OCI_SIZE_BUFFER;
 
-    std::vector<otext> buffer(static_cast<Size>(size + 1));
+        std::vector<otext> buffer(static_cast<Size>(size + 1));
 
-    core::Check(OCI_ColumnGetFullSQLType(*this, buffer.data(), size));
+        core::Check(OCI_ColumnGetFullSQLType(*this, buffer.data(), size));
 
-    return core::MakeString(static_cast<const otext*>(buffer.data()));
-}
+        return core::MakeString(static_cast<const otext*>(buffer.data()));
+    }
 
-inline DataType Column::GetType() const
-{
-    return DataType(static_cast<DataType::Type>(core::Check(OCI_ColumnGetType(*this))));
-}
+    inline DataType Column::GetType() const
+    {
+        return DataType(static_cast<DataType::Type>(core::Check(OCI_ColumnGetType(*this))));
+    }
 
-inline UInt32 Column::GetSubType() const
-{
-    return core::Check(OCI_ColumnGetSubType(*this));
-}
+    inline UInt32 Column::GetSubType() const
+    {
+        return core::Check(OCI_ColumnGetSubType(*this));
+    }
 
-inline CharsetForm Column::GetCharsetForm() const
-{
-    return CharsetForm(static_cast<CharsetForm::Type>(core::Check(OCI_ColumnGetCharsetForm(*this))));
-}
+    inline CharsetForm Column::GetCharsetForm() const
+    {
+        return CharsetForm(static_cast<CharsetForm::Type>(core::Check(OCI_ColumnGetCharsetForm(*this))));
+    }
 
-inline CollationID Column::GetCollationID() const
-{
-    return CollationID(static_cast<CollationID::Type>(core::Check(OCI_ColumnGetCollationID(*this))));
-}
+    inline CollationID Column::GetCollationID() const
+    {
+        return CollationID(static_cast<CollationID::Type>(core::Check(OCI_ColumnGetCollationID(*this))));
+    }
 
-inline UInt32 Column::GetSize() const
-{
-    return core::Check(OCI_ColumnGetSize(*this));
-}
+    inline UInt32 Column::GetSize() const
+    {
+        return core::Check(OCI_ColumnGetSize(*this));
+    }
 
-inline Int32 Column::GetScale() const
-{
-    return core::Check(OCI_ColumnGetScale(*this));
-}
+    inline Int32 Column::GetScale() const
+    {
+        return core::Check(OCI_ColumnGetScale(*this));
+    }
 
-inline Int32 Column::GetPrecision() const
-{
-    return core::Check(OCI_ColumnGetPrecision(*this));
-}
+    inline Int32 Column::GetPrecision() const
+    {
+        return core::Check(OCI_ColumnGetPrecision(*this));
+    }
 
-inline Int32 Column::GetFractionalPrecision() const
-{
-    return core::Check(OCI_ColumnGetFractionalPrecision(*this));
-}
+    inline Int32 Column::GetFractionalPrecision() const
+    {
+        return core::Check(OCI_ColumnGetFractionalPrecision(*this));
+    }
 
-inline Int32 Column::GetLeadingPrecision() const
-{
-    return core::Check(OCI_ColumnGetLeadingPrecision(*this));
-}
+    inline Int32 Column::GetLeadingPrecision() const
+    {
+        return core::Check(OCI_ColumnGetLeadingPrecision(*this));
+    }
 
-inline Int32 Column::GetDimension() const
-{
-    return core::Check(OCI_ColumnGetDimension(*this));
-}
+    inline Int32 Column::GetDimension() const
+    {
+        return core::Check(OCI_ColumnGetDimension(*this));
+    }
 
-inline Column::PropertyFlags Column::GetPropertyFlags() const
-{
-    return PropertyFlags(static_cast<PropertyFlags::Type>(core::Check(OCI_ColumnGetPropertyFlags(*this))));
-}
+    inline Column::PropertyFlags Column::GetPropertyFlags() const
+    {
+        return PropertyFlags(static_cast<PropertyFlags::Type>(core::Check(OCI_ColumnGetPropertyFlags(*this))));
+    }
 
-inline bool Column::IsNullable() const
-{
-    return (core::Check(OCI_ColumnGetNullable(*this)) == TRUE);
-}
+    inline bool Column::IsNullable() const
+    {
+        return (core::Check(OCI_ColumnGetNullable(*this)) == TRUE);
+    }
 
-inline bool Column::HasJsonSchema() const
-{
-    return (core::Check(OCI_ColumnHasJsonSchema(*this)) == TRUE);
-}
+    inline bool Column::HasJsonSchema() const
+    {
+        return (core::Check(OCI_ColumnHasJsonSchema(*this)) == TRUE);
+    }
 
-inline bool Column::IsCharSemanticUsed() const
-{
-    return (core::Check(OCI_ColumnGetCharUsed(*this)) == TRUE);
-}
+    inline bool Column::IsCharSemanticUsed() const
+    {
+        return (core::Check(OCI_ColumnGetCharUsed(*this)) == TRUE);
+    }
 
-inline TypeInfo Column::GetTypeInfo() const
-{
-    OCI_TypeInfo* typeInfo = core::Check(OCI_ColumnGetTypeInfo(*this));
+    inline TypeInfo Column::GetTypeInfo() const
+    {
+        OCI_TypeInfo* typeInfo = core::Check(OCI_ColumnGetTypeInfo(*this));
 
-    Connection connection
-    (
-        core::Check(OCI_TypeInfoGetConnection(typeInfo)),
-        GetHandle(),
-        false
-    );
+        Connection connection
+        (
+            core::Check(OCI_TypeInfoGetConnection(typeInfo)),
+            GetHandle(),
+            false
+        );
 
-    return TypeInfo(typeInfo, connection.GetHandle());
-}
+        return TypeInfo(typeInfo, connection.GetHandle());
+    }
 
 }

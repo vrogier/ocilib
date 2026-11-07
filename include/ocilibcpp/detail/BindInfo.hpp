@@ -25,66 +25,66 @@
 namespace ocilib
 {
 
-inline BindInfo::BindInfo(OCI_Bind *pBind, core::Handle *parent)
-{
-    AcquireTransient(pBind, parent);
-}
-
-inline String BindInfo::GetName() const
-{
-    return core::MakeString(core::Check(OCI_BindGetName(*this)));
-}
-
-inline DataType BindInfo::GetType() const
-{
-    return DataType(static_cast<DataType::Type>(core::Check(OCI_BindGetType(*this))));
-}
-
-inline UInt32 BindInfo::GetSubType() const
-{
-    return core::Check(OCI_BindGetSubtype(*this));
-}
-
-inline UInt32 BindInfo::GetDataCount() const
-{
-    return core::Check(OCI_BindGetDataCount(*this));
-}
-
-inline Statement BindInfo::GetStatement() const
-{
-    return Statement(core::Check(OCI_BindGetStatement(*this)));
-}
-
-inline void BindInfo::SetDataNull(bool value, UInt32 index)
-{
-    if (value)
+    inline BindInfo::BindInfo(OCI_Bind *pBind, core::Handle *parent)
     {
-        core::Check(OCI_BindSetNullAtPos(*this, index));
+        AcquireTransient(pBind, parent);
     }
-    else
+
+    inline String BindInfo::GetName() const
     {
-        core::Check(OCI_BindSetNotNullAtPos(*this, index));
+        return core::MakeString(core::Check(OCI_BindGetName(*this)));
     }
-}
 
-inline bool BindInfo::IsDataNull(UInt32 index) const
-{
-    return (core::Check(OCI_BindIsNullAtPos(*this, index)) == TRUE);
-}
+    inline DataType BindInfo::GetType() const
+    {
+        return DataType(static_cast<DataType::Type>(core::Check(OCI_BindGetType(*this))));
+    }
 
-inline void BindInfo::SetCharsetForm(CharsetForm value)
-{
-    core::Check(OCI_BindSetCharsetForm(*this, value));
-}
+    inline UInt32 BindInfo::GetSubType() const
+    {
+        return core::Check(OCI_BindGetSubtype(*this));
+    }
 
-inline void BindInfo::SetDirection(BindDirection value)
-{
-    core::Check(OCI_BindSetDirection(*this, value));
-}
+    inline UInt32 BindInfo::GetDataCount() const
+    {
+        return core::Check(OCI_BindGetDataCount(*this));
+    }
 
-inline BindInfo::BindDirection BindInfo::GetDirection() const
-{
-    return BindDirection(static_cast<BindDirection::Type>(core::Check(OCI_BindGetDirection(*this))));
-}
+    inline Statement BindInfo::GetStatement() const
+    {
+        return Statement(core::Check(OCI_BindGetStatement(*this)));
+    }
+
+    inline void BindInfo::SetDataNull(bool value, UInt32 index)
+    {
+        if (value)
+        {
+            core::Check(OCI_BindSetNullAtPos(*this, index));
+        }
+        else
+        {
+            core::Check(OCI_BindSetNotNullAtPos(*this, index));
+        }
+    }
+
+    inline bool BindInfo::IsDataNull(UInt32 index) const
+    {
+        return (core::Check(OCI_BindIsNullAtPos(*this, index)) == TRUE);
+    }
+
+    inline void BindInfo::SetCharsetForm(CharsetForm value)
+    {
+        core::Check(OCI_BindSetCharsetForm(*this, value));
+    }
+
+    inline void BindInfo::SetDirection(BindDirection value)
+    {
+        core::Check(OCI_BindSetDirection(*this, value));
+    }
+
+    inline BindInfo::BindDirection BindInfo::GetDirection() const
+    {
+        return BindDirection(static_cast<BindDirection::Type>(core::Check(OCI_BindGetDirection(*this))));
+    }
 
 }

@@ -22,9 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
     namespace support
@@ -37,100 +34,99 @@ namespace ocilib
         template<> struct VectorFormatResolver<unsigned char> { enum { Value = Vector::Binary }; };
     }
 
+    inline Vector::Vector()
+    {
 
-inline Vector::Vector()
-{
-
-}
-
-inline Vector::Vector(const Connection& connection)
-{
-    AcquireAllocated
-    (
-        core::Check(OCI_VectorCreate(connection)),
-        connection.GetHandle()
-    );
-}
-
-inline Vector::Vector(OCI_Vector *pVector, core::Handle *parent)
-{
-    AcquireTransient(pVector, parent);
-}
-
-template<class T, core::SupportedVectorNumericT<T>*>
-void Vector::Set(T* values, UInt32 size)
-{
-    core::Check(OCI_VectorSetValues(*this, support::VectorFormatResolver<T>::Value, size, reinterpret_cast<void*>(values)));
-}
-
-template<class T, core::SupportedVectorNumericT<T>*>
-void Vector::Get(T* values)
-{
-    core::Check(OCI_VectorGetValues(*this, reinterpret_cast<void*>(values)));
-}
-
-template<class T, core::SupportedVectorNumericT<T>*>
-void Vector::Set(const std::vector<T>& values)
-{
-    Set(const_cast<T*>(values.data()), static_cast<UInt32>(values.size()));
-}
-
-template<class T, core::SupportedVectorNumericT<T>*>
-std::vector<T> Vector::Get()
-{
-    std::vector<T> values;
-    values.resize(static_cast<Size>(GetDimensionCount()));
-
-    Get(const_cast<T*>(values.data()));
-
-    return values;
-}
-
-inline UInt32 Vector::GetDimensionCount()
-{
-    UInt32 dimensions{};
-    UInt32 format{};
-
-    core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
-
-    return dimensions;
-}
-
-inline Vector::VectorFormat Vector::GetFormat()
-{
-    UInt32 dimensions{};
-    UInt32 format{};
-
-    core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
-
-    return VectorFormat(static_cast<VectorFormat::Type>(format));
-};
-
-inline void Vector::FromString(const String& str, VectorFormat format, UInt32 dimensions)
-{
-    core::Check(OCI_VectorFromText(*this, str.c_str(), static_cast<UInt32>(str.size()), format, dimensions));
-}
-
-inline String Vector::ToString() const
-{
-    if (!IsNull())
-    {       
-        UInt32 size{};
-        
-        core::Check(OCI_VectorToText(*this, &size, nullptr));
-
-        String result;
-
-        result.resize(static_cast<Size>(size));
-
-        core::Check(OCI_VectorToText(*this, &size, const_cast<otext*>(result.data())));
-
-        result.resize(static_cast<Size>(size));
-
-        return result;
     }
 
-    return OCI_STRING_NULL;
-}
+    inline Vector::Vector(const Connection& connection)
+    {
+        AcquireAllocated
+        (
+            core::Check(OCI_VectorCreate(connection)),
+            connection.GetHandle()
+        );
+    }
+
+    inline Vector::Vector(OCI_Vector *pVector, core::Handle *parent)
+    {
+        AcquireTransient(pVector, parent);
+    }
+
+    template<class T, core::SupportedVectorNumericT<T>*>
+    void Vector::Set(T* values, UInt32 size)
+    {
+        core::Check(OCI_VectorSetValues(*this, support::VectorFormatResolver<T>::Value, size, reinterpret_cast<void*>(values)));
+    }
+
+    template<class T, core::SupportedVectorNumericT<T>*>
+    void Vector::Get(T* values)
+    {
+        core::Check(OCI_VectorGetValues(*this, reinterpret_cast<void*>(values)));
+    }
+
+    template<class T, core::SupportedVectorNumericT<T>*>
+    void Vector::Set(const std::vector<T>& values)
+    {
+        Set(const_cast<T*>(values.data()), static_cast<UInt32>(values.size()));
+    }
+
+    template<class T, core::SupportedVectorNumericT<T>*>
+    std::vector<T> Vector::Get()
+    {
+        std::vector<T> values;
+        values.resize(static_cast<Size>(GetDimensionCount()));
+
+        Get(const_cast<T*>(values.data()));
+
+        return values;
+    }
+
+    inline UInt32 Vector::GetDimensionCount()
+    {
+        UInt32 dimensions{};
+        UInt32 format{};
+
+        core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
+
+        return dimensions;
+    }
+
+    inline Vector::VectorFormat Vector::GetFormat()
+    {
+        UInt32 dimensions{};
+        UInt32 format{};
+
+        core::Check(OCI_VectorGetInfo(*this, &format, &dimensions));
+
+        return VectorFormat(static_cast<VectorFormat::Type>(format));
+    };
+
+    inline void Vector::FromString(const String& str, VectorFormat format, UInt32 dimensions)
+    {
+        core::Check(OCI_VectorFromText(*this, str.c_str(), static_cast<UInt32>(str.size()), format, dimensions));
+    }
+
+    inline String Vector::ToString() const
+    {
+        if (!IsNull())
+        {
+            UInt32 size{};
+
+            core::Check(OCI_VectorToText(*this, &size, nullptr));
+
+            String result;
+
+            result.resize(static_cast<Size>(size));
+
+            core::Check(OCI_VectorToText(*this, &size, const_cast<otext*>(result.data())));
+
+            result.resize(static_cast<Size>(size));
+
+            return result;
+        }
+
+        return OCI_STRING_NULL;
+    }
 
 }

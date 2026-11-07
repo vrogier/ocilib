@@ -23,8 +23,6 @@
 #include "ocilibcpp/detail/core/HandleStore.hpp"
 #include "ocilibcpp/detail/core/SmartHandle.hpp"
 
-// ReSharper disable CppClangTidyBugproneUnhandledSelfAssignment
-
 namespace ocilib
 {
     namespace core
@@ -113,7 +111,8 @@ namespace ocilib
         }
 
         template<class T>
-        void HandleHolder<T>::Acquire(T handle, bool allocated, Handle* parent, std::shared_ptr<HandleStore> store, FreeNotifyFunc freeNotify, AnyPointer extraInfo)
+        void HandleHolder<T>::Acquire(T handle, bool allocated, Handle* parent, std::shared_ptr<HandleStore> store, FreeNotifyFunc freeNotify,
+                                      AnyPointer extraInfo)
         {
             if (_control && _control->GetHandle() == handle)
             {
@@ -137,7 +136,7 @@ namespace ocilib
                 return;
             }
 
-            _control = std::make_shared<HandleControl<T>>(handle, allocated, std::weak_ptr<HandleStore>(store), freeNotify, extraInfo);
+            _control = std::make_shared<HandleControl<T> >(handle, allocated, std::weak_ptr<HandleStore>(store), freeNotify, extraInfo);
 
             if (store)
             {

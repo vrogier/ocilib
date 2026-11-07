@@ -621,10 +621,10 @@ static OCI_Boolean OcilibConnectionLogonRegular
 
 static OCI_Boolean OcilibConnectionLogonSessionGet
 (
-    OCI_Connection *con,
+    OCI_Connection  *con,
     OCI_ShardingKey *skey,
     OCI_ShardingKey *sskey,
-    const otext    *tag
+    const otext     *tag
 )
 {
     ENTER_FUNC
@@ -633,19 +633,19 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    void       *authp      = NULL;
-    ub4         sess_mode  = OCI_DEFAULT;
-    OCI_Int32   dbsize     = -1;
-    dbtext     *dbstr      = NULL;
-    OCI_Int32   dbusrsize  = -1;
-    dbtext     *dbusr      = NULL;
-    OCI_Int32   dbpwdsize  = -1;
-    dbtext     *dbpwd      = NULL;
-    OCI_Int32   dbtagsize  = 0;
-    dbtext     *dbtag      = NULL;
-    OraText    *dbret      = NULL;
-    ub4         dbretsize  = 0;
-    boolean     found      = FALSE;
+    void     *authp     = NULL;
+    ub4       sess_mode = OCI_DEFAULT;
+    OCI_Int32 dbsize    = -1;
+    dbtext   *dbstr     = NULL;
+    OCI_Int32 dbusrsize = -1;
+    dbtext   *dbusr     = NULL;
+    OCI_Int32 dbpwdsize = -1;
+    dbtext   *dbpwd     = NULL;
+    OCI_Int32 dbtagsize = 0;
+    dbtext   *dbtag     = NULL;
+    OraText  *dbret     = NULL;
+    ub4       dbretsize = 0;
+    boolean   found     = FALSE;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con);
 
@@ -817,9 +817,9 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
 
 OCI_Boolean OcilibConnectionLogon
 (
-    OCI_Connection *con,
-    const otext    *new_pwd,
-    const otext    *tag,
+    OCI_Connection  *con,
+    const otext     *new_pwd,
+    const otext     *tag,
     OCI_ShardingKey *skey,
     OCI_ShardingKey *sskey
 )
@@ -1067,7 +1067,6 @@ static OCI_Boolean OcilibConnectionLogOff
 
     con->cstate = OCI_CONN_ATTACHED;
 
-
     OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO, OTEXT("handle=[%p] disconnected"), con);
 
     SET_RETVAL(res);
@@ -1180,10 +1179,10 @@ OCI_Connection * OcilibConnectionCreateInternal
 
     OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO,
                OTEXT("handle=[%p] connected db=[%s] user=[%s] tag =[%s]"),
-                con,
-                db ? db : OTEXT(""),
-                user ? user : OTEXT(""),   
-                tag ? tag : OTEXT(""));
+               con,
+               db ? db : OTEXT(""),
+               user ? user : OTEXT(""),
+               tag ? tag : OTEXT(""));
 
     CLEANUP_AND_EXIT_FUNC
     (

@@ -22,11 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseAuto
-// ReSharper disable CppClangTidyReadabilityInconsistentDeclarationParameterName
-
 namespace ocilib
 {
 
@@ -77,9 +72,9 @@ namespace ocilib
     inline SodaDocCursor SodaColl::Find()
     {
         OCI_SodaDocCursor* cursor = core::Check
-        (
-            OCI_SodaCollFind(*this, nullptr)
-        );
+                                    (
+                                        OCI_SodaCollFind(*this, nullptr)
+                                    );
 
         return SodaDocCursor(cursor, GetHandle());
     }
@@ -87,9 +82,9 @@ namespace ocilib
     inline SodaDocCursor SodaColl::Find(const SodaOptions& options)
     {
         OCI_SodaDocCursor* cursor = core::Check
-        (
-            OCI_SodaCollFind(*this, options)
-        );
+                                    (
+                                        OCI_SodaCollFind(*this, options)
+                                    );
 
         return SodaDocCursor(cursor, GetHandle());
     }
@@ -97,9 +92,9 @@ namespace ocilib
     inline SodaDoc SodaColl::FindOne(const SodaOptions& options)
     {
         OCI_SodaDoc* doc = core::Check
-        (
-            OCI_SodaCollFindOne(*this, options)
-        );
+                           (
+                               OCI_SodaCollFindOne(*this, options)
+                           );
 
         return SodaDoc(doc, GetHandle());
     }
@@ -107,9 +102,9 @@ namespace ocilib
     inline SodaDoc SodaColl::FindOne(const String& key)
     {
         OCI_SodaDoc* doc = core::Check
-        (
-            OCI_SodaCollFindOneByKey(*this, key.c_str())
-        );
+                           (
+                               OCI_SodaCollFindOneByKey(*this, key.c_str())
+                           );
 
         return SodaDoc(doc, GetHandle());
     }
@@ -173,7 +168,7 @@ namespace ocilib
 
     inline std::vector<String> SodaColl::ListIndexes()
     {
-        UInt32 count = 0;
+        UInt32  count = 0;
         otext** names = core::Check(OCI_SodaCollListIndexes(*this, &count));
 
         std::vector<String> result;

@@ -22,9 +22,6 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
     inline JsonNode::JsonNode()
@@ -103,7 +100,7 @@ namespace ocilib
 
     inline String JsonNode::GetString() const
     {
-        UInt32 length = 0;
+        UInt32       length = 0;
         const otext* value = core::Check(OCI_JsonNodeGetString(*this, &length));
         return core::MakeString(value, static_cast<Int32>(length));
     }
@@ -115,7 +112,7 @@ namespace ocilib
 
     inline Raw JsonNode::GetBinary() const
     {
-        UInt32 length = 0;
+        UInt32      length = 0;
         const void* value = core::Check(OCI_JsonNodeGetBinary(*this, &length));
         return core::MakeRaw(const_cast<void*>(value), length);
     }
@@ -276,7 +273,7 @@ namespace ocilib
         }
         else
         {
-            T value{};
+            T           value{};
             OCI_Boolean res = FALSE;
 
             if constexpr      (std::is_same_v<U, Int16>)   res = OCI_JsonNodeGetShort(*this, reinterpret_cast<OCI_Int16*>(&value));

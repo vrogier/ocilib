@@ -25,39 +25,39 @@
 namespace ocilib
 {
 
-inline Event::Event(OCI_Event *pEvent)
-{
-    AcquireTransient(pEvent, static_cast<core::Handle*>(nullptr));
-}
+    inline Event::Event(OCI_Event *pEvent)
+    {
+        AcquireTransient(pEvent, static_cast<core::Handle*>(nullptr));
+    }
 
-inline Event::EventType Event::GetType() const
-{
-    return EventType(static_cast<EventType::Type>(core::Check(OCI_EventGetType(*this))));
-}
+    inline Event::EventType Event::GetType() const
+    {
+        return EventType(static_cast<EventType::Type>(core::Check(OCI_EventGetType(*this))));
+    }
 
-inline Event::ObjectEvent Event::GetObjectEvent() const
-{
-    return ObjectEvent(static_cast<ObjectEvent::Type>(core::Check(OCI_EventGetOperation(*this))));
-}
+    inline Event::ObjectEvent Event::GetObjectEvent() const
+    {
+        return ObjectEvent(static_cast<ObjectEvent::Type>(core::Check(OCI_EventGetOperation(*this))));
+    }
 
-inline String Event::GetDatabaseName() const
-{
-    return core::MakeString(core::Check(OCI_EventGetDatabase(*this)));
-}
+    inline String Event::GetDatabaseName() const
+    {
+        return core::MakeString(core::Check(OCI_EventGetDatabase(*this)));
+    }
 
-inline String Event::GetObjectName() const
-{
-    return core::MakeString(core::Check(OCI_EventGetObject(*this)));
-}
+    inline String Event::GetObjectName() const
+    {
+        return core::MakeString(core::Check(OCI_EventGetObject(*this)));
+    }
 
-inline String Event::GetRowID() const
-{
-    return core::MakeString(core::Check(OCI_EventGetRowid(*this)));
-}
+    inline String Event::GetRowID() const
+    {
+        return core::MakeString(core::Check(OCI_EventGetRowid(*this)));
+    }
 
-inline Subscription Event::GetSubscription() const
-{
-    return Subscription(core::Check(OCI_EventGetSubscription(*this)));
-}
+    inline Subscription Event::GetSubscription() const
+    {
+        return Subscription(core::Check(OCI_EventGetSubscription(*this)));
+    }
 
 }

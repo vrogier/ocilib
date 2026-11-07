@@ -22,61 +22,59 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyBugproneUnhandledSelfAssignment
-
 namespace ocilib
 {
 
-template<class T>
-CollectionElement<T>::CollectionElement() : _coll(nullptr), _pos(0)
-{
-
-}
-
-template<class T>
-CollectionElement<T>::CollectionElement(CollectionType *coll, UInt32 pos) : _coll(coll), _pos(pos)
-{
-
-}
-
-template<class T>
-CollectionElement<T>::operator T() const
-{
-    return _coll->Get(_pos);
-}
-
-template<class T>
-CollectionElement<T>& CollectionElement<T>::operator = (const ValueType& other)
-{
-    if (this != &other)
+    template<class T>
+    CollectionElement<T>::CollectionElement() : _coll(nullptr), _pos(0)
     {
-        _coll->Set(_pos, other);
+
     }
 
-    return *this;
-}
-
-template<class T>
-CollectionElement<T>& CollectionElement<T>::operator = (const CollectionElement &other)
-{
-    if (this != &other)
+    template<class T>
+    CollectionElement<T>::CollectionElement(CollectionType *coll, UInt32 pos) : _coll(coll), _pos(pos)
     {
-        _coll->Set(_pos, static_cast<T>(other));
+
     }
 
-    return *this;
-}
+    template<class T>
+    CollectionElement<T>::operator T() const
+    {
+        return _coll->Get(_pos);
+    }
 
-template<class T>
-bool CollectionElement<T>::IsNull() const
-{
-    return _coll->IsElementNull(_pos);
-}
+    template<class T>
+    CollectionElement<T>& CollectionElement<T>::operator = (const ValueType& other)
+    {
+        if (this != &other)
+        {
+            _coll->Set(_pos, other);
+        }
 
-template<class T>
-void CollectionElement<T>::SetNull()
-{
-    _coll->SetElementNull(_pos);
-}
+        return *this;
+    }
+
+    template<class T>
+    CollectionElement<T>& CollectionElement<T>::operator = (const CollectionElement &other)
+    {
+        if (this != &other)
+        {
+            _coll->Set(_pos, static_cast<T>(other));
+        }
+
+        return *this;
+    }
+
+    template<class T>
+    bool CollectionElement<T>::IsNull() const
+    {
+        return _coll->IsElementNull(_pos);
+    }
+
+    template<class T>
+    void CollectionElement<T>::SetNull()
+    {
+        _coll->SetElementNull(_pos);
+    }
 
 }

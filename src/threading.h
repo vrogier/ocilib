@@ -42,7 +42,7 @@
 
 #  if defined(_MSC_VER)
 
-    /* C11 <threads.h> requires MSVC 17.8 (VS2022) or newer — ocilib ships
+/* C11 <threads.h> requires MSVC 17.8 (VS2022) or newer — ocilib ships
        Windows binaries built with VS2026, so a lower floor is a hard error
        rather than a shim. */
 
@@ -54,7 +54,7 @@
 
 #  endif
 
-    /* non-MSVC Windows toolchains (MinGW, clang-cl without MSVC STL) fall
+/* non-MSVC Windows toolchains (MinGW, clang-cl without MSVC STL) fall
        through to the feature detection below — MinGW-w64 resolves to the
        pthread shim via winpthreads. */
 
@@ -63,19 +63,19 @@
 #if !defined(_WIN32) || !defined(_WIN64) || !defined(_MSC_VER)
 
 #  if !defined(OCILIB_NO_C11_THREADS) && \
-      defined(__has_include) && __has_include(<threads.h>)
+    defined(__has_include) && __has_include(<threads.h>)
 
     #include <threads.h>
 
 #  else
 
-    /* POSIX fallback over pthreads (implementations live in threading.c). */
+/* POSIX fallback over pthreads (implementations live in threading.c). */
 
     #define OCILIB_POSIX_THREADS 1
 
     #include <pthread.h>
 
-    /* status codes (mirror C11 values ordering: any nonzero means error) */
+/* status codes (mirror C11 values ordering: any nonzero means error) */
 
     #define thrd_success  0
     #define thrd_error    1
@@ -83,41 +83,81 @@
     #define thrd_timedout 3
     #define thrd_nomem    4
 
-    /* ---- mutex ------------------------------------------------------------ */
+/* ---- mutex ------------------------------------------------------------ */
 
-    typedef pthread_mutex_t mtx_t;
+typedef pthread_mutex_t mtx_t;
 
-        /* C11 kind selectors passed to mtx_init() */
+/* C11 kind selectors passed to mtx_init() */
 
     #define mtx_plain     0
     #define mtx_timed     1
     #define mtx_recursive 2
 
-    /* ---- thread-specific storage ------------------------------------------ */
+/* ---- thread-specific storage ------------------------------------------ */
 
-    typedef pthread_key_t tss_t;
-    typedef void (*tss_dtor_t)(void *);
+typedef pthread_key_t tss_t;
+typedef void (*tss_dtor_t)
+(
+    void *
+);
 
-    /* ---- one-time initialisation ------------------------------------------ */
+/* ---- one-time initialisation ------------------------------------------ */
 
-    typedef pthread_once_t once_flag;
+typedef pthread_once_t once_flag;
 
     #define ONCE_FLAG_INIT  PTHREAD_ONCE_INIT
 
-    /* ---- POSIX implementations (see threading.c) --------------------------- */
+/* ---- POSIX implementations (see threading.c) --------------------------- */
 
-    int   OcilibThreadsMtxInit(mtx_t *mutex, int type);
-    int   OcilibThreadsMtxLock(mtx_t *mutex);
-    int   OcilibThreadsMtxUnlock(mtx_t *mutex);
-    int   OcilibThreadsMtxTrylock(mtx_t *mutex);
-    void  OcilibThreadsMtxDestroy(mtx_t *mutex);
+int OcilibThreadsMtxInit
+(
+    mtx_t *mutex,
+    int    type
+);
+int OcilibThreadsMtxLock
+(
+    mtx_t *mutex
+);
+int OcilibThreadsMtxUnlock
+(
+    mtx_t *mutex
+);
+int OcilibThreadsMtxTrylock
+(
+    mtx_t *mutex
+);
+void OcilibThreadsMtxDestroy
+(
+    mtx_t *mutex
+);
 
-    int   OcilibThreadsTssCreate(tss_t *key, tss_dtor_t dtor);
-    void *OcilibThreadsTssGet(tss_t key);
-    int   OcilibThreadsTssSet(tss_t key, void *value);
-    void  OcilibThreadsTssDelete(tss_t key);
+int OcilibThreadsTssCreate
+(
+    tss_t     *key,
+    tss_dtor_t dtor
+);
+void *OcilibThreadsTssGet
+(
+    tss_t key
+);
+int OcilibThreadsTssSet
+(
+    tss_t key,
+    void *value
+);
+void OcilibThreadsTssDelete
+(
+    tss_t key
+);
 
-    void  OcilibThreadsCallOnce(once_flag *flag, void (*func)(void));
+void OcilibThreadsCallOnce
+(
+    once_flag *flag,
+    void     (*func)
+    (
+        void
+    )
+);
 
     #define mtx_init(m, t)   OcilibThreadsMtxInit((m), (t))
     #define mtx_lock(m)      OcilibThreadsMtxLock(m)

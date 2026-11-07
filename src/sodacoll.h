@@ -127,7 +127,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollReplaceOneByKey
     OCI_SodaColl *coll,
     const otext  *key,
     OCI_SodaDoc  *doc,
-    OCI_Boolean    refresh
+    OCI_Boolean   refresh
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollRemove
@@ -148,7 +148,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollInsertMany
     OCI_SodaColl *coll,
     OCI_SodaDoc **docs,
     OCI_UInt32    count,
-    OCI_Boolean    refresh
+    OCI_Boolean   refresh
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollCreateIndex
@@ -172,7 +172,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollSave
 (
     OCI_SodaColl *coll,
     OCI_SodaDoc  *doc,
-    OCI_Boolean    refresh
+    OCI_Boolean   refresh
 );
 
 #endif /* OCILIB_SODACOLL_H_INCLUDED */

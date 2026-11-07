@@ -658,9 +658,9 @@ OCI_Object * OcilibObjectInitialize
             sword ret;
 
             OCI_CALL(ret, OCIObjectGetProperty, obj->con->env->handle, obj->con->err,
-                                                     obj->handle,
-                                                     (OCIObjectPropId) OCI_OBJECTPROP_LIFETIME,
-                                                     (void *) &obj->type, &size);
+                     obj->handle,
+                     (OCIObjectPropId) OCI_OBJECTPROP_LIFETIME,
+                     (void *) &obj->type, &size);
         }
         else
         {
@@ -2355,7 +2355,7 @@ OCI_Boolean OcilibObjectToString
                     if (data && ind && (OCI_IND_NULL != *ind))
                     {
                         OCI_CALL(data_size, OCIStringSize, obj->typinf->con->env->handle, (*(OCIString **)data));
-                        data      = (void *)OcilibObjectGetString(obj, attr);
+                        data = (void *)OcilibObjectGetString(obj, attr);
                     }
                     else
                     {

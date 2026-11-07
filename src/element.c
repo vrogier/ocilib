@@ -639,8 +639,8 @@ OCI_UInt32 OcilibElementGetRaw
 
     CHECK_NULL(elem->handle);
 
-    OCIRaw   *raw     = (OCIRaw *) elem->handle;
-    ub4 raw_len;
+    OCIRaw *raw = (OCIRaw *) elem->handle;
+    ub4     raw_len;
 
     OCI_CALL(raw_len, OCIRawSize, elem->typinf->con->env->handle, raw);
 
@@ -684,10 +684,7 @@ OCI_UInt32 OcilibElementGetRawSize
 
     ub4 rawsize;
 
-
-
     OCI_CALL(rawsize, OCIRawSize, elem->typinf->con->env->handle, (OCIRaw*)elem->handle);
-
 
     SET_RETVAL(rawsize);
 

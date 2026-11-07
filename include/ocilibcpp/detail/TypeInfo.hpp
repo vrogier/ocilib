@@ -60,11 +60,11 @@ namespace ocilib
         core::Handle* connectionParent = parentHandle ? parentHandle->GetParent() : GetHandle();
 
         return Connection
-        (
-            core::Check(OCI_TypeInfoGetConnection(*this)),
-            connectionParent,
-            false
-        );
+               (
+                   core::Check(OCI_TypeInfoGetConnection(*this)),
+                   connectionParent,
+                   false
+               );
     }
 
     inline UInt32 TypeInfo::GetColumnCount() const

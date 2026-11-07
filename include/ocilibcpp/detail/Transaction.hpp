@@ -22,58 +22,56 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyPerformanceUnnecessaryValueParam
-
 namespace ocilib
 {
 
-inline Transaction::Transaction(const Connection &connection, UInt32 timeout, TransactionFlags flags, OCI_XID *pxid)
-{
-    AcquireAllocated
-    (
-        core::Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)), 
-        connection.GetHandle()
-    );
-}
+    inline Transaction::Transaction(const Connection &connection, UInt32 timeout, TransactionFlags flags, OCI_XID *pxid)
+    {
+        AcquireAllocated
+        (
+            core::Check(OCI_TransactionCreate(connection, timeout, flags.GetValues(), pxid)),
+            connection.GetHandle()
+        );
+    }
 
-inline Transaction::Transaction(OCI_Transaction *trans)
-{
-    AcquireTransient(trans, GetHandle());
-}
+    inline Transaction::Transaction(OCI_Transaction *trans)
+    {
+        AcquireTransient(trans, GetHandle());
+    }
 
-inline void Transaction::Prepare()
-{
-    core::Check(OCI_TransactionPrepare(*this));
-}
+    inline void Transaction::Prepare()
+    {
+        core::Check(OCI_TransactionPrepare(*this));
+    }
 
-inline void Transaction::Start()
-{
-    core::Check(OCI_TransactionStart(*this));
-}
+    inline void Transaction::Start()
+    {
+        core::Check(OCI_TransactionStart(*this));
+    }
 
-inline void Transaction::Stop()
-{
-    core::Check(OCI_TransactionStop(*this));
-}
+    inline void Transaction::Stop()
+    {
+        core::Check(OCI_TransactionStop(*this));
+    }
 
-inline void Transaction::Resume()
-{
-    core::Check(OCI_TransactionResume(*this));
-}
+    inline void Transaction::Resume()
+    {
+        core::Check(OCI_TransactionResume(*this));
+    }
 
-inline void Transaction::Forget()
-{
-    core::Check(OCI_TransactionForget(*this));
-}
+    inline void Transaction::Forget()
+    {
+        core::Check(OCI_TransactionForget(*this));
+    }
 
-inline Transaction::TransactionFlags Transaction::GetFlags() const
-{
-    return TransactionFlags(static_cast<TransactionFlags::Type>(core::Check(OCI_TransactionGetMode(*this))));
-}
+    inline Transaction::TransactionFlags Transaction::GetFlags() const
+    {
+        return TransactionFlags(static_cast<TransactionFlags::Type>(core::Check(OCI_TransactionGetMode(*this))));
+    }
 
-inline UInt32 Transaction::GetTimeout() const
-{
-    return core::Check(OCI_TransactionGetTimeout(*this));
-}
+    inline UInt32 Transaction::GetTimeout() const
+    {
+        return core::Check(OCI_TransactionGetTimeout(*this));
+    }
 
 }

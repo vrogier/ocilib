@@ -42,10 +42,10 @@ namespace ocilib
         public:
 
             typedef std::random_access_iterator_tag iterator_category;
-            typedef V                          value_type;
-            typedef ptrdiff_t                       difference_type;
-            typedef void                            pointer;
-            typedef V                          reference;
+            typedef V value_type;
+            typedef ptrdiff_t difference_type;
+            typedef void pointer;
+            typedef V reference;
 
             IndexedIterator() = default;
 
@@ -154,7 +154,7 @@ namespace ocilib
             }
 
             T* _owner = nullptr;
-            difference_type _pos  = 0;
+            difference_type _pos = 0;
 
         private:
 

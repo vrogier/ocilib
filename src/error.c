@@ -35,7 +35,7 @@ static once_flag error_tss_once      = ONCE_FLAG_INIT;
 static OCI_Int32 error_tss_status    = thrd_error;
 static OCI_Int32 error_tss_ref_count = 0;
 static mtx_t     error_ref_mtx;
-static once_flag error_ref_mtx_once  = ONCE_FLAG_INIT;
+static once_flag error_ref_mtx_once = ONCE_FLAG_INIT;
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibErrorTssDtor

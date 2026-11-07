@@ -22,32 +22,29 @@
 
 #include "ocilibcpp/types.hpp"
 
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
 
-inline XmlType::XmlType(OCI_XmlType *pXmlType, core::Handle *parent)
-{
-    AcquireTransient(pXmlType, parent);
-}
-
-inline String XmlType::ToString() const
-{
-    if (!IsNull())
+    inline XmlType::XmlType(OCI_XmlType *pXmlType, core::Handle *parent)
     {
-        UInt32 size = core::Check(OCI_XmlTypeGetContentSize(*this));
-
-        if (size > 0)
-        {
-            return String(core::Check(OCI_XmlTypeGetContent(*this)), static_cast<Size>(size));
-        }
-
-        return {};
+        AcquireTransient(pXmlType, parent);
     }
 
-    return OCI_STRING_NULL;
-}
+    inline String XmlType::ToString() const
+    {
+        if (!IsNull())
+        {
+            UInt32 size = core::Check(OCI_XmlTypeGetContentSize(*this));
+
+            if (size > 0)
+            {
+                return String(core::Check(OCI_XmlTypeGetContent(*this)), static_cast<Size>(size));
+            }
+
+            return {};
+        }
+
+        return OCI_STRING_NULL;
+    }
 
 }

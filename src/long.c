@@ -287,9 +287,9 @@ OCI_UInt32 OcilibLongWrite
     /* perform write call */
 
     OCI_CALL(code, OCIStmtExecute, lg->handle->con->handle, lg->handle->handle,
-                                                     lg->handle->con->err, (ub4) 1, (ub4) 0,
-                                                     (OCISnapshot *) NULL, (OCISnapshot *) NULL,
-                                                     (ub4) 0);
+             lg->handle->con->err, (ub4) 1, (ub4) 0,
+             (OCISnapshot *) NULL, (OCISnapshot *) NULL,
+             (ub4) 0);
 
     if (OCI_FAILURE(code) && (OCI_NEED_DATA != code))
     {

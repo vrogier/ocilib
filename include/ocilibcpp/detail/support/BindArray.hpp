@@ -22,8 +22,6 @@
 
 #include "ocilibcpp/support.hpp"
 
-// ReSharper disable CppClangTidyModernizePassByValue
-
 namespace ocilib
 {
     namespace support
@@ -77,10 +75,11 @@ namespace ocilib
             return _object ? _object->GetSizeForBindCall() : 0;
         }
 
-
         template<class T>
-        BindArray::BindArrayObject<T>::BindArrayObject(const Statement& statement, const String& name, ObjectVector& vector, bool isPlSqlTable, UInt32 mode, UInt32 elemSize)
-            : _statement(statement), _name(name), _vector(vector), _data(nullptr), _isPlSqlTable(isPlSqlTable), _mode(mode), _elemCount(BindArrayObject<T>::GetSize()), _elemSize(elemSize)
+        BindArray::BindArrayObject<T>::BindArrayObject(const Statement& statement, const String& name, ObjectVector& vector, bool isPlSqlTable, UInt32 mode,
+                                                       UInt32 elemSize)
+            : _statement(statement), _name(name), _vector(vector), _data(nullptr), _isPlSqlTable(isPlSqlTable), _mode(mode),
+            _elemCount(BindArrayObject<T>::GetSize()), _elemSize(elemSize)
         {
             AllocData();
         }
@@ -130,7 +129,7 @@ namespace ocilib
         {
             typename ObjectVector::iterator it, it_end;
 
-            UInt32 index = 0;
+            UInt32       index = 0;
             const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
@@ -144,7 +143,7 @@ namespace ocilib
         {
             std::vector<String>::iterator it, it_end;
 
-            UInt32 index = 0;
+            UInt32       index = 0;
             const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
@@ -160,7 +159,7 @@ namespace ocilib
         {
             std::vector<Raw>::iterator it, it_end;
 
-            UInt32 index = 0;
+            UInt32       index = 0;
             const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
@@ -181,7 +180,7 @@ namespace ocilib
         {
             typename ObjectVector::iterator it, it_end;
 
-            UInt32 index = 0;
+            UInt32       index = 0;
             const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
@@ -197,7 +196,7 @@ namespace ocilib
 
             OCI_Bind* pBind = core::Check(OCI_GetBindByName(_statement, GetName().c_str()));
 
-            UInt32 index = 0;
+            UInt32       index = 0;
             const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)
@@ -215,7 +214,7 @@ namespace ocilib
 
             OCI_Bind* pBind = core::Check(OCI_GetBindByName(_statement, GetName().c_str()));
 
-            UInt32 index = 0;
+            UInt32       index = 0;
             const UInt32 currElemCount = GetSize();
 
             for (it = _vector.begin(), it_end = _vector.end(); it != it_end && index < _elemCount && index < currElemCount; ++it, ++index)

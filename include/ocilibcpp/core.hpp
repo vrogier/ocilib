@@ -31,13 +31,6 @@
 
 #include "ocilibcpp/config.hpp"
 
-// ReSharper disable CppClangTidyCppcoreguidelinesMacroUsage
-// ReSharper disable CppClangTidyHicppSpecialMemberFunctions
-// ReSharper disable CppClangTidyCppcoreguidelinesSpecialMemberFunctions
-// ReSharper disable CppClangTidyModernizeUseNodiscard
-// ReSharper disable CppClangTidyHicppUseEqualsDefault
-// ReSharper disable CppClangTidyModernizeUseEqualsDefault
-
 namespace ocilib
 {
     /**
@@ -86,7 +79,7 @@ namespace ocilib
                 std::is_same<T, Float>,
                 std::is_same<T, Double>,
                 std::is_same<T, Number>
-            >;
+                >;
         };
 
         template<class T>
@@ -104,7 +97,7 @@ namespace ocilib
                 std::is_same<T, char>,
                 std::is_same<T, Float>,
                 std::is_same<T, Double>
-            >;
+                >;
         };
 
         template<class T>
@@ -118,7 +111,7 @@ namespace ocilib
         struct IsCollection : std::false_type {};
 
         template<class T>
-        struct IsCollection<Collection<T>> : std::true_type {};
+        struct IsCollection<Collection<T> > : std::true_type {};
 
         template<class T>
         inline constexpr bool IsCollectionV = IsCollection<T>::value;
@@ -219,9 +212,10 @@ namespace ocilib
         {
         public:
 
-            using FreeNotifyFunc = void(*)(HandleControlBase*);
+            using FreeNotifyFunc = void (*)(HandleControlBase*);
 
-            HandleControlBase(std::weak_ptr<HandleStore> store = std::weak_ptr<HandleStore>(), FreeNotifyFunc freeNotify = nullptr, AnyPointer extraInfo = nullptr);
+            HandleControlBase(std::weak_ptr<HandleStore> store = std::weak_ptr<HandleStore>(), FreeNotifyFunc freeNotify = nullptr,
+                              AnyPointer extraInfo = nullptr);
 
             virtual ~HandleControlBase() = default;
 
@@ -243,7 +237,7 @@ namespace ocilib
 
             void SetParent(HandleControlBase* parent);
 
-            std::unordered_map<HandleControlBase*, std::weak_ptr<HandleControlBase>> _children;
+            std::unordered_map<HandleControlBase*, std::weak_ptr<HandleControlBase> > _children;
             std::mutex _childrenMutex;
             std::weak_ptr<HandleControlBase> _parent;
             std::weak_ptr<HandleStore> _store;
@@ -284,7 +278,7 @@ namespace ocilib
             HandleStore();
 
             template <class T>
-            std::shared_ptr<HandleControl<T>> Find(AnyPointer handle);
+            std::shared_ptr<HandleControl<T> > Find(AnyPointer handle);
 
             void Register(AnyPointer handle, std::shared_ptr<HandleControlBase> ctrl);
             void Remove(AnyPointer handle, const HandleControlBase* ctrl);
@@ -294,7 +288,7 @@ namespace ocilib
         private:
 
             mutable std::mutex _mutex;
-            std::unordered_map<AnyPointer, std::weak_ptr<HandleControlBase>> _map;
+            std::unordered_map<AnyPointer, std::weak_ptr<HandleControlBase> > _map;
         };
 
         /**
@@ -345,12 +339,13 @@ namespace ocilib
             void AcquireAllocatedWithNotification(T handle, Handle* parent, FreeNotifyFunc freeNotify);
             void Acquire(HandleHolder& other);
 
-            void Acquire(T handle, bool allocated, Handle* parent, std::shared_ptr<HandleStore> store, FreeNotifyFunc freeNotify = nullptr, AnyPointer extraInfo = nullptr);
+            void Acquire(T handle, bool allocated, Handle* parent, std::shared_ptr<HandleStore> store, FreeNotifyFunc freeNotify = nullptr,
+                         AnyPointer extraInfo = nullptr);
             void Release();
 
         private:
 
-            std::shared_ptr<HandleControl<T>> _control;
+            std::shared_ptr<HandleControl<T> > _control;
         };
 
         /**

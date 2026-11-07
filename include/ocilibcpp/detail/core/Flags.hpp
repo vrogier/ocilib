@@ -22,8 +22,6 @@
 
 #include "ocilibcpp/core.hpp"
 
-// ReSharper disable CppClangTidyCertOop54Cpp
-
 namespace ocilib
 {
     namespace core

@@ -49,8 +49,8 @@
         CHECK_PTR(OCI_IPC_VOID, value);                    \
         CHECK(OcilibJsonNodeGetValue(node, otype, value)); \
         SET_SUCCESS();                                     \
-        CLEANUP_AND_EXIT_FUNC();  
-\
+        CLEANUP_AND_EXIT_FUNC();
+
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
 /* jzn calls whose NULL/absent result is legitimate (missing field, node without
@@ -76,7 +76,7 @@ static void JsonNodeDrainDomError
 
 static void JsonNodeCacheStr
 (
-    OCI_JsonNode *node,
+    OCI_JsonNode  *node,
     const oratext *src,
     OCI_Size       src_len
 )
@@ -147,13 +147,13 @@ static OCI_Boolean OcilibJsonNodeSplice
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    jznDomDoc   *jdoc = node->json ? node->json->jdoc : NULL;
-    OCI_Boolean  ok   = TRUE;
+    jznDomDoc  *jdoc = node->json ? node->json->jdoc : NULL;
+    OCI_Boolean ok   = TRUE;
 
     if (NULL != node->domparent && NULL != node->domkey)      /* object field */
     {
         ok = (0 == JsonDomPutFieldValue(jdoc, (jznDomObject *) node->domparent,
-                                      node->domkey, node->domkeylen, hnd));
+                                        node->domkey, node->domkeylen, hnd));
     }
     else if (NULL != node->domparent)                         /* array element */
     {
@@ -185,7 +185,6 @@ static OCI_Boolean OcilibJsonNodeSplice
 
 #endif
 }
-
 
 static OCI_Boolean OcilibJsonNodeSetTemporal
 (
@@ -974,7 +973,7 @@ OCI_Number * OcilibJsonNodeGetNumber
            expects both the value and the format in the environment charset */
 
         otstr = (otext *) OcilibMemoryAlloc(node->json->env, OCI_IPC_VOID,
-                                           (OCI_Size) sval.len_jznScalarVal + 1, sizeof(otext), FALSE);
+                                            (OCI_Size) sval.len_jznScalarVal + 1, sizeof(otext), FALSE);
         CHECK_NULL(otstr);
         OcilibStringAnsiToNative(sval.val_jznScalarVal, otstr, (OCI_Int32) sval.len_jznScalarVal);
         otstr[sval.len_jznScalarVal] = 0;
@@ -1658,7 +1657,7 @@ OCI_JsonNode * OcilibJsonNodeCreateNumber
     CHECK_JSON_DOC(json);
 
     hnd = (jznDomNode *) JsonDomNewScalarVal(json->jdoc, JZNVAL_OCI_NUMBER,
-                                            value->handle);
+                                             value->handle);
 
     CHECK_JSON(json->jdoc, NULL != hnd);
 
@@ -1801,7 +1800,6 @@ OCI_JsonNode * OcilibJsonNodeCreateBinary
     );
 }
 
-
 /* --------------------------------------------------------------------------------------------- *
  * OcilibJsonNodeSetString
  * --------------------------------------------------------------------------------------------- */
@@ -1884,7 +1882,7 @@ OCI_Boolean OcilibJsonNodeSetNumber
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    jznDomNode  *hnd    = NULL;
+    jznDomNode *hnd = NULL;
 
     CHECK_PTR(OCI_IPC_JSON_NODE, node);
     CHECK_PTR(OCI_IPC_NUMBER, value);
@@ -1895,7 +1893,7 @@ OCI_Boolean OcilibJsonNodeSetNumber
     if (node->type != OCI_JNT_NUMBER) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
     hnd = (jznDomNode *) JsonDomNewScalarVal(node->json->jdoc, JZNVAL_OCI_NUMBER,
-                                            value->handle);
+                                             value->handle);
     CHECK_JSON(node->json->jdoc, NULL != hnd);
 
     CHECK_JSON(node->json->jdoc, OcilibJsonNodeSplice(node, hnd));
@@ -2081,8 +2079,8 @@ OCI_Boolean OcilibJsonNodeSetField
     );
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
-    oratext  *orakey  = NULL;
-    OCI_Size  ora_len = 0;
+    oratext *orakey  = NULL;
+    OCI_Size ora_len = 0;
 
     CHECK_PTR(OCI_IPC_JSON_NODE, obj);
     CHECK_PTR(OCI_IPC_STRING, name);
@@ -2584,8 +2582,8 @@ OCI_Boolean OcilibJsonNodeHasField
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_JSON_NODE, node
     );
-    oratext  *orakey  = NULL;
-    OCI_Size  ora_len = 0;
+    oratext *orakey  = NULL;
+    OCI_Size ora_len = 0;
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
@@ -2638,8 +2636,8 @@ OCI_Boolean OcilibJsonNodeRemoveField
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_JSON_NODE, node
     );
-    oratext  *orakey  = NULL;
-    OCI_Size  ora_len = 0;
+    oratext *orakey  = NULL;
+    OCI_Size ora_len = 0;
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
@@ -3465,8 +3463,8 @@ OCI_Boolean OcilibJsonNodeRenameField
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    dbtext   *dbold = NULL;
-    dbtext   *dbnew = NULL;
+    dbtext   *dbold      = NULL;
+    dbtext   *dbnew      = NULL;
     OCI_Int32 dbold_size = -1;
     OCI_Int32 dbnew_size = -1;
 

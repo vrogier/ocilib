@@ -25,30 +25,32 @@
 namespace ocilib
 {
 
-inline void Queue::Create(const Connection &connection, const String& queue, const String& table, QueueType queueType, UInt32 maxRetries,
-            UInt32 retryDelay, UInt32 retentionTime, bool dependencyTracking, const String& comment)
-{
-    core::Check(OCI_QueueCreate(connection, queue.c_str(), table.c_str(), queueType, maxRetries, retryDelay, retentionTime, dependencyTracking, comment.c_str()));
-}
+    inline void Queue::Create(const Connection &connection, const String& queue, const String& table, QueueType queueType, UInt32 maxRetries,UInt32 retryDelay,
+                              UInt32 retentionTime, bool dependencyTracking, const String& comment)
+    {
+        core::Check(OCI_QueueCreate(connection, queue.c_str(), table.c_str(), queueType, maxRetries, retryDelay, retentionTime, dependencyTracking,
+                                    comment.c_str()));
+    }
 
-inline void Queue::Alter(const Connection &connection, const String& queue, UInt32 maxRetries, UInt32 retryDelay, UInt32 retentionTime, const String& comment)
-{
-    core::Check(OCI_QueueAlter(connection, queue.c_str(), maxRetries, retryDelay, retentionTime, comment.c_str()));
-}
+    inline void Queue::Alter(const Connection &connection, const String& queue, UInt32 maxRetries, UInt32 retryDelay, UInt32 retentionTime,
+                             const String& comment)
+    {
+        core::Check(OCI_QueueAlter(connection, queue.c_str(), maxRetries, retryDelay, retentionTime, comment.c_str()));
+    }
 
-inline void Queue::Drop(const Connection &connection, const String& queue)
-{
-    core::Check(OCI_QueueDrop(connection, queue.c_str()));
-}
+    inline void Queue::Drop(const Connection &connection, const String& queue)
+    {
+        core::Check(OCI_QueueDrop(connection, queue.c_str()));
+    }
 
-inline void Queue::Start(const Connection &connection, const String& queue, bool enableEnqueue, bool enableDequeue)
-{
-    core::Check(OCI_QueueStart(connection, queue.c_str(), enableEnqueue, enableDequeue));
-}
+    inline void Queue::Start(const Connection &connection, const String& queue, bool enableEnqueue, bool enableDequeue)
+    {
+        core::Check(OCI_QueueStart(connection, queue.c_str(), enableEnqueue, enableDequeue));
+    }
 
-inline void Queue::Stop(const Connection &connection, const String& queue, bool stopEnqueue, bool stopDequeue, bool wait)
-{
-    core::Check(OCI_QueueStop(connection, queue.c_str(), stopEnqueue, stopDequeue, wait));
-}
+    inline void Queue::Stop(const Connection &connection, const String& queue, bool stopEnqueue, bool stopDequeue, bool wait)
+    {
+        core::Check(OCI_QueueStop(connection, queue.c_str(), stopEnqueue, stopDequeue, wait));
+    }
 
 }

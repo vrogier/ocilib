@@ -182,8 +182,8 @@ OCI_Boolean OcilibEnqueuePut
         void* name = attempt_count == 1 ? (void*)dbstr : (void*) ansi_queue_name;
 
         OCI_CALL(ret, OCIAQEnq, enqueue->typinf->con->handle, enqueue->typinf->con->err,
-                                                       (OraText*)name, enqueue->handle, msg->handle,
-                                                       enqueue->typinf->handle, &payload, &ind, &msg->id, OCI_DEFAULT);
+                 (OraText*)name, enqueue->handle, msg->handle,
+                 enqueue->typinf->handle, &payload, &ind, &msg->id, OCI_DEFAULT);
 
         /* check returned error code */
 

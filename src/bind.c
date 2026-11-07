@@ -1085,10 +1085,10 @@ OCI_Int32 OcilibBindGetIndex
                 index = -1;
             }
 
-        if (index > 0)
-        {
-            index--;
-        }
+            if (index > 0)
+            {
+                index--;
+            }
 
             break;
         }

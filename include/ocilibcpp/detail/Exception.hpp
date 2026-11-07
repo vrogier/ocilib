@@ -24,205 +24,204 @@
 
 namespace ocilib
 {
-inline Exception::Exception() noexcept
-    : _what(nullptr),
-    _pStatement(nullptr),
-    _pConnection(nullptr),
-    _row(0),
-    _type(static_cast<ExceptionType::Type>(0)),
-    _category(static_cast<ExceptionCategory::Type>(0)),
-    _code(0)
-{
-
-}
-
-inline Exception::Exception(OCI_Error *err) noexcept
-    : _what(nullptr),
-    _pStatement(OCI_ErrorGetStatement(err)),
-    _pConnection(OCI_ErrorGetConnection(err)),
-    _row(OCI_ErrorGetRow(err)),
-    _type(static_cast<ExceptionType::Type>(OCI_ErrorGetType(err))),
-    _category(static_cast<ExceptionCategory::Type>(OCI_ErrorGetCategory(err))),
-    _code(OCI_ErrorGetCode(err))
-{
-    SetWhat(OCI_ErrorGetString(err));
-}
-
-inline Exception::Exception(const Exception& other) noexcept : Exception()
-{
-    *this = other;
-}
-
-inline Exception::~Exception() noexcept
-{
-    delete [] _what;
-}
-
-inline Exception& Exception::operator = (const Exception& other) noexcept
-{
-    if (this != &other)
+    inline Exception::Exception() noexcept
+        : _what(nullptr),
+        _pStatement(nullptr),
+        _pConnection(nullptr),
+        _row(0),
+        _type(static_cast<ExceptionType::Type>(0)),
+        _category(static_cast<ExceptionCategory::Type>(0)),
+        _code(0)
     {
-        _pStatement = other._pStatement;
-        _pConnection = other._pConnection;
-        _row = other._row;
-        _type = other._type;
-        _category = other._category;
-        _code = other._code;
 
-        CopyWhat(other._what);
     }
 
-    return *this;
-}
-inline void Exception::CopyWhat(const char* value) noexcept
-{
-    if (_what)
+    inline Exception::Exception(OCI_Error *err) noexcept
+        : _what(nullptr),
+        _pStatement(OCI_ErrorGetStatement(err)),
+        _pConnection(OCI_ErrorGetConnection(err)),
+        _row(OCI_ErrorGetRow(err)),
+        _type(static_cast<ExceptionType::Type>(OCI_ErrorGetType(err))),
+        _category(static_cast<ExceptionCategory::Type>(OCI_ErrorGetCategory(err))),
+        _code(OCI_ErrorGetCode(err))
     {
-        delete[] _what;
-        _what = nullptr;
+        SetWhat(OCI_ErrorGetString(err));
     }
 
-    if (!value)
+    inline Exception::Exception(const Exception& other) noexcept : Exception()
     {
-        return;
+        *this = other;
     }
 
-    const Size len = strlen(value) + 1;
-
-    _what = new (std::nothrow) char[len];
-    if (_what)
+    inline Exception::~Exception() noexcept
     {
-        memcpy(_what, value, len);
+        delete [] _what;
     }
-}
 
-inline void Exception::SetWhat(const otext* value) noexcept
-{
+    inline Exception& Exception::operator = (const Exception& other) noexcept
+    {
+        if (this != &other)
+        {
+            _pStatement = other._pStatement;
+            _pConnection = other._pConnection;
+            _row = other._row;
+            _type = other._type;
+            _category = other._category;
+            _code = other._code;
+
+            CopyWhat(other._what);
+        }
+
+        return *this;
+    }
+    inline void Exception::CopyWhat(const char* value) noexcept
+    {
+        if (_what)
+        {
+            delete[] _what;
+            _what = nullptr;
+        }
+
+        if (!value)
+        {
+            return;
+        }
+
+        const Size len = strlen(value) + 1;
+
+        _what = new (std::nothrow) char[len];
+        if (_what)
+        {
+            memcpy(_what, value, len);
+        }
+    }
+
+    inline void Exception::SetWhat(const otext* value) noexcept
+    {
 
 #if defined(OCI_CHARSET_ANSI)
 
-    CopyWhat(value);
+        CopyWhat(value);
 
 #else
 
-    if (_what)
-    {
-        delete[] _what;
-        _what = nullptr;
-    }
+        if (_what)
+        {
+            delete[] _what;
+            _what = nullptr;
+        }
 
-    if (!value)
-    {
-        return;
-    }
+        if (!value)
+        {
+            return;
+        }
 
-    const Size valueLength = wcslen(value);
+        const Size valueLength = wcslen(value);
 
-    _what = new (std::nothrow) char[valueLength + 1];
-    if (_what)
-    {
-        const otext* ptr = value;
-       
-        mbstate_t mbs;
-        mbrlen(nullptr, 0, &mbs);
-    
+        _what = new (std::nothrow) char[valueLength + 1];
+        if (_what)
+        {
+            const otext* ptr = value;
+
+            mbstate_t mbs;
+            mbrlen(nullptr, 0, &mbs);
+
     #if defined(_MSC_VER)
-        __pragma(warning(disable : 4996))
+            __pragma(warning(disable : 4996))
     #endif
 
-        const Size convLength = wcsrtombs(_what, &ptr, valueLength, &mbs);
+            const Size convLength = wcsrtombs(_what, &ptr, valueLength, &mbs);
 
     #if defined(_MSC_VER)
-        __pragma(warning(default: 4996))
-    #endif   
-            
-        const Size whatLength = (static_cast<Size>(-1) == convLength) ? 0 : convLength;
+            __pragma(warning(default: 4996))
+    #endif
 
-        _what[whatLength] = 0;
-    }
+            const Size whatLength = (static_cast<Size>(-1) == convLength) ? 0 : convLength;
+
+            _what[whatLength] = 0;
+        }
 
 #endif
-}
-
-inline const char * Exception::what() const noexcept
-{
-    return _what;
-}
-
-inline String Exception::GetMessage() const
-{
-    const char* str = what();
-
-    if (!str)
-    {
-        return String{};
     }
 
-    String message;
+    inline const char * Exception::what() const noexcept
+    {
+        return _what;
+    }
+
+    inline String Exception::GetMessage() const
+    {
+        const char* str = what();
+
+        if (!str)
+        {
+            return String{};
+        }
+
+        String message;
 
 #if defined(OCI_CHARSET_ANSI)
 
-    message = str;
+        message = str;
 
 #else
 
-    const Size valueLength = strlen(str);
+        const Size valueLength = strlen(str);
 
-    message.resize(valueLength);
+        message.resize(valueLength);
 
-    const char* ptr = str;
+        const char* ptr = str;
 
-    mbstate_t mbs;
-    mbrlen(nullptr, 0, &mbs);
-
-
-#if defined(_MSC_VER)
-    __pragma(warning(disable : 4996))
-#endif
-
-    const Size convLength = mbsrtowcs(&message[0], &ptr, valueLength, &mbs);
+        mbstate_t mbs;
+        mbrlen(nullptr, 0, &mbs);
 
 #if defined(_MSC_VER)
-    __pragma(warning(default: 4996))
-#endif 
+        __pragma(warning(disable : 4996))
+#endif
 
-    const Size messLength = (static_cast<Size>(-1) == convLength) ? 0 : convLength;
+        const Size convLength = mbsrtowcs(&message[0], &ptr, valueLength, &mbs);
 
-    message.resize(messLength);
+#if defined(_MSC_VER)
+        __pragma(warning(default: 4996))
+#endif
+
+        const Size messLength = (static_cast<Size>(-1) == convLength) ? 0 : convLength;
+
+        message.resize(messLength);
 
 #endif
 
-    return message;
-}
+        return message;
+    }
 
-inline Exception::ExceptionType Exception::GetType() const
-{
-    return _type;
-}
+    inline Exception::ExceptionType Exception::GetType() const
+    {
+        return _type;
+    }
 
-inline Exception::ExceptionCategory Exception::GetCategory() const
-{
-    return _category;
-}
+    inline Exception::ExceptionCategory Exception::GetCategory() const
+    {
+        return _category;
+    }
 
-inline UInt32 Exception::GetCode() const
-{
-    return _code;
-}
+    inline UInt32 Exception::GetCode() const
+    {
+        return _code;
+    }
 
-inline Statement Exception::GetStatement() const
-{
-    return Statement(_pStatement, nullptr);
-}
+    inline Statement Exception::GetStatement() const
+    {
+        return Statement(_pStatement, nullptr);
+    }
 
-inline Connection Exception::GetConnection() const
-{
-    return Connection(_pConnection, nullptr, false);
-}
+    inline Connection Exception::GetConnection() const
+    {
+        return Connection(_pConnection, nullptr, false);
+    }
 
-inline Int32 Exception::GetRow() const
-{
-    return _row;
-}
+    inline Int32 Exception::GetRow() const
+    {
+        return _row;
+    }
 
 }

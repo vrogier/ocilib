@@ -79,7 +79,7 @@ static OCI_UInt32 SeekModeValues[] =
         ENTER_FUNC(type, res, OCI_IPC_RESULTSET, rs);            \
                                                                  \
         CHECK_PTR(OCI_IPC_RESULTSET, rs);                        \
-        CHECK_INDEX(index, (rs)->nb_defs);                    \
+        CHECK_INDEX(index, (rs)->nb_defs);                       \
                                                                  \
         type tmp = res;                                          \
                                                                  \
@@ -96,7 +96,7 @@ static OCI_UInt32 SeekModeValues[] =
         OCI_Define *def = NULL;                          \
                                                          \
         CHECK_PTR(OCI_IPC_RESULTSET, rs);                \
-        CHECK_INDEX(index, (rs)->nb_defs);            \
+        CHECK_INDEX(index, (rs)->nb_defs);               \
                                                          \
         def = OcilibDefineGet(rs, index);                \
         CHECK_NULL(def);                                 \
@@ -427,7 +427,7 @@ static OCI_Boolean OcilibResultsetClearFetchedObjectInstances(OCI_Resultset *rs)
                     sword ret;
 
                     OCI_CALL(ret, OCIObjectFree, rs->stmt->con->env->handle, rs->stmt->con->err, def->buf.data[j], OCI_DEFAULT);
-                    
+
                     def->buf.data[j] = NULL;
                 }
             }
@@ -486,8 +486,8 @@ static OCI_Boolean OcilibResultsetFetchData
 
     {
         OCI_CALL(rs->fetch_status, OCIStmtFetch, rs->stmt->handle, rs->stmt->con->err,
-                                                            rs->fetch_size, (ub2) OCI_FETCH_NEXT,
-                                                            (ub4) OCI_DEFAULT);
+                 rs->fetch_size, (ub2) OCI_FETCH_NEXT,
+                 (ub4) OCI_DEFAULT);
     }
 
     if (OCI_ERROR == rs->fetch_status)

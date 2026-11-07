@@ -1419,7 +1419,7 @@ static OCI_Boolean OcilibStatementBatchErrorInit
             sword ret;
 
             OCI_CALL(ret, OCIParamGet, (dvoid *) stmt->con->err, OCI_HTYPE_ERROR,
-                                             stmt->con->err, (dvoid **) (void *) &hndl, i);
+                     stmt->con->err, (dvoid **) (void *) &hndl, i);
 
             if (NULL != hndl)
             {
@@ -1432,8 +1432,8 @@ static OCI_Boolean OcilibStatementBatchErrorInit
                 sword rethndl;
 
                 OCI_CALL(rethndl, OCIAttrGet, (dvoid *)hndl, (ub4)OCI_HTYPE_ERROR,
-                                                (void *)&row, (ub4 *)NULL,
-                                                (ub4)OCI_ATTR_DML_ROW_OFFSET, stmt->con->err);
+                         (void *)&row, (ub4 *)NULL,
+                         (ub4)OCI_ATTR_DML_ROW_OFFSET, stmt->con->err);
 
                 OCI_ERROR_GET(hndl, &err_code, err_msg, err_size);
 
@@ -1631,8 +1631,8 @@ OCI_Boolean OcilibStatementExecuteInternal
     sword ret;
 
     OCI_CALL(ret, OCIStmtExecute, stmt->con->handle, stmt->handle, stmt->con->err,
-                                                          iters, (ub4)0, (OCISnapshot *)NULL,
-                                                          (OCISnapshot *)NULL, mode);
+             iters, (ub4)0, (OCISnapshot *)NULL,
+             (OCISnapshot *)NULL, mode);
 
     /* check result */
 
@@ -1723,15 +1723,15 @@ OCI_Boolean OcilibStatementExecuteInternal
         sword ret2;
 
         OCI_CALL(ret2, OCIAttrGet, (dvoid *)stmt->handle, (ub4)OCI_HTYPE_STMT,
-                                   (dvoid *)&stmt->err_pos, (ub4 *)NULL,
-                                   (ub4)OCI_ATTR_PARSE_ERROR_OFFSET, stmt->con->err);
+                 (dvoid *)&stmt->err_pos, (ub4 *)NULL,
+                 (ub4)OCI_ATTR_PARSE_ERROR_OFFSET, stmt->con->err);
 
         /* raise exception */
 
         THROW(OcilibExceptionOCI, stmt->con->err, ret);
     }
 
-    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("handle=[%p] type=[%d]"), stmt , (OCI_Int32) stmt->type);
+    OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_DEBUG, OTEXT("handle=[%p] type=[%d]"), stmt, (OCI_Int32) stmt->type);
 
     SET_SUCCESS();
 
