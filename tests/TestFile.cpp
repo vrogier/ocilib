@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -238,4 +239,51 @@ namespace TestCApi
         ASSERT_EQ(1024u, n2);
     }
 #endif
+
+    TEST(TestFile, Read_WithoutOpen_ReturnsZero)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto file = OCI_FileCreate(conn, OCI_BFILE);
+        ASSERT_NE(nullptr, file);
+        unsigned char buffer[64];
+
+        ASSERT_EQ(0u, OCI_FileRead(file, buffer, sizeof(buffer)));
+
+        ASSERT_TRUE(OCI_FileFree(file));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+    class TestFileNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestFileNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestFileNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "FileArrayCreate", [] { return nullptr == OCI_FileArrayCreate(nullptr, 1, 1); } },
+            { "FileArrayFree", [] { return !OCI_FileArrayFree(nullptr); } },
+            { "FileAssign", [] { return !OCI_FileAssign(nullptr, nullptr); } },
+            { "FileClose", [] { return !OCI_FileClose(nullptr); } },
+            { "FileCreate", [] { return nullptr == OCI_FileCreate(nullptr, 1); } },
+            { "FileExists", [] { return !OCI_FileExists(nullptr); } },
+            { "FileFree", [] { return !OCI_FileFree(nullptr); } },
+            { "FileGetConnection", [] { return nullptr == OCI_FileGetConnection(nullptr); } },
+            { "FileGetDirectory", [] { return nullptr == OCI_FileGetDirectory(nullptr); } },
+            { "FileGetName", [] { return nullptr == OCI_FileGetName(nullptr); } },
+            { "FileGetOffset", [] { return 0 == OCI_FileGetOffset(nullptr); } },
+            { "FileGetSize", [] { return 0 == OCI_FileGetSize(nullptr); } },
+            { "FileGetType", [] { return OCI_UNKNOWN == OCI_FileGetType(nullptr); } },
+            { "FileIsEqual", [] { return !OCI_FileIsEqual(nullptr, nullptr); } },
+            { "FileIsOpen", [] { return !OCI_FileIsOpen(nullptr); } },
+            { "FileOpen", [] { return !OCI_FileOpen(nullptr); } },
+            { "FileRead", [] { return 0 == OCI_FileRead(nullptr, NullArgBuffer(), 1); } },
+            { "FileSeek", [] { return !OCI_FileSeek(nullptr, 1, 1); } },
+            { "FileSetName", [] { return !OCI_FileSetName(nullptr, OTEXT("x"), OTEXT("x")); } },
+        }),
+        &NullArgCaseName);
+
 }

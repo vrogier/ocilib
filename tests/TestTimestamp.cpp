@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 #include "../include/ocilib.h"
 
 class TestTimestamp : public ::testing::TestWithParam<OCI_UInt32>{};
@@ -454,4 +455,41 @@ namespace TestCApi
     }
 
     INSTANTIATE_TEST_CASE_P(TestTimestamp, TestTimestamp, ::testing::ValuesIn(TimestampTypes));
+
+    class TestTimestampNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestTimestampNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestTimestampNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "TimestampArrayCreate", [] { return nullptr == OCI_TimestampArrayCreate(nullptr, 1, 1); } },
+            { "TimestampArrayFree", [] { return !OCI_TimestampArrayFree(nullptr); } },
+            { "TimestampAssign", [] { return !OCI_TimestampAssign(nullptr, nullptr); } },
+            { "TimestampCheck", [] { return 0 == OCI_TimestampCheck(nullptr); } },
+            { "TimestampCompare", [] { return -1 == OCI_TimestampCompare(nullptr, nullptr); } },
+            { "TimestampConstruct", [] { return !OCI_TimestampConstruct(nullptr, 1, 1, 1, 1, 1, 1, 1, OTEXT("x")); } },
+            { "TimestampConvert", [] { return !OCI_TimestampConvert(nullptr, nullptr); } },
+            { "TimestampCreate", [] { return nullptr == OCI_TimestampCreate(nullptr, 1); } },
+            { "TimestampFree", [] { return !OCI_TimestampFree(nullptr); } },
+            { "TimestampFromCTime", [] { return !OCI_TimestampFromCTime(nullptr, NullArgTm(), 1); } },
+            { "TimestampFromText", [] { return !OCI_TimestampFromText(nullptr, OTEXT("x"), OTEXT("x")); } },
+            { "TimestampGetDate", [] { return !OCI_TimestampGetDate(nullptr, NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>()); } },
+            { "TimestampGetDateTime", [] { return !OCI_TimestampGetDateTime(nullptr, NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>()); } },
+            { "TimestampGetTime", [] { return !OCI_TimestampGetTime(nullptr, NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>()); } },
+            { "TimestampGetTimeZoneName", [] { return !OCI_TimestampGetTimeZoneName(nullptr, 1, NullArgText()); } },
+            { "TimestampGetTimeZoneOffset", [] { return !OCI_TimestampGetTimeZoneOffset(nullptr, NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>()); } },
+            { "TimestampGetType", [] { return OCI_UNKNOWN == OCI_TimestampGetType(nullptr); } },
+            { "TimestampIntervalAdd", [] { return !OCI_TimestampIntervalAdd(nullptr, nullptr); } },
+            { "TimestampIntervalSub", [] { return !OCI_TimestampIntervalSub(nullptr, nullptr); } },
+            { "TimestampSubtract", [] { return !OCI_TimestampSubtract(nullptr, nullptr, nullptr); } },
+            { "TimestampSysTimestamp", [] { return !OCI_TimestampSysTimestamp(nullptr); } },
+            { "TimestampToCTime", [] { return !OCI_TimestampToCTime(nullptr, NullArgTm(), NullArgTime()); } },
+            { "TimestampToText", [] { return !OCI_TimestampToText(nullptr, OTEXT("x"), 1, NullArgText(), 1); } },
+        }),
+        &NullArgCaseName);
+
 }

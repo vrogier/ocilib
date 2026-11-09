@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -48,4 +49,38 @@ namespace TestCApi
 
         ExecDML(OTEXT("drop table TestReturningIntoRegisterInt"));
     }
+
+    class TestReturningIntoNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestReturningIntoNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestReturningIntoNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "RegisterBigInt", [] { return !OCI_RegisterBigInt(nullptr, OTEXT("x")); } },
+            { "RegisterDate", [] { return !OCI_RegisterDate(nullptr, OTEXT("x")); } },
+            { "RegisterDouble", [] { return !OCI_RegisterDouble(nullptr, OTEXT("x")); } },
+            { "RegisterFile", [] { return !OCI_RegisterFile(nullptr, OTEXT("x"), 1); } },
+            { "RegisterFloat", [] { return !OCI_RegisterFloat(nullptr, OTEXT("x")); } },
+            { "RegisterInt", [] { return !OCI_RegisterInt(nullptr, OTEXT("x")); } },
+            { "RegisterInterval", [] { return !OCI_RegisterInterval(nullptr, OTEXT("x"), 1); } },
+            { "RegisterJson", [] { return !OCI_RegisterJson(nullptr, OTEXT("x")); } },
+            { "RegisterLob", [] { return !OCI_RegisterLob(nullptr, OTEXT("x"), 1); } },
+            { "RegisterNumber", [] { return !OCI_RegisterNumber(nullptr, OTEXT("x")); } },
+            { "RegisterObject", [] { return !OCI_RegisterObject(nullptr, OTEXT("x"), nullptr); } },
+            { "RegisterRaw", [] { return !OCI_RegisterRaw(nullptr, OTEXT("x"), 1); } },
+            { "RegisterRef", [] { return !OCI_RegisterRef(nullptr, OTEXT("x"), nullptr); } },
+            { "RegisterShort", [] { return !OCI_RegisterShort(nullptr, OTEXT("x")); } },
+            { "RegisterString", [] { return !OCI_RegisterString(nullptr, OTEXT("x"), 1); } },
+            { "RegisterTimestamp", [] { return !OCI_RegisterTimestamp(nullptr, OTEXT("x"), 1); } },
+            { "RegisterUnsignedBigInt", [] { return !OCI_RegisterUnsignedBigInt(nullptr, OTEXT("x")); } },
+            { "RegisterUnsignedInt", [] { return !OCI_RegisterUnsignedInt(nullptr, OTEXT("x")); } },
+            { "RegisterUnsignedShort", [] { return !OCI_RegisterUnsignedShort(nullptr, OTEXT("x")); } },
+            { "RegisterVector", [] { return !OCI_RegisterVector(nullptr, OTEXT("x")); } },
+        }),
+        &NullArgCaseName);
+
 }

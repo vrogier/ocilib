@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 #include <cstring>
 
@@ -723,4 +724,63 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_JsonNodeFree(n));
     }
+
+    class TestJsonNodeTypeNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestJsonNodeTypeNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestJsonNodeTypeNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "JsonNodeAssign", [] { return !OCI_JsonNodeAssign(nullptr, nullptr); } },
+            { "JsonNodeCreate", [] { return nullptr == OCI_JsonNodeCreate(nullptr, 1); } },
+            { "JsonNodeCreateArray", [] { return nullptr == OCI_JsonNodeCreateArray(nullptr); } },
+            { "JsonNodeCreateBinary", [] { return nullptr == OCI_JsonNodeCreateBinary(nullptr, NullArgBuffer(), 1); } },
+            { "JsonNodeCreateBoolean", [] { return nullptr == OCI_JsonNodeCreateBoolean(nullptr, FALSE); } },
+            { "JsonNodeCreateDate", [] { return nullptr == OCI_JsonNodeCreateDate(nullptr, nullptr); } },
+            { "JsonNodeCreateInterval", [] { return nullptr == OCI_JsonNodeCreateInterval(nullptr, nullptr); } },
+            { "JsonNodeCreateNull", [] { return nullptr == OCI_JsonNodeCreateNull(nullptr); } },
+            { "JsonNodeCreateNumber", [] { return nullptr == OCI_JsonNodeCreateNumber(nullptr, nullptr); } },
+            { "JsonNodeCreateObject", [] { return nullptr == OCI_JsonNodeCreateObject(nullptr); } },
+            { "JsonNodeCreateString", [] { return nullptr == OCI_JsonNodeCreateString(nullptr, OTEXT("x"), 1); } },
+            { "JsonNodeCreateTimestamp", [] { return nullptr == OCI_JsonNodeCreateTimestamp(nullptr, nullptr); } },
+            { "JsonNodeEquals", [] { return !OCI_JsonNodeEquals(nullptr, nullptr); } },
+            { "JsonNodeGetBigInt", [] { return !OCI_JsonNodeGetBigInt(nullptr, NullArgOut<OCI_Int64>()); } },
+            { "JsonNodeGetBigUInt", [] { return !OCI_JsonNodeGetBigUInt(nullptr, NullArgOut<OCI_UInt64>()); } },
+            { "JsonNodeGetBinary", [] { return nullptr == OCI_JsonNodeGetBinary(nullptr, NullArgOut<OCI_UInt32>()); } },
+            { "JsonNodeGetBoolean", [] { return !OCI_JsonNodeGetBoolean(nullptr); } },
+            { "JsonNodeGetDate", [] { return nullptr == OCI_JsonNodeGetDate(nullptr); } },
+            { "JsonNodeGetDouble", [] { return !OCI_JsonNodeGetDouble(nullptr, NullArgOut<OCI_Double>()); } },
+            { "JsonNodeGetFloat", [] { return !OCI_JsonNodeGetFloat(nullptr, NullArgOut<OCI_Float>()); } },
+            { "JsonNodeGetInt", [] { return !OCI_JsonNodeGetInt(nullptr, NullArgOut<OCI_Int32>()); } },
+            { "JsonNodeGetInterval", [] { return nullptr == OCI_JsonNodeGetInterval(nullptr); } },
+            { "JsonNodeGetJson", [] { return nullptr == OCI_JsonNodeGetJson(nullptr); } },
+            { "JsonNodeGetNumber", [] { return nullptr == OCI_JsonNodeGetNumber(nullptr); } },
+            { "JsonNodeGetShort", [] { return !OCI_JsonNodeGetShort(nullptr, NullArgOut<OCI_Int16>()); } },
+            { "JsonNodeGetString", [] { return nullptr == OCI_JsonNodeGetString(nullptr, NullArgOut<OCI_UInt32>()); } },
+            { "JsonNodeGetTimestamp", [] { return nullptr == OCI_JsonNodeGetTimestamp(nullptr); } },
+            { "JsonNodeGetUInt", [] { return !OCI_JsonNodeGetUInt(nullptr, NullArgOut<OCI_UInt32>()); } },
+            { "JsonNodeGetUShort", [] { return !OCI_JsonNodeGetUShort(nullptr, NullArgOut<OCI_UInt16>()); } },
+            { "JsonNodeSetBigInt", [] { return !OCI_JsonNodeSetBigInt(nullptr, 1); } },
+            { "JsonNodeSetBigUInt", [] { return !OCI_JsonNodeSetBigUInt(nullptr, 1); } },
+            { "JsonNodeSetBinary", [] { return !OCI_JsonNodeSetBinary(nullptr, NullArgBuffer(), 1); } },
+            { "JsonNodeSetBoolean", [] { return !OCI_JsonNodeSetBoolean(nullptr, FALSE); } },
+            { "JsonNodeSetDate", [] { return !OCI_JsonNodeSetDate(nullptr, nullptr); } },
+            { "JsonNodeSetDouble", [] { return !OCI_JsonNodeSetDouble(nullptr, 1); } },
+            { "JsonNodeSetFloat", [] { return !OCI_JsonNodeSetFloat(nullptr, 1); } },
+            { "JsonNodeSetInt", [] { return !OCI_JsonNodeSetInt(nullptr, 1); } },
+            { "JsonNodeSetInterval", [] { return !OCI_JsonNodeSetInterval(nullptr, nullptr); } },
+            { "JsonNodeSetNull", [] { return !OCI_JsonNodeSetNull(nullptr); } },
+            { "JsonNodeSetNumber", [] { return !OCI_JsonNodeSetNumber(nullptr, nullptr); } },
+            { "JsonNodeSetShort", [] { return !OCI_JsonNodeSetShort(nullptr, 1); } },
+            { "JsonNodeSetString", [] { return !OCI_JsonNodeSetString(nullptr, OTEXT("x"), 1); } },
+            { "JsonNodeSetTimestamp", [] { return !OCI_JsonNodeSetTimestamp(nullptr, nullptr); } },
+            { "JsonNodeSetUInt", [] { return !OCI_JsonNodeSetUInt(nullptr, 1); } },
+            { "JsonNodeSetUShort", [] { return !OCI_JsonNodeSetUShort(nullptr, 1); } },
+        }),
+        &NullArgCaseName);
+
 }

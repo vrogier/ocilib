@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 #include <chrono>
 #include <cstdio>
@@ -164,5 +165,27 @@ namespace TestCApi
         ASSERT_EQ(0u, OCI_TransactionGetTimeout(nullptr));
         ASSERT_EQ(nullptr, OCI_TransactionCreate(nullptr, 0, OCI_TRS_NEW, nullptr));
     }
+
+    class TestTransactionNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestTransactionNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestTransactionNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "TransactionCreate", [] { return nullptr == OCI_TransactionCreate(nullptr, 1, 1, nullptr /* OCI_XID * */); } },
+            { "TransactionForget", [] { return !OCI_TransactionForget(nullptr); } },
+            { "TransactionFree", [] { return !OCI_TransactionFree(nullptr); } },
+            { "TransactionGetMode", [] { return OCI_UNKNOWN == OCI_TransactionGetMode(nullptr); } },
+            { "TransactionGetTimeout", [] { return 0 == OCI_TransactionGetTimeout(nullptr); } },
+            { "TransactionPrepare", [] { return !OCI_TransactionPrepare(nullptr); } },
+            { "TransactionResume", [] { return !OCI_TransactionResume(nullptr); } },
+            { "TransactionStart", [] { return !OCI_TransactionStart(nullptr); } },
+            { "TransactionStop", [] { return !OCI_TransactionStop(nullptr); } },
+        }),
+        &NullArgCaseName);
 
 }

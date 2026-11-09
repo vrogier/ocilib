@@ -553,7 +553,7 @@ void OcilibExceptionNullPointer
     OCI_PointerType type
 )
 {
-    EXCEPTION_IMPL(OCI_ERR_NULL_POINTER, TypeNames[type + 1]);
+    EXCEPTION_IMPL(OCI_ERR_NULL_POINTER, TypeNames[type]);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -567,7 +567,7 @@ void OcilibExceptionMemory
     OCI_Size        nb_bytes
 )
 {
-    EXCEPTION_IMPL(OCI_ERR_MEMORY, TypeNames[type + 1], nb_bytes);
+    EXCEPTION_IMPL(OCI_ERR_MEMORY, TypeNames[type], nb_bytes);
 }
 
 /* --------------------------------------------------------------------------------------------- *

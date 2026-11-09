@@ -236,4 +236,48 @@ namespace TestCppApi
         ASSERT_TRUE(obj.IsNull());
         ExecDML(OTEXT("drop type TestHandleTypeCpp force"));
     }
+
+    /* C2/C3-class coverage: user-data round-trip on the C++ layer and
+       ownership semantics on copy/assignment and null handles */
+
+    TEST(TestHandleCpp, UserDataRoundTrip_OnConnection_PersistsAcrossCopies)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+        int token = 42;
+
+        con.SetUserData(&token);
+
+        Connection copy = con;
+        ASSERT_EQ(&token, con.GetUserData());
+        ASSERT_EQ(&token, copy.GetUserData());
+    }
+
+    TEST(TestHandleCpp, UserData_OnDefaultHandle_QuietlyIgnored)
+    {
+        /* OCI_SetUserData on NULL is a silent safe-fail (no error raised)
+           -> core::Check does not throw -> the call is a no-op */
+        Connection con;
+        ASSERT_TRUE(con.IsNull());
+
+        ASSERT_NO_THROW(con.SetUserData(nullptr));
+        ASSERT_EQ(nullptr, con.GetUserData());
+    }
+
+    TEST(TestHandleCpp, AssignedHandle_SharesLifetime_NotIndependent)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Statement stmt1;
+        Statement stmt2;
+
+        {
+            Connection con(env, DBS, USR, PWD);
+            stmt1 = Statement(con);
+            stmt2 = stmt1;
+        }
+
+        /* both references to the same underlying statement die together */
+        ASSERT_TRUE(stmt1.IsNull());
+        ASSERT_TRUE(stmt2.IsNull());
+    }
 }

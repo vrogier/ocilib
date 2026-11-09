@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 #include "ocilib.hpp"
 
 using namespace ocilib;
@@ -48,6 +49,39 @@ namespace TestCApi
         ASSERT_EQ(nullptr, str);
 
     }
+
+    class TestEnvironmentNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestEnvironmentNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestEnvironmentNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "ConnectionCreate", [] { return nullptr == OCI_ConnectionCreate(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), 1); } },
+            { "ConnectionCreateSharded", [] { return nullptr == OCI_ConnectionCreateSharded(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), 1, nullptr, nullptr); } },
+            { "DatabaseShutdown", [] { return !OCI_DatabaseShutdown(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), 1, 1, 1); } },
+            { "DatabaseStartup", [] { return !OCI_DatabaseStartup(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), 1, 1, 1, OTEXT("x")); } },
+            { "EnableWarnings", [] { return !OCI_EnableWarnings(nullptr, FALSE); } },
+            { "EnvironmentFree", [] { return !OCI_EnvironmentFree(nullptr); } },
+            { "GetCharset", [] { return OCI_UNKNOWN == OCI_GetCharset(nullptr); } },
+            { "GetFormat", [] { return nullptr == OCI_GetFormat(nullptr, 1); } },
+            { "GetImportMode", [] { return OCI_UNKNOWN == OCI_GetImportMode(nullptr); } },
+            { "GetLocaleString", [] { return nullptr == OCI_GetLocaleString(nullptr, 1); } },
+            { "GetOCICompileVersion", [] { return OCI_UNKNOWN == OCI_GetOCICompileVersion(nullptr); } },
+            { "GetOCIRuntimeVersion", [] { return OCI_UNKNOWN == OCI_GetOCIRuntimeVersion(nullptr); } },
+            { "GetStats", [] { return 0 == OCI_GetStats(nullptr, 1); }, NoNullPointerError }, // manual
+            { "GetSubscriptionPort", [] { return 0 == OCI_GetSubscriptionPort(nullptr); } },
+            { "SetErrorHandler", [] { return !OCI_SetErrorHandler(nullptr, nullptr); } },
+            { "SetFormat", [] { return !OCI_SetFormat(nullptr, 1, OTEXT("x")); } },
+            { "SetHAHandler", [] { return !OCI_SetHAHandler(nullptr, nullptr); } },
+            { "SetSubscriptionPort", [] { return !OCI_SetSubscriptionPort(nullptr, 1); } },
+            { "SetUserPassword", [] { return !OCI_SetUserPassword(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), OTEXT("x")); } },
+        }),
+        &NullArgCaseName);
+
 }
 
 namespace TestCppApi
@@ -456,4 +490,3 @@ namespace TestCppApi
         }
     }
 }
-

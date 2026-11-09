@@ -996,6 +996,10 @@ OCI_Boolean OcilibLobAppend
     It's an Oracle known bug #886191
     So we use OCI_LobSeek() + OCI_LobWrite() instead */
 
+    CHECK_PTR(OCI_IPC_LOB, lob);
+    CHECK_PTR(OCI_IPC_INT, char_count);
+    CHECK_PTR(OCI_IPC_INT, byte_count);
+
     if (lob->con->env->version_runtime < OCI_10_1)
     {
         CHECK(OcilibLobSeek(lob, OcilibLobGetLength(lob), OCI_SEEK_SET));
@@ -1003,10 +1007,6 @@ OCI_Boolean OcilibLobAppend
         SET_SUCCESS();
         JUMP_CLEANUP();
     }
-
-    CHECK_PTR(OCI_IPC_LOB, lob);
-    CHECK_PTR(OCI_IPC_INT, char_count);
-    CHECK_PTR(OCI_IPC_INT, byte_count);
 
     if (OCI_BLOB != lob->type)
     {

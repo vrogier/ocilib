@@ -1786,6 +1786,8 @@ OCI_Boolean OcilibStatementFree
     CHECK_PTR(OCI_IPC_STATEMENT, stmt);
     CHECK_OBJECT_FETCHED(stmt);
 
+    OcilibErrorResetSource(NULL, stmt);
+
     LIST_ATOMIC_REMOVE(stmt->con->stmts, stmt, OcilibStatementDispose);
 
     FREE(stmt);

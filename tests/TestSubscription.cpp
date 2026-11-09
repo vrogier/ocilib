@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -41,6 +42,25 @@ namespace TestCApi
     }
 
 #endif
+
+    class TestSubscriptionNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestSubscriptionNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestSubscriptionNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "SubscriptionAddStatement", [] { return !OCI_SubscriptionAddStatement(nullptr, nullptr); } },
+            { "SubscriptionGetConnection", [] { return nullptr == OCI_SubscriptionGetConnection(nullptr); } },
+            { "SubscriptionGetName", [] { return nullptr == OCI_SubscriptionGetName(nullptr); } },
+            { "SubscriptionGetTimeout", [] { return 0 == OCI_SubscriptionGetTimeout(nullptr); } },
+            { "SubscriptionRegister", [] { return nullptr == OCI_SubscriptionRegister(nullptr, OTEXT("x"), 1, nullptr, 1, 1); } },
+            { "SubscriptionUnregister", [] { return !OCI_SubscriptionUnregister(nullptr); } },
+        }),
+        &NullArgCaseName);
 
 }
 

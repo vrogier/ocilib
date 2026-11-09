@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 #include <sstream>
 
@@ -1753,4 +1754,118 @@ namespace TestCApi
     }
 
 #endif
+
+
+
+
+
+
+    TEST(TestSoda, CollInsertDoc_MalformedDoc_ReturnsFalse)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto sdb = OCI_SodaDbCreate(conn);
+        ASSERT_NE(nullptr, sdb);
+        const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("TestSodaErrDoc"), nullptr);
+        ASSERT_NE(nullptr, coll);
+        const auto doc = OCI_SodaDocCreateFromText(sdb, OTEXT("{bad json"), 9, nullptr);
+        ASSERT_NE(nullptr, doc);
+
+        ASSERT_FALSE(OCI_SodaCollInsertDoc(coll, doc));
+
+        ASSERT_TRUE(OCI_SodaDocFree(doc));
+        ASSERT_TRUE(OCI_SodaCollDrop(coll));
+        ASSERT_TRUE(OCI_SodaCollFree(coll));
+        ASSERT_TRUE(OCI_SodaDbFree(sdb));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestSoda, CollCreateIndex_MalformedSpec_ReturnsFalse)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto sdb = OCI_SodaDbCreate(conn);
+        ASSERT_NE(nullptr, sdb);
+        const auto coll = OCI_SodaDbCreateColl(sdb, OTEXT("TestSodaErrIdx"), nullptr);
+        ASSERT_NE(nullptr, coll);
+
+        ASSERT_FALSE(OCI_SodaCollCreateIndex(coll, OTEXT("{bad spec")));
+
+        ASSERT_TRUE(OCI_SodaCollDrop(coll));
+        ASSERT_TRUE(OCI_SodaCollFree(coll));
+        ASSERT_TRUE(OCI_SodaDbFree(sdb));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    class TestSodaNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestSodaNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestSodaNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "SodaCollCreateIndex", [] { return !OCI_SodaCollCreateIndex(nullptr, OTEXT("x")); } },
+            { "SodaCollCursorFree", [] { return !OCI_SodaCollCursorFree(nullptr); } },
+            { "SodaCollCursorGetNext", [] { return nullptr == OCI_SodaCollCursorGetNext(nullptr); } },
+            { "SodaCollDocCount", [] { return 0 == OCI_SodaCollDocCount(nullptr, nullptr); } },
+            { "SodaCollDocCountWithFilter", [] { return 0 == OCI_SodaCollDocCountWithFilter(nullptr, OTEXT("x")); } },
+            { "SodaCollDrop", [] { return !OCI_SodaCollDrop(nullptr); } },
+            { "SodaCollDropIndex", [] { return !OCI_SodaCollDropIndex(nullptr, OTEXT("x")); } },
+            { "SodaCollFind", [] { return nullptr == OCI_SodaCollFind(nullptr, nullptr); } },
+            { "SodaCollFindOne", [] { return nullptr == OCI_SodaCollFindOne(nullptr, nullptr); } },
+            { "SodaCollFindOneByKey", [] { return nullptr == OCI_SodaCollFindOneByKey(nullptr, OTEXT("x")); } },
+            { "SodaCollFree", [] { return !OCI_SodaCollFree(nullptr); } },
+            { "SodaCollFreeIndexNames", [] { return !OCI_SodaCollFreeIndexNames(nullptr, nullptr /* otext ** */, 1); } },
+            { "SodaCollGetConnection", [] { return nullptr == OCI_SodaCollGetConnection(nullptr); } },
+            { "SodaCollGetDataGuide", [] { return nullptr == OCI_SodaCollGetDataGuide(nullptr); } },
+            { "SodaCollGetMetadata", [] { return nullptr == OCI_SodaCollGetMetadata(nullptr); } },
+            { "SodaCollGetName", [] { return nullptr == OCI_SodaCollGetName(nullptr); } },
+            { "SodaCollInsertDoc", [] { return !OCI_SodaCollInsertDoc(nullptr, nullptr); } },
+            { "SodaCollInsertMany", [] { return !OCI_SodaCollInsertMany(nullptr, nullptr, 1, FALSE); } },
+            { "SodaCollIsMapped", [] { return !OCI_SodaCollIsMapped(nullptr); } },
+            { "SodaCollListIndexes", [] { return nullptr == OCI_SodaCollListIndexes(nullptr, NullArgOut<OCI_UInt32>()); } },
+            { "SodaCollRemove", [] { return !OCI_SodaCollRemove(nullptr, nullptr, NullArgOut<OCI_UInt64>()); } },
+            { "SodaCollRemoveOneByKey", [] { return !OCI_SodaCollRemoveOneByKey(nullptr, OTEXT("x")); } },
+            { "SodaCollReplaceOne", [] { return !OCI_SodaCollReplaceOne(nullptr, nullptr, nullptr, FALSE); } },
+            { "SodaCollReplaceOneByKey", [] { return !OCI_SodaCollReplaceOneByKey(nullptr, OTEXT("x"), nullptr, FALSE); } },
+            { "SodaCollSave", [] { return !OCI_SodaCollSave(nullptr, nullptr, FALSE); } },
+            { "SodaCollTruncate", [] { return !OCI_SodaCollTruncate(nullptr); } },
+            { "SodaDbCreate", [] { return nullptr == OCI_SodaDbCreate(nullptr); } },
+            { "SodaDbCreateColl", [] { return nullptr == OCI_SodaDbCreateColl(nullptr, OTEXT("x"), OTEXT("x")); } },
+            { "SodaDbFree", [] { return !OCI_SodaDbFree(nullptr); } },
+            { "SodaDbFreeCollectionNames", [] { return !OCI_SodaDbFreeCollectionNames(nullptr, nullptr /* otext ** */, 1); } },
+            { "SodaDbGetCollectionNames", [] { return nullptr == OCI_SodaDbGetCollectionNames(nullptr, NullArgOut<OCI_UInt32>()); } },
+            { "SodaDbGetColls", [] { return nullptr == OCI_SodaDbGetColls(nullptr, OTEXT("x")); } },
+            { "SodaDbGetConnection", [] { return nullptr == OCI_SodaDbGetConnection(nullptr); } },
+            { "SodaDbOpenColl", [] { return nullptr == OCI_SodaDbOpenColl(nullptr, OTEXT("x")); } },
+            { "SodaDocCreateFromJson", [] { return nullptr == OCI_SodaDocCreateFromJson(nullptr, nullptr, OTEXT("x")); } },
+            { "SodaDocCreateFromText", [] { return nullptr == OCI_SodaDocCreateFromText(nullptr, OTEXT("x"), 1, OTEXT("x")); } },
+            { "SodaDocCursorFree", [] { return !OCI_SodaDocCursorFree(nullptr); } },
+            { "SodaDocCursorGetNext", [] { return nullptr == OCI_SodaDocCursorGetNext(nullptr); } },
+            { "SodaDocFree", [] { return !OCI_SodaDocFree(nullptr); } },
+            { "SodaDocGetCreatedOn", [] { return nullptr == OCI_SodaDocGetCreatedOn(nullptr); } },
+            { "SodaDocGetIsJson", [] { return !OCI_SodaDocGetIsJson(nullptr); } },
+            { "SodaDocGetJson", [] { return nullptr == OCI_SodaDocGetJson(nullptr); } },
+            { "SodaDocGetKey", [] { return nullptr == OCI_SodaDocGetKey(nullptr); } },
+            { "SodaDocGetLastModified", [] { return nullptr == OCI_SodaDocGetLastModified(nullptr); } },
+            { "SodaDocGetMediaType", [] { return nullptr == OCI_SodaDocGetMediaType(nullptr); } },
+            { "SodaDocGetText", [] { return nullptr == OCI_SodaDocGetText(nullptr); } },
+            { "SodaDocGetVersion", [] { return nullptr == OCI_SodaDocGetVersion(nullptr); } },
+            { "SodaOptionsCreate", [] { return nullptr == OCI_SodaOptionsCreate(nullptr); } },
+            { "SodaOptionsFree", [] { return !OCI_SodaOptionsFree(nullptr); } },
+            { "SodaOptionsSetFetchArraySize", [] { return !OCI_SodaOptionsSetFetchArraySize(nullptr, 1); } },
+            { "SodaOptionsSetFilter", [] { return !OCI_SodaOptionsSetFilter(nullptr, OTEXT("x")); } },
+            { "SodaOptionsSetHint", [] { return !OCI_SodaOptionsSetHint(nullptr, OTEXT("x")); } },
+            { "SodaOptionsSetKey", [] { return !OCI_SodaOptionsSetKey(nullptr, OTEXT("x")); } },
+            { "SodaOptionsSetKeys", [] { return !OCI_SodaOptionsSetKeys(nullptr, nullptr /* otext ** */, 1); } },
+            { "SodaOptionsSetLimit", [] { return !OCI_SodaOptionsSetLimit(nullptr, 1); } },
+            { "SodaOptionsSetLock", [] { return !OCI_SodaOptionsSetLock(nullptr, FALSE); } },
+            { "SodaOptionsSetSkip", [] { return !OCI_SodaOptionsSetSkip(nullptr, 1); } },
+            { "SodaOptionsSetVersion", [] { return !OCI_SodaOptionsSetVersion(nullptr, OTEXT("x")); } },
+        }),
+        &NullArgCaseName);
+
 }

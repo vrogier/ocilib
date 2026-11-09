@@ -174,8 +174,8 @@ OCI_Subscription * OcilibSubscriptionRegister
 
     OCI_Subscription* sub = NULL;
 
-    CHECK_DATABASE_NOTIFY_ENABLED();
     CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_DATABASE_NOTIFY_ENABLED();
     CHECK_PTR(OCI_IPC_PROC,       handler);
     CHECK_PTR(OCI_IPC_STRING,     name);
 

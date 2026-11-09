@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 #include <cstring>
 
@@ -41,4 +42,28 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonArrayFree(jsons));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+    class TestJsonCreateNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestJsonCreateNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestJsonCreateNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "JsonArrayCreate", [] { return nullptr == OCI_JsonArrayCreate(nullptr, 1); } },
+            { "JsonArrayFree", [] { return !OCI_JsonArrayFree(nullptr); } },
+            { "JsonClone", [] { return !OCI_JsonClone(nullptr, nullptr); } },
+            { "JsonCreate", [] { return nullptr == OCI_JsonCreate(nullptr); } },
+            { "JsonFree", [] { return !OCI_JsonFree(nullptr); } },
+            { "JsonGetConnection", [] { return nullptr == OCI_JsonGetConnection(nullptr); } },
+            { "JsonGetRoot", [] { return nullptr == OCI_JsonGetRoot(nullptr); } },
+            { "JsonIsMutable", [] { return !OCI_JsonIsMutable(nullptr); } },
+            { "JsonSetMutable", [] { return !OCI_JsonSetMutable(nullptr, FALSE); } },
+            { "JsonSetRoot", [] { return !OCI_JsonSetRoot(nullptr, nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

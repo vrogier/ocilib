@@ -1105,8 +1105,8 @@ OCI_Boolean OcilibDequeueUnsubscribe
         /* context */ OCI_IPC_DEQUEUE, dequeue
     );
 
-    CHECK_DATABASE_NOTIFY_ENABLED();
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue);
+    CHECK_DATABASE_NOTIFY_ENABLED();
 
     dequeue->callback = NULL;
 

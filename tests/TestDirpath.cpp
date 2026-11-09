@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -237,5 +238,87 @@ namespace TestCApi
 
         ExecDML(OTEXT("drop table TestDirpath_Table4"));
     }
-}
 
+
+
+
+
+
+
+    TEST(TestDirpath, GetErrorSentinels_WithoutErrors_ReturnMinusOne)
+    {
+        ExecDML(OTEXT("create table TestDirpathErr_Table (a number)"));
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto ti = OCI_TypeInfoGet(conn, OTEXT("TestDirpathErr_Table"), OCI_TIF_TABLE);
+        ASSERT_NE(nullptr, ti);
+        const auto dp = OCI_DirPathCreate(ti, nullptr, 1, 1);
+        ASSERT_NE(nullptr, dp);
+        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 0, OTEXT("a"), 10, nullptr));
+        ASSERT_TRUE(OCI_DirPathPrepare(dp));
+
+        ASSERT_EQ(-1, OCI_DirPathGetErrorColumn(dp));
+        ASSERT_EQ(-1, OCI_DirPathGetErrorRow(dp));
+
+        ASSERT_TRUE(OCI_DirPathFree(dp));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ExecDML(OTEXT("drop table TestDirpathErr_Table"));
+    }
+
+    TEST(TestDirpath, Prepare_WithoutColumns_ReturnsFalse)
+    {
+        ExecDML(OTEXT("create table TestDirpath_Table1 (val_int int, val_str varchar2(50))"));
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto ti = OCI_TypeInfoGet(conn, OTEXT("TestDirpath_Table1"), OCI_TIF_TABLE);
+        ASSERT_NE(nullptr, ti);
+        const auto dp = OCI_DirPathCreate(ti, nullptr, 2, 10);
+        ASSERT_NE(nullptr, dp);
+
+        ASSERT_FALSE(OCI_DirPathPrepare(dp));
+
+        ASSERT_TRUE(OCI_DirPathFree(dp));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    class TestDirpathNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestDirpathNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestDirpathNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "DirPathAbort", [] { return !OCI_DirPathAbort(nullptr); } },
+            { "DirPathConvert", [] { return OCI_DPR_ERROR == OCI_DirPathConvert(nullptr); } },
+            { "DirPathCreate", [] { return nullptr == OCI_DirPathCreate(nullptr, OTEXT("x"), 1, 1); } },
+            { "DirPathFinish", [] { return !OCI_DirPathFinish(nullptr); } },
+            { "DirPathFlushRow", [] { return !OCI_DirPathFlushRow(nullptr); } },
+            { "DirPathFree", [] { return !OCI_DirPathFree(nullptr); } },
+            { "DirPathGetAffectedRows", [] { return 0 == OCI_DirPathGetAffectedRows(nullptr); } },
+            { "DirPathGetCurrentRows", [] { return 0 == OCI_DirPathGetCurrentRows(nullptr); } },
+            { "DirPathGetErrorColumn", [] { return -1 == OCI_DirPathGetErrorColumn(nullptr); } },
+            { "DirPathGetErrorRow", [] { return -1 == OCI_DirPathGetErrorRow(nullptr); } },
+            { "DirPathGetMaxRows", [] { return 0 == OCI_DirPathGetMaxRows(nullptr); } },
+            { "DirPathGetRowCount", [] { return 0 == OCI_DirPathGetRowCount(nullptr); } },
+            { "DirPathLoad", [] { return OCI_DPR_ERROR == OCI_DirPathLoad(nullptr); } },
+            { "DirPathPrepare", [] { return !OCI_DirPathPrepare(nullptr); } },
+            { "DirPathReset", [] { return !OCI_DirPathReset(nullptr); } },
+            { "DirPathSave", [] { return !OCI_DirPathSave(nullptr); } },
+            { "DirPathSetBufferSize", [] { return !OCI_DirPathSetBufferSize(nullptr, 1); } },
+            { "DirPathSetCacheSize", [] { return !OCI_DirPathSetCacheSize(nullptr, 1); } },
+            { "DirPathSetColumn", [] { return !OCI_DirPathSetColumn(nullptr, 1, OTEXT("x"), 1, OTEXT("x")); } },
+            { "DirPathSetConvertMode", [] { return !OCI_DirPathSetConvertMode(nullptr, 1); } },
+            { "DirPathSetCurrentRows", [] { return !OCI_DirPathSetCurrentRows(nullptr, 1); } },
+            { "DirPathSetDateFormat", [] { return !OCI_DirPathSetDateFormat(nullptr, OTEXT("x")); } },
+            { "DirPathSetEntry", [] { return !OCI_DirPathSetEntry(nullptr, 1, 1, NullArgBuffer(), 1, FALSE); } },
+            { "DirPathSetNoLog", [] { return !OCI_DirPathSetNoLog(nullptr, FALSE); } },
+            { "DirPathSetParallel", [] { return !OCI_DirPathSetParallel(nullptr, FALSE); } },
+        }),
+        &NullArgCaseName);
+
+}

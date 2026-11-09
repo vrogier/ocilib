@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 using namespace ocilib;
 
@@ -388,4 +389,27 @@ namespace TestCApi
 
         ExecDML(OTEXT("DROP TABLE TestRegisterVector"));
     }
+
+    class TestVectorNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestVectorNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestVectorNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "VectorArrayCreate", [] { return nullptr == OCI_VectorArrayCreate(nullptr, 1); } },
+            { "VectorArrayFree", [] { return !OCI_VectorArrayFree(nullptr); } },
+            { "VectorCreate", [] { return nullptr == OCI_VectorCreate(nullptr); } },
+            { "VectorFree", [] { return !OCI_VectorFree(nullptr); } },
+            { "VectorFromText", [] { return !OCI_VectorFromText(nullptr, OTEXT("x"), 1, 1, 1); } },
+            { "VectorGetInfo", [] { return !OCI_VectorGetInfo(nullptr, nullptr /* OCI_VectorFormat * */, NullArgOut<OCI_UInt32>()); } },
+            { "VectorGetValues", [] { return !OCI_VectorGetValues(nullptr, NullArgBuffer()); } },
+            { "VectorSetValues", [] { return !OCI_VectorSetValues(nullptr, 1, 1, NullArgBuffer()); } },
+            { "VectorToText", [] { return !OCI_VectorToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
+        }),
+        &NullArgCaseName);
+
 }

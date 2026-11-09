@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -140,4 +141,27 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_ShardingKeyFree(skey));
     }
+
+    class TestShardingNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestShardingNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestShardingNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "ShardingKeyAddDate", [] { return !OCI_ShardingKeyAddDate(nullptr, nullptr); } },
+            { "ShardingKeyAddNumber", [] { return !OCI_ShardingKeyAddNumber(nullptr, nullptr); } },
+            { "ShardingKeyAddRaw", [] { return !OCI_ShardingKeyAddRaw(nullptr, NullArgBuffer(), 1); } },
+            { "ShardingKeyAddString", [] { return !OCI_ShardingKeyAddString(nullptr, OTEXT("x")); } },
+            { "ShardingKeyAddTimestamp", [] { return !OCI_ShardingKeyAddTimestamp(nullptr, nullptr); } },
+            { "ShardingKeyCreate", [] { return nullptr == OCI_ShardingKeyCreate(nullptr); } },
+            { "ShardingKeyFree", [] { return !OCI_ShardingKeyFree(nullptr); } },
+            { "ShardingKeyReset", [] { return !OCI_ShardingKeyReset(nullptr); } },
+            { "ShardingKeyToText", [] { return nullptr == OCI_ShardingKeyToText(nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

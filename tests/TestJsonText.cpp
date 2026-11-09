@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 #include <cstring>
 
@@ -116,4 +117,42 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(src));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+
+
+
+
+
+    TEST(TestJsonText, LoadText_MalformedJson_ReturnsFalse)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto json = OCI_JsonCreate(conn);
+        ASSERT_NE(nullptr, json);
+
+        ASSERT_FALSE(OCI_JsonLoadText(json, OTEXT("{unclosed"), 9, OCI_JTV_ALLOW_NONE, OCI_JTE_DETECT));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        OCI_JsonFree(json);
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    class TestJsonTextNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestJsonTextNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestJsonTextNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "JsonLoadBinary", [] { return !OCI_JsonLoadBinary(nullptr, NullArgBuffer(), 1); } },
+            { "JsonLoadText", [] { return !OCI_JsonLoadText(nullptr, OTEXT("x"), 1, 1, 1); } },
+            { "JsonToBinary", [] { return !OCI_JsonToBinary(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>()); } },
+            { "JsonToText", [] { return !OCI_JsonToText(nullptr, NullArgText(), NullArgOut<OCI_UInt32>(), 1); } },
+            { "JsonValidate", [] { return !OCI_JsonValidate(nullptr, nullptr, nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

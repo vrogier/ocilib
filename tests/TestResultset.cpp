@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -787,4 +788,122 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+
+
+
+
+
+    TEST(TestResultset, GetColumnIndex_UnknownName_ReturnsMinusOne)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select 1 as val from dual")));
+        const auto rs = OCI_GetResultset(stmt);
+        ASSERT_NE(nullptr, rs);
+        ASSERT_TRUE(OCI_FetchNext(rs));
+
+        ASSERT_EQ(-1, OCI_GetColumnIndex(rs, OTEXT("no_such_column")));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestResultset, GetColumn_OutOfRangeIndex_ReturnsNull)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select 1 as val from dual")));
+        const auto rs = OCI_GetResultset(stmt);
+        ASSERT_NE(nullptr, rs);
+
+        ASSERT_EQ(nullptr, OCI_GetColumn(rs, 999));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    class TestResultsetNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestResultsetNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestResultsetNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "FetchFirst", [] { return !OCI_FetchFirst(nullptr); } },
+            { "FetchLast", [] { return !OCI_FetchLast(nullptr); } },
+            { "FetchNext", [] { return !OCI_FetchNext(nullptr); } },
+            { "FetchPrev", [] { return !OCI_FetchPrev(nullptr); } },
+            { "FetchSeek", [] { return !OCI_FetchSeek(nullptr, 1, 1); } },
+            { "GetBigInt", [] { return 0 == OCI_GetBigInt(nullptr, 1); } },
+            { "GetBigIntByName", [] { return 0 == OCI_GetBigIntByName(nullptr, OTEXT("x")); } },
+            { "GetColl", [] { return nullptr == OCI_GetColl(nullptr, 1); } },
+            { "GetCollByName", [] { return nullptr == OCI_GetCollByName(nullptr, OTEXT("x")); } },
+            { "GetColumn", [] { return nullptr == OCI_GetColumn(nullptr, 1); } },
+            { "GetColumnByName", [] { return nullptr == OCI_GetColumnByName(nullptr, OTEXT("x")); } },
+            { "GetColumnCount", [] { return 0 == OCI_GetColumnCount(nullptr); } },
+            { "GetColumnIndex", [] { return -1 == OCI_GetColumnIndex(nullptr, OTEXT("x")); } },
+            { "GetCurrentRow", [] { return -1 == OCI_GetCurrentRow(nullptr); } },
+            { "GetDataLength", [] { return 0 == OCI_GetDataLength(nullptr, 1); } },
+            { "GetDataSize", [] { return 0 == OCI_GetDataSize(nullptr, 1); } },
+            { "GetDataSizeByName", [] { return 0 == OCI_GetDataSizeByName(nullptr, OTEXT("x")); } },
+            { "GetDate", [] { return nullptr == OCI_GetDate(nullptr, 1); } },
+            { "GetDateByName", [] { return nullptr == OCI_GetDateByName(nullptr, OTEXT("x")); } },
+            { "GetDouble", [] { return 0.0 == OCI_GetDouble(nullptr, 1); } },
+            { "GetDoubleByName", [] { return 0.0 == OCI_GetDoubleByName(nullptr, OTEXT("x")); } },
+            { "GetFile", [] { return nullptr == OCI_GetFile(nullptr, 1); } },
+            { "GetFileByName", [] { return nullptr == OCI_GetFileByName(nullptr, OTEXT("x")); } },
+            { "GetFloat", [] { return 0.0f == OCI_GetFloat(nullptr, 1); } },
+            { "GetFloatByName", [] { return 0.0f == OCI_GetFloatByName(nullptr, OTEXT("x")); } },
+            { "GetInt", [] { return 0 == OCI_GetInt(nullptr, 1); } },
+            { "GetIntByName", [] { return 0 == OCI_GetIntByName(nullptr, OTEXT("x")); } },
+            { "GetInterval", [] { return nullptr == OCI_GetInterval(nullptr, 1); } },
+            { "GetIntervalByName", [] { return nullptr == OCI_GetIntervalByName(nullptr, OTEXT("x")); } },
+            { "GetJson", [] { return nullptr == OCI_GetJson(nullptr, 1); } },
+            { "GetJsonByName", [] { return nullptr == OCI_GetJsonByName(nullptr, OTEXT("x")); } },
+            { "GetLob", [] { return nullptr == OCI_GetLob(nullptr, 1); } },
+            { "GetLobByName", [] { return nullptr == OCI_GetLobByName(nullptr, OTEXT("x")); } },
+            { "GetLong", [] { return nullptr == OCI_GetLong(nullptr, 1); } },
+            { "GetLongByName", [] { return nullptr == OCI_GetLongByName(nullptr, OTEXT("x")); } },
+            { "GetNumber", [] { return nullptr == OCI_GetNumber(nullptr, 1); } },
+            { "GetNumberByName", [] { return nullptr == OCI_GetNumberByName(nullptr, OTEXT("x")); } },
+            { "GetObject", [] { return nullptr == OCI_GetObject(nullptr, 1); } },
+            { "GetObjectByName", [] { return nullptr == OCI_GetObjectByName(nullptr, OTEXT("x")); } },
+            { "GetRaw", [] { return 0 == OCI_GetRaw(nullptr, 1, NullArgBuffer(), 1); } },
+            { "GetRawByName", [] { return 0 == OCI_GetRawByName(nullptr, OTEXT("x"), NullArgBuffer(), 1); } },
+            { "GetRef", [] { return nullptr == OCI_GetRef(nullptr, 1); } },
+            { "GetRefByName", [] { return nullptr == OCI_GetRefByName(nullptr, OTEXT("x")); } },
+            { "GetRowCount", [] { return 0 == OCI_GetRowCount(nullptr); } },
+            { "GetShort", [] { return 0 == OCI_GetShort(nullptr, 1); } },
+            { "GetShortByName", [] { return 0 == OCI_GetShortByName(nullptr, OTEXT("x")); } },
+            { "GetStatement", [] { return nullptr == OCI_GetStatement(nullptr, 1); } },
+            { "GetStatementByName", [] { return nullptr == OCI_GetStatementByName(nullptr, OTEXT("x")); } },
+            { "GetString", [] { return nullptr == OCI_GetString(nullptr, 1); } },
+            { "GetStringByName", [] { return nullptr == OCI_GetStringByName(nullptr, OTEXT("x")); } },
+            { "GetStruct", [] { return !OCI_GetStruct(nullptr, NullArgBuffer(), NullArgBuffer()); } },
+            { "GetTimestamp", [] { return nullptr == OCI_GetTimestamp(nullptr, 1); } },
+            { "GetTimestampByName", [] { return nullptr == OCI_GetTimestampByName(nullptr, OTEXT("x")); } },
+            { "GetUnsignedBigInt", [] { return 0 == OCI_GetUnsignedBigInt(nullptr, 1); } },
+            { "GetUnsignedBigIntByName", [] { return 0 == OCI_GetUnsignedBigIntByName(nullptr, OTEXT("x")); } },
+            { "GetUnsignedInt", [] { return 0 == OCI_GetUnsignedInt(nullptr, 1); } },
+            { "GetUnsignedIntByName", [] { return 0 == OCI_GetUnsignedIntByName(nullptr, OTEXT("x")); } },
+            { "GetUnsignedShort", [] { return 0 == OCI_GetUnsignedShort(nullptr, 1); } },
+            { "GetUnsignedShortByName", [] { return 0 == OCI_GetUnsignedShortByName(nullptr, OTEXT("x")); } },
+            { "GetVector", [] { return nullptr == OCI_GetVector(nullptr, 1); } },
+            { "GetVectorByName", [] { return nullptr == OCI_GetVectorByName(nullptr, OTEXT("x")); } },
+            { "GetXmlType", [] { return nullptr == OCI_GetXmlType(nullptr, 1); } },
+            { "GetXmlTypeByName", [] { return nullptr == OCI_GetXmlTypeByName(nullptr, OTEXT("x")); } },
+            { "IsNull", [] { return !OCI_IsNull(nullptr, 1); } },
+            { "IsNullByName", [] { return OCI_IsNullByName(nullptr, OTEXT("x")); } }, // NULL handle -> null status indeterminate -> TRUE
+            { "ResultsetGetStatement", [] { return nullptr == OCI_ResultsetGetStatement(nullptr); } },
+            { "SetStructNumericType", [] { return !OCI_SetStructNumericType(nullptr, 1, 1); } },
+            { "SetStructNumericTypeByName", [] { return !OCI_SetStructNumericTypeByName(nullptr, OTEXT("x"), 1); } },
+        }),
+        &NullArgCaseName);
+
 }

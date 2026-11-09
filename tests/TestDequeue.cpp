@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -443,4 +444,39 @@ namespace TestCApi
             DeqNullCase{ "QueueDrop",       NullQueueDrop },
             DeqNullCase{ "QueueTableDrop",  NullQueueTableDrop }),
         ::testing::PrintToStringParamName());
+
+    class TestDequeueNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestDequeueNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestDequeueNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "DequeueCreate", [] { return nullptr == OCI_DequeueCreate(nullptr, OTEXT("x")); } },
+            { "DequeueFree", [] { return !OCI_DequeueFree(nullptr); } },
+            { "DequeueGet", [] { return nullptr == OCI_DequeueGet(nullptr); } },
+            { "DequeueGetConsumer", [] { return nullptr == OCI_DequeueGetConsumer(nullptr); } },
+            { "DequeueGetCorrelation", [] { return nullptr == OCI_DequeueGetCorrelation(nullptr); } },
+            { "DequeueGetMode", [] { return OCI_UNKNOWN == OCI_DequeueGetMode(nullptr); } },
+            { "DequeueGetNavigation", [] { return OCI_UNKNOWN == OCI_DequeueGetNavigation(nullptr); } },
+            { "DequeueGetRelativeMsgID", [] { return !OCI_DequeueGetRelativeMsgID(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>()); } },
+            { "DequeueGetVisibility", [] { return OCI_UNKNOWN == OCI_DequeueGetVisibility(nullptr); } },
+            { "DequeueGetWaitTime", [] { return 0 == OCI_DequeueGetWaitTime(nullptr); } },
+            { "DequeueListen", [] { return nullptr == OCI_DequeueListen(nullptr, 1); } },
+            { "DequeueSetAgentList", [] { return !OCI_DequeueSetAgentList(nullptr, nullptr, 1); } },
+            { "DequeueSetConsumer", [] { return !OCI_DequeueSetConsumer(nullptr, OTEXT("x")); } },
+            { "DequeueSetCorrelation", [] { return !OCI_DequeueSetCorrelation(nullptr, OTEXT("x")); } },
+            { "DequeueSetMode", [] { return !OCI_DequeueSetMode(nullptr, 1); } },
+            { "DequeueSetNavigation", [] { return !OCI_DequeueSetNavigation(nullptr, 1); } },
+            { "DequeueSetRelativeMsgID", [] { return !OCI_DequeueSetRelativeMsgID(nullptr, NullArgBuffer(), 1); } },
+            { "DequeueSetVisibility", [] { return !OCI_DequeueSetVisibility(nullptr, 1); } },
+            { "DequeueSetWaitTime", [] { return !OCI_DequeueSetWaitTime(nullptr, 1); } },
+            { "DequeueSubscribe", [] { return !OCI_DequeueSubscribe(nullptr, nullptr, 1, 1, nullptr); } },
+            { "DequeueUnsubscribe", [] { return !OCI_DequeueUnsubscribe(nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -778,4 +779,34 @@ namespace TestCApi
         ASSERT_FALSE(OCI_NumberGetValue(nullptr, OCI_NUM_INT, &v));
         ASSERT_FALSE(OCI_NumberAdd(nullptr, OCI_NUM_INT, &v));
     }
+
+    class TestNumberNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestNumberNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestNumberNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "NumberAdd", [] { return !OCI_NumberAdd(nullptr, 1, NullArgBuffer()); } },
+            { "NumberArrayCreate", [] { return nullptr == OCI_NumberArrayCreate(nullptr, 1); } },
+            { "NumberArrayFree", [] { return !OCI_NumberArrayFree(nullptr); } },
+            { "NumberAssign", [] { return !OCI_NumberAssign(nullptr, nullptr); } },
+            { "NumberCompare", [] { return -1 == OCI_NumberCompare(nullptr, nullptr); } },
+            { "NumberCreate", [] { return nullptr == OCI_NumberCreate(nullptr); } },
+            { "NumberDivide", [] { return !OCI_NumberDivide(nullptr, 1, NullArgBuffer()); } },
+            { "NumberFree", [] { return !OCI_NumberFree(nullptr); } },
+            { "NumberFromText", [] { return !OCI_NumberFromText(nullptr, OTEXT("x"), OTEXT("x")); } },
+            { "NumberGetContent", [] { return nullptr == OCI_NumberGetContent(nullptr); } },
+            { "NumberGetValue", [] { return !OCI_NumberGetValue(nullptr, 1, NullArgBuffer()); } },
+            { "NumberMultiply", [] { return !OCI_NumberMultiply(nullptr, 1, NullArgBuffer()); } },
+            { "NumberSetContent", [] { return !OCI_NumberSetContent(nullptr, NullArgRaw()); } },
+            { "NumberSetValue", [] { return !OCI_NumberSetValue(nullptr, 1, NullArgBuffer()); } },
+            { "NumberSub", [] { return !OCI_NumberSub(nullptr, 1, NullArgBuffer()); } },
+            { "NumberToText", [] { return !OCI_NumberToText(nullptr, OTEXT("x"), 1, NullArgText()); } },
+        }),
+        &NullArgCaseName);
+
 }

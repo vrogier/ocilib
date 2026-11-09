@@ -776,7 +776,7 @@ OCI_Boolean OcilibTypeInfoIsFinalType
 {
     GET_PROP
     (
-        OCI_Boolean, TRUE,
+        OCI_Boolean, FALSE,
         OCI_IPC_TYPE_INFO, typinf,
         is_final
     );

@@ -533,7 +533,7 @@ ocilib_exit_label:                  \
 
 #define SET_PROP(stype, sptr, prop, ptype, val)    \
                                                    \
-        ENTER_FUNC(OCI_Boolean, TRUE, stype, sptr) \
+        ENTER_FUNC(OCI_Boolean, FALSE, stype, sptr) \
                                                    \
         CHECK_PTR(stype, sptr);                    \
                                                    \
@@ -545,7 +545,7 @@ ocilib_exit_label:                  \
 
 #define SET_PROP_ENUM(stype, sptr, prop, ptype, val, enms, msg) \
                                                                 \
-        ENTER_FUNC(OCI_Boolean, TRUE, stype, sptr)              \
+        ENTER_FUNC(OCI_Boolean, FALSE, stype, sptr)              \
                                                                 \
         CHECK_PTR(stype, sptr);                                 \
         CHECK_ENUM_VALUE((val), (enms), (msg));                 \

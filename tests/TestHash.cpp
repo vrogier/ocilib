@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -128,4 +129,31 @@ namespace TestCApi
         ASSERT_EQ(nullptr, OCI_HashGetEntry(nullptr, 0));
         ASSERT_FALSE(OCI_HashFree(nullptr));
     }
+
+    class TestHashNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestHashNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestHashNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "HashAddInt", [] { return !OCI_HashAddInt(nullptr, OTEXT("x"), 1); } },
+            { "HashAddPointer", [] { return !OCI_HashAddPointer(nullptr, OTEXT("x"), NullArgBuffer()); } },
+            { "HashAddString", [] { return !OCI_HashAddString(nullptr, OTEXT("x"), OTEXT("x")); } },
+            { "HashCreate", [] { return nullptr == OCI_HashCreate(nullptr, 1, 1); } },
+            { "HashFree", [] { return !OCI_HashFree(nullptr); } },
+            { "HashGetEntry", [] { return nullptr == OCI_HashGetEntry(nullptr, 1); } },
+            { "HashGetInt", [] { return 0 == OCI_HashGetInt(nullptr, OTEXT("x")); } },
+            { "HashGetPointer", [] { return nullptr == OCI_HashGetPointer(nullptr, OTEXT("x")); } },
+            { "HashGetSize", [] { return 0 == OCI_HashGetSize(nullptr); } },
+            { "HashGetString", [] { return nullptr == OCI_HashGetString(nullptr, OTEXT("x")); } },
+            { "HashGetType", [] { return OCI_UNKNOWN == OCI_HashGetType(nullptr); } },
+            { "HashGetValue", [] { return nullptr == OCI_HashGetValue(nullptr, OTEXT("x")); } },
+            { "HashLookup", [] { return nullptr == OCI_HashLookup(nullptr, OTEXT("x"), FALSE); } },
+        }),
+        &NullArgCaseName);
+
 }

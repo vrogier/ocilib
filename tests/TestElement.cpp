@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -892,4 +893,63 @@ namespace TestCApi
 
         ExecDML(OTEXT("DROP TYPE TestElement_DateColl"));
     }
+
+    class TestElementNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestElementNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestElementNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "ElemCreate", [] { return nullptr == OCI_ElemCreate(nullptr); } },
+            { "ElemFree", [] { return !OCI_ElemFree(nullptr); } },
+            { "ElemGetBigInt", [] { return 0 == OCI_ElemGetBigInt(nullptr); } },
+            { "ElemGetBoolean", [] { return !OCI_ElemGetBoolean(nullptr); } },
+            { "ElemGetColl", [] { return nullptr == OCI_ElemGetColl(nullptr); } },
+            { "ElemGetDate", [] { return nullptr == OCI_ElemGetDate(nullptr); } },
+            { "ElemGetDouble", [] { return 0.0 == OCI_ElemGetDouble(nullptr); } },
+            { "ElemGetFile", [] { return nullptr == OCI_ElemGetFile(nullptr); } },
+            { "ElemGetFloat", [] { return 0.0f == OCI_ElemGetFloat(nullptr); } },
+            { "ElemGetInt", [] { return 0 == OCI_ElemGetInt(nullptr); } },
+            { "ElemGetInterval", [] { return nullptr == OCI_ElemGetInterval(nullptr); } },
+            { "ElemGetLob", [] { return nullptr == OCI_ElemGetLob(nullptr); } },
+            { "ElemGetNumber", [] { return nullptr == OCI_ElemGetNumber(nullptr); } },
+            { "ElemGetObject", [] { return nullptr == OCI_ElemGetObject(nullptr); } },
+            { "ElemGetRaw", [] { return 0 == OCI_ElemGetRaw(nullptr, NullArgBuffer(), 1); } },
+            { "ElemGetRawSize", [] { return 0 == OCI_ElemGetRawSize(nullptr); } },
+            { "ElemGetRef", [] { return nullptr == OCI_ElemGetRef(nullptr); } },
+            { "ElemGetShort", [] { return 0 == OCI_ElemGetShort(nullptr); } },
+            { "ElemGetString", [] { return nullptr == OCI_ElemGetString(nullptr); } },
+            { "ElemGetTimestamp", [] { return nullptr == OCI_ElemGetTimestamp(nullptr); } },
+            { "ElemGetUnsignedBigInt", [] { return 0 == OCI_ElemGetUnsignedBigInt(nullptr); } },
+            { "ElemGetUnsignedInt", [] { return 0 == OCI_ElemGetUnsignedInt(nullptr); } },
+            { "ElemGetUnsignedShort", [] { return 0 == OCI_ElemGetUnsignedShort(nullptr); } },
+            { "ElemIsNull", [] { return !OCI_ElemIsNull(nullptr); } },
+            { "ElemSetBigInt", [] { return !OCI_ElemSetBigInt(nullptr, 1); } },
+            { "ElemSetBoolean", [] { return !OCI_ElemSetBoolean(nullptr, FALSE); } },
+            { "ElemSetColl", [] { return !OCI_ElemSetColl(nullptr, nullptr); } },
+            { "ElemSetDate", [] { return !OCI_ElemSetDate(nullptr, nullptr); } },
+            { "ElemSetDouble", [] { return !OCI_ElemSetDouble(nullptr, 1); } },
+            { "ElemSetFile", [] { return !OCI_ElemSetFile(nullptr, nullptr); } },
+            { "ElemSetFloat", [] { return !OCI_ElemSetFloat(nullptr, 1); } },
+            { "ElemSetInt", [] { return !OCI_ElemSetInt(nullptr, 1); } },
+            { "ElemSetInterval", [] { return !OCI_ElemSetInterval(nullptr, nullptr); } },
+            { "ElemSetLob", [] { return !OCI_ElemSetLob(nullptr, nullptr); } },
+            { "ElemSetNull", [] { return !OCI_ElemSetNull(nullptr); } },
+            { "ElemSetNumber", [] { return !OCI_ElemSetNumber(nullptr, nullptr); } },
+            { "ElemSetObject", [] { return !OCI_ElemSetObject(nullptr, nullptr); } },
+            { "ElemSetRaw", [] { return !OCI_ElemSetRaw(nullptr, NullArgBuffer(), 1); } },
+            { "ElemSetRef", [] { return !OCI_ElemSetRef(nullptr, nullptr); } },
+            { "ElemSetShort", [] { return !OCI_ElemSetShort(nullptr, 1); } },
+            { "ElemSetString", [] { return !OCI_ElemSetString(nullptr, OTEXT("x")); } },
+            { "ElemSetTimestamp", [] { return !OCI_ElemSetTimestamp(nullptr, nullptr); } },
+            { "ElemSetUnsignedBigInt", [] { return !OCI_ElemSetUnsignedBigInt(nullptr, 1); } },
+            { "ElemSetUnsignedInt", [] { return !OCI_ElemSetUnsignedInt(nullptr, 1); } },
+            { "ElemSetUnsignedShort", [] { return !OCI_ElemSetUnsignedShort(nullptr, 1); } },
+        }),
+        &NullArgCaseName);
+
 }

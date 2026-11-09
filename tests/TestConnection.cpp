@@ -1,6 +1,7 @@
-﻿#include <thread>
+#include <thread>
 
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -450,4 +451,116 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+
+
+
+
+
+
+    TEST(TestConnection, Connect_InvalidCredentials_ReturnsNullAndRaisesError)
+    {
+        const auto env = GetEnvironment(nullptr);
+
+        ASSERT_EQ(nullptr, OCI_ConnectionCreate(env, DBS, USR, PWD_WRONG, OCI_SESSION_DEFAULT));
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        ASSERT_NE(0, OCI_ErrorGetCode(err));
+    }
+
+    TEST(TestConnection, Lifetime_TransientChildCycles_StatsBounded)
+    {
+        /* C1-class guard: repeated create->use->destroy of transient children
+           on one long-lived Connection must not grow env handle/object stats.
+           20 warm-up cycles (caches may legitimately retain), then measured. */
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        auto cycle = [&]
+        {
+            const auto stmt = OCI_StatementCreate(conn);
+            EXPECT_NE(nullptr, stmt);
+            EXPECT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select 1 as v, 'x' as s from dual")));
+            const auto rs = OCI_GetResultset(stmt);
+            EXPECT_NE(nullptr, rs);
+            EXPECT_TRUE(OCI_FetchNext(rs));
+            EXPECT_TRUE(OCI_StatementFree(stmt));
+        };
+
+        for (int i = 0; i < 20; i++) cycle();
+
+        const auto bytes   = OCI_GetStats(env, OCI_UST_BYTES);
+        const auto handles = OCI_GetStats(env, OCI_UST_HANDLES);
+        const auto objs    = OCI_GetStats(env, OCI_UST_OBJECTS);
+
+        for (int i = 0; i < 50; i++) cycle();
+
+        ASSERT_EQ(handles, OCI_GetStats(env, OCI_UST_HANDLES));
+        ASSERT_EQ(objs,    OCI_GetStats(env, OCI_UST_OBJECTS));
+        /* bytes may legitimately grow a little via caching but must be bounded */
+        ASSERT_LE(OCI_GetStats(env, OCI_UST_BYTES), bytes + 64 * 1024);
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+
+    class TestConnectionNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestConnectionNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestConnectionNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "Break", [] { return !OCI_Break(nullptr); } },
+            { "Commit", [] { return !OCI_Commit(nullptr); } },
+            { "ConnectionFree", [] { return !OCI_ConnectionFree(nullptr); } },
+            { "GetAutoCommit", [] { return !OCI_GetAutoCommit(nullptr); } },
+            { "GetDBName", [] { return nullptr == OCI_GetDBName(nullptr); } },
+            { "GetDatabase", [] { return nullptr == OCI_GetDatabase(nullptr); } },
+            { "GetDefaultLobPrefetchSize", [] { return 0 == OCI_GetDefaultLobPrefetchSize(nullptr); } },
+            { "GetDomainName", [] { return nullptr == OCI_GetDomainName(nullptr); } },
+            { "GetInstanceName", [] { return nullptr == OCI_GetInstanceName(nullptr); } },
+            { "GetInstanceStartTime", [] { return nullptr == OCI_GetInstanceStartTime(nullptr); } },
+            { "GetMaxCursors", [] { return 0 == OCI_GetMaxCursors(nullptr); } },
+            { "GetPassword", [] { return nullptr == OCI_GetPassword(nullptr); } },
+            { "GetServerMajorVersion", [] { return OCI_UNKNOWN == OCI_GetServerMajorVersion(nullptr); } },
+            { "GetServerMinorVersion", [] { return OCI_UNKNOWN == OCI_GetServerMinorVersion(nullptr); } },
+            { "GetServerName", [] { return nullptr == OCI_GetServerName(nullptr); } },
+            { "GetServerRevisionVersion", [] { return OCI_UNKNOWN == OCI_GetServerRevisionVersion(nullptr); } },
+            { "GetServiceName", [] { return nullptr == OCI_GetServiceName(nullptr); } },
+            { "GetSessionMode", [] { return OCI_UNKNOWN == OCI_GetSessionMode(nullptr); } },
+            { "GetSessionTag", [] { return nullptr == OCI_GetSessionTag(nullptr); } },
+            { "GetStatementCacheSize", [] { return 0 == OCI_GetStatementCacheSize(nullptr); } },
+            { "GetTimeout", [] { return 0 == OCI_GetTimeout(nullptr, 1); } },
+            { "GetTrace", [] { return nullptr == OCI_GetTrace(nullptr, 1); } },
+            { "GetTransaction", [] { return nullptr == OCI_GetTransaction(nullptr); } },
+            { "GetUserName", [] { return nullptr == OCI_GetUserName(nullptr); } },
+            { "GetVersionConnection", [] { return OCI_UNKNOWN == OCI_GetVersionConnection(nullptr); } },
+            { "GetVersionServer", [] { return nullptr == OCI_GetVersionServer(nullptr); } },
+            { "IsConnected", [] { return !OCI_IsConnected(nullptr); } },
+            { "IsTAFCapable", [] { return !OCI_IsTAFCapable(nullptr); } },
+            { "Ping", [] { return !OCI_Ping(nullptr); } },
+            { "Rollback", [] { return !OCI_Rollback(nullptr); } },
+            { "ServerDisableOutput", [] { return !OCI_ServerDisableOutput(nullptr); } },
+            { "ServerEnableOutput", [] { return !OCI_ServerEnableOutput(nullptr, 1, 1, 1); } },
+            { "ServerGetOutput", [] { return nullptr == OCI_ServerGetOutput(nullptr); } },
+            { "SetAutoCommit", [] { return !OCI_SetAutoCommit(nullptr, FALSE); } },
+            { "SetDefaultLobPrefetchSize", [] { return !OCI_SetDefaultLobPrefetchSize(nullptr, 1); } },
+            { "SetPassword", [] { return !OCI_SetPassword(nullptr, OTEXT("x")); } },
+            { "SetSessionTag", [] { return !OCI_SetSessionTag(nullptr, OTEXT("x")); } },
+            { "SetStatementCacheSize", [] { return !OCI_SetStatementCacheSize(nullptr, 1); } },
+            { "SetTAFHandler", [] { return !OCI_SetTAFHandler(nullptr, nullptr); } },
+            { "SetTimeout", [] { return !OCI_SetTimeout(nullptr, 1, 1); } },
+            { "SetTrace", [] { return !OCI_SetTrace(nullptr, 1, OTEXT("x")); } },
+            { "SetTransaction", [] { return !OCI_SetTransaction(nullptr, nullptr); } },
+            { "StatementCreate", [] { return nullptr == OCI_StatementCreate(nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

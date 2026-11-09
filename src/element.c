@@ -37,7 +37,7 @@
 
 #define ELEM_SET_VALUE(elemtype, type, func_init, func_assign)           \
                                                                          \
-        ENTER_FUNC(OCI_Boolean, TRUE, OCI_IPC_ELEMENT, elem);            \
+        ENTER_FUNC(OCI_Boolean, FALSE, OCI_IPC_ELEMENT, elem);           \
                                                                          \
         CHECK_PTR(OCI_IPC_ELEMENT, elem);                                \
         CHECK_COMPAT((elemtype) == (elem)->typinf->cols[0].datatype);    \

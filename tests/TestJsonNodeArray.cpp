@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 #include <cstring>
 
@@ -133,4 +134,48 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+
+
+
+
+
+    TEST(TestJsonNodeArray, GetItem_OutOfRangeIndex_ReturnsNull)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto json = OCI_JsonCreate(conn);
+        ASSERT_NE(nullptr, json);
+        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("[1,2,3]"), 7, OCI_JTV_ALLOW_NONE, OCI_JTE_DETECT));
+        const auto root = OCI_JsonGetRoot(json);
+        ASSERT_NE(nullptr, root);
+
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetItem(root, 99));
+        ASSERT_EQ(3u, OCI_JsonNodeGetItemCount(root));
+
+        OCI_JsonNodeFree(root);
+        OCI_JsonFree(json);
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    class TestJsonNodeArrayNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestJsonNodeArrayNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestJsonNodeArrayNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "JsonNodeAppendItem", [] { return !OCI_JsonNodeAppendItem(nullptr, nullptr); } },
+            { "JsonNodeGetItem", [] { return nullptr == OCI_JsonNodeGetItem(nullptr, 1); } },
+            { "JsonNodeGetItemCount", [] { return 0 == OCI_JsonNodeGetItemCount(nullptr); } },
+            { "JsonNodeInsertItem", [] { return !OCI_JsonNodeInsertItem(nullptr, 1, nullptr); } },
+            { "JsonNodeRemoveItem", [] { return !OCI_JsonNodeRemoveItem(nullptr, 1); } },
+            { "JsonNodeRemoveItems", [] { return 0 == OCI_JsonNodeRemoveItems(nullptr, 1, 1); } },
+            { "JsonNodeSetItem", [] { return !OCI_JsonNodeSetItem(nullptr, 1, nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

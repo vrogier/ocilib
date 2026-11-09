@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -664,5 +665,45 @@ namespace TestCApi
     /* --- public-API error paths: NULL lob handles hit the CHECK_PTR arms
        (covers the OcilibLob* guards the dropped ub4/charset internals
        tests used) --- */
+
+    class TestLobNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestLobNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestLobNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "LobAppend", [] { return !OCI_LobAppend(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>(), NullArgOut<OCI_UInt32>()); } },
+            { "LobAppendLob", [] { return !OCI_LobAppendLob(nullptr, nullptr); } },
+            { "LobArrayCreate", [] { return nullptr == OCI_LobArrayCreate(nullptr, 1, 1); } },
+            { "LobArrayFree", [] { return !OCI_LobArrayFree(nullptr); } },
+            { "LobAssign", [] { return !OCI_LobAssign(nullptr, nullptr); } },
+            { "LobClose", [] { return !OCI_LobClose(nullptr); } },
+            { "LobCopy", [] { return !OCI_LobCopy(nullptr, nullptr, 1, 1, 1); } },
+            { "LobCopyFromFile", [] { return !OCI_LobCopyFromFile(nullptr, nullptr, 1, 1, 1); } },
+            { "LobCreate", [] { return nullptr == OCI_LobCreate(nullptr, 1); } },
+            { "LobEnableBuffering", [] { return !OCI_LobEnableBuffering(nullptr, FALSE); } },
+            { "LobErase", [] { return 0 == OCI_LobErase(nullptr, 1, 1); } },
+            { "LobFlush", [] { return !OCI_LobFlush(nullptr); } },
+            { "LobFree", [] { return !OCI_LobFree(nullptr); } },
+            { "LobGetChunkSize", [] { return 0 == OCI_LobGetChunkSize(nullptr); } },
+            { "LobGetConnection", [] { return nullptr == OCI_LobGetConnection(nullptr); } },
+            { "LobGetLength", [] { return 0 == OCI_LobGetLength(nullptr); } },
+            { "LobGetMaxSize", [] { return 0 == OCI_LobGetMaxSize(nullptr); } },
+            { "LobGetOffset", [] { return 0 == OCI_LobGetOffset(nullptr); } },
+            { "LobGetType", [] { return OCI_UNKNOWN == OCI_LobGetType(nullptr); } },
+            { "LobIsEqual", [] { return !OCI_LobIsEqual(nullptr, nullptr); } },
+            { "LobIsRemote", [] { return !OCI_LobIsRemote(nullptr); } },
+            { "LobIsTemporary", [] { return !OCI_LobIsTemporary(nullptr); } },
+            { "LobOpen", [] { return !OCI_LobOpen(nullptr, 1); } },
+            { "LobRead", [] { return !OCI_LobRead(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>(), NullArgOut<OCI_UInt32>()); } },
+            { "LobSeek", [] { return !OCI_LobSeek(nullptr, 1, 1); } },
+            { "LobTruncate", [] { return !OCI_LobTruncate(nullptr, 1); } },
+            { "LobWrite", [] { return !OCI_LobWrite(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>(), NullArgOut<OCI_UInt32>()); } },
+        }),
+        &NullArgCaseName);
 
 }

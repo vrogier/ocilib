@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -54,4 +55,23 @@ namespace TestCApi
 
         ExecDML(OTEXT("drop type TestIterator_VarArr"));
     }
+
+    class TestIteratorNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestIteratorNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestIteratorNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "IterCreate", [] { return nullptr == OCI_IterCreate(nullptr); } },
+            { "IterFree", [] { return !OCI_IterFree(nullptr); } },
+            { "IterGetCurrent", [] { return nullptr == OCI_IterGetCurrent(nullptr); } },
+            { "IterGetNext", [] { return nullptr == OCI_IterGetNext(nullptr); } },
+            { "IterGetPrev", [] { return nullptr == OCI_IterGetPrev(nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

@@ -1,8 +1,9 @@
-﻿#include <atomic>
+#include <atomic>
 #include <thread>
 #include <vector>
 
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 const OCI_Size MaxThread = 10;
 
@@ -271,5 +272,33 @@ namespace TestCApi
         ASSERT_EQ(nullptr, OCI_PoolGetConnection(env, nullptr, nullptr));
         ASSERT_FALSE(OCI_PoolFree(env, nullptr));
     }
+
+    class TestPoolNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestPoolNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestPoolNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "PoolCreate", [] { return nullptr == OCI_PoolCreate(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), 1, 1, 1, 1, 1); } },
+            { "PoolFree", [] { return !OCI_PoolFree(nullptr, nullptr); } },
+            { "PoolGetBusyCount", [] { return 0 == OCI_PoolGetBusyCount(nullptr); } },
+            { "PoolGetConnection", [] { return nullptr == OCI_PoolGetConnection(nullptr, nullptr, OTEXT("x")); } },
+            { "PoolGetConnectionSharded", [] { return nullptr == OCI_PoolGetConnectionSharded(nullptr, nullptr, OTEXT("x"), nullptr, nullptr); } },
+            { "PoolGetIncrement", [] { return 0 == OCI_PoolGetIncrement(nullptr); } },
+            { "PoolGetMax", [] { return 0 == OCI_PoolGetMax(nullptr); } },
+            { "PoolGetMin", [] { return 0 == OCI_PoolGetMin(nullptr); } },
+            { "PoolGetNoWait", [] { return !OCI_PoolGetNoWait(nullptr); } },
+            { "PoolGetOpenedCount", [] { return 0 == OCI_PoolGetOpenedCount(nullptr); } },
+            { "PoolGetStatementCacheSize", [] { return 0 == OCI_PoolGetStatementCacheSize(nullptr); } },
+            { "PoolGetTimeout", [] { return 0 == OCI_PoolGetTimeout(nullptr); } },
+            { "PoolSetNoWait", [] { return !OCI_PoolSetNoWait(nullptr, FALSE); } },
+            { "PoolSetStatementCacheSize", [] { return !OCI_PoolSetStatementCacheSize(nullptr, 1); } },
+            { "PoolSetTimeout", [] { return !OCI_PoolSetTimeout(nullptr, 1); } },
+        }),
+        &NullArgCaseName);
 
 }

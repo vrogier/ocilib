@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 
 namespace TestCApi
@@ -1047,4 +1048,124 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+
+
+
+
+
+
+    TEST(TestBind, Execute_PlsqlRaise_ReturnsFalseWithOciError)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto stmt = OCI_StatementCreate(conn);
+        int value = 0;
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin raise_application_error(-20001, 'injected'); end;")));
+
+        ASSERT_FALSE(OCI_Execute(stmt));
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        ASSERT_NE(0, OCI_ErrorGetCode(err));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestBind, GetBind_OutOfRangeIndex_ReturnsNull)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto stmt = OCI_StatementCreate(conn);
+        int value = 0;
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :i := :i; end;")));
+        ASSERT_NE(nullptr, OCI_BindInt(stmt, OTEXT(":i"), &value));
+
+        ASSERT_EQ(nullptr, OCI_GetBind(stmt, 99));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    class TestBindNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestBindNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestBindNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "BindArrayGetSize", [] { return 0 == OCI_BindArrayGetSize(nullptr); } },
+            { "BindArrayOfBigInts", [] { return nullptr == OCI_BindArrayOfBigInts(nullptr, OTEXT("x"), NullArgOut<OCI_Int64>(), 1); } },
+            { "BindArrayOfColls", [] { return nullptr == OCI_BindArrayOfColls(nullptr, OTEXT("x"), nullptr, nullptr, 1); } },
+            { "BindArrayOfDates", [] { return nullptr == OCI_BindArrayOfDates(nullptr, OTEXT("x"), nullptr, 1); } },
+            { "BindArrayOfDoubles", [] { return nullptr == OCI_BindArrayOfDoubles(nullptr, OTEXT("x"), NullArgOut<OCI_Double>(), 1); } },
+            { "BindArrayOfFiles", [] { return nullptr == OCI_BindArrayOfFiles(nullptr, OTEXT("x"), nullptr, 1, 1); } },
+            { "BindArrayOfFloats", [] { return nullptr == OCI_BindArrayOfFloats(nullptr, OTEXT("x"), NullArgOut<OCI_Float>(), 1); } },
+            { "BindArrayOfIntervals", [] { return nullptr == OCI_BindArrayOfIntervals(nullptr, OTEXT("x"), nullptr, 1, 1); } },
+            { "BindArrayOfInts", [] { return nullptr == OCI_BindArrayOfInts(nullptr, OTEXT("x"), NullArgOut<OCI_Int32>(), 1); } },
+            { "BindArrayOfJsons", [] { return nullptr == OCI_BindArrayOfJsons(nullptr, OTEXT("x"), nullptr, 1); } },
+            { "BindArrayOfLobs", [] { return nullptr == OCI_BindArrayOfLobs(nullptr, OTEXT("x"), nullptr, 1, 1); } },
+            { "BindArrayOfNumbers", [] { return nullptr == OCI_BindArrayOfNumbers(nullptr, OTEXT("x"), nullptr, 1); } },
+            { "BindArrayOfObjects", [] { return nullptr == OCI_BindArrayOfObjects(nullptr, OTEXT("x"), nullptr, nullptr, 1); } },
+            { "BindArrayOfRaws", [] { return nullptr == OCI_BindArrayOfRaws(nullptr, OTEXT("x"), NullArgBuffer(), 1, 1); } },
+            { "BindArrayOfRefs", [] { return nullptr == OCI_BindArrayOfRefs(nullptr, OTEXT("x"), nullptr, nullptr, 1); } },
+            { "BindArrayOfShorts", [] { return nullptr == OCI_BindArrayOfShorts(nullptr, OTEXT("x"), NullArgOut<OCI_Int16>(), 1); } },
+            { "BindArrayOfStrings", [] { return nullptr == OCI_BindArrayOfStrings(nullptr, OTEXT("x"), NullArgText(), 1, 1); } },
+            { "BindArrayOfTimestamps", [] { return nullptr == OCI_BindArrayOfTimestamps(nullptr, OTEXT("x"), nullptr, 1, 1); } },
+            { "BindArrayOfUnsignedBigInts", [] { return nullptr == OCI_BindArrayOfUnsignedBigInts(nullptr, OTEXT("x"), NullArgOut<OCI_UInt64>(), 1); } },
+            { "BindArrayOfUnsignedInts", [] { return nullptr == OCI_BindArrayOfUnsignedInts(nullptr, OTEXT("x"), NullArgOut<OCI_UInt32>(), 1); } },
+            { "BindArrayOfUnsignedShorts", [] { return nullptr == OCI_BindArrayOfUnsignedShorts(nullptr, OTEXT("x"), NullArgOut<OCI_UInt16>(), 1); } },
+            { "BindArrayOfVectors", [] { return nullptr == OCI_BindArrayOfVectors(nullptr, OTEXT("x"), nullptr, 1); } },
+            { "BindArraySetSize", [] { return !OCI_BindArraySetSize(nullptr, 1); } },
+            { "BindBigInt", [] { return nullptr == OCI_BindBigInt(nullptr, OTEXT("x"), NullArgOut<OCI_Int64>()); } },
+            { "BindBoolean", [] { return nullptr == OCI_BindBoolean(nullptr, OTEXT("x"), NullArgOut<OCI_Boolean>()); } },
+            { "BindColl", [] { return nullptr == OCI_BindColl(nullptr, OTEXT("x"), nullptr); } },
+            { "BindDate", [] { return nullptr == OCI_BindDate(nullptr, OTEXT("x"), nullptr); } },
+            { "BindDouble", [] { return nullptr == OCI_BindDouble(nullptr, OTEXT("x"), NullArgOut<OCI_Double>()); } },
+            { "BindFile", [] { return nullptr == OCI_BindFile(nullptr, OTEXT("x"), nullptr); } },
+            { "BindFloat", [] { return nullptr == OCI_BindFloat(nullptr, OTEXT("x"), NullArgOut<OCI_Float>()); } },
+            { "BindGetAllocationMode", [] { return OCI_UNKNOWN == OCI_BindGetAllocationMode(nullptr); } },
+            { "BindGetData", [] { return nullptr == OCI_BindGetData(nullptr); } },
+            { "BindGetDataCount", [] { return 0 == OCI_BindGetDataCount(nullptr); } },
+            { "BindGetDataSize", [] { return 0 == OCI_BindGetDataSize(nullptr); } },
+            { "BindGetDataSizeAtPos", [] { return 0 == OCI_BindGetDataSizeAtPos(nullptr, 1); } },
+            { "BindGetDirection", [] { return OCI_UNKNOWN == OCI_BindGetDirection(nullptr); } },
+            { "BindGetName", [] { return nullptr == OCI_BindGetName(nullptr); } },
+            { "BindGetStatement", [] { return nullptr == OCI_BindGetStatement(nullptr); } },
+            { "BindGetSubtype", [] { return OCI_UNKNOWN == OCI_BindGetSubtype(nullptr); } },
+            { "BindGetType", [] { return OCI_UNKNOWN == OCI_BindGetType(nullptr); } },
+            { "BindInt", [] { return nullptr == OCI_BindInt(nullptr, OTEXT("x"), NullArgOut<OCI_Int32>()); } },
+            { "BindInterval", [] { return nullptr == OCI_BindInterval(nullptr, OTEXT("x"), nullptr); } },
+            { "BindIsNull", [] { return OCI_BindIsNull(nullptr); } }, // NULL handle -> null status indeterminate -> TRUE
+            { "BindIsNullAtPos", [] { return OCI_BindIsNullAtPos(nullptr, 1); } }, // NULL handle -> null status indeterminate -> TRUE
+            { "BindJson", [] { return nullptr == OCI_BindJson(nullptr, OTEXT("x"), nullptr); } },
+            { "BindLob", [] { return nullptr == OCI_BindLob(nullptr, OTEXT("x"), nullptr); } },
+            { "BindLong", [] { return nullptr == OCI_BindLong(nullptr, OTEXT("x"), nullptr, 1); } },
+            { "BindNumber", [] { return nullptr == OCI_BindNumber(nullptr, OTEXT("x"), nullptr); } },
+            { "BindObject", [] { return nullptr == OCI_BindObject(nullptr, OTEXT("x"), nullptr); } },
+            { "BindRaw", [] { return nullptr == OCI_BindRaw(nullptr, OTEXT("x"), NullArgBuffer(), 1); } },
+            { "BindRef", [] { return nullptr == OCI_BindRef(nullptr, OTEXT("x"), nullptr); } },
+            { "BindSetCharsetForm", [] { return !OCI_BindSetCharsetForm(nullptr, 1); } },
+            { "BindSetDataSize", [] { return !OCI_BindSetDataSize(nullptr, 1); } },
+            { "BindSetDataSizeAtPos", [] { return !OCI_BindSetDataSizeAtPos(nullptr, 1, 1); } },
+            { "BindSetDirection", [] { return !OCI_BindSetDirection(nullptr, 1); } },
+            { "BindSetNotNull", [] { return !OCI_BindSetNotNull(nullptr); } },
+            { "BindSetNotNullAtPos", [] { return !OCI_BindSetNotNullAtPos(nullptr, 1); } },
+            { "BindSetNull", [] { return !OCI_BindSetNull(nullptr); } },
+            { "BindSetNullAtPos", [] { return !OCI_BindSetNullAtPos(nullptr, 1); } },
+            { "BindShort", [] { return nullptr == OCI_BindShort(nullptr, OTEXT("x"), NullArgOut<OCI_Int16>()); } },
+            { "BindStatement", [] { return nullptr == OCI_BindStatement(nullptr, OTEXT("x"), nullptr); } },
+            { "BindString", [] { return nullptr == OCI_BindString(nullptr, OTEXT("x"), NullArgText(), 1); } },
+            { "BindTimestamp", [] { return nullptr == OCI_BindTimestamp(nullptr, OTEXT("x"), nullptr); } },
+            { "BindUnsignedBigInt", [] { return nullptr == OCI_BindUnsignedBigInt(nullptr, OTEXT("x"), NullArgOut<OCI_UInt64>()); } },
+            { "BindUnsignedInt", [] { return nullptr == OCI_BindUnsignedInt(nullptr, OTEXT("x"), NullArgOut<OCI_UInt32>()); } },
+            { "BindUnsignedShort", [] { return nullptr == OCI_BindUnsignedShort(nullptr, OTEXT("x"), NullArgOut<OCI_UInt16>()); } },
+            { "BindVector", [] { return nullptr == OCI_BindVector(nullptr, OTEXT("x"), nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

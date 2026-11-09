@@ -1,6 +1,7 @@
-﻿#include <cstring>
+#include <cstring>
 
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -178,4 +179,44 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
     }
+
+    class TestMessageNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestMessageNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestMessageNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "MsgCreate", [] { return nullptr == OCI_MsgCreate(nullptr); } },
+            { "MsgFree", [] { return !OCI_MsgFree(nullptr); } },
+            { "MsgGetAttemptCount", [] { return 0 == OCI_MsgGetAttemptCount(nullptr); } },
+            { "MsgGetCorrelation", [] { return nullptr == OCI_MsgGetCorrelation(nullptr); } },
+            { "MsgGetEnqueueDelay", [] { return 0 == OCI_MsgGetEnqueueDelay(nullptr); } },
+            { "MsgGetEnqueueTime", [] { return nullptr == OCI_MsgGetEnqueueTime(nullptr); } },
+            { "MsgGetExceptionQueue", [] { return nullptr == OCI_MsgGetExceptionQueue(nullptr); } },
+            { "MsgGetExpiration", [] { return 0 == OCI_MsgGetExpiration(nullptr); } },
+            { "MsgGetID", [] { return !OCI_MsgGetID(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>()); } },
+            { "MsgGetObject", [] { return nullptr == OCI_MsgGetObject(nullptr); } },
+            { "MsgGetOriginalID", [] { return !OCI_MsgGetOriginalID(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>()); } },
+            { "MsgGetPriority", [] { return 0 == OCI_MsgGetPriority(nullptr); } },
+            { "MsgGetRaw", [] { return !OCI_MsgGetRaw(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>()); } },
+            { "MsgGetSender", [] { return nullptr == OCI_MsgGetSender(nullptr); } },
+            { "MsgGetState", [] { return OCI_UNKNOWN == OCI_MsgGetState(nullptr); } },
+            { "MsgReset", [] { return !OCI_MsgReset(nullptr); } },
+            { "MsgSetConsumers", [] { return !OCI_MsgSetConsumers(nullptr, nullptr, 1); } },
+            { "MsgSetCorrelation", [] { return !OCI_MsgSetCorrelation(nullptr, OTEXT("x")); } },
+            { "MsgSetEnqueueDelay", [] { return !OCI_MsgSetEnqueueDelay(nullptr, 1); } },
+            { "MsgSetExceptionQueue", [] { return !OCI_MsgSetExceptionQueue(nullptr, OTEXT("x")); } },
+            { "MsgSetExpiration", [] { return !OCI_MsgSetExpiration(nullptr, 1); } },
+            { "MsgSetObject", [] { return !OCI_MsgSetObject(nullptr, nullptr); } },
+            { "MsgSetOriginalID", [] { return !OCI_MsgSetOriginalID(nullptr, NullArgBuffer(), 1); } },
+            { "MsgSetPriority", [] { return !OCI_MsgSetPriority(nullptr, 1); } },
+            { "MsgSetRaw", [] { return !OCI_MsgSetRaw(nullptr, NullArgBuffer(), 1); } },
+            { "MsgSetSender", [] { return !OCI_MsgSetSender(nullptr, nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

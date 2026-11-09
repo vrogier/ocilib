@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 using namespace ocilib;
 
@@ -861,4 +862,59 @@ namespace TestCApi
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
+
+
+
+
+
+
+
+    TEST(TestCollection, GetElem_OutOfRangeIndex_ReturnsNull)
+    {
+        ExecDML(OTEXT("create or replace type TestCollErr_VC as table of varchar2(30)"));
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto ti = OCI_TypeInfoGet(conn, OTEXT("TestCollErr_VC"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, ti);
+        const auto coll = OCI_CollCreate(ti);
+        ASSERT_NE(nullptr, coll);
+
+        ASSERT_EQ(nullptr, OCI_CollGetElem(coll, 0));
+
+        ASSERT_TRUE(OCI_CollFree(coll));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ExecDML(OTEXT("drop type TestCollErr_VC"));
+    }
+
+    class TestCollectionNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestCollectionNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestCollectionNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "CollAppend", [] { return !OCI_CollAppend(nullptr, nullptr); } },
+            { "CollArrayCreate", [] { return nullptr == OCI_CollArrayCreate(nullptr, 1); } },
+            { "CollArrayFree", [] { return !OCI_CollArrayFree(nullptr); } },
+            { "CollAssign", [] { return !OCI_CollAssign(nullptr, nullptr); } },
+            { "CollClear", [] { return !OCI_CollClear(nullptr); } },
+            { "CollCreate", [] { return nullptr == OCI_CollCreate(nullptr); } },
+            { "CollDeleteElem", [] { return !OCI_CollDeleteElem(nullptr, 1); } },
+            { "CollFree", [] { return !OCI_CollFree(nullptr); } },
+            { "CollGetCount", [] { return 0 == OCI_CollGetCount(nullptr); } },
+            { "CollGetElem", [] { return nullptr == OCI_CollGetElem(nullptr, 1); } },
+            { "CollGetMax", [] { return 0 == OCI_CollGetMax(nullptr); } },
+            { "CollGetSize", [] { return 0 == OCI_CollGetSize(nullptr); } },
+            { "CollGetType", [] { return OCI_UNKNOWN == OCI_CollGetType(nullptr); } },
+            { "CollGetTypeInfo", [] { return nullptr == OCI_CollGetTypeInfo(nullptr); } },
+            { "CollSetElem", [] { return !OCI_CollSetElem(nullptr, 1, nullptr); } },
+            { "CollToText", [] { return !OCI_CollToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
+            { "CollTrim", [] { return !OCI_CollTrim(nullptr, 1); } },
+        }),
+        &NullArgCaseName);
+
 }

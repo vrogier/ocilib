@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -151,6 +152,26 @@ namespace TestCApi
        args hit the CHECK_PTR / CHECK_OCI arms the dropped fault tests
        covered --- */
 
+    class TestTypeInfoNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
+    TEST_P(TestTypeInfoNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestTypeInfoNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "TypeInfoFree", [] { return !OCI_TypeInfoFree(nullptr); } },
+            { "TypeInfoGet", [] { return nullptr == OCI_TypeInfoGet(nullptr, OTEXT("x"), 1); } },
+            { "TypeInfoGetColumn", [] { return nullptr == OCI_TypeInfoGetColumn(nullptr, 1); } },
+            { "TypeInfoGetColumnCount", [] { return 0 == OCI_TypeInfoGetColumnCount(nullptr); } },
+            { "TypeInfoGetConnection", [] { return nullptr == OCI_TypeInfoGetConnection(nullptr); } },
+            { "TypeInfoGetName", [] { return nullptr == OCI_TypeInfoGetName(nullptr); } },
+            { "TypeInfoGetSuperType", [] { return nullptr == OCI_TypeInfoGetSuperType(nullptr); } },
+            { "TypeInfoGetType", [] { return OCI_UNKNOWN == OCI_TypeInfoGetType(nullptr); } },
+            { "TypeInfoIsFinalType", [] { return !OCI_TypeInfoIsFinalType(nullptr); } },
+        }),
+        &NullArgCaseName);
 
 }

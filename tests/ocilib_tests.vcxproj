@@ -468,6 +468,7 @@
     <ClInclude Include="EnvironmentManager.h" />
     <ClInclude Include="ocilib_tests.h" />
     <ClInclude Include="LeakListener.h" />
+    <ClInclude Include="NullArgs.h" />
     <ClInclude Include="TestManager.h" />
   </ItemGroup>
   <ItemGroup>

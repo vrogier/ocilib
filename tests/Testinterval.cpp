@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -462,4 +463,35 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
     }
+
+    class TestIntervalNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestIntervalNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestIntervalNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "IntervalAdd", [] { return !OCI_IntervalAdd(nullptr, nullptr); } },
+            { "IntervalArrayCreate", [] { return nullptr == OCI_IntervalArrayCreate(nullptr, 1, 1); } },
+            { "IntervalArrayFree", [] { return !OCI_IntervalArrayFree(nullptr); } },
+            { "IntervalAssign", [] { return !OCI_IntervalAssign(nullptr, nullptr); } },
+            { "IntervalCheck", [] { return -1 == OCI_IntervalCheck(nullptr); } },
+            { "IntervalCompare", [] { return 0 == OCI_IntervalCompare(nullptr, nullptr); } },
+            { "IntervalCreate", [] { return nullptr == OCI_IntervalCreate(nullptr, 1); } },
+            { "IntervalFree", [] { return !OCI_IntervalFree(nullptr); } },
+            { "IntervalFromText", [] { return !OCI_IntervalFromText(nullptr, OTEXT("x")); } },
+            { "IntervalFromTimeZone", [] { return !OCI_IntervalFromTimeZone(nullptr, OTEXT("x")); } },
+            { "IntervalGetDaySecond", [] { return !OCI_IntervalGetDaySecond(nullptr, NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>()); } },
+            { "IntervalGetType", [] { return OCI_UNKNOWN == OCI_IntervalGetType(nullptr); } },
+            { "IntervalGetYearMonth", [] { return !OCI_IntervalGetYearMonth(nullptr, NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>()); } },
+            { "IntervalSetDaySecond", [] { return !OCI_IntervalSetDaySecond(nullptr, 1, 1, 1, 1, 1); } },
+            { "IntervalSetYearMonth", [] { return !OCI_IntervalSetYearMonth(nullptr, 1, 1); } },
+            { "IntervalSubtract", [] { return !OCI_IntervalSubtract(nullptr, nullptr); } },
+            { "IntervalToText", [] { return !OCI_IntervalToText(nullptr, 1, 1, 1, NullArgText()); } },
+        }),
+        &NullArgCaseName);
+
 }

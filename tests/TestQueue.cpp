@@ -1,6 +1,7 @@
-﻿#include <atomic>
+#include <atomic>
 
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 static std::atomic<OCI_Int32> MessageWithConsumersCount {0};
 
 namespace TestCApi
@@ -484,4 +485,28 @@ namespace TestCApi
     {
         ASSERT_TRUE(OCI_QueueTableMigrate(conn, OTEXT("TestQueueAlterMigrateTable"), OTEXT("10.0")));
     }
+
+    class TestQueueNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestQueueNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestQueueNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "QueueAlter", [] { return !OCI_QueueAlter(nullptr, OTEXT("x"), 1, 1, 1, OTEXT("x")); } },
+            { "QueueCreate", [] { return !OCI_QueueCreate(nullptr, OTEXT("x"), OTEXT("x"), 1, 1, 1, 1, FALSE, OTEXT("x")); } },
+            { "QueueDrop", [] { return !OCI_QueueDrop(nullptr, OTEXT("x")); } },
+            { "QueueStart", [] { return !OCI_QueueStart(nullptr, OTEXT("x"), FALSE, FALSE); } },
+            { "QueueStop", [] { return !OCI_QueueStop(nullptr, OTEXT("x"), FALSE, FALSE, FALSE); } },
+            { "QueueTableAlter", [] { return !OCI_QueueTableAlter(nullptr, OTEXT("x"), OTEXT("x"), 1, 1); } },
+            { "QueueTableCreate", [] { return !OCI_QueueTableCreate(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), OTEXT("x"), FALSE, 1, OTEXT("x"), 1, 1, OTEXT("x")); } },
+            { "QueueTableDrop", [] { return !OCI_QueueTableDrop(nullptr, OTEXT("x"), FALSE); } },
+            { "QueueTableMigrate", [] { return !OCI_QueueTableMigrate(nullptr, OTEXT("x"), OTEXT("x")); } },
+            { "QueueTablePurge", [] { return !OCI_QueueTablePurge(nullptr, OTEXT("x"), OTEXT("x"), FALSE, 1); } },
+        }),
+        &NullArgCaseName);
+
 }

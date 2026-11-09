@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -1512,4 +1513,115 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+
+
+
+
+
+    TEST(TestStatement, Execute_InvalidSql_ReturnsFalseAndRaisesError)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from where bogus syntax x")));
+
+        ASSERT_FALSE(OCI_Execute(stmt));
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        ASSERT_NE(0, OCI_ErrorGetCode(err));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestStatement, Execute_WithoutPrepare_ReturnsFalse)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+
+        ASSERT_FALSE(OCI_Execute(stmt));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestStatement, GetBindByName_UnknownName_ReturnsNull)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :i := 42; end;")));
+
+        ASSERT_EQ(nullptr, OCI_GetBindByName(stmt, OTEXT(":does_not_exist")));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    class TestStatementNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestStatementNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestStatementNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "AllowRebinding", [] { return !OCI_AllowRebinding(nullptr, FALSE); } },
+            { "Describe", [] { return !OCI_Describe(nullptr, OTEXT("x")); } },
+            { "Execute", [] { return !OCI_Execute(nullptr); } },
+            { "ExecuteAndGetResultset", [] { return nullptr == OCI_ExecuteAndGetResultset(nullptr); } },
+            { "ExecuteStmt", [] { return !OCI_ExecuteStmt(nullptr, OTEXT("x")); } },
+            { "ExecuteStmtAndGetResultset", [] { return nullptr == OCI_ExecuteStmtAndGetResultset(nullptr, OTEXT("x")); } },
+            { "GetAffectedRows", [] { return 0 == OCI_GetAffectedRows(nullptr); } },
+            { "GetBatchError", [] { return nullptr == OCI_GetBatchError(nullptr); } },
+            { "GetBatchErrorCount", [] { return 0 == OCI_GetBatchErrorCount(nullptr); } },
+            { "GetBind", [] { return nullptr == OCI_GetBind(nullptr, 1); } },
+            { "GetBindAllocation", [] { return OCI_UNKNOWN == OCI_GetBindAllocation(nullptr); } },
+            { "GetBindByName", [] { return nullptr == OCI_GetBindByName(nullptr, OTEXT("x")); } },
+            { "GetBindCount", [] { return 0 == OCI_GetBindCount(nullptr); } },
+            { "GetBindIndex", [] { return -1 == OCI_GetBindIndex(nullptr, OTEXT("x")); } },
+            { "GetBindMode", [] { return OCI_UNKNOWN == OCI_GetBindMode(nullptr); } },
+            { "GetFetchMode", [] { return OCI_UNKNOWN == OCI_GetFetchMode(nullptr); } },
+            { "GetFetchSize", [] { return 0 == OCI_GetFetchSize(nullptr); } },
+            { "GetLongMode", [] { return OCI_UNKNOWN == OCI_GetLongMode(nullptr); } },
+            { "GetNextResultset", [] { return nullptr == OCI_GetNextResultset(nullptr); } },
+            { "GetParseBindNames", [] { return !OCI_GetParseBindNames(nullptr, NullArgOut<OCI_UInt32>(), nullptr /* otext *** */); } },
+            { "GetPieceSize", [] { return 0 == OCI_GetPieceSize(nullptr); } },
+            { "GetPrefetchMemory", [] { return 0 == OCI_GetPrefetchMemory(nullptr); } },
+            { "GetPrefetchSize", [] { return 0 == OCI_GetPrefetchSize(nullptr); } },
+            { "GetResultset", [] { return nullptr == OCI_GetResultset(nullptr); } },
+            { "GetSQLCommand", [] { return OCI_UNKNOWN == OCI_GetSQLCommand(nullptr); } },
+            { "GetSQLVerb", [] { return nullptr == OCI_GetSQLVerb(nullptr); } },
+            { "GetSql", [] { return nullptr == OCI_GetSql(nullptr); } },
+            { "GetSqlErrorPos", [] { return 0 == OCI_GetSqlErrorPos(nullptr); } },
+            { "GetSqlIdentifier", [] { return nullptr == OCI_GetSqlIdentifier(nullptr); } },
+            { "GetStatementType", [] { return OCI_UNKNOWN == OCI_GetStatementType(nullptr); } },
+            { "IsRebindingAllowed", [] { return !OCI_IsRebindingAllowed(nullptr); } },
+            { "Parse", [] { return !OCI_Parse(nullptr, OTEXT("x")); } },
+            { "Prepare", [] { return !OCI_Prepare(nullptr, OTEXT("x")); } },
+            { "ReleaseResultsets", [] { return !OCI_ReleaseResultsets(nullptr); } },
+            { "SetBindAllocation", [] { return !OCI_SetBindAllocation(nullptr, 1); } },
+            { "SetBindMode", [] { return !OCI_SetBindMode(nullptr, 1); } },
+            { "SetFetchMode", [] { return !OCI_SetFetchMode(nullptr, 1); } },
+            { "SetFetchSize", [] { return !OCI_SetFetchSize(nullptr, 1); } },
+            { "SetLongMode", [] { return !OCI_SetLongMode(nullptr, 1); } },
+            { "SetPieceSize", [] { return !OCI_SetPieceSize(nullptr, 1); } },
+            { "SetPrefetchMemory", [] { return !OCI_SetPrefetchMemory(nullptr, 1); } },
+            { "SetPrefetchSize", [] { return !OCI_SetPrefetchSize(nullptr, 1); } },
+            { "StatementFree", [] { return !OCI_StatementFree(nullptr); } },
+            { "StatementGetConnection", [] { return nullptr == OCI_StatementGetConnection(nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

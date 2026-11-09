@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 #include <cstring>
 
@@ -80,4 +81,51 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+
+
+
+
+
+    TEST(TestJsonNodeObject, SetField_OnScalarNode_ReturnsFalse)
+    {
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto json = OCI_JsonCreate(conn);
+        ASSERT_NE(nullptr, json);
+        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"a\":\"v\"}"), 9, OCI_JTV_ALLOW_NONE, OCI_JTE_DETECT));
+        const auto root = OCI_JsonGetRoot(json);
+        ASSERT_NE(nullptr, root);
+        const auto node = OCI_JsonNodeGetFieldByName(root, OTEXT("a"));
+        ASSERT_NE(nullptr, node);
+
+        ASSERT_FALSE(OCI_JsonNodeSetField(node, OTEXT("f"), nullptr));
+
+        OCI_JsonNodeFree(node);
+        OCI_JsonNodeFree(root);
+        OCI_JsonFree(json);
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    class TestJsonNodeObjectNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestJsonNodeObjectNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestJsonNodeObjectNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "JsonNodeGetFieldByIndex", [] { return nullptr == OCI_JsonNodeGetFieldByIndex(nullptr, 1); } },
+            { "JsonNodeGetFieldByName", [] { return nullptr == OCI_JsonNodeGetFieldByName(nullptr, OTEXT("x")); } },
+            { "JsonNodeGetFieldCount", [] { return 0 == OCI_JsonNodeGetFieldCount(nullptr); } },
+            { "JsonNodeGetFieldName", [] { return nullptr == OCI_JsonNodeGetFieldName(nullptr, 1); } },
+            { "JsonNodeHasField", [] { return !OCI_JsonNodeHasField(nullptr, OTEXT("x")); } },
+            { "JsonNodeRemoveField", [] { return !OCI_JsonNodeRemoveField(nullptr, OTEXT("x")); } },
+            { "JsonNodeRenameField", [] { return !OCI_JsonNodeRenameField(nullptr, OTEXT("x"), OTEXT("x")); } },
+            { "JsonNodeSetField", [] { return !OCI_JsonNodeSetField(nullptr, OTEXT("x"), nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

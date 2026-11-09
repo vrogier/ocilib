@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 #include <cstring>
 
@@ -903,4 +904,59 @@ namespace TestCApi
         OCI_JsonFree(json);
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+    TEST(TestJsonDom, Lifetime_NodeCycles_StatsBounded)
+    {
+        /* C1-class guard: repeated Json/node create->use->destroy must not grow env stats */
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        auto cycle = [&]
+        {
+            const auto json = OCI_JsonCreate(conn);
+            EXPECT_NE(nullptr, json);
+            EXPECT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"a\":1}"), 7, OCI_JTV_ALLOW_NONE, OCI_JTE_DETECT));
+            const auto root = OCI_JsonGetRoot(json);
+            EXPECT_NE(nullptr, root);
+            OCI_JsonNodeFree(root);
+            EXPECT_TRUE(OCI_JsonFree(json));
+        };
+
+        for (int i = 0; i < 20; i++) cycle();
+
+        const auto handles = OCI_GetStats(env, OCI_UST_HANDLES);
+        const auto objs    = OCI_GetStats(env, OCI_UST_OBJECTS);
+        const auto bytes   = OCI_GetStats(env, OCI_UST_BYTES);
+
+        for (int i = 0; i < 50; i++) cycle();
+
+        ASSERT_EQ(handles, OCI_GetStats(env, OCI_UST_HANDLES));
+        ASSERT_EQ(objs,    OCI_GetStats(env, OCI_UST_OBJECTS));
+        ASSERT_LE(OCI_GetStats(env, OCI_UST_BYTES), bytes + 64 * 1024);
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+
+    class TestJsonDomNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestJsonDomNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestJsonDomNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "JsonNodeClear", [] { return !OCI_JsonNodeClear(nullptr); } },
+            { "JsonNodeFree", [] { return !OCI_JsonNodeFree(nullptr); } },
+            { "JsonNodeGetByPath", [] { return nullptr == OCI_JsonNodeGetByPath(nullptr, OTEXT("x")); } },
+            { "JsonNodeGetParent", [] { return nullptr == OCI_JsonNodeGetParent(nullptr); } },
+            { "JsonNodeGetType", [] { return OCI_JNT_NULL == OCI_JsonNodeGetType(nullptr); } },
+            { "JsonNodeIsNull", [] { return !OCI_JsonNodeIsNull(nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -26,4 +27,24 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
     }
+
+    class TestAgentNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestAgentNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestAgentNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "AgentCreate", [] { return nullptr == OCI_AgentCreate(nullptr, OTEXT("x"), OTEXT("x")); } },
+            { "AgentFree", [] { return !OCI_AgentFree(nullptr); } },
+            { "AgentGetAddress", [] { return nullptr == OCI_AgentGetAddress(nullptr); } },
+            { "AgentGetName", [] { return nullptr == OCI_AgentGetName(nullptr); } },
+            { "AgentSetAddress", [] { return !OCI_AgentSetAddress(nullptr, OTEXT("x")); } },
+            { "AgentSetName", [] { return !OCI_AgentSetName(nullptr, OTEXT("x")); } },
+        }),
+        &NullArgCaseName);
+
 }

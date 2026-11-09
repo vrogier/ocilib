@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 using namespace ocilib;
 
@@ -991,4 +992,133 @@ namespace TestCApi
 
         ExecDML(OTEXT("drop type TestObject_BoolT"));
     }
+
+    TEST(TestObject, SetInt_OnStringAttr_ReturnsFalse)
+    {
+        ExecDML(OTEXT("create or replace type TestObjErr_Type as object(code number, name varchar2(30))"));
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto ti = OCI_TypeInfoGet(conn, OTEXT("TestObjErr_Type"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, ti);
+        const auto obj = OCI_ObjectCreate(ti);
+        ASSERT_NE(nullptr, obj);
+
+        ASSERT_FALSE(OCI_ObjectSetInt(obj, OTEXT("name"), 42));
+
+        ASSERT_TRUE(OCI_ObjectFree(obj));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ExecDML(OTEXT("drop type TestObjErr_Type"));
+    }
+    TEST(TestObject, GetOnNonexistentAttr_ReturnsFalseAndRaisesError)
+    {
+        ExecDML(OTEXT("create or replace type TestObjErr_Type2 as object(code number, name varchar2(30))"));
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto ti = OCI_TypeInfoGet(conn, OTEXT("TestObjErr_Type2"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, ti);
+        const auto obj = OCI_ObjectCreate(ti);
+        ASSERT_NE(nullptr, obj);
+        unsigned char raw[32];
+
+        ASSERT_EQ(FALSE, OCI_ObjectGetBoolean(obj, OTEXT("no_attr")));
+        ASSERT_EQ(0,     OCI_ObjectGetRaw(obj, OTEXT("no_attr"), raw, sizeof(raw)));
+        ASSERT_EQ(0u,   OCI_ObjectGetRawSize(obj, OTEXT("no_attr")));
+        ASSERT_EQ(FALSE, OCI_ObjectIsNull(obj, OTEXT("no_attr")));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_ObjectFree(obj));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ExecDML(OTEXT("drop type TestObjErr_Type2"));
+    }
+
+    TEST(TestObject, SetOnNonexistentAttr_ReturnsFalse)
+    {
+        ExecDML(OTEXT("create or replace type TestObjErr_Type3 as object(code number, name varchar2(30))"));
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto ti = OCI_TypeInfoGet(conn, OTEXT("TestObjErr_Type3"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, ti);
+        const auto obj = OCI_ObjectCreate(ti);
+        ASSERT_NE(nullptr, obj);
+
+        ASSERT_FALSE(OCI_ObjectSetBoolean(obj, OTEXT("no_attr"), TRUE));
+        ASSERT_FALSE(OCI_ObjectSetString(obj, OTEXT("no_attr"), OTEXT("v")));
+        ASSERT_FALSE(OCI_ObjectSetNull(obj, OTEXT("no_attr")));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_ObjectFree(obj));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ExecDML(OTEXT("drop type TestObjErr_Type3"));
+    }
+
+
+    class TestObjectNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestObjectNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestObjectNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "ObjectArrayCreate", [] { return nullptr == OCI_ObjectArrayCreate(nullptr, 1); } },
+            { "ObjectArrayFree", [] { return !OCI_ObjectArrayFree(nullptr); } },
+            { "ObjectAssign", [] { return !OCI_ObjectAssign(nullptr, nullptr); } },
+            { "ObjectCreate", [] { return nullptr == OCI_ObjectCreate(nullptr); } },
+            { "ObjectFree", [] { return !OCI_ObjectFree(nullptr); } },
+            { "ObjectGetBigInt", [] { return 0 == OCI_ObjectGetBigInt(nullptr, OTEXT("x")); } },
+            { "ObjectGetBoolean", [] { return !OCI_ObjectGetBoolean(nullptr, OTEXT("x")); } },
+            { "ObjectGetColl", [] { return nullptr == OCI_ObjectGetColl(nullptr, OTEXT("x")); } },
+            { "ObjectGetDate", [] { return nullptr == OCI_ObjectGetDate(nullptr, OTEXT("x")); } },
+            { "ObjectGetDouble", [] { return 0.0 == OCI_ObjectGetDouble(nullptr, OTEXT("x")); } },
+            { "ObjectGetFile", [] { return nullptr == OCI_ObjectGetFile(nullptr, OTEXT("x")); } },
+            { "ObjectGetFloat", [] { return 0.0f == OCI_ObjectGetFloat(nullptr, OTEXT("x")); } },
+            { "ObjectGetInt", [] { return 0 == OCI_ObjectGetInt(nullptr, OTEXT("x")); } },
+            { "ObjectGetInterval", [] { return nullptr == OCI_ObjectGetInterval(nullptr, OTEXT("x")); } },
+            { "ObjectGetLob", [] { return nullptr == OCI_ObjectGetLob(nullptr, OTEXT("x")); } },
+            { "ObjectGetNumber", [] { return nullptr == OCI_ObjectGetNumber(nullptr, OTEXT("x")); } },
+            { "ObjectGetObject", [] { return nullptr == OCI_ObjectGetObject(nullptr, OTEXT("x")); } },
+            { "ObjectGetRaw", [] { return 0 == OCI_ObjectGetRaw(nullptr, OTEXT("x"), NullArgBuffer(), 1); } },
+            { "ObjectGetRawSize", [] { return 0 == OCI_ObjectGetRawSize(nullptr, OTEXT("x")); } },
+            { "ObjectGetRef", [] { return nullptr == OCI_ObjectGetRef(nullptr, OTEXT("x")); } },
+            { "ObjectGetSelfRef", [] { return !OCI_ObjectGetSelfRef(nullptr, nullptr); } },
+            { "ObjectGetShort", [] { return 0 == OCI_ObjectGetShort(nullptr, OTEXT("x")); } },
+            { "ObjectGetString", [] { return nullptr == OCI_ObjectGetString(nullptr, OTEXT("x")); } },
+            { "ObjectGetStruct", [] { return !OCI_ObjectGetStruct(nullptr, nullptr /* void ** */, nullptr /* void ** */); } },
+            { "ObjectGetTimestamp", [] { return nullptr == OCI_ObjectGetTimestamp(nullptr, OTEXT("x")); } },
+            { "ObjectGetType", [] { return OCI_UNKNOWN == OCI_ObjectGetType(nullptr); } },
+            { "ObjectGetTypeInfo", [] { return nullptr == OCI_ObjectGetTypeInfo(nullptr); } },
+            { "ObjectGetUnsignedBigInt", [] { return 0 == OCI_ObjectGetUnsignedBigInt(nullptr, OTEXT("x")); } },
+            { "ObjectGetUnsignedInt", [] { return 0 == OCI_ObjectGetUnsignedInt(nullptr, OTEXT("x")); } },
+            { "ObjectGetUnsignedShort", [] { return 0 == OCI_ObjectGetUnsignedShort(nullptr, OTEXT("x")); } },
+            { "ObjectIsNull", [] { return !OCI_ObjectIsNull(nullptr, OTEXT("x")); } },
+            { "ObjectSetBigInt", [] { return !OCI_ObjectSetBigInt(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetBoolean", [] { return !OCI_ObjectSetBoolean(nullptr, OTEXT("x"), FALSE); } },
+            { "ObjectSetColl", [] { return !OCI_ObjectSetColl(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetDate", [] { return !OCI_ObjectSetDate(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetDouble", [] { return !OCI_ObjectSetDouble(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetFile", [] { return !OCI_ObjectSetFile(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetFloat", [] { return !OCI_ObjectSetFloat(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetInt", [] { return !OCI_ObjectSetInt(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetInterval", [] { return !OCI_ObjectSetInterval(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetLob", [] { return !OCI_ObjectSetLob(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetNull", [] { return !OCI_ObjectSetNull(nullptr, OTEXT("x")); } },
+            { "ObjectSetNumber", [] { return !OCI_ObjectSetNumber(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetObject", [] { return !OCI_ObjectSetObject(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetRaw", [] { return !OCI_ObjectSetRaw(nullptr, OTEXT("x"), NullArgBuffer(), 1); } },
+            { "ObjectSetRef", [] { return !OCI_ObjectSetRef(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetShort", [] { return !OCI_ObjectSetShort(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetString", [] { return !OCI_ObjectSetString(nullptr, OTEXT("x"), OTEXT("x")); } },
+            { "ObjectSetTimestamp", [] { return !OCI_ObjectSetTimestamp(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetUnsignedBigInt", [] { return !OCI_ObjectSetUnsignedBigInt(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetUnsignedInt", [] { return !OCI_ObjectSetUnsignedInt(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetUnsignedShort", [] { return !OCI_ObjectSetUnsignedShort(nullptr, OTEXT("x"), 1); } },
+            { "ObjectToText", [] { return !OCI_ObjectToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
+        }),
+        &NullArgCaseName);
+
 }

@@ -515,6 +515,9 @@
     <ClInclude Include="LeakListener.h">
       <Filter>Tests suite</Filter>
     </ClInclude>
+    <ClInclude Include="NullArgs.h">
+      <Filter>Tests suite</Filter>
+    </ClInclude>
     <ClInclude Include="..\include\ocilibc\api.h">
       <Filter>Include\ocilibc</Filter>
     </ClInclude>

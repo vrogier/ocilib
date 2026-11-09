@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 
 namespace TestCApi
@@ -715,4 +716,36 @@ namespace TestCApi
             ColAttrCase{ "FullSQLType",     ColAttrFullType },
             ColAttrCase{ "SubType",         ColAttrSubType }),
         ::testing::PrintToStringParamName());
+
+    class TestColumnNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestColumnNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestColumnNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "ColumnGetCharUsed", [] { return !OCI_ColumnGetCharUsed(nullptr); } },
+            { "ColumnGetCharsetForm", [] { return OCI_CSF_NONE == OCI_ColumnGetCharsetForm(nullptr); } },
+            { "ColumnGetCollationID", [] { return OCI_CCI_NONE == OCI_ColumnGetCollationID(nullptr); } },
+            { "ColumnGetDimension", [] { return 0 == OCI_ColumnGetDimension(nullptr); } },
+            { "ColumnGetFractionalPrecision", [] { return 0 == OCI_ColumnGetFractionalPrecision(nullptr); } },
+            { "ColumnGetFullSQLType", [] { return 0 == OCI_ColumnGetFullSQLType(nullptr, NullArgText(), 1); } },
+            { "ColumnGetLeadingPrecision", [] { return 0 == OCI_ColumnGetLeadingPrecision(nullptr); } },
+            { "ColumnGetName", [] { return nullptr == OCI_ColumnGetName(nullptr); } },
+            { "ColumnGetNullable", [] { return !OCI_ColumnGetNullable(nullptr); } },
+            { "ColumnGetPrecision", [] { return 0 == OCI_ColumnGetPrecision(nullptr); } },
+            { "ColumnGetPropertyFlags", [] { return 0 == OCI_ColumnGetPropertyFlags(nullptr); } },
+            { "ColumnGetSQLType", [] { return nullptr == OCI_ColumnGetSQLType(nullptr); } },
+            { "ColumnGetScale", [] { return 0 == OCI_ColumnGetScale(nullptr); } },
+            { "ColumnGetSize", [] { return 0 == OCI_ColumnGetSize(nullptr); } },
+            { "ColumnGetSubType", [] { return OCI_UNKNOWN == OCI_ColumnGetSubType(nullptr); } },
+            { "ColumnGetType", [] { return OCI_UNKNOWN == OCI_ColumnGetType(nullptr); } },
+            { "ColumnGetTypeInfo", [] { return nullptr == OCI_ColumnGetTypeInfo(nullptr); } },
+            { "ColumnHasJsonSchema", [] { return !OCI_ColumnHasJsonSchema(nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

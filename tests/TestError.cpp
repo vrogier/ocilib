@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -17,7 +18,7 @@ namespace TestCApi
         ASSERT_EQ(1017, OCI_ErrorGetCode(err));
         ASSERT_NE(nullptr, OCI_ErrorGetString(err));
         ASSERT_NE(nullptr, OCI_ErrorGetLocation(err));
-        ASSERT_NE(nullptr, OCI_ErrorGetConnection(err));
+        ASSERT_EQ(nullptr, OCI_ErrorGetConnection(err));
         ASSERT_EQ(nullptr, OCI_ErrorGetStatement(err));
         ASSERT_EQ(-1, OCI_ErrorGetRow(err));
 
@@ -97,7 +98,7 @@ namespace TestCApi
         ASSERT_EQ(OCI_ERR_CAT_OCI, OCI_ErrorGetCategory(err));
         ASSERT_EQ(1017, OCI_ErrorGetCode(err));
         ASSERT_NE(nullptr, OCI_ErrorGetString(err));
-        ASSERT_NE(nullptr, OCI_ErrorGetConnection(err));
+        ASSERT_EQ(nullptr, OCI_ErrorGetConnection(err));
         ASSERT_EQ(nullptr, OCI_ErrorGetStatement(err));
         (void) OCI_HandleGetEnvironment(err);
 
@@ -261,4 +262,26 @@ namespace TestCApi
         ASSERT_TRUE(OCI_LobFree(lob));
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
+
+    class TestErrorNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestErrorNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestErrorNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "ErrorGetCategory", [] { return OCI_UNKNOWN == OCI_ErrorGetCategory(nullptr); }, NoNullPointerError }, // error.c
+            { "ErrorGetCode", [] { return 0 == OCI_ErrorGetCode(nullptr); }, NoNullPointerError }, // error.c
+            { "ErrorGetConnection", [] { return nullptr == OCI_ErrorGetConnection(nullptr); }, NoNullPointerError }, // error.c
+            { "ErrorGetLocation", [] { return nullptr == OCI_ErrorGetLocation(nullptr); }, NoNullPointerError }, // error.c
+            { "ErrorGetRow", [] { return -1 == OCI_ErrorGetRow(nullptr); }, NoNullPointerError }, // error.c
+            { "ErrorGetStatement", [] { return nullptr == OCI_ErrorGetStatement(nullptr); }, NoNullPointerError }, // error.c
+            { "ErrorGetString", [] { return nullptr == OCI_ErrorGetString(nullptr); }, NoNullPointerError }, // error.c
+            { "ErrorGetType", [] { return OCI_UNKNOWN == OCI_ErrorGetType(nullptr); }, NoNullPointerError }, // error.c
+        }),
+        &NullArgCaseName);
+
 }

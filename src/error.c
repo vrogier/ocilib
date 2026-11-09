@@ -340,6 +340,11 @@ void OcilibErrorResetSource
     void     * source_ptr
 )
 {
+    if (NULL == err)
+    {
+        err = OcilibErrorGet(NULL, FALSE, FALSE);
+    }
+
     if (err != NULL && err->source_ptr == source_ptr)
     {
         err->source_ptr  = NULL;

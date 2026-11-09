@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 using namespace ocilib;
 
@@ -148,4 +149,20 @@ namespace TestCApi
         ASSERT_EQ(nullptr, OCI_GetXmlType(nullptr, 0));
         ASSERT_EQ(nullptr, OCI_GetXmlTypeByName(nullptr, nullptr));
     }
+
+    class TestXmlTypeNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestXmlTypeNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestXmlTypeNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "XmlTypeGetContent", [] { return nullptr == OCI_XmlTypeGetContent(nullptr); } },
+            { "XmlTypeGetContentSize", [] { return 0 == OCI_XmlTypeGetContentSize(nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -244,4 +245,27 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
+
+    class TestEnqueueNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestEnqueueNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestEnqueueNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "EnqueueCreate", [] { return nullptr == OCI_EnqueueCreate(nullptr, OTEXT("x")); } },
+            { "EnqueueFree", [] { return !OCI_EnqueueFree(nullptr); } },
+            { "EnqueueGetRelativeMsgID", [] { return !OCI_EnqueueGetRelativeMsgID(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>()); } },
+            { "EnqueueGetSequenceDeviation", [] { return OCI_UNKNOWN == OCI_EnqueueGetSequenceDeviation(nullptr); } },
+            { "EnqueueGetVisibility", [] { return OCI_UNKNOWN == OCI_EnqueueGetVisibility(nullptr); } },
+            { "EnqueuePut", [] { return !OCI_EnqueuePut(nullptr, nullptr); } },
+            { "EnqueueSetRelativeMsgID", [] { return !OCI_EnqueueSetRelativeMsgID(nullptr, NullArgBuffer(), 1); } },
+            { "EnqueueSetSequenceDeviation", [] { return !OCI_EnqueueSetSequenceDeviation(nullptr, 1); } },
+            { "EnqueueSetVisibility", [] { return !OCI_EnqueueSetVisibility(nullptr, 1); } },
+        }),
+        &NullArgCaseName);
+
 }

@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -64,4 +65,24 @@ namespace TestCApi
 
         ExecDML(OTEXT("drop table TestEventTable"));
     }
+
+    class TestEventNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestEventNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestEventNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "EventGetDatabase", [] { return nullptr == OCI_EventGetDatabase(nullptr); } },
+            { "EventGetObject", [] { return nullptr == OCI_EventGetObject(nullptr); } },
+            { "EventGetOperation", [] { return OCI_UNKNOWN == OCI_EventGetOperation(nullptr); } },
+            { "EventGetRowid", [] { return nullptr == OCI_EventGetRowid(nullptr); } },
+            { "EventGetSubscription", [] { return nullptr == OCI_EventGetSubscription(nullptr); } },
+            { "EventGetType", [] { return OCI_UNKNOWN == OCI_EventGetType(nullptr); } },
+        }),
+        &NullArgCaseName);
+
 }

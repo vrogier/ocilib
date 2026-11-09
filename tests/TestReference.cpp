@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 using namespace ocilib;
 
@@ -425,4 +426,29 @@ namespace TestCApi
 
         CleanupTestRef();
     }
+
+    class TestReferenceNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestReferenceNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestReferenceNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "RefArrayCreate", [] { return nullptr == OCI_RefArrayCreate(nullptr, 1); } },
+            { "RefArrayFree", [] { return !OCI_RefArrayFree(nullptr); } },
+            { "RefAssign", [] { return !OCI_RefAssign(nullptr, nullptr); } },
+            { "RefCreate", [] { return nullptr == OCI_RefCreate(nullptr); } },
+            { "RefFree", [] { return !OCI_RefFree(nullptr); } },
+            { "RefGetHexSize", [] { return 0 == OCI_RefGetHexSize(nullptr); } },
+            { "RefGetObject", [] { return nullptr == OCI_RefGetObject(nullptr); } },
+            { "RefGetTypeInfo", [] { return nullptr == OCI_RefGetTypeInfo(nullptr); } },
+            { "RefIsNull", [] { return !OCI_RefIsNull(nullptr); } },
+            { "RefSetNull", [] { return !OCI_RefSetNull(nullptr); } },
+            { "RefToText", [] { return !OCI_RefToText(nullptr, 1, NullArgText()); } },
+        }),
+        &NullArgCaseName);
+
 }

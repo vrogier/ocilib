@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "NullArgs.h"
 
 namespace TestCApi
 {
@@ -490,4 +491,42 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_DateFree(date));
     }
+
+    class TestDateNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestDateNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestDateNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "DateAddDays", [] { return !OCI_DateAddDays(nullptr, 1); } },
+            { "DateAddMonths", [] { return !OCI_DateAddMonths(nullptr, 1); } },
+            { "DateArrayCreate", [] { return nullptr == OCI_DateArrayCreate(nullptr, 1); } },
+            { "DateArrayFree", [] { return !OCI_DateArrayFree(nullptr); } },
+            { "DateAssign", [] { return !OCI_DateAssign(nullptr, nullptr); } },
+            { "DateCheck", [] { return -1 == OCI_DateCheck(nullptr); } },
+            { "DateCompare", [] { return 0 == OCI_DateCompare(nullptr, nullptr); } },
+            { "DateCreate", [] { return nullptr == OCI_DateCreate(nullptr); } },
+            { "DateDaysBetween", [] { return 0 == OCI_DateDaysBetween(nullptr, nullptr); } },
+            { "DateFree", [] { return !OCI_DateFree(nullptr); } },
+            { "DateFromCTime", [] { return !OCI_DateFromCTime(nullptr, NullArgTm(), 1); } },
+            { "DateFromText", [] { return !OCI_DateFromText(nullptr, OTEXT("x"), OTEXT("x")); } },
+            { "DateGetDate", [] { return !OCI_DateGetDate(nullptr, NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>()); } },
+            { "DateGetDateTime", [] { return !OCI_DateGetDateTime(nullptr, NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>()); } },
+            { "DateGetTime", [] { return !OCI_DateGetTime(nullptr, NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>(), NullArgOut<OCI_Int32>()); } },
+            { "DateLastDay", [] { return !OCI_DateLastDay(nullptr); } },
+            { "DateNextDay", [] { return !OCI_DateNextDay(nullptr, OTEXT("x")); } },
+            { "DateSetDate", [] { return !OCI_DateSetDate(nullptr, 1, 1, 1); } },
+            { "DateSetDateTime", [] { return !OCI_DateSetDateTime(nullptr, 1, 1, 1, 1, 1, 1); } },
+            { "DateSetTime", [] { return !OCI_DateSetTime(nullptr, 1, 1, 1); } },
+            { "DateSysDate", [] { return !OCI_DateSysDate(nullptr); } },
+            { "DateToCTime", [] { return !OCI_DateToCTime(nullptr, NullArgTm(), NullArgTime()); } },
+            { "DateToText", [] { return !OCI_DateToText(nullptr, OTEXT("x"), 1, NullArgText()); } },
+            { "DateZoneToZone", [] { return !OCI_DateZoneToZone(nullptr, OTEXT("x"), OTEXT("x")); } },
+        }),
+        &NullArgCaseName);
+
 }

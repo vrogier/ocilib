@@ -1,4 +1,5 @@
-﻿#include "ocilib_tests.h"
+#include "ocilib_tests.h"
+#include "NullArgs.h"
 
 using namespace ocilib;
 
@@ -197,8 +198,25 @@ namespace TestCApi
         ASSERT_EQ(String(OTEXT("0123456789ab")),
                   String(static_cast<const otext*>(OCI_LongGetBuffer(lg)), 12));
     }
+
+    class TestLongNullArgs : public ::testing::TestWithParam<NullArgCase> {};
+
+    TEST_P(TestLongNullArgs, CalledWithNullHandle_ReturnsFailure)
+    {
+        RunNullArgCase(GetParam());
+    }
+
+    INSTANTIATE_TEST_CASE_P(NullArgs, TestLongNullArgs,
+        ::testing::ValuesIn(NullArgCases
+        {
+            { "LongCreate", [] { return nullptr == OCI_LongCreate(nullptr, 1); } },
+            { "LongFree", [] { return !OCI_LongFree(nullptr); } },
+            { "LongGetBuffer", [] { return nullptr == OCI_LongGetBuffer(nullptr); } },
+            { "LongGetSize", [] { return 0 == OCI_LongGetSize(nullptr); } },
+            { "LongGetType", [] { return OCI_UNKNOWN == OCI_LongGetType(nullptr); } },
+            { "LongRead", [] { return 0 == OCI_LongRead(nullptr, NullArgBuffer(), 1); } },
+            { "LongWrite", [] { return 0 == OCI_LongWrite(nullptr, NullArgBuffer(), 1); } },
+        }),
+        &NullArgCaseName);
+
 }
-
-
-
-
