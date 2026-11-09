@@ -538,7 +538,7 @@ OCI_Boolean OcilibListLock
     {
         if (mtx_lock(&list->mutex) != thrd_success)
         {
-            THROW(OcilibExceptionMemory, OCI_IPC_LIST, 0);
+            THROW_NO_ARGS(OcilibExceptionMutex);
         }
     }
 
@@ -568,7 +568,7 @@ OCI_Boolean OcilibListUnlock
     {
         if (mtx_unlock(&list->mutex) != thrd_success)
         {
-            THROW(OcilibExceptionMemory, OCI_IPC_LIST, 0);
+            THROW_NO_ARGS(OcilibExceptionMutex);
         }
     }
 

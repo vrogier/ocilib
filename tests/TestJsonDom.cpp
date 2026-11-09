@@ -940,6 +940,24 @@ namespace TestCApi
     }
 
 
+    TEST(TestJsonDom, GetRoot_OnEmptyJson_ReturnsNullAndRaisesError)
+    {
+        /* CHECK_JSON arm: DOM has no root -> OcilibExceptionJson */
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto json = OCI_JsonCreate(conn);
+        ASSERT_NE(nullptr, json);
+
+        ASSERT_EQ(nullptr, OCI_JsonGetRoot(json));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_JsonFree(json));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+
     class TestJsonDomNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestJsonDomNullArgs, CalledWithNullHandle_ReturnsFailure)

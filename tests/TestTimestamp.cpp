@@ -456,6 +456,20 @@ namespace TestCApi
 
     INSTANTIATE_TEST_CASE_P(TestTimestamp, TestTimestamp, ::testing::ValuesIn(TimestampTypes));
 
+    TEST(TestTimestamp, Create_PreClient9_Fails)
+    {
+        /* timestamps/intervals need 9i+ descriptors - creation must fail below */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_8_1);
+        ASSERT_NE(nullptr, env);
+
+        ASSERT_EQ(nullptr, OCI_TimestampCreate(env, OCI_TIMESTAMP));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestTimestampNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestTimestampNullArgs, CalledWithNullHandle_ReturnsFailure)

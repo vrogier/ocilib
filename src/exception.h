@@ -98,6 +98,11 @@ OCI_SYM_LOCAL void OcilibExceptionNotMultithreaded
     OCI_Context* ctx
 );
 
+OCI_SYM_LOCAL void OcilibExceptionMutex
+(
+    OCI_Context* ctx
+);
+
 OCI_SYM_LOCAL void OcilibExceptionOutOfBounds
 (
     OCI_Context* ctx,

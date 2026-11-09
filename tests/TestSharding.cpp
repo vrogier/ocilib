@@ -142,6 +142,19 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ShardingKeyFree(skey));
     }
 
+    TEST(TestSharding, CreateKey_PreClient12_2_Fails)
+    {
+        /* sharding keys are a 12.2 feature */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_12_1);
+        ASSERT_NE(nullptr, env);
+        ASSERT_EQ(nullptr, OCI_ShardingKeyCreate(env));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestShardingNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestShardingNullArgs, CalledWithNullHandle_ReturnsFailure)

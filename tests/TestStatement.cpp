@@ -1567,6 +1567,48 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
+    TEST(TestStatement, GetNextResultset_PreClient12_Fails)
+    {
+        /* OCIStmtGetNextResult is a 12.1+ client feature */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_11_2);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+        ASSERT_EQ(nullptr, OCI_GetNextResultset(stmt));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
+    TEST(TestStatement, Prepare_PreClient9_2_UsesPrepare1)
+    {
+        /* pre-9.2 clients have no OCIStmtPrepare2 -> Prepare falls back to
+           OCIStmtPrepare and statements still work */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_9_0);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+
+        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select 1 from dual")));
+        ASSERT_NE(nullptr, OCI_GetResultset(stmt));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestStatementNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestStatementNullArgs, CalledWithNullHandle_ReturnsFailure)

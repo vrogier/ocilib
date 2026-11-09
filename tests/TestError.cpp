@@ -263,6 +263,31 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
 
+    static int handler_calls = 0;
+    static void error_handler(OCI_Error*) { ++handler_calls; }
+
+    TEST(TestError, Handler_InvokedOnError)
+    {
+        /* covers OcilibExceptionCallHandler - the app error-handler arm */
+
+        const auto env = OCI_EnvironmentCreate(nullptr, nullptr, OCI_ENV_DEFAULT);
+        ASSERT_NE(nullptr, env);
+        ASSERT_TRUE(OCI_SetErrorHandler(env, error_handler));
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto stmt = OCI_StatementCreate(conn);
+        handler_calls = 0;
+
+        OCI_ExecuteStmt(stmt, OTEXT("select * from table_that_does_not_exist_xyz"));
+
+        ASSERT_GT(handler_calls, 0);
+
+        OCI_StatementFree(stmt);
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestErrorNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestErrorNullArgs, CalledWithNullHandle_ReturnsFailure)

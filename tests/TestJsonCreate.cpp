@@ -43,6 +43,23 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
+    TEST(TestJsonCreate, Create_PreClient21_Fails)
+    {
+        /* JSON text parse client API is 21.1+ */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_18_1);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_EQ(nullptr, OCI_JsonCreate(conn));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestJsonCreateNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestJsonCreateNullArgs, CalledWithNullHandle_ReturnsFailure)

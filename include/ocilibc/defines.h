@@ -55,6 +55,7 @@
 #define OCI_8_0                             OCI_VER_MAKE( 8,  0,  0)
 #define OCI_8_1                             OCI_VER_MAKE( 8,  1,  0)
 #define OCI_9_0                             OCI_VER_MAKE( 9,  0,  0)
+#define OCI_9_1                             OCI_VER_MAKE( 9,  1,  0)
 #define OCI_9_2                             OCI_VER_MAKE( 9,  2,  0)
 #define OCI_10_1                            OCI_VER_MAKE(10,  1,  0)
 #define OCI_10_2                            OCI_VER_MAKE(10,  2,  0)
@@ -134,8 +135,9 @@
 #define OCI_ERR_ARG_INVALID_VALUE           27
 #define OCI_ERR_BIND_EXTERNAL_NOT_ALLOWED   28
 #define OCI_ERR_UNFREED_BYTES               29
+#define OCI_ERR_MUTEX                       30
 
-#define OCI_ERR_COUNT                       30
+#define OCI_ERR_COUNT                       31
 
 /* Public OCILIB handles */
 
@@ -715,7 +717,7 @@
 #define OCI_UST_DESCRIPTORS                 3
 #define OCI_UST_OBJECTS                     4
 
-/* log levels — cumulative severity; a level shows itself and every lower level */
+/* log levels â€” cumulative severity; a level shows itself and every lower level */
 /*   NONE  = logging disabled                                                   */
 /*   ERROR = ocilib exceptions, memory leaks                                    */
 /*   WARN  = OCI exception warnings                                             */
@@ -731,7 +733,7 @@
 #define OCI_LOG_DEBUG                       4
 #define OCI_LOG_TRACE                       5
 
-/* log categories — bitmask; OCILIB_LOG_CATEGORIES accepts a comma list         */
+/* log categories â€” bitmask; OCILIB_LOG_CATEGORIES accepts a comma list         */
 /*   LIB = OCILIB diagnostics, exceptions, connect / prepare / execute,          */
 /*         API ENTER / LEAVE call trace                                         */
 /*   MEM = OcilibMemory* alloc / free, OCI handle alloc / free, leak reports    */

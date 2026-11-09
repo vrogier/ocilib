@@ -356,7 +356,10 @@ OCI_TypeInfo * OcilibTypeInfoGet
                 ub1     ist = 0; /* Is Sub Type */
                 OCIRef* ref = NULL;
 
-                CHECK(OCI_TIF_TYPE == type);
+                if (OCI_TIF_TYPE != type)
+                {
+                    THROW(OcilibExceptionTypeInfoWrongType, name);
+                }
 
                 typinf->type = OCI_TIF_TYPE;
 

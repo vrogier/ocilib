@@ -507,6 +507,55 @@ namespace TestCApi
     }
 
 
+    TEST(TestConnection, Ping_PreClient10_2_NoOpSuccess)
+    {
+        /* OCIPing needs a 10.2+ client; below that OcilibConnectionPing is a
+           silent no-op returning TRUE (does not actually probe the server) */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_10_1);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_EQ(TRUE, OCI_Ping(conn));
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
+    TEST(TestConnection, GetServerVersion_PreClient18_1_UsesFallback)
+    {
+        /* <18.1 clients lack OCIServerRelease2 -> OCIServerVersion fallback */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_12_1);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_NE(nullptr, OCI_GetVersionServer(conn));
+        ASSERT_NE(0u, OCI_GetVersionConnection(conn));
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+    TEST(TestConnection, IsTAFCapable_PreClient10_2_ReturnsFalse)
+    {
+        /* OCI_ATTR_TAF_ENABLED needs a 10.2+ client -> silently FALSE below */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_10_1);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_EQ(FALSE, OCI_IsTAFCapable(conn));
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestConnectionNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestConnectionNullArgs, CalledWithNullHandle_ReturnsFailure)

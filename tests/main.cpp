@@ -4,6 +4,10 @@
 
 static EnvironmentManager environmentManager;
 
+/* internal test hook (src/environment.h) — lowers an env's effective OCI
+   version so backward-compat paths can be exercised on the current client */
+extern "C" OCI_SYM_LOCAL void OcilibEnvironmentSetVersion(OCI_Environment *env, OCI_UInt32 version);
+
 OCI_Environment* GetEnvironment(POCI_ERROR err_handler)
 {
     auto env = environmentManager.GetEnvironmentCApi();
@@ -14,6 +18,16 @@ OCI_Environment* GetEnvironment(POCI_ERROR err_handler)
 ocilib::Environment& GetEnvironmentCpp()
 {
     return environmentManager.GetEnvironmentCppApi();
+}
+
+OCI_Environment* GetSpecificEnvironment(POCI_ERROR err_handler, OCI_UInt32 version)
+{
+    auto env = OCI_EnvironmentCreate(err_handler, nullptr, OCI_ENV_DEFAULT);
+    if (env != nullptr)
+    {
+        OcilibEnvironmentSetVersion(env, version);
+    }
+    return env;
 }
 
 void ExecDML(String dml)

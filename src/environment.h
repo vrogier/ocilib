@@ -115,4 +115,12 @@ OCI_SYM_LOCAL const otext* OcilibEnvironmentGetFormat
     OCI_FormatType   type
 );
 
+/* not exposed to public API */
+
+OCI_SYM_LOCAL void OcilibEnvironmentSetVersion
+(
+    OCI_Environment *env,
+    OCI_UInt32       version
+);
+
 #endif /* OCILIB_ENVIRONMENT_H_INCLUDED */

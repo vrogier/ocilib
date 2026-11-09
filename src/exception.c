@@ -140,7 +140,8 @@ static const otext * ErrorMessages[OCI_ERR_COUNT] =
     OTEXT("Item '%ls' (type %d)  not found"),
     OTEXT("Argument '%ls' : Invalid value %d"),
     OTEXT("Binding '%ls': Passing non NULL host variable is not allowed when bind allocation mode is internal"),
-    OTEXT("Found %d non freed allocated bytes")
+    OTEXT("Found %d non freed allocated bytes"),
+    OTEXT("Mutex failure")
 };
 
 #else
@@ -176,7 +177,8 @@ static const otext * ErrorMessages[OCI_ERR_COUNT] =
     OTEXT("Item '%s' (type %d)  not found"),
     OTEXT("Argument '%s' : Invalid value %d"),
     OTEXT("Binding '%s': Passing non NULL host variable is not allowed when bind allocation mode is internal"),
-    OTEXT("Found %d non freed allocated bytes")
+    OTEXT("Found %d non freed allocated bytes"),
+    OTEXT("Mutex failure")
 };
 
 #endif
@@ -541,6 +543,18 @@ void OcilibExceptionNotMultithreaded
 )
 {
     EXCEPTION_IMPL_NO_ARGS(OCI_ERR_MULTITHREADED);
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibExceptionMutex
+ * --------------------------------------------------------------------------------------------- */
+
+void OcilibExceptionMutex
+(
+    OCI_Context* ctx
+)
+{
+    EXCEPTION_IMPL_NO_ARGS(OCI_ERR_MUTEX);
 }
 
 /* --------------------------------------------------------------------------------------------- *

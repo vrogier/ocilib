@@ -666,6 +666,33 @@ namespace TestCApi
        (covers the OcilibLob* guards the dropped ub4/charset internals
        tests used) --- */
 
+    TEST(TestLob, Append_PreClient10_UsesSeekWriteFallback)
+    {
+        /* pre-10.1 clients have no OCILobWriteAppend -> append falls back to
+           Seek+Write. Lowered env exercises that branch without an old client. */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_9_2);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto lob = OCI_LobCreate(conn, OCI_CLOB);
+        ASSERT_NE(nullptr, lob);
+        const auto text = OTEXT("abc");
+
+        ASSERT_EQ(OCI_9_2, OCI_GetVersionConnection(conn));
+
+        OCI_UInt32 cc = 3, bc = 0;
+        ASSERT_TRUE(OCI_LobWrite(lob, (void*)text, &cc, &bc));
+        cc = 3; bc = 0;
+        ASSERT_TRUE(OCI_LobAppend(lob, (void*)text, &cc, &bc));
+        ASSERT_EQ((OCI_UInt64)6, OCI_LobGetLength(lob));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestLobNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestLobNullArgs, CalledWithNullHandle_ReturnsFailure)

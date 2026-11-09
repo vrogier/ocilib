@@ -464,6 +464,18 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv));
     }
 
+    TEST(TestInterval, Create_PreClient9_Fails)
+    {
+        const auto env = GetSpecificEnvironment(nullptr, OCI_8_1);
+        ASSERT_NE(nullptr, env);
+
+        ASSERT_EQ(nullptr, OCI_IntervalCreate(env, OCI_INTERVAL_YM));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestIntervalNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestIntervalNullArgs, CalledWithNullHandle_ReturnsFailure)

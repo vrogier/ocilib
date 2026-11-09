@@ -1797,6 +1797,23 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
+    TEST(TestSoda, DbCreate_PreClient18_Fails)
+    {
+        /* SODA is an 18.1+ client feature */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_12_2);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_EQ(nullptr, OCI_SodaDbCreate(conn));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestSodaNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestSodaNullArgs, CalledWithNullHandle_ReturnsFailure)

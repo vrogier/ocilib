@@ -390,6 +390,23 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestRegisterVector"));
     }
 
+    TEST(TestVector, Create_PreClient23_4_Fails)
+    {
+        /* vectors are a 23ai feature */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_21_3);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_EQ(nullptr, OCI_VectorCreate(conn));
+        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+
     class TestVectorNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestVectorNullArgs, CalledWithNullHandle_ReturnsFailure)

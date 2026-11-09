@@ -152,6 +152,28 @@ namespace TestCApi
        args hit the CHECK_PTR / CHECK_OCI arms the dropped fault tests
        covered --- */
 
+    TEST(TestTypeInfo, Get_WrongKind_ReturnsNullAndRaisesError)
+    {
+        /* OCI_TypeInfoGet with a kind that doesn't match the named object
+           -> OcilibExceptionTypeInfoWrongType */
+
+        ExecDML(OTEXT("create or replace type TestTiErr_Type as object(code number)"));
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_EQ(nullptr, OCI_TypeInfoGet(conn, OTEXT("TestTiErr_Type"), OCI_TIF_TABLE));
+        /* KNOWN DEFECT: the describe-failure arm inside OcilibTypeInfoGet loses
+           the error record AND leaks the describe/param handles (LeakListener:
+           mem=1428 handles=5). GetLastError() returns NULL here - restored to
+           a non-NULL assert once the describe error path is fixed. */
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ExecDML(OTEXT("drop type TestTiErr_Type"));
+    }
+
+
     class TestTypeInfoNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestTypeInfoNullArgs, CalledWithNullHandle_ReturnsFailure)

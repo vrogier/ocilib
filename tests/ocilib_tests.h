@@ -73,5 +73,6 @@ void ExecDML(String dml);
 String ToUpper(String str);
 
 OCI_Environment * GetEnvironment(POCI_ERROR err_handler);
+OCI_Environment * GetSpecificEnvironment(POCI_ERROR err_handler, OCI_UInt32 version);
 ocilib::Environment& GetEnvironmentCpp();
 
