@@ -10,6 +10,11 @@ For the C++ layer (`ocilib.hpp`), see `migration-guide-cpp-api.md`.
 > signatures. Compile after each step; the compiler will surface every call site
 > that still needs updating.
 
+> **How to read this guide:** changes are ordered from most impactful to least.
+> Steps 1–2 touch every program (compile-time). Steps 3–4 are the dangerous ones:
+> they compile silently but change runtime behaviour. Steps 5–8 are mechanical,
+> compiler-flagged renames. Steps 9–15 only affect users of specific features.
+
 ---
 
 ## 1. Breaking changes at a glance
@@ -18,23 +23,24 @@ For the C++ layer (`ocilib.hpp`), see `migration-guide-cpp-api.md`.
 |---|--------|--------|
 | 1 | `OCI_Initialize`/`OCI_Cleanup` → `OCI_EnvironmentCreate`/`OCI_EnvironmentFree` | Low |
 | 2 | Many top-level calls now take an `OCI_Environment*` first argument | Medium |
-| 3 | `boolean` → `OCI_Boolean` | Low (mechanical) |
-| 4 | Threading API removed (`OCI_Mutex`/`OCI_Thread`/`OCI_ThreadKey`) | Low–High (depends on usage) |
-| 5 | XA / `OCI_SESSION_XA` removed | Low |
-| 6 | Raw `OCI_HandleGet*` accessors removed | Low–Medium |
-| 7 | Subscription port moved to the environment; `OCI_DequeueSubscribe` is now a batch call | Low–Medium |
-| 8 | `OCI_GetAllocatedBytes` removed; use `OCI_GetStats(env, OCI_UST_BYTES)` | Trivial |
-| 9 | `compat.h` removed — all v3-era compatibility macros gone | Low–Medium |
-| 10 | `OCI_Bind{Type}` / `OCI_BindArrayOf{Type}` return `OCI_Bind*` instead of `OCI_Boolean` | Low |
-| 11 | New typed typedefs replace bare `unsigned int` parameters | None (source-compatible) |
-| 12 | `big_int`/`big_uint` → `OCI_Int64`/`OCI_UInt64` (aliases kept) | None (source-compatible) |
-| 13 | Error model split into error type + category + unified code | Low |
-| 14 | All index parameters switch from 1-based to **0-based**; index lookups return `OCI_Int32` with `-1` = miss | Medium–High (runtime, not compile-time) |
+| 3 | All index parameters switch from 1-based to **0-based**; index lookups return `OCI_Int32` with `-1` = miss | Medium–High (runtime, not compile-time) |
+| 4 | Unchanged signatures, changed behaviour (last-error scope, notifications, bind index) | Medium (runtime, not compile-time) |
+| 5 | Error model split into error type + category + unified code | Low |
+| 6 | `boolean` → `OCI_Boolean`; fixed-width `OCI_Int*`/`OCI_UInt*`/`OCI_Size`/`OCI_Float`/`OCI_Double` typedefs | Low (mechanical) |
+| 7 | `*2` suffixes renamed `*ByName`; LOB read/write/append signatures; `OCI_CollGetElem2` removed | Low (mechanical) |
+| 8 | `OCI_Bind{Type}` / `OCI_BindArrayOf{Type}` return `OCI_Bind*` instead of `OCI_Boolean` | Low |
+| 9 | Subscription port moved to the environment; `OCI_SubscriptionRegister` gained `mode`; `OCI_DequeueSubscribe` is now a batch call | Low–Medium |
+| 10 | Threading API removed (`OCI_Mutex`/`OCI_Thread`/`OCI_ThreadKey`) | Low–High (depends on usage) |
+| 11 | Raw `OCI_HandleGet*` accessors removed | Low–Medium |
+| 12 | XA / `OCI_SESSION_XA` removed | Low |
+| 13 | `compat.h` removed — all v3-era compatibility macros gone | Low–Medium |
+| 14 | `OCI_GetAllocatedBytes` removed; use `OCI_GetStats(env, OCI_UST_BYTES)` | Trivial |
+| 15 | New typed typedefs replace bare `unsigned int` parameters | None (source-compatible) |
 
 **Overall estimate:** a typical application (connect → statement → fetch) migrates in
 **under an hour** — mostly mechanical edits caught by the compiler. Applications that
-use the removed threading API, XA, or raw OCI handles need **real porting work**
-(see §4 and §5).
+index into resultsets/collections (Step 3), use the removed threading API, XA, or
+raw OCI handles need **real porting work** (see §4, §11, §12, §13).
 
 ---
 
@@ -96,15 +102,26 @@ The rule of thumb:
 **Library-level queries and settings** (previously took no context or a different arg):
 
 ```c
-unsigned int OCI_GetOCICompileVersion(OCI_Environment *env);
-unsigned int OCI_GetOCIRuntimeVersion(OCI_Environment *env);
+OCI_UInt32     OCI_GetOCICompileVersion(OCI_Environment *env);
+OCI_UInt32     OCI_GetOCIRuntimeVersion(OCI_Environment *env);
 OCI_ImportMode OCI_GetImportMode(OCI_Environment *env);
 OCI_Charset    OCI_GetCharset(OCI_Environment *env);
-OCI_UInt64     OCI_GetStats(OCI_Environment *env, OCI_Stat stat); /* see §7 */
+OCI_UInt64     OCI_GetStats(OCI_Environment *env, OCI_Stat stat); /* see §15 */
 OCI_Boolean    OCI_EnableWarnings(OCI_Environment *env, OCI_Boolean value);
 OCI_Boolean    OCI_SetErrorHandler(OCI_Environment *env, POCI_ERROR handler);
 OCI_Boolean    OCI_SetHAHandler(OCI_Environment *env, POCI_HA_HANDLER handler);
 const otext*   OCI_GetLocaleString(OCI_Environment *env, OCI_LocaleCode code);
+OCI_Boolean    OCI_SetFormat(OCI_Environment *env, OCI_FormatType type, const otext *format);
+const otext*   OCI_GetFormat(OCI_Environment *env, OCI_FormatType type);
+OCI_Boolean    OCI_SetUserPassword(OCI_Environment *env, const otext *db,
+                                   const otext *user, const otext *pwd, const otext *new_pwd);
+```
+
+New functions that also take `env` (no v4 equivalent — see §10):
+
+```c
+OCI_Boolean OCI_SetSubscriptionPort(OCI_Environment *env, OCI_UInt32 port);
+OCI_UInt32  OCI_GetSubscriptionPort(OCI_Environment *env);
 ```
 
 **Connections and pools:**
@@ -119,7 +136,7 @@ const otext*   OCI_GetLocaleString(OCI_Environment *env, OCI_LocaleCode code);
                         unsigned int min_con, unsigned int max_con, unsigned int incr_con);
 /* v5 */ OCI_PoolCreate(OCI_Environment *env, const otext *db, const otext *user,
                         const otext *pwd, OCI_PoolType type, OCI_SessionMode mode,
-                        unsigned int min_con, unsigned int max_con, unsigned int incr_con);
+                        OCI_UInt32 min_con, OCI_UInt32 max_con, OCI_UInt32 incr_con);
 
 /* v4 */ OCI_PoolGetConnection(OCI_Pool *pool, const otext *tag);
 /* v5 */ OCI_PoolGetConnection(OCI_Environment *env, OCI_Pool *pool, const otext *tag);
@@ -133,24 +150,24 @@ the environment, not a connection):
 
 ```c
 OCI_Date*      OCI_DateCreate(OCI_Environment *env);
-OCI_Date**     OCI_DateArrayCreate(OCI_Environment *env, unsigned int nbelem);
+OCI_Date**     OCI_DateArrayCreate(OCI_Environment *env, OCI_UInt32 nbelem);
 
 OCI_Number*    OCI_NumberCreate(OCI_Environment *env);
-OCI_Number**   OCI_NumberArrayCreate(OCI_Environment *env, unsigned int nbelem);
+OCI_Number**   OCI_NumberArrayCreate(OCI_Environment *env, OCI_UInt32 nbelem);
 
 OCI_Timestamp*   OCI_TimestampCreate(OCI_Environment *env, OCI_TimestampType type);
 OCI_Timestamp**  OCI_TimestampArrayCreate(OCI_Environment *env, OCI_TimestampType type,
-                                          unsigned int nbelem);
+                                          OCI_UInt32 nbelem);
 
 OCI_Interval*    OCI_IntervalCreate(OCI_Environment *env, OCI_IntervalType type);
 OCI_Interval**   OCI_IntervalArrayCreate(OCI_Environment *env, OCI_IntervalType type,
-                                         unsigned int nbelem);
+                                         OCI_UInt32 nbelem);
 ```
 
 **Hash tables, database control:**
 
 ```c
-OCI_HashTable* OCI_HashCreate(OCI_Environment *env, unsigned int size, OCI_HashType type);
+OCI_HashTable* OCI_HashCreate(OCI_Environment *env, OCI_UInt32 size, OCI_HashType type);
 
 OCI_Boolean OCI_DatabaseStartup(OCI_Environment *env, const otext *db, const otext *user,
                                 const otext *pwd, OCI_SessionMode sess_mode,
@@ -178,6 +195,7 @@ OCI_MsgCreate / OCI_EnqueueCreate / OCI_DequeueCreate  (OCI_TypeInfo *typinf);
 OCI_AgentCreate                           (OCI_Connection *con, const otext *name, const otext *address);
 OCI_DirPathCreate                         (OCI_TypeInfo *typinf, ...);
 OCI_TypeInfoGet                           (OCI_Connection *con, const otext *name, OCI_TypeInfoType);
+OCI_TransactionCreate                     (OCI_Connection *con, OCI_UInt32 timeout, OCI_UInt32 flags);
 ```
 
 The following constructors **dropped their `OCI_Connection*` argument** — the owning
@@ -185,10 +203,10 @@ connection is now deduced from the `OCI_TypeInfo` handle itself:
 
 ```c
 OCI_ObjectCreate(OCI_TypeInfo *typinf);
-OCI_ObjectArrayCreate(OCI_TypeInfo *typinf, unsigned int nbelem);
+OCI_ObjectArrayCreate(OCI_TypeInfo *typinf, OCI_UInt32 nbelem);
 OCI_RefCreate(OCI_TypeInfo *typinf);
-OCI_RefArrayCreate(OCI_TypeInfo *typinf, unsigned int nbelem);
-OCI_CollArrayCreate(OCI_TypeInfo *typinf, unsigned int nbelem);
+OCI_RefArrayCreate(OCI_TypeInfo *typinf, OCI_UInt32 nbelem);
+OCI_CollArrayCreate(OCI_TypeInfo *typinf, OCI_UInt32 nbelem);
 ```
 
 ### 3.3 Recovering an environment from a handle
@@ -201,301 +219,92 @@ OCI_Environment* OCI_HandleGetEnvironment(void *handle);   /* any OCILIB handle 
 
 ---
 
-## 4. Step 3 — Replace the removed threading API
+## 4. Step 3 — All indexes are now 0-based (the silent trap)
 
-All public threading primitives are gone. OCILIB internally uses ISO C11 `<threads.h>`,
-and so should you — or `std::thread`/`std::mutex` in C++, pthreads, or Win32.
+In v4 every index in the C API was 1-based. In v5 **all index parameters and
+index-returning functions are 0-based**, and lookups that can miss return
+`OCI_Int32` with **`-1`** as the "not found / no position" sentinel instead of
+`0`.
 
-| Removed v4 API | Replacement |
-|----------------|-------------|
-| `OCI_MutexCreate()` / `OCI_MutexFree(m)` | `mtx_t m;` `mtx_init(&m, mtx_plain)` / `mtx_destroy(&m)` |
-| `OCI_MutexAcquire(m)` / `OCI_MutexRelease(m)` | `mtx_lock(&m)` / `mtx_unlock(&m)` |
-| `OCI_ThreadCreate()` / `OCI_ThreadFree(t)` | `thrd_t t;` / `(void)t` |
-| `OCI_ThreadRun(t, proc, arg)` | `thrd_create(&t, proc, arg)` — note `thrd_start_t` is `int (*)(void*)`, not `void (*)(OCI_Thread*, void*)` |
-| `OCI_ThreadJoin(t)` | `thrd_join(t, &res)` |
-| `OCI_ThreadKeyCreate(name, dtor)` / `SetValue` / `GetValue` | `tss_t key;` `tss_create(&key, dtor)` / `tss_set` / `tss_get` |
+> **This is the highest-risk change in v5.** `coll[1]`, `OCI_GetString(rs, 1)`,
+> `for (i = 1; i <= n; ++i)` all still compile — they just read the *wrong* element.
+> The compiler will not flag a single site. Audit every literal index and every
+> index loop deliberately.
 
-Removed types: `OCI_Mutex`, `OCI_Thread`, `OCI_ThreadKey`.
-Removed callback typedefs: `POCI_THREAD`, `POCI_THREADKEYDEST`.
+### Index parameters — now 0-based
 
-> **Effort:** trivial if you only used `OCI_Mutex` for a critical section; more work if
-> you built worker pools on `OCI_Thread`. The `OCI_ThreadKey` name→key registry has no
-> direct equivalent — use a static `tss_t` per key instead.
+| API group | What changed |
+|-----------|--------------|
+| Resultset columns | `OCI_GetColumn(rs, i)`, `OCI_Get*(rs, i)` getters (`OCI_GetInt`, `OCI_GetString`, `OCI_IsNull`, `OCI_GetRaw`, `OCI_GetDataSize`, `OCI_GetDataLength`, `OCI_GetStruct`, …), `OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, i)` |
+| Type info columns | `OCI_TypeInfoGetColumn(typinf, i)` |
+| Binds | `OCI_GetBind(stmt, i)`; array element position `pos` of `OCI_BindSetNullAtPos`, `OCI_BindSetNotNullAtPos`, `OCI_BindIsNullAtPos`, `OCI_BindSetDataSizeAtPos`, `OCI_BindGetDataSizeAtPos` (scalar binds use position `0`) |
+| Collections | `OCI_CollGetElem`, `OCI_CollSetElem`, `OCI_CollDeleteElem` |
+| JSON DOM | `OCI_JsonNodeGetFieldName`, `OCI_JsonNodeGetFieldByIndex`, `OCI_JsonNodeGetItem`, `OCI_JsonNodeSetItem`, `OCI_JsonNodeInsertItem`, `OCI_JsonNodeRemoveItem`, `OCI_JsonNodeRemoveItems` |
+| Direct path | `OCI_DirPathSetColumn(dp, i,…)` and the row/column arguments of `OCI_DirPathSetEntry`/`GetEntry`/`GetEntryCount` |
 
-Note: OCILIB is still thread-safe internally (`OCI_ENV_THREADED`); this change only
-removes the *public* helper wrappers.
+### Return values — new 0-based or `-1` semantics
 
----
+| v4 | v5 |
+|----|----|
+| `OCI_GetColumnIndex`, `OCI_GetBindIndex` — `unsigned int`, 1-based, `0` = miss | `OCI_Int32` — **0-based** index, **`-1`** = miss |
+| `OCI_GetCurrentRow` — 1-based, `0` = unfetched | `OCI_Int32` — **0-based**, **`-1`** = unfetched/empty |
+| `OCI_ErrorGetRow` — 1-based array-DML row, `0` = unrelated | `OCI_Int32` — **0-based**, **`-1`** = unrelated |
+| `OCI_DirPathGetErrorRow`, `OCI_DirPathGetErrorColumn` — 1-based | **0-based** (`0` remains the "no error" sentinel) |
+| `OCI_GetSqlErrorPos` — 1-based | **0-based** character offset; `(OCI_UInt32)-1` = no parse error |
 
-## 5. Step 4 — Remove XA usage
-
-`OCI_SESSION_XA` and the associated documentation are removed. OCILIB no longer offers
-XA / distributed-transaction connections.
-
-**Action:** delete `OCI_SESSION_XA` from session modes. If you need XA, manage the
-resource manager integration outside OCILIB (or stay on v4 for that component).
-
----
-
-## 6. Step 5 — Update notification / AQ code
-
-### 6.1 Subscription port is now per-environment
-
-v4 passed a `port` argument on every registration. v5 configures it once on the
-environment, before the first subscription:
-
-```c
-OCI_Boolean  OCI_SetSubscriptionPort(OCI_Environment *env, unsigned int port);
-unsigned int OCI_GetSubscriptionPort(OCI_Environment *env);
-```
-
-### 6.2 `OCI_SubscriptionRegister` lost its `port` parameter, gained `mode`
-
-```c
-/* v4 */
-OCI_SubscriptionRegister(con, name, type, handler, port, timeout);
-
-/* v5 */
-OCI_SubscriptionRegister(con, name, type, handler, mode, timeout);
-```
-
-`mode` is an `OCI_SubscriptionMode` (typed `OCI_UInt32` typedef): `OCI_SRM_DEFAULT`
-(server initiates the notification listener connection — same as v4) or
-`OCI_SRM_SECURE_NOTIFICATION` (client initiates it; requires Oracle client 12c+).
-Use `OCI_SRM_DEFAULT` to keep v4 behavior.
-
-### 6.3 `OCI_DequeueSubscribe` is now a batch call
-
-```c
-/* v4 — one dequeue, explicit port */
-OCI_DequeueSubscribe(dequeue, port, timeout, callback);
-
-/* v5 — array of dequeues from a connection */
-OCI_DequeueSubscribe(con, dequeues /* OCI_Dequeue** */, count, timeout, callback);
-```
-
-Build an `OCI_Dequeue*[]` array of the queues you want notifications for and register
-them in a single call. Individual dequeues can still be unsubscribed with
-`OCI_DequeueUnsubscribe()`; `OCI_DequeueFree()` auto-unsubscribes.
-
-> `OCI_ENV_EVENTS` must still be passed to `OCI_EnvironmentCreate` for notifications.
+> Note: some underlying OCI primitives (`OCICollGetElem`, `OCIParamGet`, batch
+> error rows, `OCI_ATTR_ROWID`-style parameters) keep their own conventions;
+> OCILIB translates internally, so application code should always think
+> 0-based.
 
 ---
 
-## 7. Step 6 — Memory / resource statistics
+## 5. Step 4 — Unchanged signatures, changed behaviour
 
-`OCI_GetAllocatedBytes` has been replaced by the generic `OCI_GetStats` diagnostic API.
+> **Warning:** a migration is not only about signatures. Several functions kept
+> exactly the same prototype in v5 but behave differently. The compiler will **not**
+> flag these — audit them deliberately.
 
-```c
-/* v4 */ big_uint OCI_GetAllocatedBytes(unsigned int mem_type);   /* OCI_MEM_* */
-/* v5 */ OCI_UInt64 OCI_GetStats(OCI_Environment *env, OCI_Stat stat);
-```
-
-The `OCI_MEM_ORACLE` / `OCI_MEM_OCILIB` / `OCI_MEM_ALL` constants are **removed**.
-The new `OCI_Stat` type selects the requested counter:
-
-| `stat` value | Meaning |
-|--------------|---------|
-| `OCI_UST_BYTES`      | Bytes allocated internally by OCILIB for that environment |
-| `OCI_UST_HANDLES`    | OCI handles allocated for that environment |
-| `OCI_UST_DESCRIPTORS`| OCI descriptors allocated for that environment |
-| `OCI_UST_OBJECTS`    | OCILIB object instances allocated for that environment |
-
-Replacement for the old byte counter:
-
-```c
-/* v4 */ OCI_GetAllocatedBytes(OCI_MEM_OCILIB);
-/* v5 */ OCI_GetStats(env, OCI_UST_BYTES);
-```
-
-The OCI-client-side figure is no longer exposed.
-
----
-
-## 8. Step 7 — `boolean` → `OCI_Boolean`
-
-v4 exported `#define boolean int`, which collided with other libraries and polluted
-every translation unit. v5 uses a real typedef:
-
-```c
-typedef int OCI_Boolean;
-```
-
-`TRUE`/`FALSE` are unchanged. Replace `boolean` with `OCI_Boolean` in your code —
-a straight textual rename (watch out for `struct boolean` fields if you had any).
-A compatibility `typedef OCI_Boolean boolean;` may exist in the headers; do not rely
-on it for new code.
-
----
-
-## 8b. Step 7b — `big_int`/`big_uint` → `OCI_Int64`/`OCI_UInt64`
-
-v5 introduces fixed-width integer typedefs in `platform.h`:
-
-```c
-typedef short              OCI_Int16;
-typedef unsigned short     OCI_UInt16;
-typedef int                OCI_Int32;
-typedef unsigned int       OCI_UInt32;
-typedef long long          OCI_Int64;
-typedef unsigned long long OCI_UInt64;
-typedef size_t             OCI_Size;
-typedef float              OCI_Float;
-typedef double             OCI_Double;
-```
-
-`big_int` and `big_uint` remain as compatibility typedefs in `platform.h`
-(`typedef OCI_Int64 big_int; typedef OCI_UInt64 big_uint;`). Rename when
-convenient; do not use the old names in new code.
-
-Notes:
-
-- `OCI_Int64`/`OCI_UInt64` are `long long`/`unsigned long long` on **every**
-  supported platform — exactly what the old `big_int`/`big_uint` typedefs resolved
-  to. `printf` specifiers (`%lld`/`%llu`), `OCI_ARG_OF` `_Generic` dispatch and the
-  C++ `Get<>`/`Bind<>`/`Register<>` overload sets behave exactly as before.
-- The old conditional fallback (`typedef int big_int` on compilers without 64-bit
-  integers) is gone — the 64-bit types now always exist.
-- `OCI_Int32`/`OCI_UInt32`/`OCI_Int16`/`OCI_UInt16` are used throughout the
-  public API for numeric parameters and return values. `OCI_Size` covers byte
-  sizes, buffer lengths and element counts in internal code.
-- `OCI_Float`/`OCI_Double` are the single/double precision floating point
-  types, used for float and double parameters and return values.
-- `char` and `unsigned char` remain `char`/`unsigned char` — they denote
-  characters and raw bytes, not integer quantities.
+1. **`OCI_GetLastError(void)`** — same prototype, different semantics. In v4 it
+   returned the *global* last error unless you opted into thread-local errors with
+   `OCI_ENV_CONTEXT`. In v5 it **always** returns the calling thread's `OCI_Error`;
+   the flag is gone and there is no global error slot. Code that read "the last error
+   produced anywhere" must be reworked to read errors on the thread that produced them.
+   New helper: `OCI_Boolean OCI_HasError(void)` — quick check without fetching the
+   handle.
+2. **`OCI_EnableWarnings(env, value)`** — beyond the new `env` parameter, warnings are
+   now scoped per-environment; enabling them no longer affects other environments.
+3. **Row-level change notifications now fire.** `OCI_SubscriptionRegister` with
+   `OCI_CNT_ROWS` now actually delivers per-row events with rowids — previously they
+   were silently dropped. Audit notification handlers for assumptions.
+4. **AQ dequeue registration is atomic.** `OCI_DequeueSubscribe` registers all queues
+   in one `OCISubscriptionRegister` call — fixes `ORA-24915` from repeated listener
+   starts.
+5. **`OCI_EnvironmentFree` auto-frees children.** Objects not explicitly freed
+   (connections, pools, statements, standalone datatypes) are released at environment
+   free — v4 `OCI_Cleanup` did the same, but any code relying on object lifetimes
+   *after* cleanup ordering should double-check.
+6. **`OCI_GetBindIndex` no longer reports registered binds.** In v4, names created
+   by `OCI_RegisterXxx()` leaked through the shared name map: the call returned a
+   `rbinds[]` position that could not be fed back into `OCI_GetBind()` (which only
+   indexes `ubinds[]`). In v5 it returns **`-1`** for register names — as was always
+   intended; registers are out-params, not binds. Code relying on the leaked index
+   should iterate register results via `OCI_Execute()` + `OCI_GetResultset()`/
+   `OCI_RegisterGetXxx()` instead.
+7. **`OCI_IPC_*` values were renumbered** (and thread/mutex/thread-key IDs removed).
+   Never hard-code the numeric values; use the macros.
+8. **`OCI_Environment` is public but opaque** — you never dereference it.
+9. **One environment per application** is the documented pattern, but multiple
+   environments are supported (each loads its own OCI symbol table). Two environments
+   can even load *different* OCI client libraries.
+10. **New opt-in logging.** Set environment variables before `OCI_EnvironmentCreate`:
+    - `OCILIB_LOG` — `NONE` (default), `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`
+    - `OCILIB_LOG_CATEGORIES` — `LIB`, `MEM`, `OCI`, `ALL` (default `ALL`)
+    - `OCILIB_LOG_OUTPUT` — `STDERR` (default), `STDOUT`, or a file path
 
 ---
 
-## 9. Step 8 — Raw OCI handle accessors removed
-
-All `OCI_HandleGet<…>` getters that leaked raw OCI handles are gone. Only one survives,
-with a **new meaning**:
-
-```c
-/* v4 */ const void* OCI_HandleGetEnvironment(void);                 /* returned OCIEnv*  */
-/* v5 */ OCI_Environment* OCI_HandleGetEnvironment(void *handle);   /* returns env owner */
-```
-
-Removed: `OCI_HandleGetContext`, `OCI_HandleGetServer`, `OCI_HandleGetError`,
-`OCI_HandleGetSession`, `OCI_HandleGetTransaction`, `OCI_HandleGetStatement`,
-`OCI_HandleGetLob`, `OCI_HandleGetFile`, `OCI_HandleGetDate`, `OCI_HandleGetTimestamp`,
-`OCI_HandleGetInterval`, `OCI_HandleGetObject`, `OCI_HandleGetColl`, `OCI_HandleGetRef`,
-`OCI_HandleGetMutex`, `OCI_HandleGetThread`, `OCI_HandleGetThreadID`,
-`OCI_HandleGetDirPathCtx`, `OCI_HandleGetDirPathColArray`, `OCI_HandleGetDirPathStream`,
-`OCI_HandleGetSubscription`.
-
-**Action:** if you passed raw OCI handles to direct OCI calls, those call sites must be
-rewritten — either through OCILIB APIs or by keeping your own OCI layer. There is no
-migration shim; grep your code for `OCI_HandleGet` and decide per site.
-
----
-
-## 10. Step 9 — Removed compatibility macros (`compat.h`)
-
-`include/ocilibc/compat.h` has been **deleted**. It contained backward-compatibility
-macros mapping pre-v4 names onto the modern API. All of these aliases are gone —
-rename each usage to its modern equivalent:
-
-| Removed alias | Replacement |
-|---------------|-------------|
-| `OCI_CreateConnection` / `OCI_FreeConnection` | `OCI_ConnectionCreate` / `OCI_ConnectionFree` |
-| `OCI_CreateStatement` / `OCI_FreeStatement` | `OCI_StatementCreate` / `OCI_StatementFree` |
-| `OCI_CreateTransaction` / `OCI_FreeTransaction` | `OCI_TransactionCreate` / `OCI_TransactionFree` |
-| `OCI_CreateHashTable` / `OCI_FreeHashTable` | `OCI_HashCreate` / `OCI_HashFree` |
-| `OCI_GetColumn*` (`Name`, `Type`, `CharsetForm`, `SQLType`, `FullSQLType`, `Size`, `Scale`, `Precision`, `FractionnalPrecision`, `LeadingPrecision`, `Nullable`, `CharUsed`) | `OCI_ColumnGet<…>` (same suffix; note `Fractionnal` → `Fractional` spelling fix) |
-| `OCI_GetFormatDate(s)` / `OCI_SetFormatDate(s,f)` | `OCI_GetFormat(OCI_HandleGetEnvironment(OCI_StatementGetConnection(s)), OCI_FMT_DATE)` / `OCI_SetFormat(…, OCI_FMT_DATE, f)` |
-| `OCI_ERR_API` | `OCI_ERR_CAT_OCI` (tested via `OCI_ErrorGetCategory` — see §10d) |
-| `OCI_ERR_NOT_SUPPORTED` | `OCI_ERR_DATATYPE_NOT_SUPPORTED` |
-| `OCI_SCHEMA_TABLE` / `OCI_SCHEMA_VIEW` / `OCI_SCHEMA_TYPE` | `OCI_TIF_TABLE` / `OCI_TIF_VIEW` / `OCI_TIF_TYPE` |
-| `OCI_Schema`, `OCI_SchemaGet`, `OCI_SchemaFree`, `OCI_SchemaGetColumnCount`, `OCI_SchemaGetColumn`, `OCI_SchemaGetName` | `OCI_TypeInfo`, `OCI_TypeInfoGet`, `OCI_TypeInfoFree`, `OCI_TypeInfoGetColumnCount`, `OCI_TypeInfoGetColumn`, `OCI_TypeInfoGetName` |
-| `OCI_SetNull`, `OCI_SetNull2`, `OCI_SetNullAtPos`, `OCI_SetNullAtPos2` | `OCI_BindSetNull(OCI_GetBind(…))` / `OCI_BindSetNullAtPos(OCI_GetBind(…), pos)` |
-| `OCI_ConnPool*` (`Create`, `GetConnection`, `Free`, `Get/SetTimeout`, `Get/SetNoWait`, `GetBusyCount`, `GetOpenedCount`, `GetMin`, `GetMax`, `GetIncrement`) | `OCI_Pool*` equivalents |
-| `OCI_ObjectGetTimeStamp` / `OCI_ElemGetTimeStamp` | `OCI_ObjectGetTimestamp` / `OCI_ElemGetTimestamp` |
-| `OCI_TimestampSysTimeStamp` | `OCI_TimestampSysTimestamp` |
-| `OCI_CollSetAt` / `OCI_CollGetAt` / `OCI_CollGetAt2` | `OCI_CollSetElem` / `OCI_CollGetElem` / `OCI_CollGetElem` |
-| `OCI_GetCharsetMetaData` / `OCI_GetCharsetUserData` | `OCI_GetCharset(env)` |
-| `OCI_8`, `OCI_9`, `OCI_10`, `OCI_11` | `OCI_8_1`, `OCI_9_0`, `OCI_10_1`, `OCI_11_1` |
-| `OCI_CHAR_UNICODE` | `OCI_CHAR_WIDE` |
-| `OCI_CSF_CHARSET` | `OCI_CSF_DEFAULT` |
-| `OCI_SIZE_TRACE_INF0` (with a zero) | `OCI_SIZE_TRACE_INFO` |
-| `MT(x)`, `DT(x)` | `OTEXT(x)` |
-| `mtext`, `dtext` | `otext` |
-| `mts*`/`dts*` string functions (`mtsdup`, `mtscpy`, `mtsncpy`, `mtscat`, `mtsncat`, `mtslen`, `mtscmp`, `mtscasecmp`, `mtsprintf`, `mtstol`, `mtsscanf`, and `dts*` equivalents) | `o*` equivalents (`ostrdup`, `ostrcpy`, `ostrncpy`, `ostrcat`, `ostrncat`, `ostrlen`, `ostrcmp`, `ostrcasecmp`, `osprintf`, `ostrtol`, `osscanf`) |
-| `OCI_STRING_FORMAT_NUM_BIN` | `OCI_STRING_FORMAT_NUM_BDOUBLE` |
-
-> **Effort:** trivial textual renames if you used a few aliases; moderate if a codebase
-> still relies on the v3 `OCI_ConnPool*`/`OCI_Schema*` layer.
-
-## 10b. Step 10 — Bind/register calls now return `OCI_Bind*`
-
-All input bind-registration functions now return the created `OCI_Bind*` handle
-instead of a boolean. `NULL` means failure (as before — an error is also recorded
-and retrievable via `OCI_GetLastError()`).
-
-Affected: `OCI_BindBoolean`, `OCI_Bind{Number,Short,UnsignedShort,Int,UnsignedInt,BigInt,UnsignedBigInt,String,Raw,Double,Float,Date,Timestamp,Interval,Lob,File,Object,Vector,Coll,Ref,Statement,Long}` and all `OCI_BindArrayOf{…}` variants.
-**`OCI_Register*` functions are unchanged** — they still return `OCI_Boolean`.
-
-```c
-/* v4 */ if (!OCI_BindInt(stmt, ":n", &n)) { /* fail */ }
-/* v5 */ if (OCI_BindInt(stmt, ":n", &n) == NULL) { /* fail */ }
-/* v5 — new capability: use the bind directly */
-OCI_Bind *b = OCI_BindInt(stmt, ":n", &n);
-OCI_BindSetDirection(b, OCI_BDM_OUT);   /* no need for OCI_GetBind() */
-```
-
-**Compatibility:** call sites that ignore the result are unaffected. `if (OCI_Bind…())`
-still works (non-NULL is truthy). Only assignments into a `boolean`/`OCI_Boolean`
-variable need a type change. The getter pair `OCI_GetBind`/`OCI_GetBindByName` still exists
-for retrieval by index/name.
-
-## 10c. Step 11 — `*2` suffixed functions renamed / promoted
-
-The cryptic v4 `2` suffix is gone in v5. There were **two different meanings** —
-check which group each function you use belongs to.
-
-### By-name accessors → `*ByName`
-
-All "by column/bind name" getters changed `Xxx2` → `XxxByName`. Purely mechanical:
-
-```c
-OCI_GetString2(rs, "name")              → OCI_GetStringByName(rs, "name")
-OCI_GetInt2(rs, "id")                   → OCI_GetIntByName(rs, "id")
-OCI_GetColumn2(rs, name)                → OCI_GetColumnByName(rs, name)
-OCI_GetBind2(stmt, ":n")                → OCI_GetBindByName(stmt, ":n")
-OCI_IsNull2(rs, "col")                  → OCI_IsNullByName(rs, "col")
-OCI_GetDataSize2(rs, "col")             → OCI_GetDataSizeByName(rs, "col")
-OCI_SetStructNumericType2(rs, "c", t)   → OCI_SetStructNumericTypeByName(rs, "c", t)
-```
-
-Applies to every `OCI_GetXxx2` resultset getter (Number, Short, UnsignedShort, Int,
-UnsignedInt, BigInt, UnsignedBigInt, String, Raw, Double, Float, Date, Timestamp,
-Interval, Statement, Lob, File, Object, Coll, Ref, XmlType, Vector, Long).
-
-### LOB read/write/append — counts variant is now the only one
-
-The legacy count-returning `OCI_LobRead`/`OCI_LobWrite`/`OCI_LobAppend` were removed
-(the first two were already `[OBSOLETE]` in v4). The former `*2` variants were
-promoted to the primary names:
-
-```c
-/* v4 */                                        /* v5 */
-unsigned int n;                                 unsigned int cc = len, bc = 0;
-n = OCI_LobWrite(lob, buf, len);            →   OCI_LobWrite(lob, buf, &cc, &bc);
-n = OCI_LobRead(lob, buf, SIZE);            →   OCI_LobRead(lob, buf, &cc, &bc);
-```
-
-- Signature: `OCI_Boolean OCI_LobRead(lob, buffer, unsigned int *char_count, unsigned int *byte_count)` — counts are in/out.
-- For CLOBs use `char_count`; for BLOBs use `byte_count`. Passing `0` for the unused
-  count on input lets OCILIB compute it.
-- Return value moved to `OCI_Boolean` — check the out counts for the amount transferred.
-
-### `OCI_CollGetElem2` removed
-
-`OCI_CollGetElem(coll, index)` keeps its v4 signature (`OCI_Elem*` return, shared
-collection-owned slot). The redundant `OCI_CollGetElem2` was simply deleted —
-if you used it, call `OCI_CollGetElem` instead.
-
-## 10d. Step 12 — Error model: type, category and code are now separate
+## 6. Step 5 — Error model: type, category and code are now separate
 
 v4 conflated the **error type** (error vs warning) and the **origin** (Oracle vs
 OCILIB) in the single `OCI_ErrorGetType()` result, and split the error code
@@ -563,113 +372,332 @@ void err_handler(OCI_Error *err)
 > code that hard-coded the *numeric* values (`OCI_ERR_WARNING` was `3`;
 > `OCI_ERR_TYPE_WARNING` is `2`).
 
-## 10e. Step 13 — All indexes are now 0-based
+---
 
-In v4 every index in the C API was 1-based. In v5 **all index parameters and
-index-returning functions are 0-based**, and lookups that can miss return
-`OCI_Int32` with **`-1`** as the "not found / no position" sentinel instead of
-`0`. Review every literal index and every index loop in your code.
+## 7. Step 6 — `boolean` → `OCI_Boolean`, new scalar typedefs
 
-### Index parameters — now 0-based
+### 7.1 `boolean` is gone entirely
 
-| API group | What changed |
-|-----------|--------------|
-| Resultset columns | `OCI_GetColumn(rs, i)`, `OCI_GetColumnByName` offset, `OCI_Get*(rs, i)` getters (`OCI_GetInt`, `OCI_GetString`, `OCI_IsNull`, `OCI_GetRaw`, `OCI_GetDataSize`, `OCI_GetDataLength`, `OCI_GetStruct`, …), `OCI_SetNull(rs, i)`, `OCI_SetDataSize`, `OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, i)` |
-| Type info columns | `OCI_TypeInfoGetColumn(typinf, i)` |
-| Binds | `OCI_GetBind(stmt, i)`; array element position `pos` of `OCI_BindSetNullAtPos`, `OCI_BindSetNotNullAtPos`, `OCI_BindIsNullAtPos`, `OCI_BindSetDataSizeAtPos`, `OCI_BindGetDataSizeAtPos` (scalar binds use position `0`) |
-| Collections | `OCI_CollGetElem`, `OCI_CollSetElem`, `OCI_CollDeleteElem` |
-| JSON DOM | `OCI_JsonNodeGetFieldName`, `OCI_JsonNodeGetFieldByIndex`, `OCI_JsonNodeGetItem`, `OCI_JsonNodeSetItem`, `OCI_JsonNodeInsertItem`, `OCI_JsonNodeRemoveItem`, `OCI_JsonNodeRemoveItems` |
-| Direct path | `OCI_DirPathSetColumn(dp, i,…)` and the row/column arguments of `OCI_DirPathSetEntry`/`GetEntry`/`GetEntryCount` |
+v4 exported `#define boolean int`, which collided with other libraries and polluted
+every translation unit. v5 uses a real typedef:
 
-### Return values — new 0-based or `-1` semantics
+```c
+typedef int OCI_Boolean;
+```
 
-| v4 | v5 |
-|----|----|
-| `OCI_GetColumnIndex`, `OCI_GetBindIndex` — `unsigned int`, 1-based, `0` = miss | `OCI_Int32` — **0-based** index, **`-1`** = miss |
-| `OCI_GetCurrentRow` — 1-based, `0` = unfetched | `OCI_Int32` — **0-based**, **`-1`** = unfetched/empty |
-| `OCI_ErrorGetRow` — 1-based array-DML row, `0` = unrelated | `OCI_Int32` — **0-based**, **`-1`** = unrelated |
-| `OCI_DirPathGetErrorRow`, `OCI_DirPathGetErrorColumn` — 1-based | **0-based** (`0` remains the "no error" sentinel) |
-| `OCI_GetParseErrorPos` — 1-based | **0-based** character offset |
+`TRUE`/`FALSE` are unchanged. **There is no compatibility alias** — every `boolean`
+in your code fails to compile and must be renamed to `OCI_Boolean` (a straight
+textual rename; watch out for `struct boolean` fields if you had any).
 
-> Note: some underlying OCI primitives (`OCICollGetElem`, `OCIParamGet`, batch
-> error rows, `OCI_ATTR_ROWID`-style parameters) keep their own conventions;
-> OCILIB translates internally, so application code should always think
-> 0-based.
+### 7.2 Fixed-width typedefs
+
+v5 introduces fixed-width integer typedefs in `platform.h`:
+
+```c
+typedef short              OCI_Int16;
+typedef unsigned short     OCI_UInt16;
+typedef int                OCI_Int32;
+typedef unsigned int       OCI_UInt32;
+typedef long long          OCI_Int64;
+typedef unsigned long long OCI_UInt64;
+typedef size_t             OCI_Size;
+typedef float              OCI_Float;
+typedef double             OCI_Double;
+```
+
+`big_int` and `big_uint` remain as compatibility typedefs in `platform.h`
+(`typedef OCI_Int64 big_int; typedef OCI_UInt64 big_uint;`). Rename when
+convenient; do not use the old names in new code.
+
+Notes:
+
+- `OCI_Int64`/`OCI_UInt64` are `long long`/`unsigned long long` on **every**
+  supported platform — exactly what the old `big_int`/`big_uint` typedefs resolved
+  to. `printf` specifiers (`%lld`/`%llu`), `OCI_ARG_OF` `_Generic` dispatch and the
+  C++ `Get<>`/`Bind<>`/`Register<>` overload sets behave exactly as before.
+- The old conditional fallback (`typedef int big_int` on compilers without 64-bit
+  integers) is gone — the 64-bit types now always exist.
+- `OCI_Int32`/`OCI_UInt32`/`OCI_Int16`/`OCI_UInt16` are used throughout the
+  public API for numeric parameters and return values. `OCI_Size` covers byte
+  sizes, buffer lengths and element counts in internal code.
+- `OCI_Float`/`OCI_Double` are the single/double precision floating point
+  types, used for float and double parameters and return values.
+- `char` and `unsigned char` remain `char`/`unsigned char` — they denote
+  characters and raw bytes, not integer quantities.
 
 ---
 
-## 11. Unchanged signatures — changed behaviour
+## 8. Step 7 — `*2` suffixed functions renamed / removed
 
-> **Warning:** a migration is not only about signatures. Several functions kept
-> exactly the same prototype in v5 but behave differently. The compiler will **not**
-> flag these — audit them deliberately.
+The cryptic v4 `2` suffix is gone in v5. There were **two different meanings** —
+check which group each function you use belongs to.
 
-1. **`OCI_GetLastError(void)`** — same prototype, different semantics. In v4 it
-   returned the *global* last error unless you opted into thread-local errors with
-   `OCI_ENV_CONTEXT`. In v5 it **always** returns the calling thread's `OCI_Error`;
-   the flag is gone and there is no global error slot. Code that read "the last error
-   produced anywhere" must be reworked to read errors on the thread that produced them.
-   New helper: `OCI_Boolean OCI_HasError(void)` — quick check without fetching the
-   handle.
-2. **`OCI_EnableWarnings(env, value)`** — beyond the new `env` parameter, warnings are
-   now scoped per-environment; enabling them no longer affects other environments.
-3. **Row-level change notifications now fire.** `OCI_SubscriptionRegister` with
-   `OCI_CNT_ROWS` now actually delivers per-row events with rowids — previously they
-   were silently dropped. Audit notification handlers for assumptions.
-4. **AQ dequeue registration is atomic.** `OCI_DequeueSubscribe` registers all queues
-   in one `OCISubscriptionRegister` call — fixes `ORA-24915` from repeated listener
-   starts.
-5. **`OCI_EnvironmentFree` auto-frees children.** Objects not explicitly freed
-   (connections, pools, statements, standalone datatypes) are released at environment
-   free — v4 `OCI_Cleanup` did the same, but any code relying on object lifetimes
-   *after* cleanup ordering should double-check.
-6. **`OCI_GetBindIndex` no longer reports registered binds.** In v4, names created
-   by `OCI_RegisterXxx()` leaked through the shared name map: the call returned a
-   `rbinds[]` position that could not be fed back into `OCI_GetBind()` (which only
-   indexes `ubinds[]`). In v5 it returns **`-1`** for register names — as was always
-   intended; registers are out-params, not binds. Code relying on the leaked index
-   should iterate register results via `OCI_Execute()` + `OCI_GetResultset()`/
-   `OCI_RegisterGetXxx()` instead.
-6. **`OCI_IPC_*` values were renumbered** (and thread/mutex/thread-key IDs removed).
-   Never hard-code the numeric values; use the macros.
-7. **`OCI_Environment` is public but opaque** — you never dereference it.
-8. **One environment per application** is the documented pattern, but multiple
-   environments are supported (each loads its own OCI symbol table). Two environments
-   can even load *different* OCI client libraries.
-9. **New opt-in logging.** Set environment variables before `OCI_EnvironmentCreate`:
-   - `OCILIB_LOG` — `NONE` (default), `ERROR`, `WARN`, `INFO`, `TRACE`, `DEBUG`
-   - `OCILIB_LOG_CATEGORIES` — `LIB`, `OCI`, `ALL` (default)
-   - `OCILIB_LOG_OUTPUT` — `STDERR` (default), `STDOUT`, or a file path
+### By-name accessors → `*ByName`
+
+All "by column/bind name" getters changed `Xxx2` → `XxxByName`. Purely mechanical:
+
+```c
+OCI_GetString2(rs, "name")              → OCI_GetStringByName(rs, "name")
+OCI_GetInt2(rs, "id")                   → OCI_GetIntByName(rs, "id")
+OCI_GetColumn2(rs, name)                → OCI_GetColumnByName(rs, name)
+OCI_GetBind2(stmt, ":n")                → OCI_GetBindByName(stmt, ":n")
+OCI_IsNull2(rs, "col")                  → OCI_IsNullByName(rs, "col")
+OCI_GetDataSize2(rs, "col")             → OCI_GetDataSizeByName(rs, "col")
+OCI_SetStructNumericType2(rs, "c", t)   → OCI_SetStructNumericTypeByName(rs, "c", t)
+```
+
+Applies to every `OCI_GetXxx2` resultset getter (Number, Short, UnsignedShort, Int,
+UnsignedInt, BigInt, UnsignedBigInt, String, Raw, Double, Float, Date, Timestamp,
+Interval, Statement, Lob, File, Object, Coll, Ref, XmlType, Vector, Long).
+
+### LOB read/write/append — counts variant is now the only one
+
+The legacy count-returning `OCI_LobRead`/`OCI_LobWrite`/`OCI_LobAppend` were removed
+(the first two were already `[OBSOLETE]` in v4). The former `*2` variants were
+promoted to the primary names:
+
+```c
+/* v4 */                                        /* v5 */
+unsigned int n;                                 OCI_UInt32 cc = len, bc = 0;
+n = OCI_LobWrite(lob, buf, len);            →   OCI_LobWrite(lob, buf, &cc, &bc);
+n = OCI_LobRead(lob, buf, SIZE);            →   OCI_LobRead(lob, buf, &cc, &bc);
+```
+
+- Signature: `OCI_Boolean OCI_LobRead(lob, buffer, OCI_UInt32 *char_count, OCI_UInt32 *byte_count)` — counts are in/out.
+- For CLOBs use `char_count`; for BLOBs use `byte_count`. Passing `0` for the unused
+  count on input lets OCILIB compute it.
+- Return value moved to `OCI_Boolean` — check the out counts for the amount transferred.
+
+### `OCI_CollGetElem2` removed
+
+`OCI_CollGetElem(coll, index)` keeps its v4 signature (`OCI_Elem*` return, shared
+collection-owned slot). The redundant `OCI_CollGetElem2` was simply deleted —
+if you used it, call `OCI_CollGetElem` instead.
 
 ---
 
-## 12. Non-breaking changes you can ignore (or adopt)
+## 9. Step 8 — Bind calls now return `OCI_Bind*`
+
+All input bind-registration functions now return the created `OCI_Bind*` handle
+instead of a boolean. `NULL` means failure (as before — an error is also recorded
+and retrievable via `OCI_GetLastError()`).
+
+Affected: `OCI_BindBoolean`, `OCI_Bind{Number,Short,UnsignedShort,Int,UnsignedInt,BigInt,UnsignedBigInt,String,Raw,Double,Float,Date,Timestamp,Interval,Lob,File,Object,Vector,Coll,Ref,Statement,Long,Json}` and all `OCI_BindArrayOf{…}` variants.
+**`OCI_Register*` functions are unchanged** — they still return `OCI_Boolean`.
+
+```c
+/* v4 */ if (!OCI_BindInt(stmt, ":n", &n)) { /* fail */ }
+/* v5 */ if (OCI_BindInt(stmt, ":n", &n) == NULL) { /* fail */ }
+/* v5 — new capability: use the bind directly */
+OCI_Bind *b = OCI_BindInt(stmt, ":n", &n);
+OCI_BindSetDirection(b, OCI_BDM_OUT);   /* no need for OCI_GetBind() */
+```
+
+**Compatibility:** call sites that ignore the result are unaffected. `if (OCI_Bind…())`
+still works (non-NULL is truthy). Only assignments into a `boolean`/`OCI_Boolean`
+variable need a type change. The getter pair `OCI_GetBind`/`OCI_GetBindByName` still exists
+for retrieval by index/name.
+
+---
+
+## 10. Step 9 — Notifications / AQ changes
+
+### 10.1 Subscription port is now per-environment
+
+v4 passed a `port` argument on every registration. v5 configures it once on the
+environment, before the first subscription:
+
+```c
+OCI_Boolean OCI_SetSubscriptionPort(OCI_Environment *env, OCI_UInt32 port);
+OCI_UInt32  OCI_GetSubscriptionPort(OCI_Environment *env);
+```
+
+### 10.2 `OCI_SubscriptionRegister` lost its `port` parameter, gained `mode`
+
+```c
+/* v4 */
+OCI_SubscriptionRegister(con, name, type, handler, port, timeout);
+
+/* v5 */
+OCI_SubscriptionRegister(con, name, type, handler, mode, timeout);
+```
+
+`mode` is an `OCI_SubscriptionMode` (typed `OCI_UInt32` typedef): `OCI_SRM_DEFAULT`
+(server initiates the notification listener connection — same as v4) or
+`OCI_SRM_SECURE_NOTIFICATION` (client initiates it; requires Oracle client 12c+).
+Use `OCI_SRM_DEFAULT` to keep v4 behavior.
+
+### 10.3 `OCI_DequeueSubscribe` is now a batch call
+
+```c
+/* v4 — one dequeue, explicit port */
+OCI_DequeueSubscribe(dequeue, port, timeout, callback);
+
+/* v5 — array of dequeues from a connection */
+OCI_DequeueSubscribe(con, dequeues /* OCI_Dequeue** */, count, timeout, callback);
+```
+
+Build an `OCI_Dequeue*[]` array of the queues you want notifications for and register
+them in a single call. Individual dequeues can still be unsubscribed with
+`OCI_DequeueUnsubscribe()`; `OCI_DequeueFree()` auto-unsubscribes.
+
+> `OCI_ENV_EVENTS` must still be passed to `OCI_EnvironmentCreate` for notifications.
+
+---
+
+## 11. Step 10 — Removed threading API
+
+All public threading primitives are gone. OCILIB internally uses ISO C11 `<threads.h>`,
+and so should you — or `std::thread`/`std::mutex` in C++, pthreads, or Win32.
+
+| Removed v4 API | Replacement |
+|----------------|-------------|
+| `OCI_MutexCreate()` / `OCI_MutexFree(m)` | `mtx_t m;` `mtx_init(&m, mtx_plain)` / `mtx_destroy(&m)` |
+| `OCI_MutexAcquire(m)` / `OCI_MutexRelease(m)` | `mtx_lock(&m)` / `mtx_unlock(&m)` |
+| `OCI_ThreadCreate()` / `OCI_ThreadFree(t)` | `thrd_t t;` / `(void)t` |
+| `OCI_ThreadRun(t, proc, arg)` | `thrd_create(&t, proc, arg)` — note `thrd_start_t` is `int (*)(void*)`, not `void (*)(OCI_Thread*, void*)` |
+| `OCI_ThreadJoin(t)` | `thrd_join(t, &res)` |
+| `OCI_ThreadKeyCreate(name, dtor)` / `SetValue` / `GetValue` | `tss_t key;` `tss_create(&key, dtor)` / `tss_set` / `tss_get` |
+
+Removed types: `OCI_Mutex`, `OCI_Thread`, `OCI_ThreadKey`.
+Removed callback typedefs: `POCI_THREAD`, `POCI_THREADKEYDEST`.
+
+> **Effort:** trivial if you only used `OCI_Mutex` for a critical section; more work if
+> you built worker pools on `OCI_Thread`. The `OCI_ThreadKey` name→key registry has no
+> direct equivalent — use a static `tss_t` per key instead.
+
+Note: OCILIB is still thread-safe internally (`OCI_ENV_THREADED`); this change only
+removes the *public* helper wrappers.
+
+---
+
+## 12. Step 11 — Raw OCI handle accessors removed
+
+All `OCI_HandleGet<…>` getters that leaked raw OCI handles are gone. Only one survives,
+with a **new meaning**:
+
+```c
+/* v4 */ const void* OCI_HandleGetEnvironment(void);                 /* returned OCIEnv*  */
+/* v5 */ OCI_Environment* OCI_HandleGetEnvironment(void *handle);   /* returns env owner */
+```
+
+Removed: `OCI_HandleGetContext`, `OCI_HandleGetServer`, `OCI_HandleGetError`,
+`OCI_HandleGetSession`, `OCI_HandleGetTransaction`, `OCI_HandleGetStatement`,
+`OCI_HandleGetLob`, `OCI_HandleGetFile`, `OCI_HandleGetDate`, `OCI_HandleGetTimestamp`,
+`OCI_HandleGetInterval`, `OCI_HandleGetObject`, `OCI_HandleGetColl`, `OCI_HandleGetRef`,
+`OCI_HandleGetMutex`, `OCI_HandleGetThread`, `OCI_HandleGetThreadID`,
+`OCI_HandleGetDirPathCtx`, `OCI_HandleGetDirPathColArray`, `OCI_HandleGetDirPathStream`,
+`OCI_HandleGetSubscription`.
+
+**Action:** if you passed raw OCI handles to direct OCI calls, those call sites must be
+rewritten — either through OCILIB APIs or by keeping your own OCI layer. There is no
+migration shim; grep your code for `OCI_HandleGet` and decide per site.
+
+---
+
+## 13. Step 12 — XA removed
+
+`OCI_SESSION_XA` and the associated documentation are removed. OCILIB no longer offers
+XA / distributed-transaction connections.
+
+**Action:** delete `OCI_SESSION_XA` from session modes. If you need XA, manage the
+resource manager integration outside OCILIB (or stay on v4 for that component).
+
+---
+
+## 14. Step 13 — Removed compatibility macros (`compat.h`)
+
+`include/ocilibc/compat.h` has been **deleted**. It contained backward-compatibility
+macros mapping pre-v4 names onto the modern API. All of these aliases are gone —
+rename each usage to its modern equivalent:
+
+| Removed alias | Replacement |
+|---------------|-------------|
+| `OCI_CreateConnection` / `OCI_FreeConnection` | `OCI_ConnectionCreate` / `OCI_ConnectionFree` |
+| `OCI_CreateStatement` / `OCI_FreeStatement` | `OCI_StatementCreate` / `OCI_StatementFree` |
+| `OCI_CreateTransaction` / `OCI_FreeTransaction` | `OCI_TransactionCreate` / `OCI_TransactionFree` |
+| `OCI_CreateHashTable` / `OCI_FreeHashTable` | `OCI_HashCreate` / `OCI_HashFree` |
+| `OCI_GetColumn*` (`Name`, `Type`, `CharsetForm`, `SQLType`, `FullSQLType`, `Size`, `Scale`, `Precision`, `FractionnalPrecision`, `LeadingPrecision`, `Nullable`, `CharUsed`) | `OCI_ColumnGet<…>` (same suffix; note `Fractionnal` → `Fractional` spelling fix) |
+| `OCI_GetFormatDate(s)` / `OCI_SetFormatDate(s,f)` | `OCI_GetFormat(env, OCI_FMT_DATE)` / `OCI_SetFormat(env, OCI_FMT_DATE, f)` |
+| `OCI_ERR_API` | `OCI_ERR_CAT_OCI` (tested via `OCI_ErrorGetCategory` — see §6) |
+| `OCI_ERR_NOT_SUPPORTED` | `OCI_ERR_DATATYPE_NOT_SUPPORTED` |
+| `OCI_SCHEMA_TABLE` / `OCI_SCHEMA_VIEW` / `OCI_SCHEMA_TYPE` | `OCI_TIF_TABLE` / `OCI_TIF_VIEW` / `OCI_TIF_TYPE` |
+| `OCI_Schema`, `OCI_SchemaGet`, `OCI_SchemaFree`, `OCI_SchemaGetColumnCount`, `OCI_SchemaGetColumn`, `OCI_SchemaGetName` | `OCI_TypeInfo`, `OCI_TypeInfoGet`, `OCI_TypeInfoFree`, `OCI_TypeInfoGetColumnCount`, `OCI_TypeInfoGetColumn`, `OCI_TypeInfoGetName` |
+| `OCI_SetNull`, `OCI_SetNull2`, `OCI_SetNullAtPos`, `OCI_SetNullAtPos2` | `OCI_BindSetNull(OCI_GetBind(…))` / `OCI_BindSetNullAtPos(OCI_GetBind(…), pos)` |
+| `OCI_ConnPool*` (`Create`, `GetConnection`, `Free`, `Get/SetTimeout`, `Get/SetNoWait`, `GetBusyCount`, `GetOpenedCount`, `GetMin`, `GetMax`, `GetIncrement`) | `OCI_Pool*` equivalents |
+| `OCI_ObjectGetTimeStamp` / `OCI_ElemGetTimeStamp` | `OCI_ObjectGetTimestamp` / `OCI_ElemGetTimestamp` |
+| `OCI_TimestampSysTimeStamp` | `OCI_TimestampSysTimestamp` |
+| `OCI_CollSetAt` / `OCI_CollGetAt` / `OCI_CollGetAt2` | `OCI_CollSetElem` / `OCI_CollGetElem` / `OCI_CollGetElem` |
+| `OCI_GetCharsetMetaData` / `OCI_GetCharsetUserData` | `OCI_GetCharset(env)` |
+| `OCI_8`, `OCI_9`, `OCI_10`, `OCI_11` | `OCI_8_1`, `OCI_9_0`, `OCI_10_1`, `OCI_11_1` |
+| `OCI_CHAR_UNICODE` | `OCI_CHAR_WIDE` |
+| `OCI_CSF_CHARSET` | `OCI_CSF_DEFAULT` |
+| `OCI_SIZE_TRACE_INF0` (with a zero) | `OCI_SIZE_TRACE_INFO` |
+| `MT(x)`, `DT(x)` | `OTEXT(x)` |
+| `mtext`, `dtext` | `otext` |
+| `mts*`/`dts*` string functions (`mtsdup`, `mtscpy`, `mtsncpy`, `mtscat`, `mtsncat`, `mtslen`, `mtscmp`, `mtscasecmp`, `mtsprintf`, `mtstol`, `mtsscanf`, and `dts*` equivalents) | `o*` equivalents (`ostrdup`, `ostrcpy`, `ostrncpy`, `ostrcat`, `ostrncat`, `ostrlen`, `ostrcmp`, `ostrcasecmp`, `osprintf`, `ostrtol`, `osscanf`) |
+| `OCI_STRING_FORMAT_NUM_BIN` | `OCI_STRING_FORMAT_NUM_BDOUBLE` |
+
+> **Effort:** trivial textual renames if you used a few aliases; moderate if a codebase
+> still relies on the v3 `OCI_ConnPool*`/`OCI_Schema*` layer.
+
+---
+
+## 15. Step 14 — Memory / resource statistics
+
+`OCI_GetAllocatedBytes` has been replaced by the generic `OCI_GetStats` diagnostic API.
+
+```c
+/* v4 */ big_uint OCI_GetAllocatedBytes(unsigned int mem_type);   /* OCI_MEM_* */
+/* v5 */ OCI_UInt64 OCI_GetStats(OCI_Environment *env, OCI_Stat stat);
+```
+
+The `OCI_MEM_ORACLE` / `OCI_MEM_OCILIB` / `OCI_MEM_ALL` constants are **removed**.
+The new `OCI_Stat` type selects the requested counter:
+
+| `stat` value | Meaning |
+|--------------|---------|
+| `OCI_UST_BYTES`      | Bytes allocated internally by OCILIB for that environment |
+| `OCI_UST_HANDLES`    | OCI handles allocated for that environment |
+| `OCI_UST_DESCRIPTORS`| OCI descriptors allocated for that environment |
+| `OCI_UST_OBJECTS`    | OCILIB object instances allocated for that environment |
+
+Replacement for the old byte counter:
+
+```c
+/* v4 */ OCI_GetAllocatedBytes(OCI_MEM_OCILIB);
+/* v5 */ OCI_GetStats(env, OCI_UST_BYTES);
+```
+
+The OCI-client-side figure is no longer exposed.
+
+---
+
+## 16. Non-breaking changes you can ignore (or adopt)
 
 - **Typed parameter typedefs** — `OCI_SessionMode`, `OCI_PoolType`, `OCI_LobType`,
   `OCI_FileType`, `OCI_LongType`, `OCI_TimestampType`, `OCI_IntervalType`,
-  `OCI_TypeInfoType`, `OCI_SubscriptionType`, `OCI_HashType`, `OCI_EnvMode`,
-  `OCI_ImportMode`, `OCI_Charset`, `OCI_LocaleCode`, `OCI_ErrorCode`,
+  `OCI_TypeInfoType`, `OCI_SubscriptionType`, `OCI_SubscriptionMode`, `OCI_HashType`,
+  `OCI_EnvMode`, `OCI_ImportMode`, `OCI_Charset`, `OCI_LocaleCode`,
   `OCI_FailoverType/Event/Code`, `OCI_HAEventSource/Type`,
   `OCI_DatabaseStartMode/Flag`, `OCI_DatabaseShutdownMode/Flag`, `OCI_SqlType`,
-  `OCI_ErrorType`, `OCI_ErrorCategory`, `OCI_ErrorCode`, etc.
-  All are `unsigned int` (or `int`) aliases — **source-compatible**; passing literals
-  or `unsigned int` still compiles. Exception: **callback typedefs must match
-  exactly** — update your `POCI_TAF_HANDLER` / `POCI_HA_HANDLER` implementations to
-  the typed signatures:
+  `OCI_ErrorType`, `OCI_ErrorCategory`, `OCI_ErrorCode`, `OCI_Stat`, etc.
+  All are `OCI_UInt32` (or `OCI_Int32`) aliases — **source-compatible**; passing
+  literals or `unsigned int` still compiles. Exception: **callback typedefs must
+  match exactly** — update your `POCI_TAF_HANDLER` / `POCI_HA_HANDLER`
+  implementations to the typed signatures:
 
   ```c
   OCI_FailoverCode my_taf(OCI_Connection *con, OCI_FailoverType type, OCI_FailoverEvent event);
   void my_ha(OCI_Connection *con, OCI_HAEventSource src, OCI_HAEventType evt, OCI_Timestamp *t);
   ```
 
-- **`OCI_ErrorType` / `OCI_ErrorCategory` / `OCI_ErrorCode`** (`OCI_UInt32`
-  typedefs) — see §10d for the error-model split they support.
-
 - **New convenience helpers** (pure additions, adopt if useful):
 
   ```c
   OCI_Resultset *OCI_ExecuteAndGetResultset(OCI_Statement *stmt);
   OCI_Resultset *OCI_ExecuteStmtAndGetResultset(OCI_Statement *stmt, const otext *sql);
+  OCI_Boolean    OCI_HasError(void);
   ```
 
   `OCI_Execute` + `OCI_GetResultset` and `OCI_ExecuteStmt` + `OCI_GetResultset` in
@@ -686,7 +714,7 @@ index-returning functions are 0-based**, and lookups that can miss return
 
 ---
 
-## 13. Migration checklist (agent-friendly order)
+## 17. Migration checklist (agent-friendly order)
 
 ```
 1.  [ ] Introduce `OCI_Environment *env` at program start.
@@ -697,41 +725,49 @@ index-returning functions are 0-based**, and lookups that can miss return
         OCI_PoolGetConnection, OCI_PoolFree, OCI_DateCreate/ArrayCreate,
         OCI_NumberCreate/ArrayCreate, OCI_TimestampCreate/ArrayCreate,
         OCI_IntervalCreate/ArrayCreate, OCI_HashCreate,
-        OCI_DatabaseStartup, OCI_DatabaseShutdown,
+        OCI_DatabaseStartup, OCI_DatabaseShutdown, OCI_SetUserPassword,
         OCI_GetOCICompileVersion, OCI_GetOCIRuntimeVersion, OCI_GetImportMode,
-        OCI_GetCharset, OCI_GetStats, OCI_GetLocaleString,
-        OCI_EnableWarnings, OCI_SetErrorHandler, OCI_SetHAHandler.
-6.  [ ] Rename every `boolean` → `OCI_Boolean`.
-7.  [ ] Replace OCI_Mutex*/OCI_Thread*/OCI_ThreadKey* with <threads.h>.
-8.  [ ] Remove OCI_SESSION_XA.
-9.  [ ] Call OCI_SetSubscriptionPort(env, port) before subscriptions;
-        drop `port` arg from OCI_SubscriptionRegister;
-        convert OCI_DequeueSubscribe to (con, array, count, timeout, cb).
-10. [ ] OCI_GetAllocatedBytes(mem_type) → OCI_GetStats(env, OCI_UST_BYTES); use OCI_UST_* for other counters.
-11. [ ] Remove all OCI_HandleGet* except OCI_HandleGetEnvironment(handle)
-        (return type is now OCI_Environment*).
-12. [ ] Update POCI_TAF_HANDLER / POCI_HA_HANDLER signatures to typed params.
-13. [ ] Error handling (see §10d): OCI_ERR_ORACLE/OCI_ERR_OCILIB checks →
-        OCI_ErrorGetCategory() == OCI_ERR_CAT_OCI / OCI_ERR_CAT_LIB;
-        OCI_ERR_WARNING checks → OCI_ErrorGetType() == OCI_ERR_TYPE_WARNING;
-        OCI_ErrorGetOCICode / OCI_ErrorGetInternalCode → OCI_ErrorGetCode.
-14. [ ] Recompile; fix remaining errors (all remaining breaks are compile-time).
-15. [ ] Replace any v3-era compat macros (OCI_ConnPool*, OCI_Schema*,
-        OCI_GetColumn*, OCI_SetNull*, mts*/dts* string helpers, MT/DT, …)
-        with the modern names — see §10.
-16. [ ] Audit OCI_CNT_ROWS notification handlers for the new row events.
-17. [ ] Rebase every index to 0-based (see §10e): resultset column indexes in
+        OCI_GetCharset, OCI_GetStats, OCI_GetLocaleString, OCI_SetFormat,
+        OCI_GetFormat, OCI_EnableWarnings, OCI_SetErrorHandler,
+        OCI_SetHAHandler.
+6.  [ ] Rename every `boolean` → `OCI_Boolean` (no compatibility alias exists).
+7.  [ ] Rebase every index to 0-based (see §4): resultset column indexes in
         OCI_Get*/OCI_GetColumn, bind indexes/positions, collection indexes,
         JSON item/field indexes, direct-path rows/columns, OCI_FetchSeek
         absolute offsets — and every `for (i = 1; i <= n)` loop.
-18. [ ] Update lookups: OCI_GetColumnIndex / OCI_GetBindIndex /
+8.  [ ] Update lookups: OCI_GetColumnIndex / OCI_GetBindIndex /
         OCI_GetCurrentRow / OCI_ErrorGetRow are OCI_Int32 with -1 = miss;
-        OCI_GetParseErrorPos is 0-based.
+        OCI_GetSqlErrorPos is 0-based.
+9.  [ ] Audit silent behaviour changes (see §5): OCI_GetLastError thread
+        scope, OCI_CNT_ROWS notification handlers, OCI_GetBindIndex on
+        register names.
+10. [ ] Error handling (see §6): OCI_ERR_ORACLE/OCI_ERR_OCILIB checks →
+        OCI_ErrorGetCategory() == OCI_ERR_CAT_OCI / OCI_ERR_CAT_LIB;
+        OCI_ERR_WARNING checks → OCI_ErrorGetType() == OCI_ERR_TYPE_WARNING;
+        OCI_ErrorGetOCICode / OCI_ErrorGetInternalCode → OCI_ErrorGetCode.
+11. [ ] Rename every `Xxx2` → `XxxByName`; convert OCI_LobRead/Write/Append
+        to the char_count/byte_count form; OCI_CollGetElem2 → OCI_CollGetElem.
+12. [ ] Check OCI_Bind*/OCI_BindArrayOf* call sites that stored the result
+        in a boolean — they now return OCI_Bind*.
+13. [ ] Call OCI_SetSubscriptionPort(env, port) before subscriptions;
+        drop `port` arg from OCI_SubscriptionRegister;
+        convert OCI_DequeueSubscribe to (con, array, count, timeout, cb).
+14. [ ] Replace OCI_Mutex*/OCI_Thread*/OCI_ThreadKey* with <threads.h>.
+15. [ ] Remove OCI_SESSION_XA.
+16. [ ] Remove all OCI_HandleGet* except OCI_HandleGetEnvironment(handle)
+        (return type is now OCI_Environment*).
+17. [ ] Replace any v3-era compat macros (OCI_ConnPool*, OCI_Schema*,
+        OCI_GetColumn*, OCI_SetNull*, mts*/dts* string helpers, MT/DT, …)
+        with the modern names — see §14.
+18. [ ] OCI_GetAllocatedBytes(mem_type) → OCI_GetStats(env, OCI_UST_BYTES);
+        use OCI_UST_* for other counters.
+19. [ ] Update POCI_TAF_HANDLER / POCI_HA_HANDLER signatures to typed params.
+20. [ ] Recompile; fix remaining errors (all remaining breaks are compile-time).
 ```
 
 ---
 
-## 14. Worked example — before / after
+## 18. Worked example — before / after
 
 ```c
 /* --------------------------- v4 --------------------------- */

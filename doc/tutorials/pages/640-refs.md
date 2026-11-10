@@ -49,7 +49,7 @@ OCI_ExecuteStmt(st, OTEXT("select vend_ref from sales"));
 OCI_Resultset *rs = OCI_GetResultset(st);
 while (OCI_FetchNext(rs))
 {
-    OCI_Ref *r = OCI_GetRef(rs, 1);
+    OCI_Ref *r = OCI_GetRef(rs, 0);
     if (!OCI_RefIsNull(r))
     {
         OCI_Object *v = OCI_RefGetObject(r);     /* follow the pointer */
@@ -65,7 +65,7 @@ while (OCI_FetchNext(rs))
 st.Execute("select vend_ref from sales");
 for (auto &&row : st.GetResultset().Rows())
 {
-    Ref r = row.Get<Ref>(1);
+    Ref r = row.Get<Ref>(0);
     if (!r.IsNull())
     {
         Object v = r.GetObject();                /* follow the pointer */

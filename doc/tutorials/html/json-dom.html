@@ -107,7 +107,7 @@ document for its root and walk from there:</p>
 <div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="cm">/* object ops */</span>
 <span class="n">OCI_JsonNodeGetFieldCount</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
 <span class="n">OCI_JsonNodeGetFieldByName</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"key"</span><span class="p">));</span>
-<span class="n">OCI_JsonNodeGetFieldByIndex</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">         </span><span class="cm">/* 1-based */</span>
+<span class="n">OCI_JsonNodeGetFieldByIndex</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">         </span><span class="cm">/* 0-based */</span>
 <span class="n">OCI_JsonNodeGetFieldName</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
 <span class="n">OCI_JsonNodeHasField</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"key"</span><span class="p">));</span>
 <span class="n">OCI_JsonNodeSetField</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"key"</span><span class="p">),</span><span class="w"> </span><span class="n">value_node</span><span class="p">);</span>
@@ -116,7 +116,7 @@ document for its root and walk from there:</p>
 
 <span class="cm">/* array ops */</span>
 <span class="n">OCI_JsonNodeGetItemCount</span><span class="p">(</span><span class="n">node</span><span class="p">);</span>
-<span class="n">OCI_JsonNodeGetItem</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* 1-based */</span>
+<span class="n">OCI_JsonNodeGetItem</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* 0-based */</span>
 <span class="n">OCI_JsonNodeSetItem</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">item</span><span class="p">);</span>
 <span class="n">OCI_JsonNodeAppendItem</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">item</span><span class="p">);</span>
 <span class="n">OCI_JsonNodeInsertItem</span><span class="p">(</span><span class="n">node</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">,</span><span class="w"> </span><span class="n">item</span><span class="p">);</span>
@@ -126,7 +126,7 @@ document for its root and walk from there:</p>
 </div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="cm">/* object ops */</span>
 <span class="n">node</span><span class="p">.</span><span class="n">GetFieldCount</span><span class="p">();</span>
 <span class="n">node</span><span class="p">[</span><span class="s">"key"</span><span class="p">];</span><span class="w">                                    </span><span class="cm">/* field access             */</span>
-<span class="n">node</span><span class="p">.</span><span class="n">GetFieldByIndex</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w">                        </span><span class="cm">/* 1-based                  */</span>
+<span class="n">node</span><span class="p">.</span><span class="n">GetFieldByIndex</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w">                        </span><span class="cm">/* 0-based                  */</span>
 <span class="n">node</span><span class="p">.</span><span class="n">GetFieldName</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
 <span class="n">node</span><span class="p">.</span><span class="n">HasField</span><span class="p">(</span><span class="s">"key"</span><span class="p">);</span>
 <span class="n">node</span><span class="p">.</span><span class="n">SetField</span><span class="p">(</span><span class="s">"key"</span><span class="p">,</span><span class="w"> </span><span class="n">value_node</span><span class="p">);</span>
@@ -222,8 +222,8 @@ Object,Array}</code> — build detached nodes then attach them to the tree.</p>
 <li><strong>Leaking extracted nodes</strong> — extracted/created nodes are owned refs; free them
   (root is doc-owned). C++ RAII covers this.</li>
 <li><strong>Editing immutable docs</strong> — mark the document mutable first.</li>
-<li><strong>Mixed indexing</strong> — <code>node[i]</code> and iterators are 0-based; index-taking
-  methods (<code>GetItem</code>, <code>GetFieldByIndex</code>) stay 1-based like SQL.</li>
+<li><strong>Indexing</strong> — <code>node[i]</code>, iterators and all index-taking methods
+  (<code>GetItem</code>, <code>GetFieldByIndex</code>) are 0-based uniformly.</li>
 </ul>
 <h2 id="recap">Recap</h2>
 <ul>

@@ -60,7 +60,7 @@ OCI_Execute(st);
 OCI_ExecuteStmt(st, OTEXT("select profile from emp_profile where empno = 7369"));
 OCI_Resultset *rs = OCI_GetResultset(st);
 OCI_FetchNext(rs);
-OCI_Json *got = OCI_GetJson(rs, 1);                /* borrowed */
+OCI_Json *got = OCI_GetJson(rs, 0);                /* borrowed */
 
 otext buf[2048]; OCI_UInt32 n = sizeof(buf);
 OCI_JsonToText(got, buf, &n, OCI_JTP_PRETTY);
@@ -71,7 +71,7 @@ Json doc(con);
 doc.SetMutable(true);
 doc.LoadText("{\"name\":\"SMITH\",\"skills\":[\"SQL\",\"C\"]}");
 st.Bind(":j", doc, BindInfo::In);
-/* fetch: Json got = rs.Get<Json>(1); String s = got.ToText(Json::Pretty); */
+/* fetch: Json got = rs.Get<Json>(0); String s = got.ToText(Json::Pretty); */
 ```
 :::
 

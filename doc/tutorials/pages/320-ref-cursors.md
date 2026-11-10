@@ -55,7 +55,7 @@ OCI_Execute(st);
 OCI_Resultset *rs = OCI_GetResultset(cur_st);      /* fetch like any select   */
 while (OCI_FetchNext(rs))
 {
-    printf("%d %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs, 2));
+    printf("%d %s\n", OCI_GetInt(rs, 0), OCI_GetString(rs, 1));
 }
 
 OCI_StatementFree(cur_st);
@@ -69,7 +69,7 @@ st.BindStatement(":cur", cur);                     /* OUT cursor */
 st.ExecutePrepared();
 for (auto &&row : cur.GetResultset().Rows())
 {
-    std::cout << row.Get<int>(1) << " " << row.Get<String>(2) << "\n";
+    std::cout << row.Get<int>(0) << " " << row.Get<String>(1) << "\n";
 }
 ```
 :::
@@ -88,11 +88,11 @@ select rownum, cursor(select ename from employees where deptno = d.deptno)
 ```c
 while (OCI_FetchNext(rs))
 {
-    OCI_Statement *inner = OCI_GetStatement(rs, 2);   /* cursor column → stmt  */
+    OCI_Statement *inner = OCI_GetStatement(rs, 1);   /* cursor column → stmt  */
     OCI_Resultset *rs2  = OCI_GetResultset(inner);    /* borrowed both         */
     while (OCI_FetchNext(rs2))
     {
-        printf("  %s\n", OCI_GetString(rs2, 1));
+        printf("  %s\n", OCI_GetString(rs2, 0));
     }
 }
 ```
@@ -100,10 +100,10 @@ while (OCI_FetchNext(rs))
 ```cpp
 for (auto &&row : rs.Rows())
 {
-    Statement inner = row.Get<Statement>(2);
+    Statement inner = row.Get<Statement>(1);
     for (auto &&r2 : inner.GetResultset().Rows())
     {
-        std::cout << "  " << r2.Get<String>(1) << "\n";
+        std::cout << "  " << r2.Get<String>(0) << "\n";
     }
 }
 ```

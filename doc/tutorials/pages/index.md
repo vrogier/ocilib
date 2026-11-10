@@ -23,7 +23,7 @@ OCILIB keeps the power and removes the pain:
   LOB, object, collection…) is an opaque `OCI_<Type>` handle with a `Create`/`Free`
   lifecycle in C, and an RAII class in C++.
 - **Typed API** — no `OCIAttrGet`/`OCIAttrSet` generic calls; you call strongly-typed
-  functions like `OCI_GetString(rs, 1)` or `OCI_BindDate(st, ":d", &date)`.
+  functions like `OCI_GetString(rs, 0)` or `OCI_BindDate(st, ":d", &date)`.
 - **Full Oracle coverage** — scalar and LOB types, dates/timestamps/intervals, objects,
   collections, REFs, AQ messaging, change notification, direct path loading, JSON DOM,
   SODA document store, sharding, and more.

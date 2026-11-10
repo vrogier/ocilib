@@ -78,7 +78,7 @@ OCI_Execute(st);
 OCI_ExecuteStmt(st, OTEXT("select embedding from docs where id = 1"));
 OCI_Resultset *rs = OCI_GetResultset(st);
 OCI_FetchNext(rs);
-OCI_Vector *got = OCI_GetVector(rs, 1);            /* borrowed */
+OCI_Vector *got = OCI_GetVector(rs, 0);            /* borrowed */
 
 OCI_VectorFormat fmt; OCI_UInt32 dims;
 OCI_VectorGetInfo(got, &fmt, &dims);
@@ -94,7 +94,7 @@ st.ExecutePrepared();
 st.Execute("select embedding from docs where id = 1");
 if (st.GetResultset().Next())
 {
-    Vector got = st.GetResultset().Get<Vector>(1); /* borrowed */
+    Vector got = st.GetResultset().Get<Vector>(0); /* borrowed */
     std::vector<float> vals(got.GetDimensionCount());
     got.Get<float>(vals.data());
 }

@@ -63,7 +63,7 @@ std::cout << name.GetString() << "\n";            /* RAII — nothing to free   
 /* object ops */
 OCI_JsonNodeGetFieldCount(node);
 OCI_JsonNodeGetFieldByName(node, OTEXT("key"));
-OCI_JsonNodeGetFieldByIndex(node, i);         /* 1-based */
+OCI_JsonNodeGetFieldByIndex(node, i);         /* 0-based */
 OCI_JsonNodeGetFieldName(node, i);
 OCI_JsonNodeHasField(node, OTEXT("key"));
 OCI_JsonNodeSetField(node, OTEXT("key"), value_node);
@@ -72,7 +72,7 @@ OCI_JsonNodeRenameField(node, OTEXT("old"), OTEXT("new"));
 
 /* array ops */
 OCI_JsonNodeGetItemCount(node);
-OCI_JsonNodeGetItem(node, i);                 /* 1-based */
+OCI_JsonNodeGetItem(node, i);                 /* 0-based */
 OCI_JsonNodeSetItem(node, i, item);
 OCI_JsonNodeAppendItem(node, item);
 OCI_JsonNodeInsertItem(node, i, item);
@@ -84,7 +84,7 @@ OCI_JsonNodeRemoveItems(node, start, count);  /* range delete */
 /* object ops */
 node.GetFieldCount();
 node["key"];                                    /* field access             */
-node.GetFieldByIndex(i);                        /* 1-based                  */
+node.GetFieldByIndex(i);                        /* 0-based                  */
 node.GetFieldName(i);
 node.HasField("key");
 node.SetField("key", value_node);
@@ -160,8 +160,8 @@ auto num = emp["sal"].GetNumeric<Number>();/* covers exact Number too */
 - **Leaking extracted nodes** — extracted/created nodes are owned refs; free them
   (root is doc-owned). C++ RAII covers this.
 - **Editing immutable docs** — mark the document mutable first.
-- **Mixed indexing** — `node[i]` and iterators are 0-based; index-taking
-  methods (`GetItem`, `GetFieldByIndex`) stay 1-based like SQL.
+- **Indexing** — `node[i]`, iterators and all index-taking methods
+  (`GetItem`, `GetFieldByIndex`) are 0-based uniformly.
 
 ## Recap
 

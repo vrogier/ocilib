@@ -11,7 +11,7 @@ demos: [fetch.c, fetch.cpp]
 **Objectives** — by the end of this page you will be able to:
 
 - drive the fetch loop and know what each call does to the cursor
-- read columns by 1-based index **or** by name
+- read columns by 0-based index **or** by name
 - detect NULLs correctly
 - use C++ `Get<T>`/`GetOptional<T>`/iterators
 
@@ -27,7 +27,7 @@ that drive it:
 | C function | C++ method | Role |
 |------------|------------|------|
 | `OCI_FetchNext` | `Next()` / `operator++` | advance to the next row; `FALSE`/`false` at the end |
-| `OCI_GetCurrentRow` | `GetCurrentRow()` | 1-based index of the row you're on |
+| `OCI_GetCurrentRow` | `GetCurrentRow()` | 0-based index of the row you're on |
 | `OCI_GetRowCount` | `GetCount()` | rows fetched so far |
 | `OCI_GetColumnCount` | `GetColumnCount()` | how many columns the row has |
 | `OCI_GetColumnIndex` | `GetColumnIndex(name)` | resolve a column name to its index |
@@ -41,8 +41,8 @@ Every getter comes in pairs — the `ByName` variant resolves the name to an ind
 while (OCI_FetchNext(rs))
 {
     printf("%6d %-12s %8.2f\n",
-           OCI_GetInt(rs, 1),                          /* by index    */
-           OCI_GetString(rs, 2),
+           OCI_GetInt(rs, 0),                          /* by index    */
+           OCI_GetString(rs, 1),
            OCI_GetDouble(rs, OCI_GetColumnIndex(rs, OTEXT("sal"))));
     /* or directly: OCI_GetDoubleByName(rs, OTEXT("sal")) */
 }
@@ -51,8 +51,8 @@ while (OCI_FetchNext(rs))
 ```cpp
 for (auto &&row : rs.Rows())
 {
-    std::cout << row.Get<int>(1) << ' '
-              << row.Get<String>(2) << ' '
+    std::cout << row.Get<int>(0) << ' '
+              << row.Get<String>(1) << ' '
               << row.Get<double>("sal") << '\n';     // by name
 }
 ```

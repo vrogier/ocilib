@@ -64,10 +64,10 @@ deq1.SetNavigation(Dequeue::NavFirst);
 
 std::vector<Dequeue> deqs{deq1, deq2};
 env.SetSubscriptionPort(9998);
-con.DequeueSubscribe(deqs, 0, on_message);          /* async! */
+Dequeue::Subscribe(con, deqs, 0, on_message);          /* async! */
 
 /* … later … */
-con.DequeueUnsubscribe(deqs);
+for (auto& dq : deqs) dq.Unsubscribe();
 ```
 :::
 

@@ -60,7 +60,7 @@ OCI_TypeInfo *ti = OCI_TypeInfoGet(cn, OTEXT("employees"), OCI_TIF_TABLE);
 printf("%s has %u columns\n",
        OCI_TypeInfoGetName(ti), OCI_TypeInfoGetColumnCount(ti));
 
-for (OCI_UInt32 i = 1; i <= OCI_TypeInfoGetColumnCount(ti); i++)
+for (OCI_UInt32 i = 0; i < OCI_TypeInfoGetColumnCount(ti); ++i)
 {
     OCI_Column *col = OCI_TypeInfoGetColumn(ti, i);
     printf("  %-12s %s\n", OCI_ColumnGetName(col), OCI_ColumnGetSQLType(col));
@@ -72,7 +72,7 @@ OCI_TypeInfoFree(ti);
 TypeInfo ti(con, "employees", TypeInfo::Table);
 std::cout << ti.GetName() << " has " << ti.GetColumnCount() << " columns\n";
 
-for (UInt32 i = 1; i <= ti.GetColumnCount(); i++)
+for (UInt32 i = 0; i < ti.GetColumnCount(); ++i)
 {
     Column col = ti.GetColumn(i);
     std::cout << "  " << col.GetName() << " " << col.GetSQLType() << "\n";

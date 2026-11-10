@@ -90,7 +90,7 @@ coll.Append(e);
 | `OCI_CollGetCount` | `GetCount()` | same as size for most cases |
 | `OCI_CollGetType` | `GetType()` | element/collection type info |
 | `OCI_CollGetTypeInfo` | `GetTypeInfo()` | describing TypeInfo |
-| `OCI_CollGetElem` | `Get<Elem>(i)` / typed `Get(i)` | element at index `i` (1-based) |
+| `OCI_CollGetElem` | `Get<Elem>(i)` / typed `Get(i)` | element at index `i` (0-based) |
 | `OCI_CollSetElem` | `Set` | replace element `i` |
 | `OCI_CollClear` | `Clear()` | empty it |
 | `OCI_CollTrim` | `Trim(n)` | drop trailing elements |
@@ -102,8 +102,8 @@ coll.Append(e);
 
 :::sample
 ```c
-OCI_Coll *c = OCI_GetColl(rs, 1);                 /* borrowed */
-for (OCI_UInt32 i = 1; i <= OCI_CollGetSize(c); i++)
+OCI_Coll *c = OCI_GetColl(rs, 0);                 /* borrowed */
+for (OCI_UInt32 i = 0; i < OCI_CollGetSize(c); ++i)
 {
     OCI_Elem *e = OCI_CollGetElem(c, i);
     printf("%s\n", OCI_ElemGetString(e));
@@ -112,8 +112,8 @@ for (OCI_UInt32 i = 1; i <= OCI_CollGetSize(c); i++)
 ```
 
 ```cpp
-Coll c = row.Get<Coll>(1);                          /* borrowed */
-for (UInt32 i = 1; i <= c.GetSize(); i++)
+Coll c = row.Get<Coll>(0);                          /* borrowed */
+for (UInt32 i = 0; i < c.GetSize(); ++i)
 {
     Elem e = c.GetElem(i);                          /* owned — RAII frees */
     std::cout << e.Get<String>() << "\n";
@@ -148,8 +148,7 @@ for (auto &&p : prods)
 
 ## Common pitfalls
 
-- **`CollGetElem`/`GetElem` indexes** — 1-based, like everything OCILIB; but
-  `coll[i]` and iterator positions are 0-based.
+- **`CollGetElem`/`GetElem` indexes** — 0-based, like everything OCILIB.
 - **Forgetting `ElemFree`** — elements pulled from a coll are owned refs.
 - **Nested-table vs VARRAY max** — `GetMax` is 0 for unbounded nested tables.
 

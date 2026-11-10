@@ -62,7 +62,7 @@ st.ExecutePrepared();
 ```c
 OCI_ExecuteStmt(st, OTEXT("select body from articles where id = :i"));
 /* bind :i, execute, fetch */
-OCI_Lob *clob = OCI_GetLob(rs, 1);      /* borrowed locator */
+OCI_Lob *clob = OCI_GetLob(rs, 0);      /* borrowed locator */
 
 otext buf[4096]; OCI_UInt32 n = sizeof(buf);
 while (OCI_LobRead(clob, buf, &n))      /* n = chars/bytes actually read */
@@ -75,7 +75,7 @@ while (OCI_LobRead(clob, buf, &n))      /* n = chars/bytes actually read */
 ```cpp
 st.Execute("select body from articles where id = :i");
 /* bind :i, execute, fetch */
-Lob clob = st.GetResultset().Get<Lob>(1); /* borrowed locator */
+Lob clob = st.GetResultset().Get<Lob>(0); /* borrowed locator */
 
 otext buf[4096]; UInt32 n = sizeof(buf);
 while (clob.Read(buf, n))

@@ -38,9 +38,9 @@ DirectPath dp(tbl, NUM_COLS, MAX_ROWS);
 :::sample
 ```c
 /* 1. describe columns */
-OCI_DirPathSetColumn(dp, 1, OTEXT("val_int"),  20, NULL);
-OCI_DirPathSetColumn(dp, 2, OTEXT("val_str"),  30, NULL);
-OCI_DirPathSetColumn(dp, 3, OTEXT("val_date"),  8, OTEXT("YYYYMMDD"));
+OCI_DirPathSetColumn(dp, 0, OTEXT("val_int"),  20, NULL);
+OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"),  30, NULL);
+OCI_DirPathSetColumn(dp, 2, OTEXT("val_date"),  8, OTEXT("YYYYMMDD"));
 
 /* 2. prepare → server allocates the row buffer */
 OCI_DirPathPrepare(dp);
@@ -50,9 +50,9 @@ OCI_UInt32 max = OCI_DirPathGetMaxRows(dp);        /* capacity for this buffer *
 OCI_DirPathReset(dp);
 for (row = 0; row < max && more_data; row++)
 {
-    OCI_DirPathSetEntry(dp, row, 1, &ival,  sizeof(ival), TRUE);
-    OCI_DirPathSetEntry(dp, row, 2, sval,   strlen(sval),  TRUE);
-    OCI_DirPathSetEntry(dp, row, 3, dval,   strlen(dval),  TRUE);
+    OCI_DirPathSetEntry(dp, row, 0, &ival,  sizeof(ival), TRUE);
+    OCI_DirPathSetEntry(dp, row, 1, sval,   strlen(sval),  TRUE);
+    OCI_DirPathSetEntry(dp, row, 2, dval,   strlen(dval),  TRUE);
 }
 switch (OCI_DirPathConvert(dp))
 {
@@ -81,9 +81,9 @@ UInt32 max = dp.GetMaxRows();                  /* capacity for this buffer */
 dp.Reset();
 for (row = 0; row < max && more_data; row++)
 {
-    dp.SetEntry(row, 1, &ival, sizeof(ival), true);
-    dp.SetEntry(row, 2, sval,  strlen(sval),  true);
-    dp.SetEntry(row, 3, dval,  strlen(dval),  true);
+    dp.SetEntry(row, 0, &ival, sizeof(ival), true);
+    dp.SetEntry(row, 1, sval,  strlen(sval),  true);
+    dp.SetEntry(row, 2, dval,  strlen(dval),  true);
 }
 switch (dp.Convert())
 {

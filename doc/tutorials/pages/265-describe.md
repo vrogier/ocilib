@@ -23,7 +23,7 @@ of its result — columns, types, sizes — without executing a single row:
 OCI_Describe(st, OTEXT("select empno, ename, sal from employees where deptno = :d"));
 
 OCI_Resultset *rs = OCI_GetResultset(st);     /* metadata-only resultset */
-for (OCI_UInt32 i = 1; i <= OCI_GetColumnCount(rs); i++)
+for (OCI_UInt32 i = 0; i < OCI_GetColumnCount(rs); ++i)
 {
     OCI_Column *col = OCI_GetColumn(rs, i);
     printf("%-15s %s\n", OCI_ColumnGetName(col), OCI_ColumnGetSQLType(col));
@@ -34,7 +34,7 @@ for (OCI_UInt32 i = 1; i <= OCI_GetColumnCount(rs); i++)
 st.Describe("select empno, ename, sal from employees where deptno = :d");
 
 Resultset rs = st.GetResultset();           /* metadata-only */
-for (UInt32 i = 1; i <= rs.GetColumnCount(); i++)
+for (UInt32 i = 0; i < rs.GetColumnCount(); ++i)
     std::cout << rs.GetColumn(i).GetName() << " "
               << rs.GetColumn(i).GetSQLType() << "\n";
 ```

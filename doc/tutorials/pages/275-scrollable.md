@@ -60,11 +60,11 @@ Seek directions:
 OCI_FetchLast(rs);                                  /* land on last row        */
 printf("total rows: %u\n", OCI_GetRowCount(rs));    /* full count now known    */
 
-OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, 3);             /* row 3                   */
+OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, 2);             /* row 3                   */
 OCI_FetchSeek(rs, OCI_SFD_RELATIVE, -1);            /* back one → row 2        */
 while (OCI_FetchPrev(rs))                           /* walk to the top         */
 {
-    printf("%s\n", OCI_GetString(rs, 2));
+    printf("%s\n", OCI_GetString(rs, 1));
 }
 ```
 
@@ -72,11 +72,11 @@ while (OCI_FetchPrev(rs))                           /* walk to the top         *
 rs.Last();
 std::cout << "total rows: " << rs.GetCount() << "\n";
 
-rs.Seek(Resultset::SeekAbsolute, 3);
+rs.Seek(Resultset::SeekAbsolute, 2);
 rs.Seek(Resultset::SeekRelative, -1);
 while (rs.Prev())
 {
-    std::cout << rs.Get<String>(2) << "\n";
+    std::cout << rs.Get<String>(1) << "\n";
 }
 ```
 :::

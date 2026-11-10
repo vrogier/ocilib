@@ -51,7 +51,7 @@ st.Execute("select count(*) from employees");
 UInt32 n = 0;
 if (st.GetResultset().Next())
 {
-    n = st.GetResultset().Get<UInt32>(1);
+    n = st.GetResultset().Get<UInt32>(0);
 }
 ```
 :::

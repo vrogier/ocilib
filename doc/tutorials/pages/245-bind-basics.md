@@ -56,7 +56,7 @@ OCI_Execute(st);                              /* reads &empno at execute time */
 OCI_Resultset *rs = OCI_GetResultset(st);
 while (OCI_FetchNext(rs))
 {
-    printf("%s %.2f\n", OCI_GetString(rs, 1), OCI_GetDouble(rs, 2));
+    printf("%s %.2f\n", OCI_GetString(rs, 0), OCI_GetDouble(rs, 1));
 }
 
 empno = 7839;                                 /* same statement, new value */
@@ -73,7 +73,7 @@ st.ExecutePrepared();
 Resultset rs = st.GetResultset();
 while (rs++)
 {
-    std::cout << rs.Get<String>(1) << " " << rs.Get<double>(2) << "\n";
+    std::cout << rs.Get<String>(0) << " " << rs.Get<double>(1) << "\n";
 }
 
 empno = 7839;

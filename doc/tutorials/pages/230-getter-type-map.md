@@ -64,9 +64,9 @@ Every getter also exists in a `*ByName` variant that resolves the column name.
 `GetOptional<T>` wraps any of them in `std::optional` for NULL-safety.
 
 ```cpp
-auto name  = rs.Get<String>(2);
+auto name  = rs.Get<String>(1);
 auto photo = rs.GetOptional<Lob>(5);      // std::optional<Lob>
-auto doc   = rs.Get<Json>(6);
+auto doc   = rs.Get<Json>(5);
 ```
 
 ## Try it yourself

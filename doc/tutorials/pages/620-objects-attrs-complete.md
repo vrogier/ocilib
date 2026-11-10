@@ -46,7 +46,7 @@ Plus utilities: `OCI_ObjectGetStruct` (whole object → C struct, same rules as
 
 :::sample
 ```c
-OCI_Object *sale = OCI_GetObject(rs, 1);
+OCI_Object *sale = OCI_GetObject(rs, 0);
 
 OCI_Object *vendor = OCI_ObjectGetObject(sale, OTEXT("VENDOR"));   /* borrowed */
 printf("vendor: %s\n", OCI_ObjectGetString(vendor, OTEXT("NAME")));
@@ -57,7 +57,7 @@ OCI_Ref  *r    = OCI_ObjectGetRef (sale, OTEXT("MANAGER_REF"));    /* → page 6
 ```
 
 ```cpp
-Object sale = row.Get<Object>(1);
+Object sale = row.Get<Object>(0);
 
 Object vendor = sale.Get<Object>("VENDOR");       /* owned ref — RAII frees it */
 std::cout << "vendor: " << vendor.Get<String>("NAME") << "\n";
@@ -77,7 +77,7 @@ Ref r = sale.Get<Ref>("MANAGER_REF");                             /* → page 64
 :::sample
 ```c
 OCI_TypeInfo *ti = OCI_ObjectGetTypeInfo(obj);
-for (OCI_UInt32 i = 1; i <= OCI_TypeInfoGetColumnCount(ti); i++)
+for (OCI_UInt32 i = 0; i < OCI_TypeInfoGetColumnCount(ti); ++i)
 {
     OCI_Column *a = OCI_TypeInfoGetColumn(ti, i);
     const otext *n = OCI_ColumnGetName(a);
@@ -88,7 +88,7 @@ for (OCI_UInt32 i = 1; i <= OCI_TypeInfoGetColumnCount(ti); i++)
 
 ```cpp
 TypeInfo ti = obj.GetTypeInfo();
-for (UInt32 i = 1; i <= ti.GetColumnCount(); i++)
+for (UInt32 i = 0; i < ti.GetColumnCount(); ++i)
 {
     Column a = ti.GetColumn(i);
     String n = a.GetName();
@@ -104,7 +104,7 @@ Where C needs one call per attribute type, C++ collapses the whole matrix into a
 single templated accessor — the attribute's column type decides `T`:
 
 ```cpp
-Object s = row.Get<Object>(1);
+Object s = row.Get<Object>(0);
 
 int code    = s.Get<int>("CODE");
 String name = s.Get<String>("NAME");

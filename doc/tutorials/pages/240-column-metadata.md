@@ -22,7 +22,7 @@ You don't create columns: ask the resultset for them, they're **borrowed** (owne
 :::sample
 ```c
 OCI_UInt32 n = OCI_GetColumnCount(rs);
-for (OCI_UInt32 i = 1; i <= n; i++)
+for (OCI_UInt32 i = 0; i < n; ++i)
 {
     OCI_Column *col = OCI_GetColumn(rs, i);             /* or OCI_GetColumnByName */
     /* … read attributes … */
@@ -30,7 +30,7 @@ for (OCI_UInt32 i = 1; i <= n; i++)
 ```
 
 ```cpp
-for (UInt32 i = 1; i <= rs.GetColumnCount(); i++)
+for (UInt32 i = 0; i < rs.GetColumnCount(); ++i)
 {
     Column col = rs.GetColumn(i);          /* or rs.GetColumn("ENAME") */
     /* … read attributes … */
@@ -67,7 +67,7 @@ for (UInt32 i = 1; i <= rs.GetColumnCount(); i++)
 ```c
 static void describe_resultset(OCI_Resultset *rs)
 {
-    for (OCI_UInt32 i = 1; i <= OCI_GetColumnCount(rs); i++)
+    for (OCI_UInt32 i = 0; i < OCI_GetColumnCount(rs); ++i)
     {
         OCI_Column *col = OCI_GetColumn(rs, i);
         printf("#%-2u %-20s %-15s size=%-4u prec=%u scale=%u %s\n",
@@ -85,7 +85,7 @@ static void describe_resultset(OCI_Resultset *rs)
 ```cpp
 static void describe_resultset(Resultset &rs)
 {
-    for (UInt32 i = 1; i <= rs.GetColumnCount(); i++)
+    for (UInt32 i = 0; i < rs.GetColumnCount(); ++i)
     {
         Column col = rs.GetColumn(i);
         std::cout << "#" << i << " " << col.GetName() << " " << col.GetSQLType()

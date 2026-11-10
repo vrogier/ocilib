@@ -45,7 +45,7 @@ OCI_Resultset *rs = OCI_GetResultset(st);
 
 while (OCI_FetchNext(rs))
 {
-    OCI_Long *lg = OCI_GetLong(rs, 1);             /* borrowed — statement owns it */
+    OCI_Long *lg = OCI_GetLong(rs, 0);             /* borrowed — statement owns it */
     unsigned char buf[8192];
     OCI_UInt32 len = sizeof(buf);
     while (OCI_LongRead(lg, buf, &len))            /* FALSE when done */
@@ -62,7 +62,7 @@ st.Execute("select big_text from articles");
 
 for (auto &&row : st.GetResultset().Rows())
 {
-    Long lg = row.Get<Long>(1);                     /* borrowed */
+    Long lg = row.Get<Long>(0);                     /* borrowed */
     unsigned char buf[8192];
     UInt32 len = sizeof(buf);
     while (lg.Read(buf, len))

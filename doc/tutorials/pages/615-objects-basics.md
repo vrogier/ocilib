@@ -82,7 +82,7 @@ OCI_ExecuteStmt(st, OTEXT("select value(s) from sales s"));
 OCI_Resultset *rs = OCI_GetResultset(st);
 while (OCI_FetchNext(rs))
 {
-    OCI_Object *s = OCI_GetObject(rs, 1);          /* borrowed */
+    OCI_Object *s = OCI_GetObject(rs, 0);          /* borrowed */
     printf("%d %s %.2f\n",
            OCI_ObjectGetInt(s, OTEXT("CODE")),
            OCI_ObjectGetString(s, OTEXT("NAME")),
@@ -94,7 +94,7 @@ while (OCI_FetchNext(rs))
 st.Execute("select value(s) from sales s");
 for (auto &&row : st.GetResultset().Rows())
 {
-    Object s = row.Get<Object>(1);                 /* borrowed */
+    Object s = row.Get<Object>(0);                 /* borrowed */
     std::cout << s.Get<int>("CODE") << " "
               << s.Get<String>("NAME") << " "
               << s.Get<double>("PRICE") << "\n";

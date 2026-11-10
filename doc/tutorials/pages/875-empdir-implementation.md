@@ -78,8 +78,8 @@ static int cmd_list(int dept)
     while (OCI_FetchNext(rs))
     {
         printf("%5i  %-10s  %-9s  %8.2f\n",
-               OCI_GetInt(rs, 1), OCI_GetString(rs, 2),
-               OCI_GetString(rs, 3), OCI_GetDouble(rs, 4));
+               OCI_GetInt(rs, 0), OCI_GetString(rs, 1),
+               OCI_GetString(rs, 2), OCI_GetDouble(rs, 3));
     }
 
     OCI_StatementFree(st);
@@ -101,12 +101,12 @@ static int cmd_get(int empno)
     OCI_Resultset *rs = OCI_GetResultset(st);
     if (OCI_FetchNext(rs))
     {
-        OCI_Date *d = OCI_GetDate(rs, 4);
+        OCI_Date *d = OCI_GetDate(rs, 3);
         otext buf[64];
         OCI_DateToText(d, OTEXT("YYYY-MM-DD"), 63, buf);
         printf("%s  %s  %.2f  %s\n",
-               OCI_GetString(rs, 1), OCI_GetString(rs, 2),
-               OCI_GetDouble(rs, 3), buf);
+               OCI_GetString(rs, 0), OCI_GetString(rs, 1),
+               OCI_GetDouble(rs, 2), buf);
     }
     else
     {
@@ -304,7 +304,7 @@ static int cmd_profile(int empno)
     OCI_Resultset *rs = OCI_GetResultset(st);
     if (OCI_FetchNext(rs) && !OCI_IsNull(rs, 1))
     {
-        OCI_Json *doc = OCI_GetJson(rs, 1);
+        OCI_Json *doc = OCI_GetJson(rs, 0);
         OCI_JsonNode *root = OCI_JsonGetRoot(doc);
 
         const otext *skill = OTEXT("<none>");
@@ -406,8 +406,8 @@ static int cmd_list(int dept)
     st.Execute();
     for (auto &&row : st.GetResultset().Rows())
     {
-        std::cout << row.Get<int>(1) << "  " << row.Get<String>(2) << "  "
-                  << row.Get<String>(3) << "  " << row.Get<double>(4) << "\n";
+        std::cout << row.Get<int>(0) << "  " << row.Get<String>(1) << "  "
+                  << row.Get<String>(2) << "  " << row.Get<double>(3) << "\n";
     }
     return 0;
 }
@@ -426,8 +426,8 @@ static int cmd_get(int empno)
     Resultset rs = st.GetResultset();
     if (rs.FetchNext())
     {
-        std::cout << rs.Get<String>(1) << "  " << rs.Get<String>(2) << "  "
-                  << rs.Get<double>(3) << "  " << rs.Get<Date>(4).ToString() << "\n";
+        std::cout << rs.Get<String>(0) << "  " << rs.Get<String>(1) << "  "
+                  << rs.Get<double>(2) << "  " << rs.Get<Date>(3).ToString() << "\n";
     }
     else
     {
@@ -600,7 +600,7 @@ static int cmd_profile(int empno)
     Resultset rs = st.GetResultset();
     if (rs.FetchNext() && !rs.IsNull(1))
     {
-        Json doc = rs.Get<Json>(1);
+        Json doc = rs.Get<Json>(0);
         JsonNode root = doc.GetRoot();
 
         String skill = "<none>";

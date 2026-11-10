@@ -35,7 +35,7 @@ OCI_ExecuteStmt(st, OTEXT("select shape from shapes"));
 OCI_Resultset *rs = OCI_GetResultset(st);
 while (OCI_FetchNext(rs))
 {
-    OCI_Object *poly = OCI_GetObject(rs, 1);
+    OCI_Object *poly = OCI_GetObject(rs, 0);
     printf("polygon %d (%s):\n",
            OCI_ObjectGetInt(poly, OTEXT("ID")),
            OCI_ObjectGetString(poly, OTEXT("NAME")));
@@ -62,7 +62,7 @@ while (OCI_FetchNext(rs))
 st.Execute("select shape from shapes");
 for (auto &&row : st.GetResultset().Rows())
 {
-    Object poly = row.Get<Object>(1);
+    Object poly = row.Get<Object>(0);
     std::cout << "polygon " << poly.Get<int>("ID") << " ("
               << poly.Get<String>("NAME") << "):\n";
 

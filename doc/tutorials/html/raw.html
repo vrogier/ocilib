@@ -44,7 +44,7 @@
 <span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span><span class="s">"select hextoraw('DEADBEEF') from dual"</span><span class="p">);</span>
 <span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Next</span><span class="p">())</span>
 <span class="p">{</span>
-<span class="w">    </span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Raw</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">        </span><span class="cm">/* std::vector&lt;unsigned char&gt; */</span>
+<span class="w">    </span><span class="n">buf</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Raw</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">        </span><span class="cm">/* std::vector&lt;unsigned char&gt; */</span>
 <span class="p">}</span>
 </pre></div>
 </div></div>
@@ -61,7 +61,7 @@ bytes written.</p>
 <h2 id="c-ocilibraw">C++ — <code>ocilib::Raw</code></h2>
 <p><code>ocilib::Raw</code> is <code>std::vector&lt;unsigned char&gt;</code>; getters <strong>fill it</strong> (v5 avoids the
 temp-copy):</p>
-<div class="highlight"><pre><span></span><code><span class="n">Raw</span><span class="w"> </span><span class="n">blob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Raw</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><span class="n">Raw</span><span class="w"> </span><span class="n">blob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Raw</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
 <span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":k"</span><span class="p">,</span><span class="w"> </span><span class="n">blob</span><span class="p">,</span><span class="w"> </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">In</span><span class="p">);</span>
 </code></pre></div>
 

@@ -37,7 +37,7 @@ the API"</em>, step by step.</p>
   LOB, object, collection…) is an opaque <code>OCI_&lt;Type&gt;</code> handle with a <code>Create</code>/<code>Free</code>
   lifecycle in C, and an RAII class in C++.</li>
 <li><strong>Typed API</strong> — no <code>OCIAttrGet</code>/<code>OCIAttrSet</code> generic calls; you call strongly-typed
-  functions like <code>OCI_GetString(rs, 1)</code> or <code>OCI_BindDate(st, ":d", &amp;date)</code>.</li>
+  functions like <code>OCI_GetString(rs, 0)</code> or <code>OCI_BindDate(st, ":d", &amp;date)</code>.</li>
 <li><strong>Full Oracle coverage</strong> — scalar and LOB types, dates/timestamps/intervals, objects,
   collections, REFs, AQ messaging, change notification, direct path loading, JSON DOM,
   SODA document store, sharding, and more.</li>

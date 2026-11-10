@@ -34,7 +34,7 @@ OCI_ExecuteStmt(st, OTEXT("select xmldoc from orders where id = :i"));
 OCI_Resultset *rs = OCI_GetResultset(st);
 if (OCI_FetchNext(rs))
 {
-    OCI_XmlType *x = OCI_GetXmlType(rs, 1);          /* borrowed */
+    OCI_XmlType *x = OCI_GetXmlType(rs, 0);          /* borrowed */
     printf("%u bytes\n", OCI_XmlTypeGetContentSize(x));
     printf("%s\n",     OCI_XmlTypeGetContent(x));     /* otext* XML  */
 }
@@ -44,7 +44,7 @@ if (OCI_FetchNext(rs))
 st.Execute("select xmldoc from orders where id = :i");
 if (st.GetResultset().Next())
 {
-    XmlType x = st.GetResultset().Get<XmlType>(1);   /* borrowed */
+    XmlType x = st.GetResultset().Get<XmlType>(0);   /* borrowed */
     std::cout << x.GetContent() << "\n";
 }
 ```

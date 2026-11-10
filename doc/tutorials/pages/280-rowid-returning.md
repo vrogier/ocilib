@@ -35,7 +35,7 @@ st.Execute("select rowid from employees where empno = 7839");
 std::string rid;
 if (st.GetResultset().Next())
 {
-    rid = st.GetResultset().Get<String>(1);   /* ROWID arrives as a string */
+    rid = st.GetResultset().Get<String>(0);   /* ROWID arrives as a string */
 }
 ```
 :::
@@ -62,7 +62,7 @@ OCI_Execute(st);
 OCI_Resultset *rs = OCI_GetResultset(st);      /* rows returned by RETURNING */
 while (OCI_FetchNext(rs))
 {
-    printf("emp %d → new sal %.2f\n", OCI_GetInt(rs, 1), OCI_GetDouble(rs, 2));
+    printf("emp %d → new sal %.2f\n", OCI_GetInt(rs, 0), OCI_GetDouble(rs, 1));
 }
 ```
 
@@ -74,7 +74,7 @@ st.Register(":new_sal");
 st.ExecutePrepared();
 for (auto &&row : st.GetResultset().Rows())
 {
-    std::cout << row.Get<int>(1) << " -> " << row.Get<double>(2) << "\n";
+    std::cout << row.Get<int>(0) << " -> " << row.Get<double>(1) << "\n";
 }
 ```
 :::

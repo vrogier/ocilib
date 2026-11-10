@@ -43,7 +43,7 @@ String name;
 st.Execute("select ename from employees where empno = 7839");
 if (st.GetResultset().Next())
 {
-    name = st.GetResultset().Get<String>(1);   /* String = otext-typed */
+    name = st.GetResultset().Get<String>(0);   /* String = otext-typed */
 }
 ```
 :::
@@ -63,12 +63,12 @@ override on the connection:
 
 :::sample
 ```c
-OCI_SetFormat(cn, OCI_FMT_DATE, OTEXT("YYYY-MM-DD"));
+OCI_SetFormat(env, OCI_FMT_DATE, OTEXT("YYYY-MM-DD"));
 /* now string getters on a DATE column return ISO-style text */
 ```
 
 ```cpp
-con.SetFormat(FormatType::FormatDate, "YYYY-MM-DD");
+env.SetFormat(FormatType::FormatDate, "YYYY-MM-DD");
 ```
 :::
 

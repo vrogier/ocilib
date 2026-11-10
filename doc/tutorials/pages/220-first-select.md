@@ -23,7 +23,7 @@ rows the server has waiting. Two facts define how you use it:
 - it's **borrowed**: the resultset lives inside the statement — free the statement
   and the resultset dies with it;
 - it's **forward-moving**: a fetch call advances to the next row, and the typed
-  getters always read the *current* row's columns (1-based, like SQL).
+  getters always read the *current* row's columns (0-based).
 
 The read loop never changes:
 
@@ -74,12 +74,12 @@ int main(void)
     OCI_Resultset *rs = OCI_GetResultset(st);
     while (OCI_FetchNext(rs))
     {
-        printf("%5i %-10s %8.2f", OCI_GetInt(rs, 1), OCI_GetString(rs, 2),
-               OCI_GetDouble(rs, 3));
+        printf("%5i %-10s %8.2f", OCI_GetInt(rs, 0), OCI_GetString(rs, 1),
+               OCI_GetDouble(rs, 2));
 
         if (!OCI_IsNull(rs, 4))                 /* comm is nullable */
         {
-            printf("  comm=%.2f", OCI_GetDouble(rs, 4));
+            printf("  comm=%.2f", OCI_GetDouble(rs, 3));
         }
 
         printf("\n");
@@ -115,8 +115,8 @@ int main()
         Resultset rs = st.GetResultset();
         for (auto &&row : rs.Rows())                   /* v5: range-for iterator */
         {
-            std::cout << row.Get<int>(1) << " " << row.Get<String>(2)
-                      << " " << row.Get<double>(3);
+            std::cout << row.Get<int>(0) << " " << row.Get<String>(1)
+                      << " " << row.Get<double>(2);
 
             auto comm = row.GetOptional<double>(4);   /* std::optional — NULL-safe */
             if (comm)
@@ -158,7 +158,7 @@ int main()
 
 - **Reading before fetching** — getters only see the *current* row; call
   `OCI_FetchNext` first.
-- **Using index 0** — columns start at 1. `OCI_GetX(rs, 0)` fails.
+- **Using a 1-based index** — columns start at 0. `OCI_GetX(rs, 1)` reads the *second* column, not the first.
 - **Getting a NULL `comm` as a number** — always test `OCI_IsNull` (C) or use
   `GetOptional<T>` (C++) on nullable columns.
 - **`ORA-00942: table or view does not exist`** — you forgot to run
@@ -167,7 +167,7 @@ int main()
 ## Recap
 
 - `ExecuteStmt` → `GetResultset` → `FetchNext` → typed getters is *the* OCILIB loop.
-- Columns are 1-based; getters accept index or name.
+- Columns are 0-based; getters accept index or name.
 - C++ adds `Get<T>` type inference, `GetOptional<T>` for NULLs, and iterators.
 
 **Next:** the full getter table — every `OCI_Get*` function and the SQL type each one

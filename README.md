@@ -184,19 +184,21 @@ Open the project or solution matching your Visual Studio version and build the d
 
 ## 8. Testing
 
-The unit test suite (`tests/`, gtest-based, ~850 tests covering the C and C++ APIs) requires a reachable Oracle database; connection parameters come from environment variables:
+The unit test suite (`tests/`, gtest-based, 2,100+ tests covering the C and C++ APIs) requires a reachable Oracle database; connection parameters are hardcoded in `tests/ocilib_tests.h` (`DBS`, `USR`, `PWD`, `SYS_USR`, `SYS_PWD`) — adjust them to your environment before building. The suite builds from `tests/ocilib_tests.sln` (MSVC) and runs as `ocilib_tests`.
+
+The standalone demos in `demo/` take their connection parameters from environment variables instead:
 
 - `OCILIB_DEMO_DB` — connection string (e.g. `localhost:1521/FREEPDB1`)
 - `OCILIB_DEMO_USR` — user name
 - `OCILIB_DEMO_PWD` — password
 
-Build the test project (or `make check` under autotools) and run `ocilib_tests`.
-
 ## 9. Documentation
 
 The complete OCILIB API reference is available online at https://ocilib.net/doc/html/.
 
-Migration guides for moving from OCILIB 4.x to 5.0 live in `doc/`:
+A step-by-step tutorial series ships with the sources under `doc/tutorials/` — ~90 lessons covering the whole C and C++ API, from first connection to JSON, SODA and sharding, with every code sample in both languages. Open `doc/tutorials/html/index.html` to read it offline.
+
+Migration guides for moving from OCILIB 4.x to 5.0 live in `doc/` — written so they can be fed to an agentic coding tool (precise find → replace rules with exact signatures):
 
 - `doc/migration-guide-c-api.md` — migrating the C API
 - `doc/migration-guide-cpp-api.md` — migrating the C++ API

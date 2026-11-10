@@ -72,7 +72,7 @@
 <span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span><span class="s">"select ename from employees where empno = 7839"</span><span class="p">);</span>
 <span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Next</span><span class="p">())</span>
 <span class="p">{</span>
-<span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">   </span><span class="cm">/* String = otext-typed */</span>
+<span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">   </span><span class="cm">/* String = otext-typed */</span>
 <span class="p">}</span>
 </pre></div>
 </div></div>
@@ -115,10 +115,10 @@ override on the connection:</p>
 </tr>
 </tbody>
 </table>
-<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_SetFormat</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_FMT_DATE</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"YYYY-MM-DD"</span><span class="p">));</span>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_SetFormat</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_FMT_DATE</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"YYYY-MM-DD"</span><span class="p">));</span>
 <span class="cm">/* now string getters on a DATE column return ISO-style text */</span>
 </pre></div>
-</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">con</span><span class="p">.</span><span class="n">SetFormat</span><span class="p">(</span><span class="n">FormatType</span><span class="o">::</span><span class="n">FormatDate</span><span class="p">,</span><span class="w"> </span><span class="s">"YYYY-MM-DD"</span><span class="p">);</span>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">env</span><span class="p">.</span><span class="n">SetFormat</span><span class="p">(</span><span class="n">FormatType</span><span class="o">::</span><span class="n">FormatDate</span><span class="p">,</span><span class="w"> </span><span class="s">"YYYY-MM-DD"</span><span class="p">);</span>
 </pre></div>
 </div></div>
 <h2 id="in-c-string-and-stringview">In C++ — <code>String</code> and <code>StringView</code></h2>

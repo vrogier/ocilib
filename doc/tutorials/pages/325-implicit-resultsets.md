@@ -53,7 +53,7 @@ while (rs)
 {
     while (OCI_FetchNext(rs))
     {
-        printf("%s\n", OCI_GetString(rs, 1));
+        printf("%s\n", OCI_GetString(rs, 0));
     }
     printf("---\n");
     rs = OCI_GetNextResultset(st);            /* NULL when no more */
@@ -67,7 +67,7 @@ st.Execute("declare c sys_refcursor; begin "
 for (Resultset rs = st.GetResultset(); rs; rs = st.GetNextResultset())
     for (auto &&row : rs.Rows())
     {
-        std::cout << row.Get<String>(1) << "\n";
+        std::cout << row.Get<String>(0) << "\n";
     }
 ```
 :::

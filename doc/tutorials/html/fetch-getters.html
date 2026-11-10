@@ -27,7 +27,7 @@
 <p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
 <ul>
 <li>drive the fetch loop and know what each call does to the cursor</li>
-<li>read columns by 1-based index <strong>or</strong> by name</li>
+<li>read columns by 0-based index <strong>or</strong> by name</li>
 <li>detect NULLs correctly</li>
 <li>use C++ <code>Get&lt;T&gt;</code>/<code>GetOptional&lt;T&gt;</code>/iterators</li>
 </ul>
@@ -54,7 +54,7 @@ that drive it:</p>
 <tr>
 <td><code>OCI_GetCurrentRow</code></td>
 <td><code>GetCurrentRow()</code></td>
-<td>1-based index of the row you're on</td>
+<td>0-based index of the row you're on</td>
 </tr>
 <tr>
 <td><code>OCI_GetRowCount</code></td>
@@ -78,16 +78,16 @@ that drive it:</p>
 <div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_FetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
 <span class="p">{</span>
 <span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%6d %-12s %8.2f</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
-<span class="w">           </span><span class="n">OCI_GetInt</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w">                          </span><span class="cm">/* by index    */</span>
-<span class="w">           </span><span class="n">OCI_GetString</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span>
+<span class="w">           </span><span class="n">OCI_GetInt</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w">                          </span><span class="cm">/* by index    */</span>
+<span class="w">           </span><span class="n">OCI_GetString</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span>
 <span class="w">           </span><span class="n">OCI_GetDouble</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_GetColumnIndex</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"sal"</span><span class="p">))));</span>
 <span class="w">    </span><span class="cm">/* or directly: OCI_GetDoubleByName(rs, OTEXT("sal")) */</span>
 <span class="p">}</span>
 </pre></div>
 </div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">row</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Rows</span><span class="p">())</span>
 <span class="p">{</span>
-<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">' '</span>
-<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">' '</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">' '</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">' '</span>
 <span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"sal"</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">'\n'</span><span class="p">;</span><span class="w">     </span><span class="c1">// by name</span>
 <span class="p">}</span>
 </pre></div>

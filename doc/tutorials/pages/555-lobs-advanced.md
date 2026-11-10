@@ -41,13 +41,13 @@ server:
 
 :::sample
 ```c
-OCI_Lob *a = OCI_GetLob(rs, 1);            /* source row's lob  */
+OCI_Lob *a = OCI_GetLob(rs, 0);            /* source row's lob  */
 OCI_Lob *b = OCI_LobCreate(cn, OCI_CLOB);  /* new temp lob      */
 OCI_LobAppendLob(b, a);                    /* a's content → b   */
 ```
 
 ```cpp
-Lob a = st.GetResultset().Get<Lob>(1);     /* source row's lob  */
+Lob a = st.GetResultset().Get<Lob>(0);     /* source row's lob  */
 Lob b(con, Lob::Clob);                     /* new temp lob      */
 b.AppendLob(a);                            /* a's content → b   */
 ```

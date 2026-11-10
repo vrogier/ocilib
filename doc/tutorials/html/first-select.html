@@ -38,7 +38,7 @@ rows the server has waiting. Two facts define how you use it:</p>
 <li>it's <strong>borrowed</strong>: the resultset lives inside the statement — free the statement
   and the resultset dies with it;</li>
 <li>it's <strong>forward-moving</strong>: a fetch call advances to the next row, and the typed
-  getters always read the <em>current</em> row's columns (1-based, like SQL).</li>
+  getters always read the <em>current</em> row's columns (0-based).</li>
 </ul>
 <p>The read loop never changes:</p>
 <div class="highlight"><pre><span></span><code>Statement ──execute──&gt; Resultset ──fetch──&gt; row ──get──&gt; column values
@@ -82,12 +82,12 @@ the type you ask for.</p>
 <span class="w">    </span><span class="n">OCI_Resultset</span><span class="w"> </span><span class="o">*</span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_GetResultset</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
 <span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_FetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
 <span class="w">    </span><span class="p">{</span>
-<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"%5i %-10s %8.2f"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_GetInt</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_GetString</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span>
-<span class="w">               </span><span class="n">OCI_GetDouble</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">));</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"%5i %-10s %8.2f"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_GetInt</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_GetString</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span>
+<span class="w">               </span><span class="n">OCI_GetDouble</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">));</span>
 
 <span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">OCI_IsNull</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">))</span><span class="w">                 </span><span class="cm">/* comm is nullable */</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">"  comm=%.2f"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_GetDouble</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">));</span>
+<span class="w">            </span><span class="n">printf</span><span class="p">(</span><span class="s">"  comm=%.2f"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_GetDouble</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">));</span>
 <span class="w">        </span><span class="p">}</span>
 
 <span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
@@ -121,8 +121,8 @@ the type you ask for.</p>
 <span class="w">        </span><span class="n">Resultset</span><span class="w"> </span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">();</span>
 <span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">row</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Rows</span><span class="p">())</span><span class="w">                   </span><span class="cm">/* v5: range-for iterator */</span>
 <span class="w">        </span><span class="p">{</span>
-<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
-<span class="w">                      </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+<span class="w">            </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="w">                      </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
 
 <span class="w">            </span><span class="k">auto</span><span class="w"> </span><span class="n">comm</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">GetOptional</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span><span class="w">   </span><span class="cm">/* std::optional — NULL-safe */</span>
 <span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">comm</span><span class="p">)</span>
@@ -162,7 +162,7 @@ the type you ask for.</p>
 <ul>
 <li><strong>Reading before fetching</strong> — getters only see the <em>current</em> row; call
   <code>OCI_FetchNext</code> first.</li>
-<li><strong>Using index 0</strong> — columns start at 1. <code>OCI_GetX(rs, 0)</code> fails.</li>
+<li><strong>Using a 1-based index</strong> — columns start at 0. <code>OCI_GetX(rs, 1)</code> reads the <em>second</em> column, not the first.</li>
 <li><strong>Getting a NULL <code>comm</code> as a number</strong> — always test <code>OCI_IsNull</code> (C) or use
   <code>GetOptional&lt;T&gt;</code> (C++) on nullable columns.</li>
 <li><strong><code>ORA-00942: table or view does not exist</code></strong> — you forgot to run
@@ -171,7 +171,7 @@ the type you ask for.</p>
 <h2 id="recap">Recap</h2>
 <ul>
 <li><code>ExecuteStmt</code> → <code>GetResultset</code> → <code>FetchNext</code> → typed getters is <em>the</em> OCILIB loop.</li>
-<li>Columns are 1-based; getters accept index or name.</li>
+<li>Columns are 0-based; getters accept index or name.</li>
 <li>C++ adds <code>Get&lt;T&gt;</code> type inference, <code>GetOptional&lt;T&gt;</code> for NULLs, and iterators.</li>
 </ul>
 <p><strong>Next:</strong> the full getter table — every <code>OCI_Get*</code> function and the SQL type each one

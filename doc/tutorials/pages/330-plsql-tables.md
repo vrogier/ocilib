@@ -52,9 +52,9 @@ OCI_BindArrayOfStrings(st, OTEXT(":tab_values"), (otext*)tab_values, SIZE_VALUE,
 OCI_BindArrayOfStrings(st, OTEXT(":tab_out"),    (otext*)tab_out,    SIZE_VALUE, COUNT);
 
 /* directions: first two IN, third OUT */
+OCI_BindSetDirection(OCI_GetBind(st, 0), OCI_BDM_IN);
 OCI_BindSetDirection(OCI_GetBind(st, 1), OCI_BDM_IN);
-OCI_BindSetDirection(OCI_GetBind(st, 2), OCI_BDM_IN);
-OCI_BindSetDirection(OCI_GetBind(st, 3), OCI_BDM_OUT);
+OCI_BindSetDirection(OCI_GetBind(st, 2), OCI_BDM_OUT);
 
 OCI_Execute(st);        /* tab_out[][] now holds the combined strings */
 ```

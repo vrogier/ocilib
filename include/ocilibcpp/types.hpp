@@ -8971,7 +8971,7 @@ namespace ocilib
         * Unregister a previously registered notification
         *
         * @note
-        * Environment::Cleanup() will automatically unregister any non unregistered subscriptions
+        * The Environment destructor will automatically unregister any non unregistered subscriptions
         *
         * @note
         * If the database connection passed to Register()
