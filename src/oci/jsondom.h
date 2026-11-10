@@ -464,6 +464,9 @@ struct jznDomDoc
 #define JsonDomGetFieldPos(jdoc, obj, fname, fnlen) \
     ((jdoc)->mthds_jznDomDoc->jznDomGetFieldByName((jdoc),(obj),(fname),(fnlen)))
 
+#define JsonDomDocFree(jdoc) \
+    ((jdoc)->mthds_jznDomDoc->jznDomDocFree((jdoc)))
+
 #endif /* !JsonDomGetFields */
 
 #endif /* OCILIB_OCI_JZNDOM_H_INCLUDED */

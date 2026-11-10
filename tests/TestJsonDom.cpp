@@ -993,8 +993,6 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-
-
     class TestJsonDomNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestJsonDomNullArgs, CalledWithNullHandle_ReturnsFailure)

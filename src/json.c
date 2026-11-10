@@ -216,7 +216,7 @@ OCI_Boolean OcilibJsonFree
 
         if (NULL != json->jdoc)
         {
-            json->jdoc->mthds_jznDomDoc->jznDomDocFree(json->jdoc);
+            JsonDomDocFree(json->jdoc);
             json->jdoc = NULL;
         }
 
