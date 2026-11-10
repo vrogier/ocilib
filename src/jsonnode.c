@@ -690,19 +690,24 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByName
     hnd = JsonDomGetFieldByName(node->json->jdoc, (jznDomObject*)node->handle,
                                 orakey, (ub2) ora_len);
 
-    CHECK_JSON(node->json->jdoc, NULL != hnd);
+    if (NULL == hnd)
+    {
+        JsonNodeDrainDomError(node->json->jdoc);
+    }
+    else
+    {
+        field = OcilibJsonNodeInitialize(node->json, hnd, OCI_JNT_NULL);
 
-    field = OcilibJsonNodeInitialize(node->json, hnd, OCI_JNT_NULL);
+        CHECK_NULL(field);
 
-    CHECK_NULL(field);
+        field->domparent = node->handle;
 
-    field->domparent = node->handle;
+        ALLOC_BUFFER(OCI_IPC_VOID, field->domkey, ora_len + 1, 1);
 
-    ALLOC_BUFFER(OCI_IPC_VOID, field->domkey, ora_len + 1, 1);
+        memcpy(field->domkey, orakey, ora_len);
 
-    memcpy(field->domkey, orakey, ora_len);
-
-    field->domkeylen = (ub2) ora_len;
+        field->domkeylen = (ub2) ora_len;
+    }
 
     SET_RETVAL(field);
 

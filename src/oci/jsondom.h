@@ -108,6 +108,13 @@ typedef struct jznDomScalar  jznDomScalar;
 typedef struct jznDomObjFieldName jznDomObjFieldName;
 typedef struct jznDomNameValuePair jznDomNameValuePair;
 
+typedef sword jsonerr;
+
+typedef struct jznEventSource jznEventSource;
+typedef struct jznEventWriter jznEventWriter;
+typedef struct JsonDomVisitorInfo JsonDomVisitorInfo;
+typedef void (*JsonDomVisitorFunc)(JsonDomVisitorInfo *vinfo, void *appctx);
+
 typedef ub4 jznoct_hashidt;
 typedef ub4 jzndom_fnmOff;
 
@@ -259,10 +266,14 @@ typedef struct jznDomAPI
     jznDomNode *(*jznDomGetRootNode)(jznDomDoc *jdoc);
 
     ub4         (*jznDomGetNumObjField)(jznDomDoc *jdoc, jznDomObject *obj);
-    void        (*jznDomGetFieldVal)(void);
+        jznDomNode *(*jznDomGetFieldVal)(jznDomDoc *jdoc, jznDomObject *obj, jznDomObjFieldName *nmkey);
+
+
     jznDomNode *(*jznDomGetFieldByName)(jznDomDoc *jdoc, jznDomObject *obj,
                                         oratext *nm, ub2 nmlen);
-    void        (*jznDomGetAllFieldNamesAndVals)(void);
+        void (*jznDomGetAllFieldNamesAndVals)(jznDomDoc *jdoc, jznDomObject *obj, jznDomNameValuePair nvps[] /* OUT */);
+
+
     ub4         (*jznDomGetFieldNamesAndValsBatch)(jznDomDoc *jdoc,
                                                    jznDomObject *obj,
                                                    ub4 startPos, ub4 fetchSz,
@@ -271,7 +282,9 @@ typedef struct jznDomAPI
     ub4         (*jznDomGetArraySize)(jznDomDoc *jdoc, jznDomArray *ary);
     jznDomNode *(*jznDomGetArrayElem)(jznDomDoc *jdoc,
                                       jznDomArray *ary, ub4 index);
-    void        (*jznDomGetArrayElemBatch)(void);
+        ub4 (*jznDomGetArrayElemBatch)(jznDomDoc *jdoc, jznDomArray *ary, ub4 startPos, ub4 fetchSz, jznDomNode *ndary[] /* OUT */);
+
+
 
     sword       (*jznDomSetRootNode)(jznDomDoc *jdoc, jznDomNode *root);
     sword       (*jznDomPutFieldValue)(jznDomDoc *jdoc, jznDomObject *obj,
@@ -281,7 +294,9 @@ typedef struct jznDomAPI
                                  jznDomNode *node, ub4 pos);
     boolean     (*jznDomAppendItem)(jznDomDoc *jdoc,
                                    jznDomArray *arr, jznDomNode *node);
-    void        (*jznDomReplaceItem)(void);
+        boolean (*jznDomReplaceItem)(jznDomDoc *jdoc, jznDomArray *arr, jznDomNode *node, ub4 pos);
+
+
     boolean     (*jznDomDeleteField)(jznDomDoc *jdoc, jznDomObject *obj,
                                      jznDomObjFieldName *nmkey);
     jznDomNode *(*jznDomUnlinkField)(jznDomDoc *jdoc, jznDomObject *obj,
@@ -297,33 +312,55 @@ typedef struct jznDomAPI
     jznDomObject *(*jznDomNewObject)(jznDomDoc *jdoc, ub4 sz);
     jznDomArray  *(*jznDomNewArray)(jznDomDoc *jdoc, ub4 sz);
     jznDomScalar *(*jznDomNewScalar)(jznDomDoc *jdoc, jznScalarVal *val);
-    void          (*jznDomDocReset)(void);
-    void          (*jznDomDocFree)(void);
-    void          (*jznDomGetOutputEventSrc)(void);
+    void          (*jznDomDocReset)(jznDomDoc *jdoc);
+    void          (*jznDomDocFree)(jznDomDoc *jdoc);
+        jznEventSource *(*jznDomGetOutputEventSrc)(jznDomDoc *jdoc);
+
+
     boolean       (*jznDomEquals)(jznDomDoc *jdoc1, jznDomNode *nd1,
                                   jznDomDoc *jdoc2, jznDomNode *nd2);
     jznDomNode   *(*jznDomCopy)(jznDomDoc *srcdoc, jznDomNode *srcnode,
                                 jznDomDoc *destdoc);
-    void          (*jznDomValidFid)(void);
-    void          (*jznDomStoreField)(void);
-    void          (*jznDomPrintNode)(void);
-    void          (*jznDomNodeVisitor)(void);
+        jsonerr (*jznDomValidFid)(jznDomDoc *jdoc, jznDomObjFieldName *fnms, ub2 fnmsn);
+
+
+        jsonerr (*jznDomStoreField)(jznDomDoc *jdoc, oratext *fname, ub4 fnlen, jznDomObjFieldName *name /* OUT */);
+
+
+        jsonerr (*jznDomPrintNode)(jznDomDoc *jdoc, jznDomNode *node, jznEventWriter *writer);
+
+
+        void (*jznDomNodeVisitor)(jznDomDoc *jdoc, jznDomNode *node, JsonDomVisitorFunc func, void *ctx);
+
+
     jznDomScalar *(*jznDomNewScalarVal)(jznDomDoc *jdoc, jznvaltype typ, ...);
     boolean       (*jznDomDeleteFieldByName)(jznDomDoc *jdoc, jznDomObject *obj,
                                              oratext *name, ub2 namelen);
-    void          (*jznDomUnlinkFieldByName)(void);
+        jznDomNode *(*jznDomUnlinkFieldByName)(jznDomDoc *jdoc, jznDomObject *obj, oratext *name, ub2 namelen);
+
+
     void          (*jznDomFreeNode)(jznDomDoc *jdoc, jznDomNode *node);
     sword         (*jznDomGetScalarInfoOci)(jznDomDoc *jdoc, jznDomScalar *nd,
                                             jznScalarVal *val,
                                             JsonOCIVal *aux);
     oratext      *(*jznDomGetError)(jznDomDoc *jdoc,
                                     sword *err, boolean clear);
-    void          (*jznDomReplaceRootNode)(void);
-    void          (*jznDomImportFromEventSrc)(void);
+        jznDomNode *(*jznDomReplaceRootNode)(jznDomDoc *jdoc, jznDomNode *root);
+
+
+        jznDomNode *(*jznDomImportFromEventSrc)(jznDomDoc *jdoc, jznEventSource *evtsrc, boolean readOneItem);
+
+
     jznDomNode   *(*jznDomGetParent)(jznDomDoc *jdoc, jznDomNode *node);
-    void          (*jznDomSetNodeProperties)(void);
-    void          (*jznDomLoad)(void);
-    void          (*jznDomSerialize)(void);
+        jsonerr (*jznDomSetNodeProperties)(jznDomDoc *jdoc, jznDomNode *node, ...);
+
+
+        jznDomNode *(*jznDomLoad)(jznDomDoc *jdoc, jsonerr *jerr, ...);
+
+
+        jsonerr (*jznDomSerialize)(jznDomDoc *jdoc, ...);
+
+
 } jznDomAPI;
 
 /* DOM document container */

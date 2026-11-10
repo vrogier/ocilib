@@ -957,6 +957,43 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
+    TEST(TestJsonDom, NodeGetFieldByName_MissingField_RaisesJznError)
+    {
+        /* JsonDomGetFieldByName returns NULL for a missing field ->
+           CHECK_JSON -> OcilibExceptionJson (OCI_ERR_CAT_JZN) */
+
+        const auto env = GetEnvironment(nullptr);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto json = OCI_JsonCreate(conn);
+        ASSERT_NE(nullptr, json);
+
+        ASSERT_TRUE(OCI_JsonLoadText(json, OTEXT("{\"a\":1}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
+        const auto root = OCI_JsonGetRoot(json);
+        ASSERT_NE(nullptr, root);
+        ASSERT_EQ(OCI_JNT_OBJECT, OCI_JsonNodeGetType(root));
+
+        /* legit miss: NULL, no error, and the doc's stale JZN error is drained
+           so the next mutating call is not poisoned */
+        ASSERT_EQ(nullptr, OCI_JsonNodeGetFieldByName(root, OTEXT("no_such_field_xyz")));
+        ASSERT_EQ(nullptr, OCI_GetLastError());
+
+        /* mutating the loaded (immutable) DOM fails at JZN level ->
+           CHECK_JSON -> OcilibExceptionJson -> real JZN error */
+        const auto val = OCI_JsonNodeCreateNull(json);
+        ASSERT_NE(nullptr, val);
+        ASSERT_FALSE(OCI_JsonNodeSetField(root, OTEXT("b"), val));
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        ASSERT_EQ(OCI_ERR_CAT_JZN, OCI_ErrorGetCategory(err));
+
+        ASSERT_TRUE(OCI_JsonNodeFree(val));
+        ASSERT_TRUE(OCI_JsonNodeFree(root));
+        ASSERT_TRUE(OCI_JsonFree(json));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+
 
     class TestJsonDomNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 

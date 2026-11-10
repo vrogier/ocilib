@@ -214,6 +214,12 @@ OCI_Boolean OcilibJsonFree
     {
         OcilibErrorResetSource(NULL, json);
 
+        if (NULL != json->jdoc)
+        {
+            json->jdoc->mthds_jznDomDoc->jznDomDocFree(json->jdoc);
+            json->jdoc = NULL;
+        }
+
         FREE(json);
     }
 
