@@ -467,6 +467,227 @@ static const OCI_LocaleStringInfo LocaleStringDefaults[OCI_LSI_COUNT] =
       NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            }
 };
 
+static void OcilibEnvironmentClearSymbolsAbove(OCI_Environment *env, OCI_UInt32 version);
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibEnvironmentComputeRuntimeVersion
+ * --------------------------------------------------------------------------------------------- */
+
+static OCI_UInt32 OcilibEnvironmentComputeRuntimeVersion
+(
+    OCI_Environment *env,
+    OCI_UInt32       version
+)
+{
+    /* version != 0 requests an emulated (lowered) client: mask symbols
+       introduced above the requested version and return it as-is */
+
+    if (OCI_UNKNOWN != version)
+    {
+        OcilibEnvironmentClearSymbolsAbove(env, version);
+        return version;
+    }
+
+    /* detect the real client version from the loaded API surface */
+
+    if (env->api->OCIClientVersion)
+    {
+        sword maj = 0;
+        sword min = 0;
+        sword rev = 0;
+
+        env->api->OCIClientVersion(&maj, &min, &rev, NULL, NULL);
+
+        return (OCI_UInt32) OCI_VER_MAKE(maj, min, rev);
+    }
+    else if (env->api->OCIVectorToArray)             return OCI_23_4;
+    else if (env->api->OCIServerDataLengthGet)       return OCI_21_3;
+    else if (env->api->OCIJsonTextBufferParse)       return OCI_21_1;
+    else if (env->api->OCISodaBulkInsert)            return OCI_19_3;
+    else if (env->api->OCISodaOperKeysSet)           return OCI_18_3;
+    else if (env->api->OCIServerRelease2)            return OCI_18_1;
+    else if (env->api->OCIStmtGetNextResult)         return OCI_12_1;
+    else if (env->api->OCILobGetContentType)         return OCI_11_2;
+    else if (env->api->OCIArrayDescriptorFree)       return OCI_11_1;
+    else if (env->api->OCILobWrite2)                 return OCI_10_1;
+    else if (env->api->OCIStmtPrepare2)              return OCI_9_2;
+    else if (env->api->OCIDateTimeGetTimeZoneName)   return OCI_9_0;
+    else if (env->api->OCIEnvInit)                   return OCI_8_0;
+
+    return 0;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibEnvironmentClearSymbolsAbove
+ * --------------------------------------------------------------------------------------------- */
+
+static void OcilibEnvironmentClearSymbolsAbove
+(
+    OCI_Environment *env,
+    OCI_UInt32       version
+)
+{
+    if (version < OCI_23_4)
+    {
+        env->api->OCIVectorToArray = NULL;
+        env->api->OCIVectorFromArray = NULL;
+        env->api->OCIVectorToText = NULL;
+        env->api->OCIVectorFromText = NULL;
+        env->api->OCIJsonSchemaValidate = NULL;
+    }
+
+    if (version < OCI_21_1)
+    {
+        env->api->OCIJsonTextBufferParse = NULL;
+        env->api->OCIJsonToTextBuffer = NULL;
+        env->api->OCIJsonBinaryBufferLoad = NULL;
+        env->api->OCIJsonToBinaryBuffer = NULL;
+        env->api->OCIJsonDomDocGet = NULL;
+        env->api->OCIJsonDomDocSet = NULL;
+        env->api->OCIJsonClone = NULL;
+        env->api->OCIJsonBinaryLengthGet = NULL;
+    }
+
+    if (version < OCI_20_1)
+    {
+        env->api->OCISodaCollTruncate = NULL;
+    }
+
+    if (version < OCI_19_3)
+    {
+        env->api->OCIServerDataLengthGet = NULL;
+    }
+
+    if (version < OCI_18_5)
+    {
+        env->api->OCISodaBulkInsertWithCtnt = NULL;
+        env->api->OCISodaBulkInsert = NULL;
+        env->api->OCISodaBulkInsertAndGet = NULL;
+        env->api->OCISodaBulkInsertAndGetWithCtnt = NULL;
+        env->api->OCISodaBulkInsertAndGetWithOpts = NULL;
+    }
+
+    if (version < OCI_18_3)
+    {
+        env->api->OCISodaOperKeysSet = NULL;
+    }
+
+    if (version < OCI_18_1)
+    {
+        env->api->OCIServerRelease2 = NULL;
+        env->api->OCISodaCollCreate = NULL;
+        env->api->OCISodaMetadataBuild = NULL;
+        env->api->OCISodaCollCreateWithMetadata = NULL;
+        env->api->OCISodaCollOpen = NULL;
+        env->api->OCISodaDocCreate = NULL;
+        env->api->OCISodaDocCreateWithKey = NULL;
+        env->api->OCISodaDocCreateWithKeyAndMType = NULL;
+        env->api->OCISodaInsert = NULL;
+        env->api->OCISodaInsertAndGet = NULL;
+        env->api->OCISodaInsertWithCtnt = NULL;
+        env->api->OCISodaInsertAndGetWithCtnt = NULL;
+        env->api->OCISodaFind = NULL;
+        env->api->OCISodaFindOne = NULL;
+        env->api->OCISodaFindOneWithKey = NULL;
+        env->api->OCISodaDocGetNext = NULL;
+        env->api->OCISodaCollList = NULL;
+        env->api->OCISodaCollGetNext = NULL;
+        env->api->OCISodaDocCount = NULL;
+        env->api->OCISodaDocCountWithFilter = NULL;
+        env->api->OCISodaReplOne = NULL;
+        env->api->OCISodaReplOneAndGet = NULL;
+        env->api->OCISodaReplOneWithKey = NULL;
+        env->api->OCISodaReplOneAndGetWithKey = NULL;
+        env->api->OCISodaReplOneWithCtnt = NULL;
+        env->api->OCISodaReplOneAndGetWithCtnt = NULL;
+        env->api->OCISodaRemove = NULL;
+        env->api->OCISodaRemoveOneWithKey = NULL;
+        env->api->OCISodaCollDrop = NULL;
+        env->api->OCISodaIndexCreate = NULL;
+        env->api->OCISodaIndexDrop = NULL;
+        env->api->OCISodaSave = NULL;
+        env->api->OCISodaSaveAndGet = NULL;
+        env->api->OCISodaIndexList = NULL;
+        env->api->OCISodaDataGuideGet = NULL;
+    }
+
+    if (version < OCI_12_2)
+    {
+        env->api->OCIShardingKeyColumnAdd = NULL;
+        env->api->OCIShardingKeyReset = NULL;
+        env->api->OCIShardInstancesGet = NULL;
+    }
+
+    if (version < OCI_12_1)
+    {
+        env->api->OCIStmtGetNextResult = NULL;
+    }
+
+    if (version < OCI_11_2)
+    {
+        env->api->OCILobGetContentType = NULL;
+    }
+
+    if (version < OCI_11_1)
+    {
+        env->api->OCIArrayDescriptorAlloc = NULL;
+        env->api->OCIArrayDescriptorFree = NULL;
+    }
+
+    if (version < OCI_10_2)
+    {
+        env->api->OCIClientVersion = NULL;
+        env->api->OCIDBStartup = NULL;
+        env->api->OCIDBShutdown = NULL;
+        env->api->OCIPing = NULL;
+    }
+
+    if (version < OCI_10_1)
+    {
+        env->api->OCILobGetStorageLimit = NULL;
+        env->api->OCILobCopy2 = NULL;
+        env->api->OCILobErase2 = NULL;
+        env->api->OCILobGetLength2 = NULL;
+        env->api->OCILobLoadFromFile2 = NULL;
+        env->api->OCILobRead2 = NULL;
+        env->api->OCILobTrim2 = NULL;
+        env->api->OCILobWrite2 = NULL;
+        env->api->OCILobWriteAppend2 = NULL;
+    }
+
+    if (version < OCI_9_2)
+    {
+        env->api->OCINlsGetInfo = NULL;
+        env->api->OCIEnvNlsCreate = NULL;
+        env->api->OCIStmtPrepare2 = NULL;
+        env->api->OCIStmtRelease = NULL;
+    }
+
+    if (version < OCI_9_1)
+    {
+        env->api->OCIStmtFetch2 = NULL;
+    }
+
+    if (version < OCI_8_1)
+    {
+        env->api->OCIEnvCreate = NULL;
+        env->api->OCIDirPathAbort = NULL;
+        env->api->OCIDirPathDataSave = NULL;
+        env->api->OCIDirPathFinish = NULL;
+        env->api->OCIDirPathPrepare = NULL;
+        env->api->OCIDirPathLoadStream = NULL;
+        env->api->OCIDirPathColArrayEntrySet = NULL;
+        env->api->OCIDirPathColArrayReset = NULL;
+        env->api->OCIDirPathColArrayToStream = NULL;
+        env->api->OCIDirPathStreamReset = NULL;
+        env->api->OCIDirPathFlushRow = NULL;
+        env->api->OCICacheFree = NULL;
+        env->api->OCISubscriptionRegister = NULL;
+        env->api->OCISubscriptionUnRegister = NULL;
+    }
+
+
+}
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnvironmentLoadSymbols
  * --------------------------------------------------------------------------------------------- */
@@ -1134,7 +1355,8 @@ OCI_Environment * OcilibEnvironmentCreate
 (
     POCI_ERROR   err_handler,
     const otext *lib_path,
-    OCI_EnvMode  mode
+    OCI_EnvMode  mode,
+    OCI_UInt32   version
 )
 {
     OCI_Environment *env = (OCI_Environment *) calloc(1, sizeof(*env));
@@ -1188,13 +1410,6 @@ OCI_Environment * OcilibEnvironmentCreate
 
 #endif
 
-    /* check if it was already initialized */
-
-    if (env->loaded)
-    {
-        SET_RETVAL(env);
-        JUMP_EXIT_NO_CLEANUP();
-    }
 
 #if defined(OCI_CHARSET_WIDE) && (OCI_VERSION_COMPILE >= OCI_10_2)
 
@@ -1204,11 +1419,8 @@ OCI_Environment * OcilibEnvironmentCreate
 
 #endif
 
-    env->error_handler = err_handler;
-
-    env->version_compile = OCI_VERSION_COMPILE;
-    env->version_runtime = OCI_VERSION_RUNTIME;
-
+    env->error_handler      = err_handler;
+    env->version_compile    = OCI_VERSION_COMPILE;
     env->env_mode           = mode;
     env->charset            = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_ANSI;
     env->use_wide_char_conv = (IS_WIDE_CHAR_ENV() && (WCHAR_MAX == WCHAR_4_BYTES));
@@ -1299,78 +1511,9 @@ OCI_Environment * OcilibEnvironmentCreate
 
     /* API Version checking */
 
-    if (env->api->OCIClientVersion)
-    {
-        sword maj = 0;
-        sword min = 0;
-        sword rev = 0;
+    env->version_runtime = OcilibEnvironmentComputeRuntimeVersion(env, version);
 
-        env->api->OCIClientVersion(&maj, &min, &rev, NULL, NULL);
-
-        env->version_runtime = (OCI_UInt32) OCI_VER_MAKE(maj, min, rev);
-    }
-    else if (env->api->OCIVectorToArray)
-    {
-        env->version_runtime = OCI_23_4;
-    }
-    else if (env->api->OCIServerDataLengthGet)
-    {
-        env->version_runtime = OCI_21_3;
-    }
-    else if (env->api->OCIJsonTextBufferParse)
-    {
-        env->version_runtime = OCI_21_1;
-    }
-    else if (env->api->OCISodaBulkInsert)
-    {
-        env->version_runtime = OCI_19_3;
-    }
-    else if (env->api->OCISodaOperKeysSet)
-    {
-        env->version_runtime = OCI_18_3;
-    }
-    else if (env->api->OCIServerRelease2)
-    {
-        env->version_runtime = OCI_18_1;
-    }
-    else if (env->api->OCIStmtGetNextResult)
-    {
-        env->version_runtime = OCI_12_1;
-    }
-    else if (env->api->OCILobGetContentType)
-    {
-        env->version_runtime = OCI_11_2;
-    }
-    else if (env->api->OCIArrayDescriptorFree)
-    {
-        env->version_runtime = OCI_11_1;
-    }
-    else if (env->api->OCIClientVersion)
-    {
-        env->version_runtime = OCI_10_2;
-    }
-    else if (env->api->OCILobWrite2)
-    {
-        env->version_runtime = OCI_10_1;
-    }
-    else if (env->api->OCIStmtPrepare2)
-    {
-        env->version_runtime = OCI_9_2;
-    }
-    else if (env->api->OCIDateTimeGetTimeZoneName)
-    {
-        env->version_runtime = OCI_9_0;
-    }
-    else if (env->api->OCIEnvInit)
-    {
-        env->version_runtime = OCI_8_0;
-
-        if (mode & OCI_ENV_THREADED)
-        {
-            THROW(OcilibExceptionNotAvailable, OCI_FEATURE_MULTITHREADING);
-        }
-    }
-    else
+    if (OCI_UNKNOWN == env->version_runtime)
     {
 #ifdef OCI_IMPORT_RUNTIME
         if (env->lib_handle)
@@ -1379,6 +1522,11 @@ OCI_Environment * OcilibEnvironmentCreate
         }
 #endif
         THROW_NO_ARGS(OcilibExceptionLoadingSymbols);
+    }
+
+    if ((env->version_runtime < OCI_8_1) && (mode & OCI_ENV_THREADED))
+    {
+        THROW(OcilibExceptionNotAvailable, OCI_FEATURE_MULTITHREADING);
     }
 
 #if defined(OCI_BIG_UINT_ENABLED)
@@ -1529,8 +1677,6 @@ OCI_Environment * OcilibEnvironmentCreate
 
 #endif
 
-    env->loaded = TRUE;
-
     SET_RETVAL(env);
 
     CLEANUP_AND_EXIT_FUNC
@@ -1561,8 +1707,6 @@ OCI_Boolean OcilibEnvironmentFree
     OCI_Boolean success = FALSE;
 
     OCI_UInt32 i = 0;
-
-    /* exit if the environment is not loaded */
 
     CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
 
@@ -1614,10 +1758,6 @@ OCI_Boolean OcilibEnvironmentFree
     {
         mtx_destroy(&env->mutex);
     }
-
-    /* set unloaded flag */
-
-    env->loaded = FALSE;
 
     /* close error handle */
 
@@ -1726,223 +1866,6 @@ OCI_UInt32 OcilibEnvironmentGetOCIRuntimeVersion
     );
 }
 
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibEnvironmentClearSymbolsAbove
- * --------------------------------------------------------------------------------------------- */
-
-/* internal/test hook: clears every OCI symbol first introduced above the given
-   version, so code paths depending on newer clients become unreachable -
-   mirrors the #if OCI_VERSION_COMPILE blocks of OcilibEnvironmentLoadSymbols */
-
-static void OcilibEnvironmentClearSymbolsAbove
-(
-    OCI_Environment *env,
-    OCI_UInt32       version
-)
-{
-    if (version < OCI_23_4)
-    {
-        env->api->OCIVectorToArray = NULL;
-        env->api->OCIVectorFromArray = NULL;
-        env->api->OCIVectorToText = NULL;
-        env->api->OCIVectorFromText = NULL;
-        env->api->OCIJsonSchemaValidate = NULL;
-    }
-
-    if (version < OCI_21_1)
-    {
-        env->api->OCIJsonTextBufferParse = NULL;
-        env->api->OCIJsonToTextBuffer = NULL;
-        env->api->OCIJsonBinaryBufferLoad = NULL;
-        env->api->OCIJsonToBinaryBuffer = NULL;
-        env->api->OCIJsonDomDocGet = NULL;
-        env->api->OCIJsonDomDocSet = NULL;
-        env->api->OCIJsonClone = NULL;
-        env->api->OCIJsonBinaryLengthGet = NULL;
-    }
-
-    if (version < OCI_20_1)
-    {
-        env->api->OCISodaCollTruncate = NULL;
-    }
-
-    if (version < OCI_19_3)
-    {
-        env->api->OCIServerDataLengthGet = NULL;
-    }
-
-    if (version < OCI_18_5)
-    {
-        env->api->OCISodaBulkInsertWithCtnt = NULL;
-        env->api->OCISodaBulkInsert = NULL;
-        env->api->OCISodaBulkInsertAndGet = NULL;
-        env->api->OCISodaBulkInsertAndGetWithCtnt = NULL;
-        env->api->OCISodaBulkInsertAndGetWithOpts = NULL;
-    }
-
-    if (version < OCI_18_3)
-    {
-        env->api->OCISodaOperKeysSet = NULL;
-    }
-
-    if (version < OCI_18_1)
-    {
-        env->api->OCIServerRelease2 = NULL;
-        env->api->OCISodaCollCreate = NULL;
-        env->api->OCISodaMetadataBuild = NULL;
-        env->api->OCISodaCollCreateWithMetadata = NULL;
-        env->api->OCISodaCollOpen = NULL;
-        env->api->OCISodaDocCreate = NULL;
-        env->api->OCISodaDocCreateWithKey = NULL;
-        env->api->OCISodaDocCreateWithKeyAndMType = NULL;
-        env->api->OCISodaInsert = NULL;
-        env->api->OCISodaInsertAndGet = NULL;
-        env->api->OCISodaInsertWithCtnt = NULL;
-        env->api->OCISodaInsertAndGetWithCtnt = NULL;
-        env->api->OCISodaFind = NULL;
-        env->api->OCISodaFindOne = NULL;
-        env->api->OCISodaFindOneWithKey = NULL;
-        env->api->OCISodaDocGetNext = NULL;
-        env->api->OCISodaCollList = NULL;
-        env->api->OCISodaCollGetNext = NULL;
-        env->api->OCISodaDocCount = NULL;
-        env->api->OCISodaDocCountWithFilter = NULL;
-        env->api->OCISodaReplOne = NULL;
-        env->api->OCISodaReplOneAndGet = NULL;
-        env->api->OCISodaReplOneWithKey = NULL;
-        env->api->OCISodaReplOneAndGetWithKey = NULL;
-        env->api->OCISodaReplOneWithCtnt = NULL;
-        env->api->OCISodaReplOneAndGetWithCtnt = NULL;
-        env->api->OCISodaRemove = NULL;
-        env->api->OCISodaRemoveOneWithKey = NULL;
-        env->api->OCISodaCollDrop = NULL;
-        env->api->OCISodaIndexCreate = NULL;
-        env->api->OCISodaIndexDrop = NULL;
-        env->api->OCISodaSave = NULL;
-        env->api->OCISodaSaveAndGet = NULL;
-        env->api->OCISodaIndexList = NULL;
-        env->api->OCISodaDataGuideGet = NULL;
-    }
-
-    if (version < OCI_12_2)
-    {
-        env->api->OCIShardingKeyColumnAdd = NULL;
-        env->api->OCIShardingKeyReset = NULL;
-        env->api->OCIShardInstancesGet = NULL;
-    }
-
-    if (version < OCI_12_1)
-    {
-        env->api->OCIStmtGetNextResult = NULL;
-    }
-
-    if (version < OCI_11_2)
-    {
-        env->api->OCILobGetContentType = NULL;
-    }
-
-    if (version < OCI_11_1)
-    {
-        env->api->OCIArrayDescriptorAlloc = NULL;
-        env->api->OCIArrayDescriptorFree = NULL;
-    }
-
-    if (version < OCI_10_2)
-    {
-        env->api->OCIClientVersion = NULL;
-        env->api->OCIDBStartup = NULL;
-        env->api->OCIDBShutdown = NULL;
-        env->api->OCIPing = NULL;
-    }
-
-    if (version < OCI_10_1)
-    {
-        env->api->OCILobGetStorageLimit = NULL;
-        env->api->OCILobCopy2 = NULL;
-        env->api->OCILobErase2 = NULL;
-        env->api->OCILobGetLength2 = NULL;
-        env->api->OCILobLoadFromFile2 = NULL;
-        env->api->OCILobRead2 = NULL;
-        env->api->OCILobTrim2 = NULL;
-        env->api->OCILobWrite2 = NULL;
-        env->api->OCILobWriteAppend2 = NULL;
-    }
-
-    if (version < OCI_9_2)
-    {
-        env->api->OCINlsGetInfo = NULL;
-        env->api->OCIEnvNlsCreate = NULL;
-        env->api->OCIStmtPrepare2 = NULL;
-        env->api->OCIStmtRelease = NULL;
-    }
-
-    if (version < OCI_9_1)
-    {
-        env->api->OCIStmtFetch2 = NULL;
-    }
-
-    if (version < OCI_8_1)
-    {
-        env->api->OCIEnvCreate = NULL;
-        env->api->OCIDirPathAbort = NULL;
-        env->api->OCIDirPathDataSave = NULL;
-        env->api->OCIDirPathFinish = NULL;
-        env->api->OCIDirPathPrepare = NULL;
-        env->api->OCIDirPathLoadStream = NULL;
-        env->api->OCIDirPathColArrayEntrySet = NULL;
-        env->api->OCIDirPathColArrayReset = NULL;
-        env->api->OCIDirPathColArrayToStream = NULL;
-        env->api->OCIDirPathStreamReset = NULL;
-        env->api->OCIDirPathFlushRow = NULL;
-        env->api->OCICacheFree = NULL;
-        env->api->OCISubscriptionRegister = NULL;
-        env->api->OCISubscriptionUnRegister = NULL;
-    }
-
-
-}
-/* --------------------------------------------------------------------------------------------- *
- * OcilibEnvironmentSetVersion
- * --------------------------------------------------------------------------------------------- */
-
-void OcilibEnvironmentSetVersion
-(
-    OCI_Environment *env,
-    OCI_UInt32       version
-)
-{
-    if (NULL == env || NULL == env->api)
-    {
-        return;
-    }
-
-    /* internal/test hook: lowering only - cannot enable features absent
-       from the detected client */
-
-    if (version >= env->version_runtime)
-    {
-        return;
-    }
-
-    /* clear symbols first introduced above the requested version */
-
-    OcilibEnvironmentClearSymbolsAbove(env, version);
-
-    env->version_runtime = version;
-
-#if defined(OCI_BIG_UINT_ENABLED)
-
-    env->use_lob_ub8 = (version >= OCI_10_1) && (NULL != env->api->OCILobCopy2);
-
-#endif
-
-#if defined(OCI_STMT_SCROLLABLE_READONLY)
-
-    env->use_scrollable_cursors = (version >= OCI_9_0) && (NULL != env->api->OCIStmtFetch2);
-
-#endif
-}
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibEnvironmentGetOCIRuntimeImportMode

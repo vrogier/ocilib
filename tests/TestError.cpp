@@ -1,5 +1,6 @@
 #include "ocilib_tests.h"
 #include "NullArgs.h"
+#include <filesystem>
 
 namespace TestCApi
 {
@@ -260,6 +261,134 @@ namespace TestCApi
         EXPECT_EQ(con, OCI_ErrorGetConnection(err));
 
         ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(con));
+    }
+
+    /* internal logger hooks (src/log.h) — the logger reads OCILIB_LOG* env
+       vars only when its global ref_count reaches 0, so a test must drain the
+       refcount first to re-trigger initialization for a single env */
+
+    extern "C" OCI_SYM_LOCAL OCI_Boolean OcilibLogInitialize(void);
+    extern "C" OCI_SYM_LOCAL OCI_Boolean OcilibLogCleanup(void);
+    extern "C" OCI_SYM_LOCAL void OcilibLogWrite(OCI_LogCategory category, OCI_LogLevel level,
+                                               const char* step, const char* function,
+                                               const otext* format, ...);
+
+    /* drains OcilibLogger.ref_count — clamped at 0 internally, so over-calling
+       is safe; afterwards OcilibLogInitialize() fully re-reads the env vars */
+    static void DrainLogRefCount()
+    {
+        for (int i = 0; i < 128; i++) OcilibLogCleanup();
+    }
+
+    static void LogCycle(const char* level, const char* categories, const char* output)
+    {
+        _putenv("OCILIB_LOG=");
+        _putenv("OCILIB_LOG_CATEGORIES=");
+        _putenv("OCILIB_LOG_OUTPUT=");
+
+        DrainLogRefCount();
+
+        _putenv((std::string("OCILIB_LOG=") + level).c_str());
+        _putenv((std::string("OCILIB_LOG_CATEGORIES=") + categories).c_str());
+        _putenv((std::string("OCILIB_LOG_OUTPUT=") + output).c_str());
+
+        ASSERT_TRUE(OcilibLogInitialize());
+
+        OcilibLogWrite(OCI_LOG_CAT_OCI, OCI_LOG_DEBUG, nullptr, __func__, OTEXT("probe"));
+        OcilibLogWrite(OCI_LOG_CAT_LIB, OCI_LOG_ERROR, "STP", __func__, OTEXT("probe %d"), 42);
+        OcilibLogWrite(OCI_LOG_CAT_MEM, OCI_LOG_INFO, "", __func__, OTEXT("probe"));
+
+        OcilibLogCleanup();   /* ref_count 0 + initialized → fclose + reset */
+
+        _putenv("OCILIB_LOG=");
+        _putenv("OCILIB_LOG_CATEGORIES=");
+        _putenv("OCILIB_LOG_OUTPUT=");
+    }
+
+    TEST(TestError, LogWrite_CoversWritePathAndCleanup)
+    {
+        /* covers OcilibLogWrite body (log.c 621+: timestamp, prefix, snprintf,
+           lock/fputs) and the file-owned teardown arm of OcilibLogCleanup
+           (fclose + reset), plus the STDOUT/STDERR/default sink arms and the
+           step-prefix formatting that no library call site exercises */
+
+        const std::string tmp = (std::filesystem::temp_directory_path() / "ocilib_test_log.txt").string();
+
+        LogCycle("DEBUG", "LIB, MEM, OCI", tmp.c_str());
+        ASSERT_TRUE(std::filesystem::file_size(tmp) > 0);
+
+        LogCycle("DEBUG", "ALL", "STDOUT");
+        LogCycle("WARN", "BOGUS_CAT,LIB", "");   /* empty output → stderr default + unknown token */
+        LogCycle("NOTALEVEL", "ALL", tmp.c_str()); /* unknown level → early return */
+
+        std::error_code ec;
+        std::filesystem::remove(tmp, ec);
+    }
+
+    TEST(TestError, ElementError_CarriesConnection)
+    {
+        /* covers the OCI_IPC_ELEMENT arm of OcilibErrorGetConnection() */
+
+        ExecDML(OTEXT("create or replace type TestErrDateColl as table of date"));
+
+        const auto env = GetEnvironment(nullptr);
+        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, con);
+
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("TestErrDateColl"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, typinf);
+        const auto coll = OCI_CollCreate(typinf);
+        const auto elem = OCI_ElemCreate(typinf);
+        const auto date = OCI_DateCreate(env);
+        ASSERT_NE(nullptr, coll);
+        ASSERT_NE(nullptr, elem);
+        ASSERT_NE(nullptr, date);
+        ASSERT_TRUE(OCI_ElemSetDate(elem, date));
+        ASSERT_TRUE(OCI_CollAppend(coll, elem));
+        ASSERT_TRUE(OCI_ElemFree(elem));   /* append copies — caller keeps ownership */
+
+        const auto got = OCI_CollGetElem(coll, 0);
+        ASSERT_NE(nullptr, got);
+
+        /* DATE element read as int -> OcilibExceptionTypeNotCompatible, source = element */
+
+        ASSERT_EQ(0, OCI_ElemGetInt(got));
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(con, OCI_ErrorGetConnection(err));
+
+        ASSERT_TRUE(OCI_DateFree(date));
+        ASSERT_TRUE(OCI_CollFree(coll));
+        ASSERT_TRUE(OCI_ConnectionFree(con));
+
+        ExecDML(OTEXT("drop type TestErrDateColl"));
+    }
+
+    TEST(TestError, LongError_CarriesConnection)
+    {
+        /* covers the OCI_IPC_LONG arm of OcilibErrorGetConnection() :
+           OCI_LongWrite() with a NULL buffer throws with the long as the
+           error source */
+
+        const auto env = GetEnvironment(nullptr);
+        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, con);
+        const auto stmt = OCI_StatementCreate(con);
+        ASSERT_NE(nullptr, stmt);
+
+        const auto lg = OCI_LongCreate(stmt, OCI_CLONG);
+        ASSERT_NE(nullptr, lg);
+
+        ASSERT_EQ(0u, OCI_LongWrite(lg, nullptr, 0));
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(con, OCI_ErrorGetConnection(err));
+
+        ASSERT_TRUE(OCI_LongFree(lg));
+        ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
 

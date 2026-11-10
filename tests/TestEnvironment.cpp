@@ -1,6 +1,9 @@
 #include "ocilib_tests.h"
 #include "NullArgs.h"
 #include "ocilib.hpp"
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 using namespace ocilib;
 
@@ -489,4 +492,49 @@ namespace TestCppApi
             ASSERT_TRUE(OCI_EnvironmentFree(env));
         }
     }
+
+    /* --- emulated legacy client (version != 0 on OcilibEnvironmentCreate) ---
+       covers OcilibEnvironmentClearSymbolsAbove (version < OCI_8_1 arms) and
+       the OCIInitialize/OCIEnvInit legacy init branch */
+
+    extern "C" OCI_SYM_LOCAL OCI_Environment* OcilibEnvironmentCreate(POCI_ERROR, const otext*, OCI_EnvMode, OCI_UInt32);
+
+    TEST(TestEnvironment, Emulated8_0Client_ThreadedRejected)
+    {
+        /* version < OCI_8_1 + OCI_ENV_THREADED → OCI_ERR_NOT_AVAILABLE */
+        const auto env = OcilibEnvironmentCreate(nullptr, nullptr, OCI_ENV_THREADED, OCI_8_0);
+        ASSERT_EQ(nullptr, env);
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
+    }
+
+    TEST(TestEnvironment, Emulated8_0Client_LegacyInit)
+    {
+        /* non-threaded 8.0 env goes through OCIInitialize + OCIEnvInit
+           (requires the client to still export those legacy symbols) */
+        const auto env = OcilibEnvironmentCreate(nullptr, nullptr, OCI_ENV_DEFAULT, OCI_8_0);
+        ASSERT_NE(nullptr, env);
+        EXPECT_EQ(OCI_8_0, OCI_GetOCIRuntimeVersion(env));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+#ifdef _WIN32
+    TEST(TestEnvironment, NlsLangUtf8_WindowsFallback)
+    {
+        /* SetEnvironmentVariableA() updates the process env block but NOT the
+           MSVC CRT environ copy, so getenv() misses it — exactly the fallback
+           OcilibEnvironmentGetVariable()'s GetEnvironmentVariableA arm handles.
+           The UTF8 value also covers the nls_utf8 detection block in create. */
+
+        ASSERT_NE(0u, SetEnvironmentVariableA("NLS_LANG", "AMERICAN_AMERICA.AL32UTF8"));
+
+        const auto env = OCI_EnvironmentCreate(nullptr, nullptr, OCI_ENV_DEFAULT);
+        ASSERT_NE(nullptr, env);
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+
+        SetEnvironmentVariableA("NLS_LANG", nullptr);
+    }
+#endif
 }

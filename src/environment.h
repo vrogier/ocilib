@@ -33,7 +33,8 @@ OCI_SYM_LOCAL OCI_Environment * OcilibEnvironmentCreate
 (
     POCI_ERROR   err_handler,
     const otext *lib_path,
-    OCI_EnvMode  mode
+    OCI_EnvMode  mode,
+    OCI_UInt32   version
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentFree
@@ -113,14 +114,6 @@ OCI_SYM_LOCAL const otext* OcilibEnvironmentGetFormat
 (
     OCI_Environment *env,
     OCI_FormatType   type
-);
-
-/* not exposed to public API */
-
-OCI_SYM_LOCAL void OcilibEnvironmentSetVersion
-(
-    OCI_Environment *env,
-    OCI_UInt32       version
 );
 
 #endif /* OCILIB_ENVIRONMENT_H_INCLUDED */

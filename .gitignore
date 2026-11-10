@@ -200,3 +200,4 @@ testlog.manifest
 /CoverageReport
 /.vince
 /.tmp
+/CoverageReport-Log

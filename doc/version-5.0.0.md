@@ -34,7 +34,7 @@ The release touches the C API, the C++ API, the internal handle/symbol architect
 - **C++17 modernization.** The C++ API adopts standard C++17 idioms: `std::optional` support via `GetOptional<T>` on `Resultset`, `Object` and `Row` (`std::nullopt` on SQL NULL); `[[nodiscard]]` on all value-returning getters and factories; move semantics on `HandleHolder` (refcount-free returns and container moves); a `core::IsCollection` trait with `static_assert` diagnostics making `Resultset::Get<T>`/`Object::Get<T>`/`Collection::Get<T>` fail clearly on unsupported types instead of silently treating them as collections; and RAW getters fill the returned `Raw` buffer directly (one allocation instead of temp-vector+copy). The `ocilib::ostring` typedef is renamed `ocilib::String` (an `ostring` alias is kept for compatibility) and a `ocilib::StringView` (`std::basic_string_view<otext>`) typedef is available.
 - **Oracle Sharding support.** New `OCI_ShardingKey` handle (`OCI_ShardingKeyCreate`/`Free`/`Reset`, typed `OCI_ShardingKeyAdd*` column appenders for string/number/date/timestamp/raw, base64 `OCI_ShardingKeyToText` diagnostics), sharded connection creation (`OCI_ConnectionCreateSharded`), sharded pool checkout (`OCI_PoolGetConnectionSharded`). C++ mirrors: `ShardingKey` with templated `AddColumn<T>`, a sharded `Connection` constructor and a sharded `Pool::GetConnection` overload. Requires Oracle 12cR2 or above.
 - **Known Oracle client limitation (UNICODE builds).** `OCISodaIndexCreate`/`IndexDrop`/`IndexList` and `OCI_SRM_SECURE_NOTIFICATION` fail **inside the Oracle client itself** under `OCI_CHARSET_WIDE` (verified on 23ai); ANSI builds are unaffected. Public API docs carry `@warning` notes and the affected tests are `#ifdef OCI_CHARSET_ANSI`-guarded.
-- **Large test-suite expansion.** The gtest suite grew from **219 to 822 test cases** (`TEST`/`TEST_P`; 855 registered gtest instances at run time), with many new test modules for previously uncovered areas.
+- **Large test-suite expansion.** The gtest suite grew from **219 to 2,100+ test cases** (`TEST`/`TEST_P`; 2,133 registered gtest instances at run time), with many new test modules for previously uncovered areas.
 
 ---
 
@@ -243,12 +243,12 @@ The following items require code changes when upgrading from v4.x to v5.0.0:
 
 The gtest-based suite was heavily expanded and updated for the v5.0 APIs.
 
-- **Test case count:** from **219** `TEST`/`TEST_P` cases in `master` (30 test files) to **822** in v5.0.0 (95 test files) — 855 registered gtest instances at run time.
+- **Test case count:** from **219** `TEST`/`TEST_P` cases in `master` (30 test files) to **2,100+** in v5.0.0 (95 test files) — 2,133 registered gtest instances at run time.
 - **New test modules** were added for previously untested or lightly tested areas such as Agent, Bind, Callback, Column, Dequeue, Element, Enqueue, Error, Event, Exception, File, Format, Handle, Hash, Helpers, Iterator, List, Log, Memory, Message, ReportedIssues, Resultset, Statement, Stringutils, Transaction, and TypeInfo.
 - **Removed test modules:** `TestThread.cpp` and `TestThreadKey.cpp` (APIs removed).
 - `TestConnection`, `TestPool`, `TestQueue`, `TestSubscription`, `TestNotifications`, and other existing modules were updated to use `OCI_EnvironmentCreate`, `std::thread`, the new subscription port API, and the new dequeue registration signature.
 - The Visual Studio test project (`tests/ocilib_tests.vcxproj`) and filters were updated to reflect the new file set.
-- **Code coverage (OpenCppCoverage, ANSI build): ~93% line coverage** across `src\*.c` (see `doc/test-coverage.md`). Coverage is measured with `Release - ANSI|x64` because the SODA index and secure-notification paths cannot run in UNICODE builds (Oracle client bug). Most of the remaining ~7% consists of error-handling paths for legacy Oracle versions (`#if OCI_VERSION_COMPILE < OCI_x_y` compatibility branches and pre-12c error paths) that cannot be exercised against a modern server.
+- **Code coverage (OpenCppCoverage, ANSI build): 96%+ line coverage** across `src\*.c` (see `doc/test-coverage.md`). Coverage is measured with `Release - ANSI|x64` because the SODA index and secure-notification paths cannot run in UNICODE builds (Oracle client bug). Most of the remaining ~4% consists of error-handling paths for legacy Oracle versions (`#if OCI_VERSION_COMPILE < OCI_x_y` compatibility branches and pre-12c error paths) and defensive branches that cannot be exercised safely.
 
 ---
 

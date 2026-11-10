@@ -154,6 +154,7 @@
 
 ### Fixes (C API)
 
+- `OCI_TypeInfoGet()` can once again describe PL/SQL package-level types — `TYPE ... IS RECORD` and index-by tables — passed as `schema.package.type`. This feature was added in v4.2.0 and broke in v4.7.4 when type describes were switched to `OCITypeByName()` (issue #281 fix for `SYS.RAW`), which does not support package-level types; the name-based describe is now used as a fallback. Attributes of a package-level type that are themselves package-level types (nested records and index-by tables) are now resolved through the type descriptor they reference, which also fixes `ORA-24328` on those paths.
 - Row-level change notifications (`OCI_CNT_ROWS`) now fire correctly; previously row events and rowids were silently dropped.
 - AQ dequeue registration now registers all dequeues in a single `OCISubscriptionRegister()` call, eliminating `ORA-24915` from repeated listener starts.
 - Per-environment OCI symbol loading now works correctly when multiple environments or different library paths are used.

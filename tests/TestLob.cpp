@@ -692,6 +692,139 @@ namespace TestCApi
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
 
+    /* --- coverage: OcilibLobWrite non-UTF8 count-derivation arms 
+       the default test env is not UTF8 on either build, so the
+       zero-count input gets derived from the other --- */
+
+    TEST(TestLob, Write_CharCountOnly_DerivesByteCount)
+    {
+        const auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto lob = OCI_LobCreate(conn, OCI_CLOB);
+        ASSERT_NE(nullptr, lob);
+        const auto text = OTEXT("abc");
+
+        OCI_UInt32 cc = 3, bc = 0;
+        ASSERT_TRUE(OCI_LobWrite(lob, (void*)text, &cc, &bc));
+        EXPECT_EQ(3u * static_cast<OCI_UInt32>(sizeof(otext)), bc);
+        ASSERT_EQ((OCI_UInt64)3, OCI_LobGetLength(lob));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestLob, Write_ByteCountOnly_DerivesCharCount)
+    {
+        const auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto lob = OCI_LobCreate(conn, OCI_CLOB);
+        ASSERT_NE(nullptr, lob);
+        const auto text = OTEXT("abc");
+
+        OCI_UInt32 cc = 0, bc = 3u * static_cast<OCI_UInt32>(sizeof(otext));
+        ASSERT_TRUE(OCI_LobWrite(lob, (void*)text, &cc, &bc));
+        EXPECT_EQ(3u, cc);
+        ASSERT_EQ((OCI_UInt64)3, OCI_LobGetLength(lob));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    /* --- coverage: OcilibLobWrite / OcilibLobErase legacy ub4 arms
+       pre-10.1 clients have no OCILobWrite2/OCILobErase2,
+       so a lowered env exercises the non-ub8 branches --- */
+
+    TEST(TestLob, Write_PreClient10_UsesLegacyLobWrite)
+    {
+        const auto env = GetSpecificEnvironment(nullptr, OCI_9_2);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto lob = OCI_LobCreate(conn, OCI_CLOB);
+        ASSERT_NE(nullptr, lob);
+        const auto text = OTEXT("abc");
+
+        ASSERT_EQ(OCI_9_2, OCI_GetVersionConnection(conn));
+
+        OCI_UInt32 cc = 3, bc = 0;
+        ASSERT_TRUE(OCI_LobWrite(lob, (void*)text, &cc, &bc));
+        ASSERT_EQ((OCI_UInt64)3, OCI_LobGetLength(lob));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+    TEST(TestLob, Erase_PreClient10_UsesLegacyLobErase)
+    {
+        const auto env = GetSpecificEnvironment(nullptr, OCI_9_2);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto lob = OCI_LobCreate(conn, OCI_CLOB);
+        ASSERT_NE(nullptr, lob);
+        const auto text = OTEXT("abcd");
+
+        OCI_UInt32 cc = 4, bc = 0;
+        ASSERT_TRUE(OCI_LobWrite(lob, (void*)text, &cc, &bc));
+
+        ASSERT_EQ((OCI_UInt64)2, OCI_LobErase(lob, 0, 2));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+    /* --- coverage: OcilibMemoryAllocDescriptorArray /
+       OcilibMemoryFreeDescriptorArray legacy per-descriptor loops
+       (memory.c) — pre-11.1 clients have no OCIArrayDescriptorAlloc/Free,
+       so a lowered env exercises the OCIDescriptorAlloc/Free loops --- */
+
+    TEST(TestLob, ArrayCreateFree_PreClient11_UsesDescriptorLoop)
+    {
+        const auto env = GetSpecificEnvironment(nullptr, OCI_10_1);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        ASSERT_EQ(OCI_10_1, OCI_GetVersionConnection(conn));
+
+        const auto arr = OCI_LobArrayCreate(conn, OCI_CLOB, 2);
+        ASSERT_NE(nullptr, arr);
+        ASSERT_TRUE(OCI_LobArrayFree(arr));
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+    /* --- coverage: OcilibLobTruncate offset reset arm 
+       truncating below the current write offset resets it to
+       OcilibLobGetLength() + 1 --- */
+
+    TEST(TestLob, Truncate_BelowOffset_ResetsOffset)
+    {
+        const auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+        const auto lob = OCI_LobCreate(conn, OCI_CLOB);
+        ASSERT_NE(nullptr, lob);
+        const auto text = OTEXT("abcd");
+
+        OCI_UInt32 cc = 4, bc = 0;
+        ASSERT_TRUE(OCI_LobWrite(lob, (void*)text, &cc, &bc));
+        ASSERT_EQ((OCI_UInt64)4, OCI_LobGetOffset(lob));
+
+        ASSERT_TRUE(OCI_LobTruncate(lob, 2));
+        EXPECT_LE(OCI_LobGetOffset(lob), (OCI_UInt64)2);
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
 
     class TestLobNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 

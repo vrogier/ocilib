@@ -167,6 +167,48 @@ namespace TestCApi
         EXPECT_EQ(String(OTEXT("full")), String(OCI_ObjectGetString(obj, OTEXT("S"))));
     }
 
+    TEST_F(TestObjectAttrs, ToString_AllAttributeTypes_Formatted)
+    {
+        /* covers the per-datatype arms of OcilibObjectToString() :
+           OCI_CDT_RAW / DATETIME / TIMESTAMP / INTERVAL / LOB / FILE / REF /
+           OBJECT / COLLECTION — every arm needs a non-NULL attribute, so the
+           object is populated server-side and fetched back */
+
+        ExecDML(OTEXT("begin execute immediate 'drop table TestObject_RefTarget'; exception when others then null; end;"));
+        ExecDML(OTEXT("begin execute immediate 'drop table TestObject_FullRows'; exception when others then null; end;"));
+        ExecDML(OTEXT("create table TestObject_RefTarget of TestObject_TgtType"));
+        ExecDML(OTEXT("insert into TestObject_RefTarget values (1, 'x')"));
+        ExecDML(OTEXT("create table TestObject_FullRows (o TestObject_FullType)"));
+        ExecDML(OTEXT("insert into TestObject_FullRows values (TestObject_FullType("
+                      "1, 2, 's', 'AABB', date'2024-01-02', timestamp'2024-01-02 03:04:05',"
+                      "interval '1' day, 'clobdata', TestObject_NumVarray(1,2,3),"
+                      "(select ref(t) from TestObject_RefTarget t where rownum=1),"
+                      "bfilename('DATA_PUMP_DIR','x.dat'), TestObject_TgtType(3,'y')))"));
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select o from TestObject_FullRows")));
+        const auto rs = OCI_GetResultset(stmt);
+        ASSERT_NE(nullptr, rs);
+        ASSERT_TRUE(OCI_FetchNext(rs));
+        const auto fetched = OCI_GetObject(rs, 0);
+        ASSERT_NE(nullptr, fetched);
+
+        OCI_UInt32 size = 0;
+        ASSERT_TRUE(OCI_ObjectToText(fetched, &size, nullptr));
+        ASSERT_GT(size, 0u);
+
+        std::vector<otext> buf(size + 1, 0);
+        ASSERT_TRUE(OCI_ObjectToText(fetched, &size, buf.data()));
+        const String out(buf.data());
+        EXPECT_NE(String::npos, out.find(OTEXT("TESTOBJECT_FULLTYPE(")));
+
+        ASSERT_TRUE(OCI_ObjectFree(fetched));
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ExecDML(OTEXT("drop table TestObject_FullRows"));
+        ExecDML(OTEXT("drop table TestObject_RefTarget"));
+    }
+
     TEST_F(TestObjectAttrs, SetAndGetRawAttr_RoundTripsBytes)
     {
         unsigned char raw[] = { 0x00, 0x01, 0x02, 0x03, 0x04 };

@@ -293,7 +293,6 @@ struct OCI_Environment
     OCI_UInt32  nb_descp;                       /* number of OCI descriptors allocated */
     OCI_UInt32  nb_objinst;                     /* number of OCI objects allocated */
     ub4         env_mode;                         /* default environment mode */
-    OCI_Boolean loaded;                               /* OCILIB correctly loaded ? */
     OCI_Boolean nls_utf8;                             /* is UFT8 enabled for data strings ? */
     OCI_Boolean use_lob_ub8;                          /* use 64 bits integers for lobs ? */
     OCI_Boolean use_scrollable_cursors;               /* use Oracle 9i fetch API */

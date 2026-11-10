@@ -2915,7 +2915,7 @@ OCI_Environment* OCI_API OCI_EnvironmentCreate
 )
 {
     OcilibCheckContext();
-    return OcilibEnvironmentCreate(err_handler, lib_path, mode);
+    return OcilibEnvironmentCreate(err_handler, lib_path, mode, OCI_UNKNOWN);
 }
 
 OCI_Boolean OCI_API OCI_EnvironmentFree
