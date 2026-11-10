@@ -282,20 +282,29 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
         /* describe call */
 
+        dvoid *describe_obj  = (dvoid*) dbstr1;
+        ub4    describe_size = (ub4) dbsize1;
+        ub1    describe_type = OCI_OTYPE_NAME;
+
         if (OCI_TIF_TYPE == type)
         {
             OCIType* tdo = NULL;
+            sword    ret = OCI_ERROR;
 
-            /* for types, as OCIDescribeAny() doest not support some cases like SYS.RAW anymore
+            /* for types, as OCIDescribeAny() does not support some cases like SYS.RAW anymore
                like on previous Oracle versions, let's use OCITypeByName()
             */
+
+            /* OCITypeByName() does not support package level types (PL/SQL records and
+               PL/SQL index by tables). When it fails, fall back to describing the object */
+
 
             dbstr2 = OcilibStringGetDBString(typinf->con->env, typinf->schema, &dbsize2);
             dbstr3 = OcilibStringGetDBString(typinf->con->env, typinf->name, &dbsize3);
 
-            CHECK_OCI
+            OCI_CALL
             (
-                con->err,
+                ret,
                 OCITypeByName,
                 con->env->handle, con->err, con->handle,
                 (CONST text*) dbstr2, (ub4) dbsize2,
@@ -305,26 +314,22 @@ OCI_TypeInfo * OcilibTypeInfoGet
                 &tdo
             );
 
-            CHECK_OCI
-            (
-                con->err,
-                OCIDescribeAny,
-                con->handle, con->err, tdo,
-                (ub4) 0, OCI_OTYPE_PTR,
-                OCI_DEFAULT, OCI_PTYPE_UNK, dschp
-            );
+            if (OCI_SUCCESSFUL(ret))
+            {
+                describe_obj  = tdo;
+                describe_size = 0;
+                describe_type = OCI_OTYPE_PTR;
+            }
         }
-        else
-        {
-            CHECK_OCI
-            (
-                con->err,
-                OCIDescribeAny,
-                con->handle, con->err, (dvoid*)dbstr1,
-                (ub4)dbsize1, OCI_OTYPE_NAME,
-                OCI_DEFAULT, OCI_PTYPE_UNK, dschp
-            );
-        }
+
+        CHECK_OCI
+        (
+            con->err,
+            OCIDescribeAny,
+            con->handle, con->err, describe_obj,
+            describe_size, describe_type,
+            OCI_DEFAULT, OCI_PTYPE_UNK, dschp
+        );
 
         /* get parameter handle */
 

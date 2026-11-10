@@ -22,6 +22,7 @@
 
 #include "connection.h"
 #include "macros.h"
+#include "memory.h"
 #include "object.h"
 #include "stringutils.h"
 #include "typeinfo.h"
@@ -138,6 +139,112 @@ OCI_Boolean OcilibColumnGetAttributeInfo
 
     EXIT_FUNC();
 }
+
+#if OCI_VERSION_COMPILE >= OCI_12_1
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibColumnGetAttrPackageName
+ * --------------------------------------------------------------------------------------------- */
+
+/* When describing the attributes of a type, OCI_ATTR_PACKAGE_NAME is not supported by the
+   attribute parameter handle and raises ORA-24328. Moreover a PL/SQL index by table attribute
+   and a schema level object attribute are both reported as SQLT_NTY with no package information,
+   so they cannot be told apart on the attribute parameter itself.
+
+   Describing the type descriptor the attribute refers to gives the authoritative qualification :
+   package level types (PL/SQL records and index by tables) yield a package name while schema
+   level types yield none, in which case package_name is left empty.
+
+   This is a best effort lookup : it never throws, any failure simply returns FALSE */
+
+static OCI_Boolean OcilibColumnGetAttrPackageName
+(
+    OCI_Connection *con,
+    void           *param,
+    otext          *package_name
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_CONNECTION, con
+    );
+
+    OCIDescribe *dschp      = NULL;
+    OCIRef      *tdo_ref    = NULL;
+    OCIType     *tdo        = NULL;
+    OCIParam    *tdo_param  = NULL;
+    dbtext      *dbstr      = NULL;
+    OCI_Int32    dbsize     = 0;
+    sword         ret       = OCI_ERROR;
+
+    CHECK_PTR(OCI_IPC_CONNECTION, con);
+    CHECK_PTR(OCI_IPC_VOID,       param);
+    CHECK_PTR(OCI_IPC_STRING,     package_name);
+
+    OCI_CALL
+    (
+        ret, OCIAttrGet,
+        (void*) param, (ub4) OCI_DTYPE_PARAM, (void*) &tdo_ref,
+        (ub4*) NULL, (ub4) OCI_ATTR_REF_TDO, con->err
+    );
+
+    CHECK(OCI_SUCCESSFUL(ret) && NULL != tdo_ref);
+
+    OCI_CALL
+    (
+        ret, OCITypeByRef,
+        con->env->handle, con->err, tdo_ref,
+        OCI_DURATION_SESSION, OCI_TYPEGET_ALL, &tdo
+    );
+
+    CHECK(OCI_SUCCESSFUL(ret) && NULL != tdo);
+
+    CHECK(OcilibMemoryAllocHandle(con->env, con->env->handle,
+                                  (dvoid**) (void*) &dschp, OCI_HTYPE_DESCRIBE));
+
+    OCI_CALL
+    (
+        ret, OCIDescribeAny,
+        con->handle, con->err, tdo,
+        (ub4) 0, OCI_OTYPE_PTR,
+        OCI_DEFAULT, OCI_PTYPE_UNK, dschp
+    );
+
+    CHECK(OCI_SUCCESSFUL(ret));
+
+    OCI_CALL
+    (
+        ret, OCIAttrGet,
+        (void*) dschp, (ub4) OCI_HTYPE_DESCRIBE, (void*) &tdo_param,
+        (ub4*) NULL, (ub4) OCI_ATTR_PARAM, con->err
+    );
+
+    CHECK(OCI_SUCCESSFUL(ret) && NULL != tdo_param);
+
+    OCI_CALL
+    (
+        ret, OCIAttrGet,
+        (void*) tdo_param, (ub4) OCI_DTYPE_PARAM, (void*) &dbstr,
+        (ub4*) &dbsize, (ub4) OCI_ATTR_PACKAGE_NAME, con->err
+    );
+
+    CHECK(OCI_SUCCESSFUL(ret) && NULL != dbstr && dbsize > 0);
+
+    OcilibStringOracleToNative(dbstr, package_name, dbcharcount(dbsize));
+
+    SET_SUCCESS();
+
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != dschp)
+        {
+            OcilibMemoryFreeHandle(con->env, dschp, OCI_HTYPE_DESCRIBE);
+        }
+    );
+}
+
+#endif
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibColumnRetrieveInfo
@@ -535,14 +642,27 @@ OCI_Boolean OcilibColumnRetrieveInfo
 
 #if OCI_VERSION_COMPILE >= OCI_12_1
 
-        if (SQLT_REC == col->sqlcode || SQLT_TAB == col->sqlcode)
+        if (OCI_DESC_RESULTSET == ptype)
         {
-            CHECK_ATTRIB_GET
-            (
-                OCI_DTYPE_PARAM, OCI_ATTR_PACKAGE_NAME,
-                handle, &dbstr_package, &dbsize_package,
-                con->err
-            );
+            /* for PL/SQL types returned by implicit resultsets, the package name is carried
+               by the statement handle */
+
+            if (SQLT_REC == col->sqlcode || SQLT_TAB == col->sqlcode)
+            {
+                CHECK_ATTRIB_GET
+                (
+                    OCI_DTYPE_PARAM, OCI_ATTR_PACKAGE_NAME,
+                    handle, &dbstr_package, &dbsize_package,
+                    con->err
+                );
+            }
+        }
+        else
+        {
+            /* see OcilibColumnGetAttrPackageName() : describing a type attribute can not get
+               the package name from the attribute parameter handle */
+
+            OcilibColumnGetAttrPackageName(con, param, package_name);
         }
 
 #endif

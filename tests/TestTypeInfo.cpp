@@ -174,6 +174,212 @@ namespace TestCApi
     }
 
 
+    /* --- PL/SQL package level types (records and index by tables).
+
+       These are only reachable through the fully qualified name "schema.package.type" and are
+       described by name because OCITypeByName() does not support package level types.
+       Nested attributes are resolved from the type descriptor they refer to, which is the only
+       way to tell a package level type apart from a schema level one --- */
+
+    class TestTypeInfoPlsql : public ::testing::Test
+    {
+    protected:
+
+        static void SetUpTestCase()
+        {
+            ExecDML(OTEXT("create or replace type TestTiPlsqlObj as object(x number, y varchar2(10))"));
+            ExecDML(OTEXT("create or replace type TestTiPlsqlColl as table of number"));
+            ExecDML(OTEXT("create or replace package TestTiPlsql_Pkg as "
+                          "  type t_rec is record(id number, name varchar2(30));"
+                          "  type t_tab is table of number index by pls_integer;"
+                          "  type t_nested is record("
+                          "     txt  varchar2(10),"
+                          "     rec  t_rec,"
+                          "     tab  t_tab,"
+                          "     obj  TestTiPlsqlObj,"
+                          "     coll TestTiPlsqlColl);"
+                          "  type t_scalars is record("
+                          "     bint binary_integer,"
+                          "     pls  pls_integer,"
+                          "     bf   binary_float,"
+                          "     bd   binary_double);"
+                          "end TestTiPlsql_Pkg;"));
+        }
+
+        static void TearDownTestCase()
+        {
+            ExecDML(OTEXT("drop package TestTiPlsql_Pkg"));
+            ExecDML(OTEXT("drop type TestTiPlsqlColl"));
+            ExecDML(OTEXT("drop type TestTiPlsqlObj"));
+        }
+
+        void SetUp() override
+        {
+            const auto env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
+
+            con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, con);
+        }
+
+        void TearDown() override
+        {
+            OCI_ConnectionFree(con);
+        }
+
+        /* type info of the attribute at the given index */
+        OCI_TypeInfo* AttributeTypeInfo(OCI_TypeInfo* typinf, OCI_UInt32 index) const
+        {
+            const auto col = OCI_TypeInfoGetColumn(typinf, index);
+            return col ? OCI_ColumnGetTypeInfo(col) : nullptr;
+        }
+
+        OCI_Connection* con{ nullptr };
+    };
+
+    TEST_F(TestTypeInfoPlsql, PackageRecord_DescribesAttributes)
+    {
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("usr.TestTiPlsql_Pkg.t_rec"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, typinf);
+
+        ASSERT_EQ(OCI_TIF_TYPE, OCI_TypeInfoGetType(typinf));
+        ASSERT_EQ(String(OTEXT("TESTTIPLSQL_PKG.T_REC")), String(OCI_TypeInfoGetName(typinf)));
+        ASSERT_EQ(2u, OCI_TypeInfoGetColumnCount(typinf));
+
+        const auto id = OCI_TypeInfoGetColumn(typinf, 0);
+        ASSERT_NE(nullptr, id);
+        ASSERT_EQ(String(OTEXT("ID")), String(OCI_ColumnGetName(id)));
+        ASSERT_EQ(OCI_CDT_NUMERIC, OCI_ColumnGetType(id));
+
+        const auto name = OCI_TypeInfoGetColumn(typinf, 1);
+        ASSERT_NE(nullptr, name);
+        ASSERT_EQ(String(OTEXT("NAME")), String(OCI_ColumnGetName(name)));
+        ASSERT_EQ(OCI_CDT_TEXT, OCI_ColumnGetType(name));
+        ASSERT_EQ(30u, OCI_ColumnGetSize(name));
+    }
+
+    TEST_F(TestTypeInfoPlsql, PackageIndexByTable_DescribesElement)
+    {
+        /* a PL/SQL index by table is reported by OCI as a named collection */
+
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("usr.TestTiPlsql_Pkg.t_tab"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, typinf);
+
+        ASSERT_EQ(OCI_TIF_TYPE, OCI_TypeInfoGetType(typinf));
+        ASSERT_EQ(String(OTEXT("TESTTIPLSQL_PKG.T_TAB")), String(OCI_TypeInfoGetName(typinf)));
+        ASSERT_EQ(1u, OCI_TypeInfoGetColumnCount(typinf));
+
+        const auto elem = OCI_TypeInfoGetColumn(typinf, 0);
+        ASSERT_NE(nullptr, elem);
+        ASSERT_EQ(OCI_CDT_NUMERIC, OCI_ColumnGetType(elem));
+    }
+
+    TEST_F(TestTypeInfoPlsql, SchemaQualifiedPackageType_DescribesAttributes)
+    {
+        /* the schema may be supplied explicitly : "schema.package.type" */
+
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("USR.TestTiPlsql_Pkg.t_rec"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, typinf);
+        ASSERT_EQ(2u, OCI_TypeInfoGetColumnCount(typinf));
+    }
+
+    TEST_F(TestTypeInfoPlsql, NestedPackageRecordAttribute_IsPackageQualified)
+    {
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("usr.TestTiPlsql_Pkg.t_nested"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, typinf);
+        ASSERT_EQ(5u, OCI_TypeInfoGetColumnCount(typinf));
+
+        const auto rec = OCI_TypeInfoGetColumn(typinf, 1);
+        ASSERT_NE(nullptr, rec);
+        ASSERT_EQ(String(OTEXT("REC")), String(OCI_ColumnGetName(rec)));
+        ASSERT_EQ(OCI_CDT_OBJECT, OCI_ColumnGetType(rec));
+
+        const auto nested = AttributeTypeInfo(typinf, 1);
+        ASSERT_NE(nullptr, nested);
+        ASSERT_EQ(String(OTEXT("TESTTIPLSQL_PKG.T_REC")), String(OCI_TypeInfoGetName(nested)));
+        ASSERT_EQ(2u, OCI_TypeInfoGetColumnCount(nested));
+    }
+
+    TEST_F(TestTypeInfoPlsql, NestedIndexByTableAttribute_IsPackageQualified)
+    {
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("usr.TestTiPlsql_Pkg.t_nested"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, typinf);
+
+        const auto tab = OCI_TypeInfoGetColumn(typinf, 2);
+        ASSERT_NE(nullptr, tab);
+        ASSERT_EQ(String(OTEXT("TAB")), String(OCI_ColumnGetName(tab)));
+        ASSERT_EQ(OCI_CDT_COLLECTION, OCI_ColumnGetType(tab));
+
+        const auto nested = AttributeTypeInfo(typinf, 2);
+        ASSERT_NE(nullptr, nested);
+        ASSERT_EQ(String(OTEXT("TESTTIPLSQL_PKG.T_TAB")), String(OCI_TypeInfoGetName(nested)));
+    }
+
+    TEST_F(TestTypeInfoPlsql, NestedSchemaObjectAttribute_IsNotPackageQualified)
+    {
+        /* a schema level object attribute is reported exactly like a package level one
+           (SQLT_NTY, no package information), so it must not inherit the enclosing package */
+
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("usr.TestTiPlsql_Pkg.t_nested"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, typinf);
+
+        const auto obj = OCI_TypeInfoGetColumn(typinf, 3);
+        ASSERT_NE(nullptr, obj);
+        ASSERT_EQ(String(OTEXT("OBJ")), String(OCI_ColumnGetName(obj)));
+        ASSERT_EQ(OCI_CDT_OBJECT, OCI_ColumnGetType(obj));
+
+        const auto nested = AttributeTypeInfo(typinf, 3);
+        ASSERT_NE(nullptr, nested);
+        ASSERT_EQ(String(OTEXT("TESTTIPLSQLOBJ")), String(OCI_TypeInfoGetName(nested)));
+        ASSERT_EQ(2u, OCI_TypeInfoGetColumnCount(nested));
+    }
+
+    TEST_F(TestTypeInfoPlsql, NestedSchemaCollectionAttribute_IsNotPackageQualified)
+    {
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("usr.TestTiPlsql_Pkg.t_nested"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, typinf);
+
+        const auto coll = OCI_TypeInfoGetColumn(typinf, 4);
+        ASSERT_NE(nullptr, coll);
+        ASSERT_EQ(String(OTEXT("COLL")), String(OCI_ColumnGetName(coll)));
+        ASSERT_EQ(OCI_CDT_COLLECTION, OCI_ColumnGetType(coll));
+
+        const auto nested = AttributeTypeInfo(typinf, 4);
+        ASSERT_NE(nullptr, nested);
+        ASSERT_EQ(String(OTEXT("TESTTIPLSQLCOLL")), String(OCI_TypeInfoGetName(nested)));
+    }
+
+    TEST_F(TestTypeInfoPlsql, PlsqlOnlyScalarAttributes_MapToNumeric)
+    {
+        /* BINARY_INTEGER and PLS_INTEGER are PL/SQL only SQLT codes that only show up
+           when describing a package level record */
+
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("usr.TestTiPlsql_Pkg.t_scalars"), OCI_TIF_TYPE);
+        ASSERT_NE(nullptr, typinf);
+        ASSERT_EQ(4u, OCI_TypeInfoGetColumnCount(typinf));
+
+        for (OCI_UInt32 i = 0; i < OCI_TypeInfoGetColumnCount(typinf); i++)
+        {
+            const auto col = OCI_TypeInfoGetColumn(typinf, i);
+            ASSERT_NE(nullptr, col);
+            ASSERT_EQ(OCI_CDT_NUMERIC, OCI_ColumnGetType(col));
+        }
+
+        ASSERT_EQ(OCI_NUM_FLOAT, OCI_ColumnGetSubType(OCI_TypeInfoGetColumn(typinf, 2)));
+        ASSERT_EQ(OCI_NUM_DOUBLE, OCI_ColumnGetSubType(OCI_TypeInfoGetColumn(typinf, 3)));
+    }
+
+    TEST_F(TestTypeInfoPlsql, PackageTypeWithoutSchemaQualifier_Fails)
+    {
+        /* a package level type is not reachable without the schema qualifier :
+           "package.type" is interpreted by Oracle as "schema.object" and fails
+           to describe, so it must be "schema.package.type" */
+
+        ASSERT_EQ(nullptr, OCI_TypeInfoGet(con, OTEXT("TestTiPlsql_Pkg.t_rec"), OCI_TIF_TYPE));
+        ASSERT_EQ(nullptr, OCI_TypeInfoGet(con, OTEXT("t_rec"), OCI_TIF_TYPE));
+    }
+
+
     class TestTypeInfoNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
     TEST_P(TestTypeInfoNullArgs, CalledWithNullHandle_ReturnsFailure)
