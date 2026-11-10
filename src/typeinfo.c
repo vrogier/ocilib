@@ -298,7 +298,6 @@ OCI_TypeInfo * OcilibTypeInfoGet
             /* OCITypeByName() does not support package level types (PL/SQL records and
                PL/SQL index by tables). When it fails, fall back to describing the object */
 
-
             dbstr2 = OcilibStringGetDBString(typinf->con->env, typinf->schema, &dbsize2);
             dbstr3 = OcilibStringGetDBString(typinf->con->env, typinf->name, &dbsize3);
 

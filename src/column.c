@@ -170,13 +170,13 @@ static OCI_Boolean OcilibColumnGetAttrPackageName
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    OCIDescribe *dschp      = NULL;
-    OCIRef      *tdo_ref    = NULL;
-    OCIType     *tdo        = NULL;
-    OCIParam    *tdo_param  = NULL;
-    dbtext      *dbstr      = NULL;
-    OCI_Int32    dbsize     = 0;
-    sword         ret       = OCI_ERROR;
+    OCIDescribe *dschp     = NULL;
+    OCIRef      *tdo_ref   = NULL;
+    OCIType     *tdo       = NULL;
+    OCIParam    *tdo_param = NULL;
+    dbtext      *dbstr     = NULL;
+    OCI_Int32    dbsize    = 0;
+    sword        ret       = OCI_ERROR;
 
     CHECK_PTR(OCI_IPC_CONNECTION, con);
     CHECK_PTR(OCI_IPC_VOID,       param);
