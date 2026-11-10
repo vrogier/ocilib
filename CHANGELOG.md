@@ -188,6 +188,7 @@
 - Line coverage of `src\*.c` is ~93% under OpenCppCoverage (see `doc/test-coverage.md`), measured on the ANSI build since some SODA index and secure-notification paths cannot run under UNICODE builds (Oracle client bug); most of the remaining ~7% is legacy-Oracle-version error handling that cannot be exercised against a modern server
 - Updated all demo applications to use `OCI_EnvironmentCreate()` and standard threading primitives where applicable
 - Updated compilers for MS Windows prebuilt binaries to VS2026 18.10.0, with statically linked VC runtime updated from vc143 to vc145
+- Added an AI-assisted development disclosure (see README section 11): starting with v5, AI-assisted tools, including agentic AI, are used for unit test generation, code analysis, large-scale automated refactoring, and preliminary feature analysis and implementation draft proposals. All resulting changes are reviewed and validated by the maintainer, who retains full responsibility for the implementation, code quality and ongoing maintenance.
 
 ## 2026-05-19 - Version 4.9.0
 

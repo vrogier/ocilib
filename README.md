@@ -206,3 +206,16 @@ Migration guides for moving from OCILIB 4.x to 5.0 live in `doc/`:
 - Website: http://www.ocilib.net
 - Issues: https://github.com/vrogier/ocilib/issues
 - Changelog: [CHANGELOG.md](CHANGELOG.md)
+
+## 11. AI-assisted development disclosure
+
+Starting with OCILIB v5, AI-assisted development tools, including agentic AI, are used to support the
+following activities:
+
+- **Unit testing** — generation of unit tests for existing APIs
+- **Code analysis** — assistance in identifying potential bugs, flaws and areas for improvement in existing code
+- **Automated refactoring** — assistance with large-scale, repetitive refactoring across multiple source files, significantly reducing the time required for these changes while maintaining consistency throughout the codebase
+- **Feature Analysis** — preliminary analysis and implementation draft proposals, subsequently subject to extensive design review, debugging, modification and integration to ensure consistency with OCILIB's architecture, coding conventions and design principles
+
+All resulting changes are reviewed and validated by the maintainer, who retains full responsibility for
+the implementation, code quality and ongoing maintenance.
