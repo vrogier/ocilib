@@ -15,7 +15,7 @@ direct path, and administer the instance.
 A CSV importer for `employees` with two engines:
 
 1. `--mode=array` — parse CSV into `OCI_Int32`/otext/`OCI_Double` arrays,
-   `OCI_BindArrayOf*`, `BindArraySetSize`, one `Execute`, one `Commit`.
+   `OCI_StatementBind*Array`, `BindArraySetSize`, one `Execute`, one `Commit`.
 2. `--mode=dirpath` — `TypeInfoGet(employees)` → `DirPathCreate` → `SetColumn` per
    column → `Prepare` → `SetEntry` loop → `Convert`/`Load` → `Finish`.
 
@@ -39,7 +39,7 @@ Add flags: `--rows N`, `--no-log` (DirPathSetNoLog), `--onerror continue`
 | Skill | Pages |
 |-------|-------|
 | Array binds | 810 |
-| DirPath cycle + errors | 815 |
+| DirectPath cycle + errors | 815 |
 | Error handling | 080 |
 | Prepared executes | 260 |
 

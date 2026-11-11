@@ -1,7 +1,7 @@
 ---
 title: JSON DOM — OCI_JsonNode
 navtitle: JSON DOM
-part: 5
+part: 2
 level: intermediate
 oracle: "21"
 demos: [json.c, json.cpp]
@@ -16,7 +16,25 @@ demos: [json.c, json.cpp]
 - manipulate objects and arrays
 - query by path, compare and deep-copy nodes
 
-## Meet the JsonNode
+## In context — the DOM under the document
+
+The previous page treated a JSON document as one opaque value you load, bind,
+and validate. `OCI_JsonNode` opens it up: every node in the parsed tree —
+objects, arrays, strings, numbers, booleans, nulls — is a node you can inspect,
+navigate (`Parent`, `GetObjectByName`, `GetArrayItem`), and, on a mutable
+document, rewrite (`Set*` family, `AddObject`, `AppendArrayItem`).
+
+The model matches the JSON spec exactly, which makes the mental mapping easy:
+`JSON_VALUE` in SQL extracts a scalar the way `GetInt32`/`GetString` do on a
+node; `JSON_QUERY` returns a fragment the way `GetObject`/`GetArray` return a
+subtree. The difference is *where* the work happens — SQL filters rows
+server-side, while the DOM API operates on the one document you already fetched,
+with no round-trip. OCILIB keeps the DOM strictly client-side: nodes are
+borrowed children of their document — you never `Free` a `JsonNode` — and the
+document's mutability flag gates every setter. The edit workflow is therefore
+always: clone the fetched doc → `SetMutable` → navigate and modify → bind back.
+
+## The JsonNode
 
 A `Json` document is a tree of **nodes** — each node is one value (object, array,
 string, number, boolean, binary, date/timestamp/interval, or null) carrying a type
@@ -31,7 +49,8 @@ OCI_JsonNode *emp  = OCI_JsonNodeGetFieldByName(root, OTEXT("employee"));
 OCI_JsonNode *name = OCI_JsonNodeGetFieldByName(emp,  OTEXT("name"));
 
 printf("%s\n", OCI_JsonNodeGetString(name, NULL));
-OCI_JsonNodeFree(name); OCI_JsonNodeFree(emp);   /* root belongs to the doc */
+OCI_JsonNodeFree(name);
+OCI_JsonNodeFree(emp);   /* root belongs to the doc */
 ```
 
 ```cpp
@@ -148,6 +167,27 @@ for (auto&& n : emp)                       /* iterators walk fields/items */
 
 auto num = emp["sal"].GetNumeric<Number>();/* covers exact Number too */
 ```
+
+## Putting it together — the typical sequence
+
+DOM work always starts from a document, then navigates down:
+
+1. **Get the root** — `OCI_JsonGetRoot` on a document (yours, or a fetched one).
+2. **Ask the node's type first** — `GetType` tells you object, array, string,
+   number, boolean, or null. Every getter below depends on getting this right.
+3. **Navigate**: `GetObjectByName` for named fields, `GetArrayItem` for
+   positional access, `GetObjectCount`/`GetArrayCount` to loop, `Parent` to
+   climb back up. The returned nodes are *borrowed* children of the document.
+4. **Read scalars** with `GetString`/`GetInt32`/`GetBoolean`/… — or `GetNumeric`
+   for a `Number` when precision matters.
+5. **Edit — only on a mutable document**: `Set*` replaces values, `AddObject`/
+   `AppendArrayItem` grow containers. The workflow is always clone →
+   `SetMutable` → modify → bind back.
+
+Hints: a `JsonNode` is never freed — it lives and dies with its document;
+asking a node for the wrong type fails cleanly (FALSE / exception), so
+`GetType` first when the schema isn't fully trusted; and use `GetByName`
+defensively — a missing key returns NULL, not an empty node.
 
 ## Try it yourself
 

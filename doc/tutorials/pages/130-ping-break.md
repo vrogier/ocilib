@@ -31,7 +31,7 @@ Use it before reusing a long-idle connection, after a network blip, or in health
 
 :::sample
 ```c
-if (!OCI_Ping(cn))
+if (!OCI_ConnectionPing(cn))
 {
     fprintf(stderr, "connection lost\n");
 }
@@ -63,7 +63,7 @@ from a *different* thread:
 static int run_sleep(void *arg)
 {
     OCI_Statement *st = arg;                       /* blocked ~10 s unless broken */
-    OCI_ExecuteStmt(st, OTEXT("begin dbms_lock.sleep(10); end;"));
+    OCI_StatementExecute(st, OTEXT("begin dbms_lock.sleep(10); end;"));
     return 0;
 }
 
@@ -72,10 +72,11 @@ int main(void)
     /* … env + connection … */
 
     OCI_Statement *st = OCI_StatementCreate(cn);
-    thrd_t t;  thrd_create(&t, run_sleep, st);
+    thrd_t t;
+thrd_create(&t, run_sleep, st);
 
     sleep(1);
-    OCI_Break(cn);                                 /* aborts the call in thread t */
+    OCI_ConnectionBreak(cn);                                 /* aborts the call in thread t */
 
     thrd_join(t, NULL);                            /* worker saw ORA-01013        */
     /* … */
@@ -96,6 +97,24 @@ breaking one.
     "kill session". Use it for UI cancel buttons and watchdogs, and create the
     environment with the threaded flag whenever threads touch the API.
 
+## Putting it together — the typical sequence
+
+Liveness and interruption are the two sides of "what if the connection dies":
+
+1. **Probe cheaply**: `OCI_Ping` is the lightweight "still there?" check — a
+   single round-trip, far cheaper than a dummy `select 1 from dual`.
+2. **Interrupt deliberately**: `OCI_Break` aborts an in-flight call *from
+   another thread* — it's how you implement a cancel button or a watchdog
+   timeout on a long query.
+3. **Reconnect on failure**: `OCI_Reconnect` re-establishes a dead session
+   without rebuilding your statements from scratch.
+
+Hints: `Ping` costs a round-trip — don't call it inside a fetch loop, call it
+before starting real work or when the app goes idle→active; `Break` is for
+*other* threads — calling it from the executing thread does nothing useful;
+and a broken call returns FALSE with `OCI_GetLastError` saying interrupted —
+that's a normal path, not a bug.
+
 ## Try it yourself
 
 1. Run the pattern above and confirm the worker finishes in ~1 s with ORA-01013
@@ -108,7 +127,7 @@ breaking one.
 - **Breaking from the same thread** — pointless; that thread is inside the call.
 - **Expecting ping to throw** — it answers "alive?" — check the return.
 - **Sharing one connection across worker + breaker without the threaded environment
-  flag** — undefined behavior; see Part 4.
+  flag** — undefined behavior; see Part 5.
 
 ## Recap
 

@@ -25,7 +25,8 @@ up yet):
 OCI_DatabaseStartup(env, db, usr, pwd,
                     OCI_SESSION_SYSDBA,   /* admin session          */
                     OCI_DB_SPM_FULL,      /* startup mode           */
-                    OCI_DB_SPF_FORCE);    /* startup flags          */
+                    OCI_DB_SPF_FORCE,
+                    NULL);              /* spfile (optional)      */
 
 OCI_DatabaseShutdown(env, db, usr, pwd,
                      OCI_SESSION_SYSDBA,
@@ -63,11 +64,27 @@ finer modes run stages individually.
 - DBA tooling, instance management utilities, test rigs that bounce a DB.
 - Requires connecting as `sys`/`system` with `OCI_SESSION_SYSDBA` (or
   `OCI_SESSION_PRELIM_AUTH` + sysdba for the startup-before-connect pattern).
-- Instance inspection meanwhile is for everyone: `OCI_GetInstanceName`,
-  `OCI_GetInstanceStartTime`, `OCI_GetVersionServer` (page 120).
+- Instance inspection meanwhile is for everyone: `OCI_ConnectionGetInstanceName`,
+  `OCI_ConnectionGetInstanceStartTime`, `OCI_ConnectionGetServerVersionString` (page 120).
 
 !!! warning "You can really shut down production"
     `OCI_DB_SDF_ABORT` kills sessions mid-flight. Gate this behind admin workflows.
+
+## Putting it together — the typical sequence
+
+DBA work in OCILIB is privileged-connection + specific calls:
+
+1. **Connect as SYSDBA/SYSOPER** — the session mode flag at connect.
+2. **Startup/shutdown** — `OCI_DatabaseStartup`, `OCI_DatabaseShutdown` with
+   the mode flags.
+3. **Instance queries** — `OCI_InstanceStartup` for the instance-level
+   control.
+4. **Environment checks** — `OCI_Get*` version and status calls for
+   pre-flight.
+
+Hints: `SYSDBA` connections are privileged — guard them like root;
+startup/shutdown need the right mode flags — `OCI_DB_SPF_START` selects the
+parameter file; and admin connections don't pool — create them ad-hoc.
 
 ## Try it yourself
 

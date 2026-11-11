@@ -10,11 +10,11 @@ demos: [queue.c]
 
 **Objectives** — by the end of this page you will be able to:
 
-- build `OCI_Msg` payloads (objects or raw)
+- build `OCI_Message` payloads (objects or raw)
 - set message properties: priority, expiration, correlation, delay
 - post messages and understand the transaction rules
 
-## Meet the message object
+## The message object
 
 A `Msg` is the unit you post — a shell created from the payload's `TypeInfo`, filled with either a typed `Object` (same TypeInfo as the queue payload) or opaque raw bytes for RAW-payload queues.
 
@@ -24,17 +24,18 @@ Enqueue posts it; **the post is transactional** — it becomes visible at commit
 ```c
 OCI_TypeInfo *inf = OCI_TypeInfoGet(con, OTEXT("message_t"), OCI_TIF_TYPE);
 OCI_Enqueue  *enq = OCI_EnqueueCreate(inf, OTEXT("message_queue"));
-OCI_Msg      *msg = OCI_MsgCreate(inf);
+OCI_Message      *msg = OCI_MessageCreate(inf);
 OCI_Object   *obj = OCI_ObjectCreate(inf);
 
 OCI_ObjectSetString(obj, OTEXT("TITLE"),   OTEXT("NEXT MEETING"));
 OCI_ObjectSetString(obj, OTEXT("CONTENT"), OTEXT("12:00 PM"));
-OCI_MsgSetObject(msg, obj);
+OCI_MessageSetObject(msg, obj);
 
 OCI_EnqueuePut(enq, msg);
-OCI_Commit(con);                        /* enqueue is transactional! */
+OCI_ConnectionCommit(con);                        /* enqueue is transactional! */
 
-OCI_MsgFree(msg); OCI_ObjectFree(obj);
+OCI_MessageFree(msg);
+OCI_ObjectFree(obj);
 ```
 
 ```cpp
@@ -56,19 +57,19 @@ con.Commit();                           /* enqueue is transactional! */
 
 | C function | C++ method | Meaning |
 |------------|------------|---------|
-| `OCI_MsgSetObject` | `Message::SetObject` | object payload |
-| `OCI_MsgSetRaw` | `Message::SetRaw` | opaque bytes payload |
-| `OCI_MsgSetPriority` | `SetPriority` | queue priority (higher = sooner) |
-| `OCI_MsgSetExpiration` | `SetExpiration` | move to exception queue after N s |
-| `OCI_MsgSetEnqueueDelay` | `SetEnqueueDelay` | delayed delivery |
-| `OCI_MsgSetCorrelation` | `SetCorrelation` | correlation id — dequeue filters on it |
-| `OCI_MsgSetExceptionQueue` | `SetExceptionQueue` | dead-letter queue |
-| `OCI_MsgSetSender` | `SetSender` | `Agent` producer identity |
-| `OCI_MsgSetConsumers` | `SetConsumers` | named consumers (multi-consumer queues) |
-| `OCI_MsgSetOriginalID` | `SetOriginalID` | propagate/dequeue chains |
-| `OCI_MsgGetID` | `GetID()` | assigned id after `Put` |
-| `OCI_MsgGetEnqueueTime` | `GetEnqueueTime()` | when posted |
-| `OCI_MsgGetState` | `GetState()` | READY/WAITING/PROCESSED/EXPIRED |
+| `OCI_MessageSetObject` | `Message::SetObject` | object payload |
+| `OCI_MessageSetRaw` | `Message::SetRaw` | opaque bytes payload |
+| `OCI_MessageSetPriority` | `SetPriority` | queue priority (higher = sooner) |
+| `OCI_MessageSetExpiration` | `SetExpiration` | move to exception queue after N s |
+| `OCI_MessageSetEnqueueDelay` | `SetEnqueueDelay` | delayed delivery |
+| `OCI_MessageSetCorrelation` | `SetCorrelation` | correlation id — dequeue filters on it |
+| `OCI_MessageSetExceptionQueue` | `SetExceptionQueue` | dead-letter queue |
+| `OCI_MessageSetSender` | `SetSender` | `Agent` producer identity |
+| `OCI_MessageSetConsumers` | `SetConsumers` | named consumers (multi-consumer queues) |
+| `OCI_MessageSetOriginalID` | `SetOriginalID` | propagate/dequeue chains |
+| `OCI_MessageGetID` | `GetID()` | assigned id after `Put` |
+| `OCI_MessageGetEnqueueTime` | `GetEnqueueTime()` | when posted |
+| `OCI_MessageGetState` | `GetState()` | READY/WAITING/PROCESSED/EXPIRED |
 
 Enqueue-level options live on the endpoint: visibility (`OCI_AMV_*` ↔
 `Enqueue::Immediate`/`OnCommit`), relative message id, sequence deviation.
@@ -78,6 +79,23 @@ Enqueue-level options live on the endpoint: visibility (`OCI_AMV_*` ↔
 Enqueue participates in your transaction — the message becomes visible only at
 commit unless you set immediate visibility instead.
 
+## Putting it together — the typical sequence
+
+Enqueueing pushes a message into the queue:
+
+1. **Build the message** — `OCI_MsgCreate` on the queue's payload type.
+2. **Fill it** — `MsgSet` attributes (payload object, correlation, priority,
+   expiration).
+3. **Enqueue** — `OCI_EnqueuePut(queue, msg)` posts it; the message ID comes
+   back.
+4. **Check the result** — enqueue is transactional — it commits with the
+   rest of your work.
+
+Hints: message priority decides dequeue order — same-priority is FIFO;
+correlation IDs are how you route replies — set one if the consumer filters;
+and the payload type must match the queue's declared type — `OCI_Object` for
+ADT queues, `OCI_Raw` for raw queues.
+
 ## Try it yourself
 
 1. Enqueue 3 messages with different priorities; dequeue in priority order.
@@ -86,7 +104,7 @@ commit unless you set immediate visibility instead.
 
 ## Common pitfalls
 
-- **Forgetting `OCI_Commit`** — messages never become visible.
+- **Forgetting `OCI_ConnectionCommit`** — messages never become visible.
 - **Msg/Object freed too early** — keep the payload alive through `EnqueuePut`.
 - **Correlation mismatch** — dequeue filter must match exactly.
 

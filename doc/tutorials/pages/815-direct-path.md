@@ -1,5 +1,5 @@
 ---
-title: Direct path loading — OCI_DirPath
+title: Direct path loading — OCI_DirectPath
 navtitle: Direct path loading
 part: 8
 level: advanced
@@ -7,7 +7,7 @@ demos: [dirpath.c, dirpath_complete.c]
 sql: dirpath.sql
 ---
 
-# Direct path loading — the `DirPath` loader
+# Direct path loading — the `DirectPath` loader
 
 **Objectives** — by the end of this page you will be able to:
 
@@ -15,16 +15,16 @@ sql: dirpath.sql
 - run the set-column → prepare → convert → load cycle
 - handle conversion errors and tune buffers
 
-## Meet the DirPath
+## The DirectPath
 
-A `DirPath` bypasses the SQL engine and writes blocks directly into the table segment — the same path `SQL*Loader` uses.
+A `DirectPath` bypasses the SQL engine and writes blocks directly into the table segment — the same path `SQL*Loader` uses.
 
 It's the fastest ingest in Oracle, at the cost of a stricter workflow: it's created **from the table's TypeInfo** (a table, not a query), describes its columns, fills a server row buffer in batches, converts and loads.
 
 :::sample
 ```c
 OCI_TypeInfo *tbl = OCI_TypeInfoGet(cn, OTEXT("dirpath_data"), OCI_TIF_TABLE);
-OCI_DirPath  *dp  = OCI_DirPathCreate(tbl, NULL, NUM_COLS, MAX_ROWS);
+OCI_DirectPath  *dp  = OCI_DirectPathCreate(tbl, NULL, NUM_COLS, MAX_ROWS);
 ```
 
 ```cpp
@@ -38,33 +38,34 @@ DirectPath dp(tbl, NUM_COLS, MAX_ROWS);
 :::sample
 ```c
 /* 1. describe columns */
-OCI_DirPathSetColumn(dp, 0, OTEXT("val_int"),  20, NULL);
-OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"),  30, NULL);
-OCI_DirPathSetColumn(dp, 2, OTEXT("val_date"),  8, OTEXT("YYYYMMDD"));
+OCI_DirectPathSetColumn(dp, 0, OTEXT("val_int"),  20, NULL);
+OCI_DirectPathSetColumn(dp, 1, OTEXT("val_str"),  30, NULL);
+OCI_DirectPathSetColumn(dp, 2, OTEXT("val_date"),  8, OTEXT("YYYYMMDD"));
 
 /* 2. prepare → server allocates the row buffer */
-OCI_DirPathPrepare(dp);
-OCI_UInt32 max = OCI_DirPathGetMaxRows(dp);        /* capacity for this buffer */
+OCI_DirectPathPrepare(dp);
+OCI_UInt32 max = OCI_DirectPathGetMaxRows(dp);        /* capacity for this buffer */
 
 /* 3. fill + convert + load, looping over your data */
-OCI_DirPathReset(dp);
+OCI_DirectPathReset(dp);
 for (row = 0; row < max && more_data; row++)
 {
-    OCI_DirPathSetEntry(dp, row, 0, &ival,  sizeof(ival), TRUE);
-    OCI_DirPathSetEntry(dp, row, 1, sval,   strlen(sval),  TRUE);
-    OCI_DirPathSetEntry(dp, row, 2, dval,   strlen(dval),  TRUE);
+    OCI_DirectPathSetEntry(dp, row, 0, &ival,  sizeof(ival), TRUE);
+    OCI_DirectPathSetEntry(dp, row, 1, sval,   strlen(sval),  TRUE);
+    OCI_DirectPathSetEntry(dp, row, 2, dval,   strlen(dval),  TRUE);
 }
-switch (OCI_DirPathConvert(dp))
+switch (OCI_DirectPathConvert(dp))
 {
     case OCI_DPR_FULL:      /* buffer full — load and continue */
     case OCI_DPR_COMPLETE:  /* data done — load and finish      */
-        OCI_DirPathLoad(dp); break;
+        OCI_DirectPathLoad(dp);
+    break;
     case OCI_DPR_ERROR:     /* conversion errors — see below    */
         break;
 }
 /* 4. wrap up */
-OCI_DirPathFinish(dp);
-OCI_DirPathFree(dp);
+OCI_DirectPathFinish(dp);
+OCI_DirectPathFree(dp);
 ```
 
 ```cpp
@@ -87,10 +88,11 @@ for (row = 0; row < max && more_data; row++)
 }
 switch (dp.Convert())
 {
-    case DirPath::ResFull:      /* buffer full — load and continue */
-    case DirPath::ResComplete:  /* data done — load and finish      */
-        dp.Load(); break;
-    case DirPath::ResError:     /* conversion errors — see below    */
+    case DirectPath::ResFull:      /* buffer full — load and continue */
+    case DirectPath::ResComplete:  /* data done — load and finish      */
+        dp.Load();
+    break;
+    case DirectPath::ResError:     /* conversion errors — see below    */
         break;
 }
 /* 4. wrap up */
@@ -105,33 +107,49 @@ incomplete for piecewise/long values.
 
 | C function | C++ method | Purpose |
 |------------|------------|---------|
-| `OCI_DirPathSetBufferSize` | `SetBufferSize` | I/O buffer |
-| `OCI_DirPathSetCacheSize` | `SetCacheSize` | stream cache |
-| `OCI_DirPathSetNoLog` | `SetNoLog` | `NOLOGGING` load (speed vs recoverability!) |
-| `OCI_DirPathSetParallel` | `SetParallel` | parallel load |
-| `OCI_DirPathSetDateFormat` | `SetDateFormat` | default date format for text→date columns |
-| `OCI_DirPathSetConvertMode` | `SetConvertMode` | conversion behavior |
-| `OCI_DirPathSetCurrentRows` | `SetCurrentRows` | partial-row fill |
-| `OCI_DirPathSetEntry` | `SetEntry` | one cell (row, col, data, len, complete-flag) |
-| `OCI_DirPathFlushRow` | `FlushRow` | flush a partial row |
-| `OCI_DirPathSave` | `Save` | savepoint |
-| `OCI_DirPathGetRowCount` | `GetRowCount()` | progress |
-| `OCI_DirPathGetAffectedRows` | `GetAffectedRows()` | rows committed so far |
-| `OCI_DirPathGetErrorRow` | `GetErrorRow()` | failing row on `DPR_ERROR` |
-| `OCI_DirPathGetErrorColumn` | `GetErrorColumn()` | failing column on `DPR_ERROR` |
-| `OCI_DirPathReset` | `Reset` | buffer reset |
-| `OCI_DirPathAbort` | `Abort` | abort the stream |
-| `OCI_DirPathFinish` | `Finish` | commit the load |
+| `OCI_DirectPathSetBufferSize` | `SetBufferSize` | I/O buffer |
+| `OCI_DirectPathSetCacheSize` | `SetCacheSize` | stream cache |
+| `OCI_DirectPathSetNoLog` | `SetNoLog` | `NOLOGGING` load (speed vs recoverability!) |
+| `OCI_DirectPathSetParallel` | `SetParallel` | parallel load |
+| `OCI_DirectPathSetDateFormat` | `SetDateFormat` | default date format for text→date columns |
+| `OCI_DirectPathSetConvertMode` | `SetConvertMode` | conversion behavior |
+| `OCI_DirectPathSetCurrentRows` | `SetCurrentRows` | partial-row fill |
+| `OCI_DirectPathSetEntry` | `SetEntry` | one cell (row, col, data, len, complete-flag) |
+| `OCI_DirectPathFlushRow` | `FlushRow` | flush a partial row |
+| `OCI_DirectPathSave` | `Save` | savepoint |
+| `OCI_DirectPathGetRowCount` | `GetRowCount()` | progress |
+| `OCI_DirectPathGetAffectedRows` | `GetAffectedRows()` | rows committed so far |
+| `OCI_DirectPathGetErrorRow` | `GetErrorRow()` | failing row on `DPR_ERROR` |
+| `OCI_DirectPathGetErrorColumn` | `GetErrorColumn()` | failing column on `DPR_ERROR` |
+| `OCI_DirectPathReset` | `Reset` | buffer reset |
+| `OCI_DirectPathAbort` | `Abort` | abort the stream |
+| `OCI_DirectPathFinish` | `Finish` | commit the load |
 
 ## Direct path vs array bind
 
-| | `OCI_DirPath` | `OCI_BindArrayOf*` |
+| | `OCI_DirectPath` | `OCI_StatementBind*Array` |
 |---|---|---|
 | Speed | fastest (direct blocks) | fast (round-trip batching) |
 | Constraints | limited checking during load | full constraint evaluation |
 | Triggers | mostly bypassed | fired |
 | Logging | optional `NOLOGGING` | always logged |
 | Best for | ETL / initial loads | everyday bulk DML |
+
+## Putting it together — the typical sequence
+
+Direct path bypasses SQL entirely — the SQL*Loader fast lane:
+
+1. **Describe the target** — `OCI_DirectPathCreate(con, "table", part, ncols)`.
+2. **Bind columns** — `OCI_DirectPathSetColumn` per column position.
+3. **Load rows** — `OCI_DirectPathSetEntry` per row of your arrays, then
+   `OCI_DirectPathLoad` pushes a chunk.
+4. **Finish** — `OCI_DirectPathFinish` commits the stream, `OCI_DirectPathFree`
+   cleans up.
+
+Hints: direct path skips constraints/triggers — the data arrives raw, so
+validate before you load; `Convert`/`Load` is the streaming pair — call them
+per batch, not per row; and `Abort` cancels mid-load — the partial data
+never lands.
 
 ## Try it yourself
 

@@ -32,12 +32,12 @@ C++ `ocilib::Exception` mirrors: `GetType()` (`ExceptionType`),
 
 ## Delivery paths
 
-1. **Error handler** — your `OCI_EnvironmentCreate`/`OCI_SetErrorHandler` callback;
+1. **Error handler** — your `OCI_EnvironmentCreate`/`OCI_EnvironmentSetErrorHandler` callback;
    fires inside the failing call.
 2. **`OCI_GetLastError()`** — thread-local poll anytime after a FALSE/NULL return.
 3. **C++ exceptions** — every failed call throws `ocilib::Exception`.
 
-`OCI_EnableWarnings(env, TRUE)` routes `WARNING`-type Oracle notices through the
+`OCI_EnvironmentEnableWarnings(env, TRUE)` routes `WARNING`-type Oracle notices through the
 same channels.
 
 ## Return-value conventions
@@ -45,11 +45,11 @@ same channels.
 - Most calls: `OCI_Boolean` (`TRUE`/`FALSE`).
 - Factories/getters returning handles/values: `NULL`/`0` on failure — check the
   handler/`GetLastError` for details.
-- `OCI_Ping` semantics: `TRUE` = alive (not "success" in the error sense).
+- `OCI_ConnectionPing` semantics: `TRUE` = alive (not "success" in the error sense).
 
 ## Common Oracle codes worth knowing
 
 `ORA-00942` table missing · `ORA-01017` bad credentials · `ORA-00001` unique
-constraint · `ORA-01013` operation cancelled (`OCI_Break`) · `ORA-12154` connect
+constraint · `ORA-01013` operation cancelled (`OCI_ConnectionBreak`) · `ORA-12154` connect
 identifier · `ORA-12541`/`12514` listener/service · `ORA-06550`/`06502` PL/SQL
 compile/runtime errors.

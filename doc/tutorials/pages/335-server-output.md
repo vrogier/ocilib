@@ -1,7 +1,7 @@
 ---
 title: DBMS_OUTPUT — server-side print capture
 navtitle: DBMS_OUTPUT
-part: 3
+part: 4
 level: beginner
 demos: [output.c]
 ---
@@ -21,27 +21,27 @@ executing PL/SQL — Oracle's `printf` debugging. The connection exposes it:
 
 | C function | C++ method | Purpose |
 |------------|------------|---------|
-| `OCI_ServerEnableOutput` | `EnableServerOutput` | allocate the buffer (`bufsize`, `arrsize`, `linesize`) |
-| `OCI_ServerGetOutput` | `GetServerOutput` | pop the next buffered line (NULL/empty when drained) |
-| `OCI_ServerDisableOutput` | `DisableServerOutput` | turn it off |
+| `OCI_ConnectionEnableServerOutput` | `EnableServerOutput` | allocate the buffer (`bufsize`, `arrsize`, `linesize`) |
+| `OCI_ConnectionGetServerOutput` | `GetServerOutput` | pop the next buffered line (NULL/empty when drained) |
+| `OCI_ConnectionDisableServerOutput` | `DisableServerOutput` | turn it off |
 
 :::sample
 ```c
-OCI_ServerEnableOutput(cn, 32000, 5, 255);   /* buf 32k, 5 lines/batch, ≤255 chars */
+OCI_ConnectionEnableServerOutput(cn, 32000, 5, 255);   /* buf 32k, 5 lines/batch, ≤255 chars */
 
-OCI_ExecuteStmt(st, OTEXT(
+OCI_StatementExecute(st, OTEXT(
     "begin "
     "  dbms_output.put_line('First  line'); "
     "  dbms_output.put_line('Second line'); "
     "end;"));
 
 const otext *line;
-while ((line = OCI_ServerGetOutput(cn)))
+while ((line = OCI_ConnectionGetServerOutput(cn)))
 {
     printf("%s\n", line);
 }
 
-OCI_ServerDisableOutput(cn);
+OCI_ConnectionDisableServerOutput(cn);
 ```
 
 ```cpp
@@ -74,6 +74,23 @@ con.DisableServerOutput();
 - `linesize` — max chars per line (Oracle caps at 32767 in recent versions; 255 is the
   classic default).
 
+## Putting it together — the typical sequence
+
+`DBMS_OUTPUT` is PL/SQL's print — OCILIB drains it like this:
+
+1. **Enable it** — `OCI_ServerEnableOutput(con, size, bufsize, linesize)`
+   allocates the server-side buffer for the session.
+2. **Run the PL/SQL** — any `DBMS_OUTPUT.PUT_LINE` inside lands in the buffer.
+3. **Drain it** — `OCI_ServerGetOutput` returns the buffered text as one
+   `otext*` (or empty when there's nothing).
+4. **Disable** — `OCI_ServerDisableOutput` frees the buffer.
+
+Hints: enable *before* execute — output buffered while disabled is lost
+forever, not queued; the buffer is per-connection, not per-statement — two
+PL/SQL calls append to the same drain; and `GetOutput` is how you *read* the
+buffer — calling it mid-run gets whatever's been PUT_LINE'd so far, not the
+whole run's output.
+
 ## Try it yourself
 
 1. Print a progress trace from a multi-statement block (`put_line` between steps).
@@ -94,4 +111,4 @@ con.DisableServerOutput();
 - Enable → execute → drain the buffer → disable.
 - A debugging lifeline for PL/SQL — but not a streaming channel.
 
-**Checkpoint:** Part 3 ends with a small payroll-procedure exercise.
+**Checkpoint:** Part 4 ends with a small payroll-procedure exercise.

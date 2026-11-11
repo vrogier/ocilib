@@ -1,5 +1,5 @@
 ---
-title: Collections — OCI_Iter, element types & nesting
+title: Collections — OCI_Iterator, element types & nesting
 navtitle: Collections advanced
 part: 6
 level: advanced
@@ -13,21 +13,21 @@ level: advanced
 - use the full element get/set matrix (same types as objects)
 - handle collections of objects and nested collections
 
-## Meet the iterator — the traversal handle
+## The iterator — the traversal handle
 
 An `Iter` is a cursor over a collection — the idiomatic traversal: no index
 arithmetic, works for varrays and nested tables alike:
 
 :::sample
 ```c
-OCI_Iter *it = OCI_IterCreate(coll);
-OCI_Elem *e  = OCI_IterGetNext(it);          /* NULL when done */
+OCI_Iterator *it = OCI_IteratorCreate(coll);
+OCI_Element *e  = OCI_IteratorGetNext(it);          /* NULL when done */
 while (e)
 {
     /* read e */
-    e = OCI_IterGetNext(it);
+    e = OCI_IteratorGetNext(it);
 }
-OCI_IterFree(it);
+OCI_IteratorFree(it);
 ```
 
 ```cpp
@@ -40,11 +40,11 @@ for (auto &&e : coll)                        /* CollectionIterator */
 
 | C function | C++ method | Purpose |
 |------------|------------|---------|
-| `OCI_IterCreate` | `CollectionIterator` / `begin()` | traversal handle |
-| `OCI_IterGetNext` | `it++` | next element (NULL/end at done) |
-| `OCI_IterGetPrev` | `it--` | previous element |
-| `OCI_IterGetCurrent` | `*it` | current element again |
-| `OCI_IterFree` | — (RAII) | release |
+| `OCI_IteratorCreate` | `CollectionIterator` / `begin()` | traversal handle |
+| `OCI_IteratorGetNext` | `it++` | next element (NULL/end at done) |
+| `OCI_IteratorGetPrev` | `it--` | previous element |
+| `OCI_IteratorGetCurrent` | `*it` | current element again |
+| `OCI_IteratorFree` | — (RAII) | release |
 
 ## The element — the same matrix as objects
 
@@ -66,7 +66,7 @@ type — C++ `ElemGet`/typed `Get<T>` dispatch on the element type):
 :::sample
 ```c
 /* nested collection: a coll inside a coll element */
-OCI_Coll *inner = OCI_ElemGetColl(e);        /* e is element of the outer coll */
+OCI_Collection *inner = OCI_ElementGetCollection(e);        /* e is element of the outer coll */
 ```
 
 ```cpp
@@ -77,11 +77,29 @@ Coll inner = e.Get<Coll>();                  /* e is element of the outer coll *
 
 ## Binding collections to PL/SQL & SQL
 
-- The collection bind (`OCI_BindColl` / `Bind(":c", coll)`) passes a whole
+- The collection bind (`OCI_StatementBindCollection` / `Bind(":c", coll)`) passes a whole
   collection as one bind.
-- The coll getter on a row (`OCI_GetColl` / `Get<Coll>` / `Get<Collection<T>>`)
+- The coll getter on a row (`OCI_ResultsetGetColl` / `Get<Coll>` / `Get<Collection<T>>`)
   fetches collection columns.
 - `ObjectSetColl` wires a collection-valued object attribute.
+
+## Putting it together — the typical sequence
+
+Advanced collection work adds ordering, trimming, and nested shapes:
+
+1. **Insert at position** — `CollectionInsert`/`InsertElem` puts a value at an
+   index, shifting the rest.
+2. **Trim from the tail** — `CollectionTrim` removes the last N elements —
+   nested-table style, since VARRAYs can't have holes.
+3. **Iterate by value** — `CollGetElem` per index for reads, `CollSetElem`
+   for writes.
+4. **Nested collections** — an element can itself be a collection;
+   `CollGetElem` on it returns another `OCI_Collection`.
+
+Hints: `Delete` (nested tables) leaves holes — `Trim` doesn't; iterating
+holes returns NULL indicators — handle them or `SetElem` over them; and
+collections of objects use the same API — `GetElem` returns an `OCI_Object*`
+when the element type is object.
 
 ## Try it yourself
 

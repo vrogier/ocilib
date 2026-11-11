@@ -1,7 +1,7 @@
 ---
 title: Transactions — commit, rollback, autocommit
 navtitle: Transactions
-part: 4
+part: 5
 level: beginner
 ---
 
@@ -10,7 +10,7 @@ level: beginner
 **Objectives** — by the end of this page you will be able to:
 
 - control when DML becomes permanent
-- use `OCI_SetAutoCommit` deliberately
+- use `OCI_ConnectionSetAutoCommit` deliberately
 - choose the right transaction boundary for batch work
 
 ## Concepts
@@ -21,16 +21,16 @@ control it:
 
 | C function | C++ method | Effect |
 |------------|------------|--------|
-| `OCI_Commit` | `Commit()` | make pending changes permanent |
-| `OCI_Rollback` | `Rollback()` | discard pending changes |
-| `OCI_SetAutoCommit` | `SetAutoCommit` | auto-commit after each execute |
-| `OCI_GetAutoCommit` | `GetAutoCommit()` | current flag |
+| `OCI_ConnectionCommit` | `Commit()` | make pending changes permanent |
+| `OCI_ConnectionRollback` | `Rollback()` | discard pending changes |
+| `OCI_ConnectionSetAutoCommit` | `SetAutoCommit` | auto-commit after each execute |
+| `OCI_ConnectionGetAutoCommit` | `GetAutoCommit()` | current flag |
 
 :::sample
 ```c
-OCI_ExecuteStmt(st, OTEXT("update employees set comm = 0 where deptno = 30"));
-OCI_Commit(cn);        /* permanent   */
-/* or OCI_Rollback(cn); → undone      */
+OCI_StatementExecute(st, OTEXT("update employees set comm = 0 where deptno = 30"));
+OCI_ConnectionCommit(cn);        /* permanent   */
+/* or OCI_ConnectionRollback(cn); → undone      */
 ```
 
 ```cpp
@@ -57,14 +57,14 @@ That's the safe default for applications; turn it on only for scratch/repl-style
 
 :::sample
 ```c
-if (!OCI_ExecuteStmt(st, OTEXT("update accounts set bal = bal - :amt where id = :src"))
- || !OCI_ExecuteStmt(st, OTEXT("update accounts set bal = bal + :amt where id = :dst")))
+if (!OCI_StatementExecute(st, OTEXT("update accounts set bal = bal - :amt where id = :src"))
+ || !OCI_StatementExecute(st, OTEXT("update accounts set bal = bal + :amt where id = :dst")))
 {
-    OCI_Rollback(cn);          /* either both or neither */
+    OCI_ConnectionRollback(cn);          /* either both or neither */
 }
 else
 {
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 }
 ```
 
@@ -84,6 +84,23 @@ catch (...)
 
 !!! tip "DDL commits anyway"
     `create`/`alter`/`drop` implicitly commit in Oracle — a rollback can't undo them.
+
+## Putting it together — the typical sequence
+
+Transaction control is two calls and a mental model:
+
+1. **Work** — any DML between `Connect` and `Commit`/`Rollback` is in one
+   implicit transaction; OCILIB doesn't auto-commit.
+2. **Commit** — `OCI_ConnectionCommit` makes it permanent.
+3. **Or rollback** — `OCI_ConnectionRollback` undoes everything since the last commit.
+4. **Set the mode** — `SetAutoCommit` when you want per-statement commits
+   (rare in real apps; it kills batching).
+
+Hints: OCILIB defaults to *manual* commit — forgetting `Commit` loses work
+silently on disconnect; `AutoCommit` on is the demo convenience that becomes
+a production footgun — one DML per commit is fine for a config table, a
+disaster for a bulk load; and `Rollback` undoes *everything* pending — you
+can't partially commit mid-transaction.
 
 ## Try it yourself
 

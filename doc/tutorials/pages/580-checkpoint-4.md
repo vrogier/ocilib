@@ -1,15 +1,17 @@
 ---
 title: Checkpoint 4 — employee profiles
 navtitle: Checkpoint 4 profiles
-part: 5
+part: 2
 level: intermediate
 ---
 
 # Checkpoint 4 — employee profiles
 
-You should now be able to work with every scalar and large Oracle data type:
+You should now be able to work with every Oracle data type the library exposes:
 strings/charsets, dates, timestamps, intervals, exact numbers, RAW, vectors, LOBs,
-BFILEs, XMLType and JSON.
+BFILEs, XMLType, JSON — PL/SQL-only types (`BOOLEAN`, `RECORD`) and
+schema-level user-defined types (`OCI_Object`/`Object`). Collections and REFs
+get their own deep dive in Part 6.
 
 ## The exercise — profile service
 
@@ -25,13 +27,13 @@ Write a program that:
 
 1. **JSON profile** — for each employee, build a mutable `OCI_Json` with
    `{"name":…,"hiredate":…,"skills":[…]}`, `LoadText`/node ops to fill it, then
-   `OCI_BindJson` into `profile`.
+   `OCI_StatementBindJson` into `profile`.
 2. **Photo** — stream a small PNG into `photo` via `OCI_LobCreate`/`LobWrite` in
    32 KB chunks; read it back with `LobRead` and compare checksums.
 3. **Resume BFILE** — `OCI_FileSetName(DOCS_DIR, 'smith.txt')`, verify
    `FileExists`, `FileOpen`+`FileRead` it, bind into `resume`.
 4. **XML doc** — `xmltype(:x)` insert into `dept_docs` via string bind, fetch with
-   `OCI_GetXmlType` and print `GetContent`.
+   `OCI_ResultsetGetXmlType` and print `GetContent`.
 5. **Tenure report** — `OCI_DateDaysBetween(sysdate, hiredate)` per employee;
    format hiredate with `OCI_DateToText`.
 
@@ -55,5 +57,5 @@ Write a program that:
 | XMLType | 565 |
 | JSON doc + DOM | 570/575 |
 
-Part 5 done — you can now move any Oracle value in and out. Next: the
+Part 2 done — you can now move any Oracle value in and out. Next: the
 object-relational API (types, objects, collections, REFs).

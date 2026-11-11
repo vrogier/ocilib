@@ -21,18 +21,18 @@ facts like the server version. All available without any round-trip:
 
 | C function | C++ method | Tells you |
 |------------|------------|-----------|
-| `OCI_GetOCICompileVersion` | `Environment::GetCompileVersion()` | OCI headers OCILIB was **compiled** against |
-| `OCI_GetOCIRuntimeVersion` | `Environment::GetRuntimeVersion()` | Oracle client loaded **at run time** (`MMmmRR`, e.g. `230500`) |
-| `OCI_GetImportMode` | `GetImportMode()` | `ImportLinkage` or `ImportRuntime` |
-| `OCI_GetCharset` | `GetCharset()` | `CharsetAnsi` or `CharsetWide` |
-| `OCI_GetVersionConnection` | `Connection::GetVersion()` | negotiated OCI version for the connection |
-| `OCI_GetVersionServer` | `Connection::GetServerVersion()` | server version **string** (`"23.5.0.0"`) |
+| `OCI_EnvironmentGetOCICompileVersion` | `Environment::GetCompileVersion()` | OCI headers OCILIB was **compiled** against |
+| `OCI_EnvironmentGetOCIRuntimeVersion` | `Environment::GetRuntimeVersion()` | Oracle client loaded **at run time** (`MMmmRR`, e.g. `230500`) |
+| `OCI_EnvironmentGetImportMode` | `GetImportMode()` | `ImportLinkage` or `ImportRuntime` |
+| `OCI_EnvironmentGetCharset` | `GetCharset()` | `CharsetAnsi` or `CharsetWide` |
+| `OCI_ConnectionGetVersion` | `Connection::GetVersion()` | negotiated OCI version for the connection |
+| `OCI_ConnectionGetServerVersionString` | `Connection::GetServerVersion()` | server version **string** (`"23.5.0.0"`) |
 
 The numeric versions decode with `OCI_VER_*` macros in C and split getters in C++:
 
 :::sample
 ```c
-OCI_UInt32 v = OCI_GetOCIRuntimeVersion();
+OCI_UInt32 v = OCI_EnvironmentGetOCIRuntimeVersion(env);
 printf("OCI client %u.%u.%u\n",
        OCI_VER_MAJ(v), OCI_VER_MIN(v), OCI_VER_REV(v));
 ```
@@ -51,7 +51,7 @@ checks before touching a newer feature:
 
 :::sample
 ```c
-if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion()) >= 23)
+if (OCI_VER_MAJ(OCI_EnvironmentGetOCIRuntimeVersion(env)) >= 23)
 {
     /* safe to use vectors, JSON schema validation, … */
 }
@@ -79,13 +79,31 @@ essential in libraries and callbacks where a handle arrives without context:
 
 :::sample
 ```c
-OCI_Environment *env = OCI_HandleGetEnvironment((OCI_Handle *)cn);
+OCI_Environment *env = OCI_HandleGetEnvironment(cn);
 ```
 
 ```cpp
 /* C++ objects keep their environment internally — you rarely ask */
 ```
 :::
+
+## Putting it together — the typical sequence
+
+Version introspection answers "what am I running on" at two levels:
+
+1. **Client side**: `OCI_GetCompileVersion` / `OCI_GetRuntimeVersion` — what
+   OCILIB was built as vs what OCI is loaded; `OCI_GetVersionConnection`
+   reports what a connection sees.
+2. **Server side**: `OCI_ConnectionGetServerVersion*` and
+   `GetServerVersionString` — the banner-level answer.
+3. **Feature gates**: `OCILIB_HAS_*` / version comparisons let you decide at
+   runtime whether to offer sharding, SODA, or vectors — the pages in Part 9
+   all hang off these calls.
+
+Hints: mismatched client/server versions are the #1 source of "works on my
+machine" — print both in your startup banner; `OCI_GetRuntimeVersion` catches
+the case where someone deployed the wrong `oci.dll`; and version-gate at
+startup, not deep in your feature code — it's cheaper to refuse early.
 
 ## Try it yourself
 

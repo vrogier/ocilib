@@ -183,6 +183,22 @@ A `LEAVE (ret=…)` showing an error return is where a failure surfaced.
     Logging is environment-variable driven — the variables are read once at
     environment creation, so set them before the program starts.
 
+## Putting it together — the typical sequence
+
+OCILIB logging is a per-environment diagnostic channel:
+
+1. **Enable it** — `OCI_EnableTrace`/`OCI_TraceSet*` on the environment with
+   the flags for what you want traced.
+2. **Run your code** — every OCI call, duration, and SQL gets logged.
+3. **Read it** — log callback or file, per `TraceSetOut`.
+4. **Disable for production** — tracing is verbose and slow; it's a debug
+   tool, not a monitoring feature.
+
+Hints: trace flags compose — OR them for SQL + timing + errors together;
+the output format is designed for diffing — two runs, one flag difference,
+diff the logs; and tracing is the fastest way to see *what OCILIB actually
+sent* — invaluable when your SQL works in SQL*Plus but not here.
+
 ## Try it yourself
 
 1. Run your connection sample with `OCILIB_LOG=TRACE` — follow the

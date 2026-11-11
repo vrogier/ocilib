@@ -28,7 +28,7 @@ Environment  ── owns the loaded Oracle client, the error handler, all handle
   loads the Oracle client library (`oci.dll` / `libclntsh.so`), installs your **error
   handler callback**, and produces the handle every other object is attached to.
 
-## Meet the connection
+## The connection
 
 A **connection** represents one database *session* — your authenticated context on
 the server. While it's open, it carries real server-side state:
@@ -53,7 +53,7 @@ ocilib::Connection con(env, db, usr, pwd);   /* default session mode */
 ```
 :::
 
-Typical usage: **one connection per logical session** — per user login, per worker thread, or per checkout from a pool (Part 4).
+Typical usage: **one connection per logical session** — per user login, per worker thread, or per checkout from a pool (Part 5).
 
 It stays open as long as you need it; closing it (freeing the handle) ends the session and rolls back anything uncommitted.
 
@@ -107,8 +107,8 @@ int main(void)
 
     OCI_Connection *cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
 
-    printf("Server major    version : %i\n", OCI_GetServerMajorVersion(cn));
-    printf("Connection      version : %u\n", OCI_GetVersionConnection(cn));
+    printf("Server major    version : %i\n", OCI_ConnectionGetServerMajorVersion(cn));
+    printf("Connection      version : %u\n", OCI_ConnectionGetVersion(cn));
 
     OCI_ConnectionFree(cn);
     OCI_EnvironmentFree(env);
@@ -159,9 +159,26 @@ Connection      version : 2300
     `OCI_Initialize()` / `OCI_Cleanup()` from OCILIB 4.x. If you have used an earlier
     version, see the migration guide linked from the Appendices.
 
+## Putting it together — the typical sequence
+
+Connecting is the first real call — and the first place failures surface:
+
+1. **Have the three pieces ready**: db string (`//host:port/service`), user,
+   password — `OCILIB_DEMO_*` env vars in samples.
+2. **Call `OCI_ConnectionCreate`** — it opens a session, authenticates, and
+   hands you the `OCI_Connection` everything else hangs off.
+3. **Check the result** — NULL means refused: bad service name, wrong
+   credentials, unreachable host. `OCI_GetLastError` tells you which.
+4. **Free it when done** — `OCI_ConnectionFree` drops the session.
+
+Hints: the connection handle is the *parent* of statements, transactions,
+queues — freeing it while children are alive is the classic leak; a refused
+connect is not an exception in C — check the NULL, don't rely on the handler
+firing; and `//host:port/service` is EZCONNECT — no `tnsnames.ora` needed.
+
 ## Try it yourself
 
-1. Add `OCI_Ping(cn)` after connecting and print its result — it verifies the session
+1. Add `OCI_ConnectionPing(cn)` after connecting and print its result — it verifies the session
    round-trips to the server.
 2. Set `OCILIB_DEMO_PWD` to a wrong value and observe what your error handler prints.
 3. Try the three connection-string forms if you have a `tnsnames.ora` alias configured.

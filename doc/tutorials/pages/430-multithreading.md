@@ -1,6 +1,6 @@
 ---
 title: Multithreading
-part: 4
+part: 5
 level: advanced
 demos: [abort.c]
 ---
@@ -54,9 +54,9 @@ connection.
 :::sample
 ```c
 /* worker */
-OCI_Connection *cn = OCI_PoolGetConnection(pool, NULL);   /* my own session */
+OCI_Connection *cn = OCI_PoolGetConnection(env, pool, NULL);   /* my own session */
 OCI_Statement  *st = OCI_StatementCreate(cn);
-OCI_ExecuteStmt(st, OTEXT("update …"));
+OCI_StatementExecute(st, OTEXT("update …"));
 OCI_StatementFree(st);
 OCI_ConnectionFree(cn);                                    /* back to pool */
 ```
@@ -79,6 +79,26 @@ The error handler callback also fires on the calling thread. v5 internals use IS
 !!! warning "Serialized is not parallel"
     Two threads executing on the *same* connection don't run in parallel — OCI
     serializes them. Parallel work needs parallel connections (the pool).
+
+## Putting it together — the typical sequence
+
+Threads + OCI is mostly about what's safe to share:
+
+1. **Create the environment threaded** — `OCI_ENV_THREADED` at
+   `EnvironmentCreate` is non-negotiable for multi-threaded use.
+2. **One connection per thread** — connections are *not* thread-safe;
+   share a pool, not a session.
+3. **Use the OCILIB primitives** — `OCI_ThreadCreate`, `OCI_Mutex*`,
+   `OCI_Condition*` for portable threading, or C++ `std::thread` + the same
+   rules.
+4. **`OCI_ThreadJoin`** for the join; `OCI_MutexAcquire`/`Release` for the
+   shared state.
+
+Hints: sharing a connection across threads serializes *and* corrupts — one
+per thread, always; `OCI_ENV_THREADED` is checked at environment creation —
+forgetting it is the classic crash-under-load bug; and OCILIB's own mutex/
+condition are thin wrappers — `std::mutex` in C++ or `pthread` directly is
+equally fine, the OCI side only cares about the environment flag.
 
 ## Try it yourself
 

@@ -6,7 +6,7 @@ part: 10
 
 # Appendix — Oracle version feature matrix
 
-Gate version-dependent features with `OCI_VER_MAJ(OCI_GetOCIRuntimeVersion())`
+Gate version-dependent features with `OCI_VER_MAJ(OCI_EnvironmentGetOCIRuntimeVersion(env))`
 **and** the server version — you need *both* client and server ≥ the level.
 
 | Feature | Min Oracle | Pages |
@@ -32,9 +32,9 @@ Gate version-dependent features with `OCI_VER_MAJ(OCI_GetOCIRuntimeVersion())`
 
 :::sample
 ```c
-OCI_UInt32 rt  = OCI_GetOCIRuntimeVersion();        /* client MMmmRR    */
-OCI_UInt32 cv  = OCI_GetVersionConnection(cn);      /* negotiated       */
-const otext *sv = OCI_GetVersionServer(cn);         /* "23.5.0.0"       */
+OCI_UInt32 rt  = OCI_EnvironmentGetOCIRuntimeVersion(env);        /* client MMmmRR    */
+OCI_UInt32 cv  = OCI_ConnectionGetVersion(cn);      /* negotiated       */
+const otext *sv = OCI_ConnectionGetServerVersionString(cn);         /* "23.5.0.0"       */
 
 if (OCI_VER_MAJ(rt) >= 23 && OCI_VER_MAJ(cv) >= 23) { /* VECTOR ok */ }
 ```

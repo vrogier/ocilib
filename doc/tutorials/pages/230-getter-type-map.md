@@ -1,7 +1,7 @@
 ---
 title: The complete getter type map
 navtitle: Getter type map
-part: 2
+part: 3
 level: beginner
 ---
 
@@ -17,36 +17,36 @@ level: beginner
 
 | SQL type | C getter | C++ `Get<T>` |
 |----------|----------|--------------|
-| `NUMBER` (small int) | `OCI_GetShort` | `Get<short>` |
-| `NUMBER` (small unsigned) | `OCI_GetUnsignedShort` | `Get<unsigned short>` |
-| `NUMBER` (int) | `OCI_GetInt` | `Get<int>` |
-| `NUMBER` (unsigned int) | `OCI_GetUnsignedInt` | `Get<unsigned int>` |
-| `NUMBER` (big int) | `OCI_GetBigInt` | `Get<BigInt>` |
-| `NUMBER` (big unsigned) | `OCI_GetUnsignedBigInt` | `Get<UBigInt>` |
-| `NUMBER` (float) | `OCI_GetFloat` | `Get<float>` |
-| `NUMBER` / `FLOAT` | `OCI_GetDouble` | `Get<double>` |
-| `NUMBER` (exact) | `OCI_GetNumber` | `Get<Number>` |
-| `BOOLEAN` (23ai) | `OCI_GetBoolean` | `Get<bool>` |
-| `CHAR/VARCHAR2/NCHAR` | `OCI_GetString` | `Get<String>` |
-| `RAW` | `OCI_GetRaw` | `Get<Raw>` (`std::vector<unsigned char>`) |
+| `NUMBER` (small int) | `OCI_ResultsetGetInt16` | `Get<Int16>` |
+| `NUMBER` (small unsigned) | `OCI_ResultsetGetUInt16` | `Get<UInt16>` |
+| `NUMBER` (int) | `OCI_ResultsetGetInt32` | `Get<Int32>` |
+| `NUMBER` (unsigned int) | `OCI_ResultsetGetUInt32` | `Get<UInt32>` |
+| `NUMBER` (big int) | `OCI_ResultsetGetInt64` | `Get<Int64>` |
+| `NUMBER` (big unsigned) | `OCI_ResultsetGetUInt64` | `Get<UInt64>` |
+| `NUMBER` (float) | `OCI_ResultsetGetFloat` | `Get<Float>` |
+| `NUMBER` / `FLOAT` | `OCI_ResultsetGetDouble` | `Get<Double>` |
+| `NUMBER` (exact) | `OCI_ResultsetGetNumber` | `Get<Number>` |
+| `BOOLEAN` (23ai) | `OCI_ResultsetGetInt32` | `Get<Int32>` |
+| `CHAR/VARCHAR2/NCHAR` | `OCI_ResultsetGetString` | `Get<String>` |
+| `RAW` | `OCI_ResultsetGetRaw` | `Get<Raw>` (`std::vector<unsigned char>`) |
 
 ## Object handles (borrowed — never freed)
 
 | SQL type | C getter | C++ `Get<T>` | Handle type |
 |----------|----------|--------------|-------------|
-| `DATE` | `OCI_GetDate` | `Get<Date>` | `OCI_Date` / `Date` → Part 5 |
-| `TIMESTAMP*` / `WITH [LOCAL] TZ` | `OCI_GetTimestamp` | `Get<Timestamp>` | `OCI_Timestamp` / `Timestamp` |
-| `INTERVAL YM/DS` | `OCI_GetInterval` | `Get<Interval>` | `OCI_Interval` / `Interval` |
-| `BLOB/CLOB/NCLOB` | `OCI_GetLob` | `Get<Lob>` | `OCI_Lob` / `Lob` |
-| `BFILE` | `OCI_GetFile` | `Get<File>` | `OCI_File` / `File` |
-| `LONG`, `LONG RAW` | `OCI_GetLong` | `Get<Long>` | `OCI_Long` / `Long` |
-| object types | `OCI_GetObject` | `Get<Object>` | `OCI_Object` / `Object` |
-| `VARRAY` / nested table | `OCI_GetColl` | `Get<Collection<T>>` | `OCI_Coll` / `Collection` |
-| `REF` | `OCI_GetRef` | `Get<Reference>` | `OCI_Ref` / `Reference` |
-| `SYS.XMLTYPE` | `OCI_GetXmlType` | `Get<XmlType>` | `OCI_XmlType` / `XmlType` |
-| `JSON` | `OCI_GetJson` | `Get<Json>` | `OCI_Json` / `Json` |
-| `VECTOR` (23ai) | `OCI_GetVector` | `Get<Vector>` | `OCI_Vector` / `Vector` |
-| `REF CURSOR` | `OCI_GetStatement` | `Get<Statement>` | `OCI_Statement` / `Statement` |
+| `DATE` | `OCI_ResultsetGetDate` | `Get<Date>` | `OCI_Date` / `Date` → Part 2 |
+| `TIMESTAMP*` / `WITH [LOCAL] TZ` | `OCI_ResultsetGetTimestamp` | `Get<Timestamp>` | `OCI_Timestamp` / `Timestamp` |
+| `INTERVAL YM/DS` | `OCI_ResultsetGetInterval` | `Get<Interval>` | `OCI_Interval` / `Interval` |
+| `BLOB/CLOB/NCLOB` | `OCI_ResultsetGetLob` | `Get<Lob>` | `OCI_Lob` / `Lob` |
+| `BFILE` | `OCI_ResultsetGetFile` | `Get<File>` | `OCI_File` / `File` |
+| `LONG`, `LONG RAW` | `OCI_ResultsetGetLong` | `Get<Long>` | `OCI_Long` / `Long` |
+| object types | `OCI_ResultsetGetObject` | `Get<Object>` | `OCI_Object` / `Object` |
+| `VARRAY` / nested table | `OCI_ResultsetGetColl` | `Get<Collection<T>>` | `OCI_Collection` / `Collection` |
+| `REF` | `OCI_ResultsetGetReference` | `Get<Reference>` | `OCI_Reference` / `Reference` |
+| `SYS.XMLTYPE` | `OCI_ResultsetGetXmlType` | `Get<XmlType>` | `OCI_XmlType` / `XmlType` |
+| `JSON` | `OCI_ResultsetGetJson` | `Get<Json>` | `OCI_Json` / `Json` |
+| `VECTOR` (23ai) | `OCI_ResultsetGetVector` | `Get<Vector>` | `OCI_Vector` / `Vector` |
+| `REF CURSOR` | `OCI_ResultsetGetCursor` | `Get<Statement>` | `OCI_Statement` / `Statement` |
 
 Every getter also exists in a `*ByName` variant that resolves the column name.
 
@@ -69,12 +69,31 @@ auto photo = rs.GetOptional<Lob>(5);      // std::optional<Lob>
 auto doc   = rs.Get<Json>(5);
 ```
 
+## Putting it together — the typical sequence
+
+Choosing the right getter is a two-step lookup:
+
+1. **Know the column's SQL type** — from `describe`, `GetColumn`, or the
+   schema you wrote.
+2. **Map it**: `NUMBER` int → `GetInt32`/`Get<Int32>`, `NUMBER` float →
+   `GetDouble`, `VARCHAR2`/`CHAR` → `GetString`, `DATE` → `GetDate`,
+   `TIMESTAMP` → `GetTimestamp`, `CLOB`/`BLOB` → `GetLob`, `RAW` → `GetRaw`,
+   `JSON` → `GetJson`, `XMLTYPE` → `GetXmlType`, object → `Get<Object>`.
+3. **C++ `Get<T>` collapses the choice** — the template dispatches on the type
+   you ask for; `Get<Int32>(0)` is the same call as `OCI_ResultsetGetInt32`.
+
+Hints: `GetString` is the universal fallback — it converts any column to text;
+BOOLEAN columns are `GetInt32`, there is no `GetBoolean` on a resultset; and
+the C++ `Get<T>` accepts the same set of types as the C getters — `Raw`,
+`Date`, `Timestamp`, `Lob`, `Json`, `Number`, `XmlType`, `Object`, `Interval`,
+`Vector`, `Long` all work.
+
 ## Try it yourself
 
 1. `describe employees` in SQL*Plus and pick the correct getter for each column.
 2. Fetch `rowid` — which getter do you use? (Hint: it's a string.)
-3. Fetch a `sys_refcursor` returned by a query — walk it with `OCI_GetStatement` then
-   `OCI_GetResultset` on that nested statement.
+3. Fetch a `sys_refcursor` returned by a query — walk it with `OCI_ResultsetGetCursor` then
+   `OCI_StatementGetResultset` on that nested statement.
 
 ## Recap
 

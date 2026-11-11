@@ -113,8 +113,8 @@ builds, OCILIB never uses plain string literals for API calls:
 - **`ocilib::String`** — C++ string type (`std::string` or `std::wstring`)
 
 ```c
-OCI_ExecuteStmt(st, OTEXT("select ename from employees"));   /* portable */
-OCI_ExecuteStmt(st, "select ename from employees");          /* ANSI builds only */
+OCI_StatementExecute(st, OTEXT("select ename from employees"));   /* portable */
+OCI_StatementExecute(st, "select ename from employees");          /* ANSI builds only */
 ```
 
 Plain `const char*` literals happen to compile on ANSI builds, and C++ samples accept

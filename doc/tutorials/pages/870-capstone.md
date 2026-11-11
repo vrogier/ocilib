@@ -32,7 +32,7 @@ empdir profile <empno>            (JSON doc ops)
 | `list`/`get` | statements, binds, resultset getters, scrollable | 210–275 |
 | `add` | prepared binds, transactions | 245/410 |
 | `raise` | PL/SQL proc + OUT param, RETURNING | 315/280 |
-| `import` | array binds or `OCI_DirPath` | 810/815 |
+| `import` | array binds or `OCI_DirectPath` | 810/815 |
 | `watch` | `OCI_ENV_EVENTS` + `OCI_Subscription` | 730 |
 | `jobs` | AQ enqueue/dequeue, `job_t` payload | 710–725 |
 | `profile` | `OCI_Json`/`JsonNode` DOM | 570/575 |
@@ -57,7 +57,7 @@ Statements are prepared once per command and bound by name.
 
 - Add `empdir export --objects` writing departments as `dept_t` object graphs.
 - Add `empdir docs` running the SODA collection CRUD from Part 9.
-- Wire `OCI_SetTrace(MODULE/ACTION)` per command and watch `V$SESSION`.
+- Wire `OCI_ConnectionSetTrace(MODULE/ACTION)` per command and watch `V$SESSION`.
 
 ## The source
 

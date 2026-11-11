@@ -29,7 +29,7 @@ create type job_t as object (job_id number, action varchar2(20), empno number);
 
 **Stretch:**
 - Replace polling with `OCI_DequeueSubscribe` + `OCI_ENV_EVENTS` callback.
-- Add `OCI_SubscriptionRegister` on `employees` with `OCI_CNT_ROWS` and log which
+- Add `OCI_SubscriptionCreate` on `employees` with `OCI_CNT_ROWS` and log which
   ROWIDs your jobs changed.
 - Two named consumers (`OCI_Agent` "CLERK"/"MANAGER") routed by `MsgSetConsumers`.
 

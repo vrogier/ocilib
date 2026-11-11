@@ -23,12 +23,12 @@ document in the same call:
 
 :::sample
 ```c
-OCI_SodaDoc *docs[3] = { d1, d2, d3 };
-OCI_SodaCollInsertMany(coll, docs, 3, TRUE);     /* docs now carry keys+versions */
+OCI_SodaDocument *docs[3] = { d1, d2, d3 };
+OCI_SodaCollectionInsertMany(coll, docs, 3, TRUE);     /* docs now carry keys+versions */
 ```
 
 ```cpp
-std::vector<SodaDoc> docs{ d1, d2, d3 };
+std::vector<SodaDocument> docs{ d1, d2, d3 };
 coll.InsertMany(docs, true);                     /* docs now carry keys+versions */
 ```
 :::
@@ -46,7 +46,7 @@ OCI_SodaOptionsSetLimit (opt, 10);
 OCI_SodaOptionsSetSkip  (opt, 20);
 OCI_SodaOptionsSetHint  (opt, OTEXT("MONITOR"));
 OCI_SodaOptionsSetLock  (opt, TRUE);            /* SELECT FOR UPDATE semantics */
-OCI_SodaDocCursor *cur = OCI_SodaCollFind(coll, opt);
+OCI_SodaDocumentCursor *cur = OCI_SodaCollectionFind(coll, opt);
 ```
 
 ```cpp
@@ -70,11 +70,12 @@ for (auto &&doc : coll.Find(opt))
 
 :::sample
 ```c
-OCI_SodaCollCreateIndex(coll, OTEXT("{\"name\":\"ix_age\",\"fields\":[{\"path\":\"age\"}]}"));
-otext **names; OCI_UInt32 n;
-OCI_SodaCollListIndexes(coll, &names, &n);       /* + FreeIndexNames */
-OCI_SodaCollDropIndex(coll, OTEXT("ix_age"));
-OCI_Json *guide = OCI_SodaCollGetDataGuide(coll, NULL);  /* inferred schema */
+OCI_SodaCollectionCreateIndex(coll, OTEXT("{\"name\":\"ix_age\",\"fields\":[{\"path\":\"age\"}]}"));
+otext **names;
+OCI_UInt32 n;
+names = OCI_SodaCollectionListIndexes(coll, &n);       /* + OCI_SodaCollectionFreeIndexNames */
+OCI_SodaCollectionDropIndex(coll, OTEXT("ix_age"));
+OCI_SodaDocument *guide = OCI_SodaCollectionGetDataGuide(coll);  /* inferred schema */
 ```
 
 ```cpp
@@ -95,6 +96,21 @@ Json guide = coll.GetDataGuide();                 /* inferred schema */
 `SodaCollTruncate` (empty it), `SodaCollDrop` (drop collection + backing table),
 `SodaCollGetMetadata` (creation options), `SodaCollIsMapped` (mapped vs native),
 `SodaDbGetCollectionNames`/`GetColls` (enumerate, + `FreeCollectionNames`).
+
+## Putting it together — the typical sequence
+
+Advanced SODA adds query-by-example, bulk ops, and indexes:
+
+1. **QBE** — `SodaCollectionFind` with a JSON filter document, not SQL.
+2. **Bulk insert** — `SodaCollectionInsertMany` for batches.
+3. **Indexes** — `SodaCollectionCreateIndex`, `ListIndexes`, `DropIndex` on
+   document fields.
+4. **Data guide** — `SodaCollectionGetDataGuide` introspects the collection's
+   document shapes.
+
+Hints: QBE filters are documents — `{"field": {"$eq": value}}` syntax, not
+WHERE clauses; `GetDataGuide` returns a `SodaDocument` describing observed
+field paths; and index management is DDL — it commits, unlike document ops.
 
 ## Try it yourself
 

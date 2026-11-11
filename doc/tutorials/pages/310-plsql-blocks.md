@@ -1,6 +1,6 @@
 ---
 title: Anonymous PL/SQL blocks
-part: 3
+part: 4
 level: beginner
 demos: [plsql_block.c]
 ---
@@ -18,13 +18,36 @@ demos: [plsql_block.c]
 An anonymous block is just SQL text to OCILIB — prepare, bind, execute, like
 everything else. The magic is that **bind placeholders work both ways** inside PL/SQL:
 
+!!! note "No `/` at the end — unlike SQL*Plus"
+    In SQL*Plus you terminate a block with a `/` on its own line so the tool
+    knows to send it. OCILIB goes straight to OCI — there is **no `/`**: the
+    SQL string ends at `END;`. A trailing `/` in your statement text is an
+    actual syntax error on the server.
+
+    What you type in SQL*Plus:
+
+    ```sql
+    BEGIN
+      :r := 1;
+    END;
+    /
+    ```
+
+    What you pass to `OCI_StatementPrepare` — the `/` is gone:
+
+    ```sql
+    BEGIN
+      :r := 1;
+    END;
+    ```
+
 :::sample
 ```c
 OCI_Int32 res = 0;
 
-OCI_Prepare(st, OTEXT("begin :res := trunc(sysdate+1) - trunc(sysdate-1); end;"));
-OCI_BindInt(st, OTEXT(":res"), &res);       /* assignment target → OUT automatically */
-OCI_Execute(st);
+OCI_StatementPrepare(st, OTEXT("begin :res := trunc(sysdate+1) - trunc(sysdate-1); end;"));
+OCI_StatementBindInt32(st, OTEXT(":res"), &res);       /* assignment target → OUT automatically */
+OCI_StatementExecutePrepared(st);
 
 printf("res = %d\n", res);                   /* 2 — written by the block */
 ```
@@ -44,10 +67,10 @@ during execute. Placeholders used as values act as IN.
 :::sample
 ```c
 int days = 30, result = 0;
-OCI_Prepare(st, OTEXT("begin :out := :days * 2; end;"));
-OCI_BindInt(st, OTEXT(":days"), &days);      /* IN  */
-OCI_BindInt(st, OTEXT(":out"),  &result);    /* OUT — filled after Execute */
-OCI_Execute(st);
+OCI_StatementPrepare(st, OTEXT("begin :out := :days * 2; end;"));
+OCI_StatementBindInt32(st, OTEXT(":days"), &days);      /* IN  */
+OCI_StatementBindInt32(st, OTEXT(":out"),  &result);    /* OUT — filled after Execute */
+OCI_StatementExecutePrepared(st);
 ```
 
 ```cpp
@@ -77,6 +100,24 @@ end;
 PL/SQL exceptions surface as regular errors — `ORA-06550` (compile),
 `ORA-01403`/`ORA-06502` at runtime — with the statement's error-position field
 pointing into your block text when the error is syntactic.
+
+## Putting it together — the typical sequence
+
+Running PL/SQL from OCILIB is the same statement path, different SQL shape:
+
+1. **Prepare a `BEGIN…END;` block** — the whole anonymous block is one SQL
+   string to OCILIB.
+2. **Bind the placeholders** — `:in`, `:out` markers inside the block map to
+   `StatementBind*` calls exactly like a SELECT.
+3. **Execute** — the block runs server-side; `OUT` binds come back filled.
+4. **No resultset** — unless the block opens a cursor you fetch (next pages),
+   `GetResultset` on PL/SQL returns NULL.
+
+Hints: `BEGIN…END` is a statement like any other — the same
+prepare/bind/execute lifecycle applies; named placeholders in the block
+(`:ret_val`) are bound by name, order doesn't matter; and a PL/SQL compile
+error is an *execute-time* failure, not a prepare-time one — `Prepare`
+succeeds, `Execute` reports `ORA-06550`.
 
 ## Try it yourself
 

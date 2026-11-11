@@ -14,7 +14,7 @@ demos: [err.c, err_ctx.c, err_warning.c]
 - enable Oracle warnings
 - map the C error model onto C++ exceptions
 
-## Meet the error object
+## The error object
 
 The **error** is different from every other handle in this tutorial: *you* never create or free one.
 
@@ -84,7 +84,7 @@ In C++, both channels collapse into one: a failed call throws `ocilib::Exception
 
 :::sample
 ```c
-if (!OCI_Commit(cn))
+if (!OCI_ConnectionCommit(cn))
 {
     OCI_Error *err = OCI_GetLastError();
     fprintf(stderr, "commit failed: %s (code %u)\n",
@@ -114,7 +114,7 @@ handler, tagged with the warning severity so you can tell them apart:
 
 :::sample
 ```c
-OCI_EnableWarnings(env, TRUE);
+OCI_EnvironmentEnableWarnings(env, TRUE);
 ```
 
 ```cpp
@@ -127,6 +127,24 @@ env.EnableWarnings(true);
 `ocilib::Exception` derives from `std::exception` — catch it specifically when you need the OCILIB fields (`GetType`, `GetCategory`, `GetRow`…); `std::exception` suffices otherwise.
 
 There is no "last error" polling and no callback — the exception *is* the error object.
+
+## Putting it together — the typical sequence
+
+Error handling is a contract, learned once and applied everywhere:
+
+1. **Register the handler** at `EnvironmentCreate` — `void
+   err_handler(OCI_Error *err)` receives every failure.
+2. **Check return codes** — `OCI_Boolean` FALSE means failure; NULL means
+   no-handle. *That* is the error signal in C, not an exception.
+3. **Ask `OCI_GetLastError`** for the details — `OCI_ErrorGet*` gives the
+   message, ORA code, SQL statement, row.
+4. **In C++ it's different**: failures throw `ocilib::Exception` — the same
+   `core::Check` wraps every call. `try`/`catch`, not return codes.
+
+Hints: the handler is *notification*, not prevention — you still must check
+returns; `GetLastError` is per-thread — call it from the thread that failed;
+and the C++ exception carries the same `OCI_Error` fields — `e.GetMessage()`,
+`e.GetOracleErrorCode()` map one-to-one.
 
 ## Try it yourself
 

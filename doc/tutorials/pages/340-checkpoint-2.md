@@ -1,7 +1,7 @@
 ---
 title: Checkpoint 2 — payroll procedure
 navtitle: Checkpoint 2 payroll
-part: 3
+part: 4
 level: intermediate
 ---
 
@@ -43,14 +43,14 @@ end;
 
 1. Connects and calls `emp_payroll.apply_raise(20, 7.5, …)`:
    - `p_deptno`/`p_pct` IN binds, `p_count` OUT bind (direction!),
-   - `p_list` via `OCI_BindStatement` onto a second statement handle.
+   - `p_list` via `OCI_StatementBindCursor` onto a second statement handle.
 2. Prints `p_count`, then iterates the returned cursor.
 3. Enables server output first and prints the `put_line` trace at the end.
 
 **Stretch:**
 
 - Add a `p_names in t_tab` index-by parameter listing names to *exclude* — bind a
-  `OCI_BindArrayOfStrings` for it.
+  `OCI_StatementBindStringArray` for it.
 - Re-implement `p_list` with `dbms_sql.return_result` inside the proc and compare
   the client code (`GetNextResultset` vs `BindStatement`).
 
@@ -66,4 +66,4 @@ end;
 | `DBMS_OUTPUT` | 335 |
 
 When `apply_raise` prints the trace line, the count, and the updated salary list —
-Part 3 is done. Next: transactions, pools and threads.
+Part 4 is done. Next: transactions, pools and threads.

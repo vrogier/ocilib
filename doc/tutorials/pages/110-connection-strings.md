@@ -63,7 +63,7 @@ The connection answers that — a quick sanity check worth doing once:
 :::sample
 ```c
 printf("connected as %s to %s (server %s)\n",
-       OCI_GetUserName(cn), OCI_GetDatabase(cn), OCI_GetVersionServer(cn));
+       OCI_ConnectionGetUserName(cn), OCI_ConnectionGetConnectionString(cn), OCI_ConnectionGetServerVersionString(cn));
 ```
 
 ```cpp
@@ -75,6 +75,29 @@ std::cout << "connected as " << con.GetUserName() << " to " << con.GetDbName()
 The connection exposes a much larger attribute surface — service/instance details, trace fields, the statement cache, timeouts and TAF/HA hooks.
 
 That's the subject of the next page.
+
+## Putting it together — the typical sequence
+
+Connecting is a two-line operation, but the decisions happen before the call:
+
+1. **Pick the addressing form**: `//host:port/service` (EZCONNECT, the default),
+   `//host:port/service:dedicated`, a full TNS alias, or a descriptor string —
+   the syntax decides *how* Oracle locates the instance, not what OCILIB does
+   with it.
+2. **Choose the connect flavor**: plain `Connection` for normal work, pooled
+   `PoolGetConnection` for repeated connects, `SYSDBA`/`SYSOPER` only for admin
+   pages.
+3. **Pass the credentials** — `OCILIB_DEMO_*` env vars in the samples, real ones
+   in your code.
+4. **Check the result** — `OCI_ConnectionCreate` returns a handle or NULL;
+   `OCI_GetLastError` explains a refused connect (bad service, bad credentials,
+   unreachable host).
+
+Hints: the *service* name is not the SID — `/ORCL` and `//host/orcl` mean
+different things on misconfigured servers; connection strings with `@` and `//`
+are the most-quoted source of "connects in SQL*Plus but not here"; and a pooled
+handle is returned by `PoolGetConnection`, not `Connection` — don't mix the
+lifecycles.
 
 ## Try it yourself
 

@@ -27,14 +27,14 @@ OCI_Int32  ids[N];
 otext      names[N][31];
 OCI_Double sals[N];
 
-OCI_Prepare(st, OTEXT("insert into employees(empno, ename, sal) values(:i, :e, :s)"));
-OCI_BindArrayOfInts   (st, OTEXT(":i"), ids,   N);
-OCI_BindArrayOfStrings(st, OTEXT(":e"), (otext*)names, 30, N);
-OCI_BindArrayOfDoubles(st, OTEXT(":s"), sals,  N);
-OCI_BindArraySetSize(st, N);
+OCI_StatementPrepare(st, OTEXT("insert into employees(empno, ename, sal) values(:i, :e, :s)"));
+OCI_StatementBindInt32Array   (st, OTEXT(":i"), ids,   N);
+OCI_StatementBindStringArray(st, OTEXT(":e"), (otext*)names, 30, N);
+OCI_StatementBindDoubleArray(st, OTEXT(":s"), sals,  N);
+OCI_StatementBindArraySetSize(st, N);
 
-OCI_Execute(st);                       /* N inserts, one call */
-printf("%u rows\n", OCI_GetAffectedRows(st));
+OCI_StatementExecutePrepared(st);                       /* N inserts, one call */
+printf("%u rows\n", OCI_StatementGetAffectedRows(st));
 ```
 
 ```cpp
@@ -59,12 +59,12 @@ In C++ a `std::vector<T>` + `AsArray` dispatches on the type.
 
 | C function | C++ method | Purpose |
 |------------|------------|---------|
-| `OCI_BindArraySetSize` | `SetBindArraySize` | how many array elements this execute uses |
-| `OCI_BindArrayGetSize` | `GetBindArraySize()` | read it |
+| `OCI_StatementBindArraySetSize` | `SetBindArraySize` | how many array elements this execute uses |
+| `OCI_StatementBindArrayGetSize` | `GetBindArraySize()` | read it |
 | `OCI_BindSetNullAtPos` | `BindInfo::SetDataNull(true, i)` | NULL flag per row |
 | `OCI_BindSetNotNullAtPos` | `SetDataNull(false, i)` | back to NOT NULL |
 | `OCI_BindIsNullAtPos` | `IsDataNull(i)` | read the flag |
-| `OCI_GetAffectedRows` | `GetAffectedRows()` | total rows across the batch |
+| `OCI_StatementGetAffectedRows` | `GetAffectedRows()` | total rows across the batch |
 
 ## Batch errors
 
@@ -78,6 +78,20 @@ information** — the error's row field identifies the offending array index
   capacity.
 - Keep arrays alive through all executes (same binding rules as scalar binds).
 - Batch size is a memory↔round-trip trade, like fetch size.
+
+## Putting it together — the typical sequence
+
+Array binds batch N rows per round-trip — the biggest DML speedup in OCILIB:
+
+1. **Prepare once** — the DML with `:bind` placeholders.
+2. **Bind arrays** — `StatementBind*Array` with C arrays + element count.
+3. **Execute** — one call applies the DML to every element.
+4. **Check errors** — `OCI_GetBatchError` iterates the per-row failures —
+   array ops don't all-or-nothing.
+
+Hints: `GetAffectedRows` reports the total; `GetBatchErrorCount` + loop
+`GetBatchError` gives the per-row story; and arrays must all be the same
+length — the count is shared across the statement's binds.
 
 ## Try it yourself
 
@@ -94,7 +108,7 @@ information** — the error's row field identifies the offending array index
 
 ## Recap
 
-- `OCI_BindArrayOf*` + `BindArraySetSize` + one `Execute` = bulk DML;
+- `OCI_StatementBind*Array` + `BindArraySetSize` + one `Execute` = bulk DML;
   `BindSetNullAtPos` for sparse NULLs.
 
 **Next:** direct path loading — the fastest bulk ingest of all.

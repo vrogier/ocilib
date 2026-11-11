@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PL/SQL-only types — BOOLEAN and RECORD — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2" open><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li class="active"><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span></div>
+    <h1 id="plsql-only-types-boolean-and-record">PL/SQL-only types — <code>BOOLEAN</code> and <code>RECORD</code></h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>pass booleans in and out of PL/SQL calls</li>
+<li>describe, fill and bind a PL/SQL <code>RECORD</code></li>
+<li>know where user-defined types (UDT) fit in the picture</li>
+</ul>
+<h2 id="in-context-types-that-only-exist-inside-plsql">In context — types that only exist inside PL/SQL</h2>
+<p>PL/SQL has its own type system layered on top of SQL's. Two of its types are
+worth singling out because they behave <em>differently</em> from everything else in
+this part: <code>BOOLEAN</code> exists as a PL/SQL parameter type long before it became a
+SQL column (23ai), and <code>RECORD</code> is a package-level composite that lives entirely
+inside PL/SQL — you cannot <code>CREATE TABLE … (r RECORD)</code>, only declare variables
+of it inside <code>BEGIN…END</code> blocks and package specs.</p>
+<p>That distinction explains the OCILIB story for both: a <code>BOOLEAN</code> <strong>parameter</strong>
+binds through the scalar bind path, while a <code>BOOLEAN</code> <strong>column</strong> (23ai+) fetches
+through the integer resultset getters — there is no <code>OCI_ResultsetGetBoolean</code>
+because the wire representation is <code>OCI_Boolean</code> (an int). And a <code>RECORD</code> is not
+a column type at all — it rides on the <em>object</em> machinery OCILIB uses for UDTs:
+you describe the record type via <code>TypeInfo</code> and it arrives as <code>OCI_Object</code>, with
+<code>Get</code>/<code>Set</code> accessors on its named fields.</p>
+<h2 id="the-plsql-types">The PL/SQL types</h2>
+<p>Two Oracle types exist <strong>only inside PL/SQL</strong> — no SQL column can hold them, so
+no <code>OCI_ResultsetGet*</code> is needed: they flow through binds and objects only.</p>
+<ul>
+<li><code>BOOLEAN</code> — a PL/SQL parameter type (and since 23ai, a <em>SQL</em> column type too)</li>
+<li><code>RECORD</code> — a package-level composite type (<code>type t is record(a …, b …)</code>)</li>
+</ul>
+<h2 id="boolean">BOOLEAN</h2>
+<p><code>BOOLEAN</code> is bound like any scalar — the <em>same</em> bind carries <code>IN</code>, <code>OUT</code> and
+<code>IN OUT</code> traffic: assign to the placeholder in PL/SQL and the host variable
+comes back updated. For <code>BOOLEAN</code> <strong>columns</strong> (23ai), use the integer getter
+(<code>OCI_CDT_BOOLEAN</code> values are <code>OCI_Boolean</code> in the row buffer).</p>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_StatementBindBoolean</code></td>
+<td><code>Bind(":b", v)</code></td>
+<td>bool param, any direction</td>
+</tr>
+<tr>
+<td><code>OCI_ResultsetGetInt32</code></td>
+<td><code>Get&lt;Int32&gt;</code></td>
+<td>read a <code>BOOLEAN</code> column (0/1)</td>
+</tr>
+</tbody>
+</table>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Boolean</span><span class="w"> </span><span class="n">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">FALSE</span><span class="p">;</span>
+
+<span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"begin :b := check_employee(:e); end;"</span><span class="p">));</span>
+<span class="n">OCI_StatementBindBoolean</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":b"</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ok</span><span class="p">);</span>
+<span class="n">OCI_StatementBindInt32</span><span class="w">  </span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":e"</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">empno</span><span class="p">);</span>
+<span class="n">OCI_StatementExecutePrepared</span><span class="p">(</span><span class="n">st</span><span class="p">);</span><span class="w">          </span><span class="cm">/* ok now holds the result */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="kt">bool</span><span class="w"> </span><span class="n">ok</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nb">false</span><span class="p">;</span>
+
+<span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"begin :b := check_employee(:e); end;"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":b"</span><span class="p">,</span><span class="w"> </span><span class="n">ok</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="n">empno</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">ExecutePrepared</span><span class="p">();</span><span class="w">                      </span><span class="cm">/* ok now holds the result */</span>
+</pre></div>
+</div></div>
+<h2 id="record">RECORD</h2>
+<p>A PL/SQL <code>RECORD</code> is a <em>package-level</em> named type — OCILIB models it as an
+<code>OCI_Object</code>, exactly like a schema UDT. Describe it by its <strong>fully-qualified</strong>
+name <code>schema.package.type</code> (unqualified names describe schema objects only),
+create the object, fill its attributes by name, bind it.</p>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_TypeInfoGet</code> (<code>OCI_TIF_TYPE</code>)</td>
+<td><code>TypeInfo</code> ctor</td>
+<td>describe the record</td>
+</tr>
+<tr>
+<td><code>OCI_ObjectCreate</code></td>
+<td><code>Object</code> ctor</td>
+<td>instantiate it</td>
+</tr>
+<tr>
+<td><code>OCI_ObjectSet{Type}</code> / <code>OCI_ObjectGet{Type}</code></td>
+<td><code>Set&lt;T&gt;</code> / <code>Get&lt;T&gt;</code></td>
+<td>attribute access</td>
+</tr>
+<tr>
+<td><code>OCI_StatementBindObject</code></td>
+<td><code>Bind(":r", rec)</code></td>
+<td>pass it to PL/SQL</td>
+</tr>
+</tbody>
+</table>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_TypeInfo</span><span class="w"> </span><span class="o">*</span><span class="n">ti</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGet</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"hr.emp_pkg.t_emp_rec"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_TIF_TYPE</span><span class="p">);</span>
+<span class="n">OCI_Object</span><span class="w">   </span><span class="o">*</span><span class="n">rec</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ObjectCreate</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span>
+
+<span class="n">OCI_ObjectSetInt32</span><span class="w"> </span><span class="p">(</span><span class="n">rec</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"EMPNO"</span><span class="p">),</span><span class="w"> </span><span class="mi">7788</span><span class="p">);</span>
+<span class="n">OCI_ObjectSetString</span><span class="p">(</span><span class="n">rec</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"ENAME"</span><span class="p">),</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"SCOTT"</span><span class="p">));</span>
+
+<span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"begin emp_pkg.promote(:r, :pct); end;"</span><span class="p">));</span>
+<span class="n">OCI_StatementBindObject</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":r"</span><span class="p">),</span><span class="w"> </span><span class="n">rec</span><span class="p">);</span>
+<span class="n">OCI_StatementExecutePrepared</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+
+<span class="n">OCI_ObjectFree</span><span class="p">(</span><span class="n">rec</span><span class="p">);</span><span class="w">   </span><span class="cm">/* caller-created — you free it */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Object</span><span class="w"> </span><span class="n">rec</span><span class="p">(</span><span class="n">TypeInfo</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="s">"hr.emp_pkg.t_emp_rec"</span><span class="p">,</span><span class="w"> </span><span class="n">TypeInfo</span><span class="o">::</span><span class="n">Type</span><span class="p">));</span>
+
+<span class="n">rec</span><span class="p">.</span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Int32</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"EMPNO"</span><span class="p">,</span><span class="w"> </span><span class="mi">7788</span><span class="p">);</span>
+<span class="n">rec</span><span class="p">.</span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"ENAME"</span><span class="p">,</span><span class="w"> </span><span class="s">"SCOTT"</span><span class="p">);</span>
+
+<span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"begin emp_pkg.promote(:r, :pct); end;"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":r"</span><span class="p">,</span><span class="w"> </span><span class="n">rec</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">ExecutePrepared</span><span class="p">();</span><span class="w">            </span><span class="cm">/* rec is RAII — no free needed */</span>
+</pre></div>
+</div></div>
+<p>Records nest cleanly — a field can itself be another record, a PL/SQL table, or
+a schema UDT (<code>OCI_ObjectGetObject</code>, <code>OCI_ObjectGetColl</code>…, same <code>Get&lt;T&gt;</code>/<code>Set&lt;T&gt;</code>
+in C++). <code>OCI_TypeInfoGetColumn</code> introspects the record's fields exactly like a
+UDT's attributes.</p>
+<h2 id="and-user-defined-types">And user-defined types?</h2>
+<p><code>CREATE TYPE</code> objects (UDTs) are schema-level named types — SQL columns <em>can</em>
+hold them. They share the same <code>OCI_Object</code> machinery as records: see
+<a href="user-defined-types.html">user-defined types</a> next, then Part 6 for
+collections and REFs.</p>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>PL/SQL types follow the bind path, not the fetch path:</p>
+<ol>
+<li><strong>BOOLEAN parameter</strong>: <code>StatementBindBoolean</code> — the <em>same</em> bind carries IN,
+   OUT, and IN OUT traffic. Set the variable before <code>Execute</code> for IN, read it
+   after for OUT.</li>
+<li><strong>BOOLEAN column (23ai)</strong>: fetch with the <em>integer</em> getters —
+   <code>GetInt32</code>/<code>Get&lt;Int32&gt;</code> — because the wire value is <code>OCI_Boolean</code> (an int).
+   There is no <code>GetBoolean</code> on a resultset.</li>
+<li><strong>RECORD parameter</strong>: describe the package type with <code>TypeInfoGet</code> —
+   <em>fully qualified</em> (<code>schema.pkg.t_rec</code>) — create an <code>Object</code>, <code>Set</code> its
+   fields by name, bind it with <code>BindObject</code>. Records never appear as
+   resultset columns; they only flow through PL/SQL.</li>
+</ol>
+<p>Hints: the <code>TypeInfoGet</code> call must be qualified — <code>pkg.type</code>, not just <code>type</code>;
+a <code>BindBoolean</code> bound to a non-BOOLEAN param fails at execute time, not bind
+time; and remember <code>RECORD</code> is package-scoped — a top-level <code>CREATE TYPE</code>
+that's a <em>record</em> is a UDT, and belongs to the next page.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Declare a package <code>record</code> with <code>NUMBER</code>/<code>VARCHAR2</code>/<code>BOOLEAN</code> fields; call a
+   procedure taking it as <code>IN OUT</code> — set it, call, read it back.</li>
+<li><code>OCI_TypeInfoGet</code> the record, loop <code>GetColumnCount</code>/<code>GetColumn</code> and dump each
+   field's <code>OCI_ColumnGetSqlType</code>.</li>
+<li>Return <code>BOOLEAN</code> from a function and print it — compare with an <code>Int32</code> bind.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Describing <code>pkg.type</code> without the schema</strong> — <code>OCI_TypeInfoGet</code> resolves
+  <code>schema.object</code>, so <code>"pkg.t_rec"</code> misses; pass <code>"schema.pkg.t_rec"</code>.</li>
+<li><strong><code>OCI_StatementBindBoolean</code> in plain SQL</strong> — <code>BOOLEAN</code> binds are for PL/SQL
+  parameters; a <code>BOOLEAN</code> <em>column</em> in a SELECT needs <code>OCI_ResultsetGetInt32</code>.</li>
+<li><strong>Expecting <code>OCI_ResultsetGetRecord</code></strong> — records never appear as columns;
+  they arrive as <code>OCI_Object</code> via binds, ref-cursor attrs, or OUT params.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>PL/SQL <code>BOOLEAN</code> = scalar bind (<code>OCI_StatementBindBoolean</code>); <code>BOOLEAN</code> columns
+  (23ai) read via <code>OCI_ResultsetGetInt32</code>.</li>
+<li>PL/SQL <code>RECORD</code> = an <code>OCI_Object</code> described by <code>OCI_TypeInfoGet</code> on
+  <code>schema.pkg.type</code>, filled by attribute, bound with <code>OCI_StatementBindObject</code>.</li>
+<li>UDTs share the same object machinery — covered in Part 6.</li>
+</ul>
+<p><strong>Next:</strong> checkpoint — a schema that exercises every type from Part 2.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="json-dom.html"><span class="pn-dir">← Previous</span>JSON DOM</a><a class="pn-link pn-next" href="user-defined-types.html"><span class="pn-dir">Next →</span>User types</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

@@ -45,9 +45,9 @@ Tagging a session is a set of `Trace` calls on the connection:
 
 :::sample
 ```c
-OCI_SetTrace(cn, OCI_TRC_MODULE,   OTEXT("empdir"));
-OCI_SetTrace(cn, OCI_TRC_ACTION,   OTEXT("list-employees"));
-OCI_SetTrace(cn, OCI_TRC_IDENTITY, OTEXT("vince"));
+OCI_ConnectionSetTrace(cn, OCI_TRC_MODULE,   OTEXT("empdir"));
+OCI_ConnectionSetTrace(cn, OCI_TRC_ACTION,   OTEXT("list-employees"));
+OCI_ConnectionSetTrace(cn, OCI_TRC_IDENTITY, OTEXT("vince"));
 /* now:  select module, action, client_identifier from v$session;  */
 ```
 
@@ -68,18 +68,18 @@ limits and timeouts:
 
 | C function | C++ method | Returns |
 |------------|------------|---------|
-| `OCI_GetDBName` | `GetDbName()` | database name |
-| `OCI_GetDatabase` | `GetDbName()` | database/service used at connect |
-| `OCI_GetInstanceName` | `GetInstanceName()` | instance name |
-| `OCI_GetInstanceStartTime` | `GetInstanceStartTime()` | instance start time (`Timestamp` in C++) |
-| `OCI_GetServiceName` | `GetService()` | service name |
-| `OCI_GetDomainName` | `GetDomain()` | domain |
-| `OCI_GetServerName` | `GetServerName()` | server host |
-| `OCI_GetSessionMode` | — | the `OCI_SESSION_*` mode used at connect |
-| `OCI_GetVersionServer` | `GetServerVersion()` | server version string (`"23.5.0.0"`) |
-| `OCI_GetMaxCursors` | `GetMaxCursors()` | `open_cursors` limit |
-| `OCI_GetTimeout` | `GetTimeout(TimeoutType)` | network/call timeout |
-| `OCI_SetTimeout` | `SetTimeout(TimeoutType, ms)` | set a timeout |
+| `OCI_ConnectionGetDatabaseName` | `GetDbName()` | database name |
+| `OCI_ConnectionGetConnectionString` | `GetDbName()` | database/service used at connect |
+| `OCI_ConnectionGetInstanceName` | `GetInstanceName()` | instance name |
+| `OCI_ConnectionGetInstanceStartTime` | `GetInstanceStartTime()` | instance start time (`Timestamp` in C++) |
+| `OCI_ConnectionGetServiceName` | `GetService()` | service name |
+| `OCI_ConnectionGetDomainName` | `GetDomain()` | domain |
+| `OCI_ConnectionGetServerName` | `GetServerName()` | server host |
+| `OCI_ConnectionGetSessionMode` | — | the `OCI_SESSION_*` mode used at connect |
+| `OCI_ConnectionGetServerVersionString` | `GetServerVersion()` | server version string (`"23.5.0.0"`) |
+| `OCI_ConnectionGetMaxCursors` | `GetMaxCursors()` | `open_cursors` limit |
+| `OCI_ConnectionGetTimeout` | `GetTimeout(TimeoutType)` | network/call timeout |
+| `OCI_ConnectionSetTimeout` | `SetTimeout(TimeoutType, ms)` | set a timeout |
 
 Timeouts come in three kinds — the C++ enum maps them under `Connection::TimeoutType`:
 
@@ -96,8 +96,8 @@ cache** keeps recently used statement handles warm:
 
 :::sample
 ```c
-OCI_SetStatementCacheSize(cn, 50);          /* statements to keep */
-printf("cache size: %u\n", OCI_GetStatementCacheSize(cn));
+OCI_ConnectionSetStatementCacheSize(cn, 50);          /* statements to keep */
+printf("cache size: %u\n", OCI_ConnectionGetStatementCacheSize(cn));
 ```
 
 ```cpp
@@ -114,15 +114,33 @@ Big win on OLTP-style code that loops over a fixed set of queries.
 
 | C function | C++ method | Purpose |
 |------------|------------|---------|
-| `OCI_SetDefaultLobPrefetchSize` | `SetDefaultLobPrefetchSize` | LOB bytes prefetched per row (Part 5) |
-| `OCI_GetDefaultLobPrefetchSize` | `GetDefaultLobPrefetchSize` | read the prefetch size |
-| `OCI_SetUserData` | `SetUserData` | attach a `void*`/`AnyPointer` to the connection |
-| `OCI_GetUserData` | `GetUserData()` | read it back |
-| `OCI_IsTAFCapable` | `IsTAFCapable()` | Transparent Application Failover supported? |
-| `OCI_SetTAFHandler` | `SetTAFHandler` | TAF failover callback (RAC) |
-| `OCI_SetHAHandler` | `SetHAHandler` | High-Availability event callback — needs `OCI_ENV_EVENTS` / `Environment::Events` |
-| `OCI_GetAutoCommit` | `GetAutoCommit()` | read autocommit state |
-| `OCI_SetAutoCommit` | `SetAutoCommit` | enable/disable autocommit (page 410) |
+| `OCI_ConnectionSetDefaultLobPrefetchSize` | `SetDefaultLobPrefetchSize` | LOB bytes prefetched per row (Part 2) |
+| `OCI_ConnectionGetDefaultLobPrefetchSize` | `GetDefaultLobPrefetchSize` | read the prefetch size |
+| `OCI_HandleSetUserData` | `SetUserData` | attach a `void*`/`AnyPointer` to the connection |
+| `OCI_HandleGetUserData` | `GetUserData()` | read it back |
+| `OCI_ConnectionIsTAFCapable` | `IsTAFCapable()` | Transparent Application Failover supported? |
+| `OCI_ConnectionSetTAFHandler` | `SetTAFHandler` | TAF failover callback (RAC) |
+| `OCI_EnvironmentSetHAHandler` | `SetHAHandler` | High-Availability event callback — needs `OCI_ENV_EVENTS` / `Environment::Events` |
+| `OCI_ConnectionGetAutoCommit` | `GetAutoCommit()` | read autocommit state |
+| `OCI_ConnectionSetAutoCommit` | `SetAutoCommit` | enable/disable autocommit (page 410) |
+
+## Putting it together — the typical sequence
+
+Session attributes are mostly set-once-then-use:
+
+1. **Connect first** — attributes live on an open connection, not the
+   environment.
+2. **Read what you got**: `GetServerVersion`, `GetDBName`, `GetSessionTag`,
+   `GetStatementCacheSize` — the diagnostics calls that answer "what am I
+   actually talking to?".
+3. **Set what the server should know**: `SetSessionTag` (for DRP/FCF routing),
+   `SetDBA` mode if you're admin, statement-cache size for hot loops.
+4. **Use them**: a bigger statement cache pays off on repeated `Prepare` of the
+   same SQL; a session tag lets a DBA trace *your* app in `v$session`.
+
+Hints: `GetVersion` (client) and `GetServerVersion` (remote) answer different
+questions — mismatch them and you'll chase phantom bugs; statement caching is
+free performance on every prepare-heavy path — raise it before profiling.
 
 ## Try it yourself
 

@@ -14,7 +14,7 @@ demos: [desc.c, meta.c]
 - walk `TypeInfo` metadata: name, kind, columns, super type
 - use it as the factory key for objects, collections and REFs
 
-## Meet the TypeInfo
+## The TypeInfo
 
 A `TypeInfo` is a **server-side description** of a schema object — the same info `describe` gives you in SQL*Plus.
 
@@ -63,7 +63,7 @@ printf("%s has %u columns\n",
 for (OCI_UInt32 i = 0; i < OCI_TypeInfoGetColumnCount(ti); ++i)
 {
     OCI_Column *col = OCI_TypeInfoGetColumn(ti, i);
-    printf("  %-12s %s\n", OCI_ColumnGetName(col), OCI_ColumnGetSQLType(col));
+    printf("  %-12s %s\n", OCI_ColumnGetName(col), OCI_ColumnGetSqlType(col));
 }
 OCI_TypeInfoFree(ti);
 ```
@@ -94,6 +94,22 @@ TypeInfo tt(con, "t_vendor", TypeInfo::Type);
 Object obj(tt);                              /* new t_vendor instance */
 ```
 :::
+
+## Putting it together — the typical sequence
+
+Schema describe is the dictionary-introspection entry point:
+
+1. **Call `OCI_Describe`** on the object name — table, type, procedure.
+2. **Get the `OCI_TypeInfo`** — the dictionary-level description.
+3. **Walk it** — `TypeInfoGet*` gives column/type lists, `ColumnCount`,
+   per-attribute info.
+4. **Use it to drive code** — describe-once, generate or adapt at runtime.
+
+Hints: `TypeInfoGet` results are cached per-connection — the second describe
+of the same object is cheap; fully-qualify with `schema.object` when the
+object isn't in your schema — unqualified misses are silent; and describe a
+*type* (`OCI_TIF_TYPE`) when you want the UDT layout, a *table* (`OCI_TIF_TABLE`)
+when you want the column list — easy to mix up.
 
 ## Try it yourself
 

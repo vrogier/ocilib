@@ -10,6 +10,7 @@ These tutorials target **v5**. If you know OCILIB 4.x, the map is short:
 
 | v4 | v5 | Where it matters |
 |----|----|------------------|
+| ~460 functions, 11 typedefs, 12 constants | renamed to the `OCI_<Type><Action>` model (`compat.h` maps old names; `OCI_NO_COMPAT` to opt out) — full table in the C migration guide, Appendix A | everywhere |
 | `OCI_Initialize(err, lib, mode)` | `OCI_EnvironmentCreate(err, lib, mode)` → `OCI_Environment*` | pages 060/150 |
 | `OCI_Cleanup()` | `OCI_EnvironmentFree(env)` | everywhere |
 | global error handler/state | per-`OCI_Environment` state + `OCI_HandleGetEnvironment` | 080/150 |

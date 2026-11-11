@@ -16,7 +16,7 @@ sql: sharding.sql
 - connect to a specific shard
 - check out sharded connections from a pool
 
-## Meet the ShardingKey
+## The ShardingKey
 
 Oracle Sharding splits one logical table across many physical databases (**shards**).
 
@@ -29,7 +29,7 @@ A *super-sharding key* adds a second level for composite shards.
 OCI_ShardingKey *skey = OCI_ShardingKeyCreate(env);
 OCI_ShardingKeyAddString(skey, OTEXT("GOLD"));              /* cust class   */
 OCI_Number *num = OCI_NumberCreate(env);
-OCI_NumberSetValue(num, OCI_NUM_INT, &(int){42});
+OCI_NumberSetValue(num, OCI_NUM_INT32, &(int){42});
 OCI_ShardingKeyAddNumber(skey, num);                        /* cust_id      */
 
 /* optional super-sharding key for composite shards */
@@ -40,7 +40,8 @@ OCI_ShardingKeyAddString(sskey, OTEXT("EUROPE"));
 ```cpp
 ShardingKey skey(env);
 skey.AddColumn<String>("GOLD");             /* cust class  */
-Number num(env); num.SetValue<int>(42);
+Number num(env);
+num.SetValue<int>(42);
 skey.AddColumn<Number>(num);                /* cust_id     */
 ShardingKey sskey(env);
 sskey.AddColumn<String>("EUROPE");
@@ -78,13 +79,29 @@ shard transparently:
 
 :::sample
 ```c
-OCI_Connection *cn = OCI_PoolGetConnectionSharded(pool, NULL, skey, sskey);
+OCI_Connection *cn = OCI_PoolGetConnectionSharded(env, pool, NULL, skey, sskey);
 ```
 
 ```cpp
 auto cn = pool.GetConnection("", skey, sskey);
 ```
 :::
+
+## Putting it together — the typical sequence
+
+Sharding adds a routing key to the connect story:
+
+1. **Create the pool or connection** with shard awareness — sharded pools
+   route by key.
+2. **Get a sharded connection** — `OCI_PoolGetConnectionSharded` with the
+   shard key string.
+3. **Work normally** — the routed session goes to the right shard
+   transparently.
+
+Hints: the shard key is opaque to OCILIB — a string the server interprets;
+`Sharded` connect is a pool feature — ad-hoc sharded connects don't exist
+the same way; and version-gate this hard — sharding is 12.2+ client and a
+sharded topology server-side.
 
 ## Try it yourself
 

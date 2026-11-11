@@ -39,7 +39,7 @@ Write `toolbox.c` (or `.cpp`) — a program that:
 
 1. Creates the environment with a printing error handler.
 2. Connects using the `OCILIB_DEMO_*` variables.
-3. Prints **server version string**, **connection version**, and `OCI_Ping` result.
+3. Prints **server version string**, **connection version**, and `OCI_ConnectionPing` result.
 4. Takes an optional first command-line argument as the connect string (falling back
    to the env var) — you'll reuse this habit in later exercises.
 5. Frees everything in the right order and exits 0 on success.

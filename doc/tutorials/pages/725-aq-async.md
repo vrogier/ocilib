@@ -24,11 +24,11 @@ Polling wastes round-trips.
 ```c
 void on_message(OCI_Dequeue *deq)
 {
-    OCI_Msg *msg = OCI_DequeueGet(deq);        /* the message that woke us */
-    OCI_Object *obj = OCI_MsgGetObject(msg);
+    OCI_Message *msg = OCI_DequeueGet(deq);        /* the message that woke us */
+    OCI_Object *obj = OCI_MessageGetObject(msg);
     printf("got: %s\n", OCI_ObjectGetString(obj, OTEXT("TITLE")));
-    OCI_MsgFree(msg);
-    OCI_Commit(cn);                          /* dequeue is transactional — commit it */
+    OCI_MessageFree(msg);
+    OCI_ConnectionCommit(cn);                          /* dequeue is transactional — commit it */
 }
 ```
 
@@ -47,11 +47,12 @@ OCI_DequeueSetConsumer(deq1, OTEXT("C1"));
 OCI_DequeueSetNavigation(deq1, OCI_ADN_FIRST_MSG);
 
 OCI_Dequeue *deqs[2] = { deq1, deq2 };
-OCI_SetSubscriptionPort(env, 9998);
+OCI_EnvironmentSetSubscriptionPort(env, 9998);
 OCI_DequeueSubscribe(con, deqs, 2, 0, on_message);   /* async! */
 
 /* … later … */
-OCI_DequeueUnsubscribe(con, deqs, 2);
+OCI_DequeueUnsubscribe(deq1);
+OCI_DequeueUnsubscribe(deq2);
 ```
 
 ```cpp
@@ -71,7 +72,7 @@ for (auto& dq : deqs) dq.Unsubscribe();
 ```
 :::
 
-## Meet the Agent — named endpoints
+## The Agent — named endpoints
 
 An `Agent` is a named producer/consumer identity (`AgentCreate(con, name, addr)` /
 `Agent(con, name, addr)`):
@@ -90,6 +91,22 @@ That's pub/sub: enqueue to a consumer list, each named consumer gets its copy.
 4. Callbacks fire on message arrival — dequeue inside the callback.
 5. Unsubscribe to stop.
 
+## Putting it together — the typical sequence
+
+Async dequeue is a callback, not a loop:
+
+1. **Register the callback** — `OCI_DequeueSubscribe(queue, callback)` with
+   your handler signature.
+2. **Provide an `OCI_Event`-style context** — the callback fires when a
+   message arrives.
+3. **Process in the callback** — payload access is the same `MsgGet` calls.
+4. **`DequeueUnsubscribe`** when done — the subscription dies with the
+   connection otherwise.
+
+Hints: callbacks run on an OCILIB notification thread — keep them short and
+thread-aware; subscribe once per queue, not per message; and async is for
+consumers — producers still enqueue the synchronous way.
+
 ## Try it yourself
 
 1. Subscribe one dequeue; enqueue 3 messages; count callback invocations.
@@ -101,7 +118,7 @@ That's pub/sub: enqueue to a consumer list, each named consumer gets its copy.
 - **No `OCI_ENV_EVENTS`** — subscribe fails silently/errors; the flag is mandatory.
 - **Callback doing too much** — it's a notification context; dequeue quickly and
   defer heavy work.
-- **Port conflicts** — `OCI_SetSubscriptionPort` needs a free UDP/TCP port.
+- **Port conflicts** — `OCI_EnvironmentSetSubscriptionPort` needs a free UDP/TCP port.
 
 ## Recap
 

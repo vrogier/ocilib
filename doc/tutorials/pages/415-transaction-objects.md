@@ -1,7 +1,7 @@
 ---
 title: OCI_Transaction — explicit transaction objects
 navtitle: Transaction objects
-part: 4
+part: 5
 level: advanced
 ---
 
@@ -13,11 +13,19 @@ level: advanced
 - attach/detach transactions to connections
 - resume suspended work
 
-## Meet the transaction object
+## The transaction object
 
 Commit and rollback operate on whatever transaction is *current* on the connection.
 
-A **transaction object** gives that unit of work a handle — so it can have a timeout, an isolation mode, a name, be suspended and resumed, or be part of a distributed branch.
+!!! tip "You probably don't need this"
+    For ordinary work you never create a transaction object — just call
+    `OCI_ConnectionCommit` / `OCI_ConnectionRollback` (C++) `con.Commit()` /
+    `con.Rollback()` on the connection and the *implicit* transaction takes
+    care of itself. An explicit `OCI_Transaction` is for **fine-grained
+    control**: a custom timeout, a non-default isolation mode (read-only,
+    serializable), or suspend/resume across calls.
+
+A **transaction object** gives that unit of work a handle — so it can have a timeout, an isolation mode, a name, or be suspended and resumed.
 
 You create it on a connection, make it the connection's current transaction, and drive it through its lifecycle.
 
@@ -27,7 +35,7 @@ OCI_Transaction *tx = OCI_TransactionCreate(
     cn,                 /* connection          */
     60,                 /* timeout (seconds)   */
     OCI_TRS_NEW,        /* mode                */
-    NULL);              /* OCI_XID* for distributed tx (XA-like) */
+    NULL);              /* reserved — pass NULL              */
 ```
 
 ```cpp
@@ -44,8 +52,8 @@ ocilib::Transaction tx(con, 60, Transaction::New);
 | `OCI_TransactionResume` | `Resume()` | re-attach a suspended tx |
 | `OCI_TransactionGetMode` | `GetMode()` | current mode |
 | `OCI_TransactionGetTimeout` | `GetTimeout()` | configured timeout |
-| `OCI_SetTransaction` | `Connection::SetTransaction` | make it the connection's current tx |
-| `OCI_GetTransaction` | `Connection::GetTransaction` | current tx |
+| `OCI_ConnectionSetTransaction` | `Connection::SetTransaction` | make it the connection's current tx |
+| `OCI_ConnectionGetTransaction` | `Connection::GetTransaction` | current tx |
 | `OCI_TransactionFree` | — (RAII) | release the handle |
 
 ## Mode flags
@@ -56,18 +64,17 @@ ocilib::Transaction tx(con, 60, Transaction::New);
 | `OCI_TRS_READONLY` | `Transaction::ReadOnly` | read-consistent transaction |
 | `OCI_TRS_READWRITE` | `Transaction::ReadWrite` | explicit read-write |
 | `OCI_TRS_SERIALIZABLE` | `Transaction::Serializable` | serializable isolation |
-| `OCI_TRS_LOOSE` | `Transaction::Loose` | loosely-coupled distributed branch |
-| `OCI_TRS_TIGHT` | `Transaction::Tight` | tightly-coupled distributed branch |
+
 
 ## Typical flow
 
 :::sample
 ```c
 OCI_Transaction *tx = OCI_TransactionCreate(cn, 0, OCI_TRS_NEW, NULL);
-OCI_SetTransaction(cn, tx);
+OCI_ConnectionSetTransaction(cn, tx);
 OCI_TransactionStart(tx);
 
-OCI_ExecuteStmt(st, OTEXT("update employees set sal = sal * 1.1 where deptno = 20"));
+OCI_StatementExecute(st, OTEXT("update employees set sal = sal * 1.1 where deptno = 20"));
 
 OCI_TransactionStop(tx);      /* commit through the transaction */
 OCI_TransactionFree(tx);
@@ -88,8 +95,25 @@ tx.Stop();                    /* commit through the transaction */
 
 - **Named/timed transactions** — a transaction that must expire (`timeout` param).
 - **Suspend/resume** — detach work, run something else, `Resume` later.
-- **Distributed transactions** — `OCI_XID*` branches (the pxid arg).
 - Everyday apps are fine with `Commit`/`Rollback` — this page is for the 5%.
+
+## Putting it together — the typical sequence
+
+Explicit `OCI_Transaction` handles are for when implicit isn't enough:
+
+1. **Create** — `OCI_TransactionCreate` with the flags that pick the type
+   (`OCI_TRS_NEW`, `OCI_TRS_READ_ONLY`, …).
+2. **Start it** — `OCI_TransactionStart` attaches the transaction to the
+   connection's current work.
+3. **Do the work** — statements between start and commit are inside it.
+4. **Commit/rollback/stop** — `OCI_TransactionStop` for the explicit end,
+   `Free` for the handle.
+
+Hints: explicit transactions are mostly for flagged work — plain
+commit/rollback doesn't need them; `OCI_TRS_READ_ONLY` enforces consistency
+across multiple statements — the repeatable-read use case; and a transaction
+handle is separate from the connection's implicit one — don't mix the two on
+the same unit of work.
 
 ## Try it yourself
 
@@ -101,6 +125,6 @@ tx.Stop();                    /* commit through the transaction */
 
 - The transaction object = a handle on the unit of work: start/stop/prepare/resume,
   attached to a connection as its current transaction.
-- Use it for timeouts, isolation modes, suspend/resume and distributed branches.
+- Use it for timeouts, isolation modes and suspend/resume.
 
 **Next:** connection pooling — many sessions without reconnect costs.

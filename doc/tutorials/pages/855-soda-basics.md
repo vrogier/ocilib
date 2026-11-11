@@ -11,7 +11,7 @@ demos: [soda.c, soda.cpp]
 
 **Objectives** — by the end of this page you will be able to:
 
-- open `OCI_SodaDb`, create collections and documents
+- open `OCI_SodaDatabase`, create collections and documents
 - insert, find and count documents
 - read document metadata (key, version, timestamps)
 
@@ -22,31 +22,31 @@ collections of documents, queried by example — no SQL needed.
 
 OCILIB exposes the full native surface since v5.
 
-The object chain is short: a `SodaDb` session on your
-connection → `SodaColl` collections → `SodaDoc` documents, with `SodaOptions` for
+The object chain is short: a `SodaDatabase` session on your
+connection → `SodaCollection` collections → `SodaDocument` documents, with `SodaOptions` for
 query modifiers:
 
 :::sample
 ```c
-OCI_SodaDb *sdb = OCI_SodaDbCreate(cn);                    /* SODA session    */
-OCI_SodaColl *coll = OCI_SodaDbCreateColl(sdb,
+OCI_SodaDatabase *sdb = OCI_SodaDatabaseCreate(cn);                    /* SODA session    */
+OCI_SodaCollection *coll = OCI_SodaDatabaseCreateCollection(sdb,
                        OTEXT("soda_employees"), NULL);     /* metadata = NULL */
 
-OCI_SodaDoc *doc = OCI_SodaDocCreateFromText(
+OCI_SodaDocument *doc = OCI_SodaDocumentCreateFromText(
     sdb, OTEXT("{\"name\":\"Fred\",\"age\":42}"), 0, NULL);/* content, len, key */
-OCI_SodaCollInsertDoc(coll, doc);
+OCI_SodaCollectionInsertDocument(coll, doc);
 
 printf("key=%s version=%s created=%s\n",
-       OCI_SodaDocGetKey(doc), OCI_SodaDocGetVersion(doc),
-       OCI_SodaDocGetCreatedOn(doc));
-OCI_SodaDocFree(doc);
+       OCI_SodaDocumentGetKey(doc), OCI_SodaDocumentGetVersion(doc),
+       OCI_SodaDocumentGetCreatedOn(doc));
+OCI_SodaDocumentFree(doc);
 ```
 
 ```cpp
-SodaDb sdb(con);                                 /* SODA session    */
-SodaColl coll = sdb.CreateCollection("soda_employees");
+SodaDatabase sdb(con);                                 /* SODA session    */
+SodaCollection coll = sdb.CreateCollection("soda_employees");
 
-SodaDoc doc(sdb, "{\"name\":\"Fred\",\"age\":42}");
+SodaDocument doc(sdb, "{\"name\":\"Fred\",\"age\":42}");
 coll.InsertDoc(doc);
 std::cout << doc.GetKey() << " " << doc.GetVersion() << "\n";
 ```
@@ -58,13 +58,13 @@ A find yields a **cursor** — each pulled document is owned (free it in C):
 
 :::sample
 ```c
-OCI_SodaDocCursor *cur = OCI_SodaCollFind(coll, NULL);     /* all docs */
-while ((doc = OCI_SodaDocCursorGetNext(cur)))
+OCI_SodaDocumentCursor *cur = OCI_SodaCollectionFind(coll, NULL);     /* all docs */
+while ((doc = OCI_SodaDocumentCursorGetNext(cur)))
 {
-    printf("%s\n", OCI_SodaDocGetText(doc, NULL));
-    OCI_SodaDocFree(doc);                                 /* each doc owned */
+    printf("%s\n", OCI_SodaDocumentGetText(doc));
+    OCI_SodaDocumentFree(doc);                                 /* each doc owned */
 }
-OCI_SodaDocCursorFree(cur);
+OCI_SodaDocumentCursorFree(cur);
 ```
 
 ```cpp
@@ -79,11 +79,11 @@ for (auto &&doc : coll.Find())              /* cursor → range-for, RAII   */
 
 | Object | C/C++ role |
 |--------|------------|
-| `SodaDb` | SODA session (`CreateColl`, `OpenColl`, `GetCollectionNames`, `GetColls`) |
-| `SodaColl` | a collection (`InsertDoc`, `InsertMany`, `Save`, `ReplaceOne{,ByKey}`, `Find`, `FindOne{,ByKey}`, `DocCount{,WithFilter}`, `Remove{,OneByKey}`, `Truncate`, `Drop`, `GetMetadata`, `GetDataGuide`, index ops) |
-| `SodaDoc` | a document (`GetContent`/`GetText`/`GetJson`, `GetKey`, `GetVersion`, `GetCreatedOn`, `GetLastModified`, `GetMediaType`, `GetIsJson`) |
+| `SodaDatabase` | SODA session (`CreateColl`, `OpenColl`, `GetCollectionNames`, `GetColls`) |
+| `SodaCollection` | a collection (`InsertDoc`, `InsertMany`, `Save`, `ReplaceOne{,ByKey}`, `Find`, `FindOne{,ByKey}`, `DocCount{,WithFilter}`, `Remove{,OneByKey}`, `Truncate`, `Drop`, `GetMetadata`, `GetDataGuide`, index ops) |
+| `SodaDocument` | a document (`GetContent`/`GetText`/`GetJson`, `GetKey`, `GetVersion`, `GetCreatedOn`, `GetLastModified`, `GetMediaType`, `GetIsJson`) |
 | `SodaOptions` | query modifiers (`SetFilter` QBE, `SetKey`/`SetKeys`, `SetLimit`, `SetSkip`, `SetLock`, `SetHint`, `SetFetchArraySize`, `SetVersion`) |
-| `SodaDocCursor` / `SodaCollCursor` | doc/collection iterators — C++ range-for |
+| `SodaDocumentCursor` / `SodaCollectionCursor` | doc/collection iterators — C++ range-for |
 
 ## Find one + count
 
@@ -91,18 +91,34 @@ for (auto &&doc : coll.Find())              /* cursor → range-for, RAII   */
 ```c
 OCI_SodaOptions *opt = OCI_SodaOptionsCreate(sdb);
 OCI_SodaOptionsSetFilter(opt, OTEXT("{\"name\":\"Jane\"}"));     /* QBE filter */
-OCI_SodaDoc *jane = OCI_SodaCollFindOne(coll, opt);
-OCI_ULong64 n = OCI_SodaCollDocCount(coll, opt);
+OCI_SodaDocument *jane = OCI_SodaCollectionFindOne(coll, opt);
+OCI_UInt64 n = OCI_SodaCollectionDocumentCount(coll, opt);
 OCI_SodaOptionsFree(opt);
 ```
 
 ```cpp
 SodaOptions opt(sdb);
 opt.SetFilter("{\"name\":\"Jane\"}");            /* QBE filter */
-SodaDoc jane = coll.FindOne(opt);
+SodaDocument jane = coll.FindOne(opt);
 ULong64 n = coll.DocCount(opt);
 ```
 :::
+
+## Putting it together — the typical sequence
+
+SODA is the document-store view of the same database:
+
+1. **Get the SODA database** — `OCI_SodaDatabase` from a connection.
+2. **Get or create a collection** — `SodaCollection` is a JSON-document bucket.
+3. **Insert documents** — `SodaDocument` wraps each JSON doc; `Insert` puts
+   them in.
+4. **Find them** — `Find` with a filter or `FindKeys` for a cursor over keys.
+5. **Fetch documents** — the cursor's `Next` yields `SodaDocument`s.
+
+Hints: SODA collections are just tables underneath — `select * from
+"soda_coll"` still works; documents are JSON — the same OSON storage as the
+JSON columns page; and `SodaDb` → `SodaDatabase` is the C++ name — the C API
+was `OCI_SodaDatabase*` all along.
 
 ## Try it yourself
 
@@ -114,11 +130,11 @@ ULong64 n = coll.DocCount(opt);
 
 - **Documents are owned** — every `SodaDocCursorGetNext`/`FindOne` doc needs
   `SodaDocFree`.
-- **Forgetting `OCI_Commit`** — SODA writes are transactional.
+- **Forgetting `OCI_ConnectionCommit`** — SODA writes are transactional.
 - **`InsertDoc` vs `Save`** — insert fails on existing key; save upserts.
 
 ## Recap
 
-- `SodaDb` → `Coll` → `Doc` + `Options` → `Find`/cursors — full CRUD without SQL.
+- `SodaDatabase` → `Coll` → `Doc` + `Options` → `Find`/cursors — full CRUD without SQL.
 
 **Next:** SODA advanced — bulk ops, indexes, data guide, the refresh flag.

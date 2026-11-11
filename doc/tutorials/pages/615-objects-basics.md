@@ -15,7 +15,7 @@ sql: object.sql
 - set scalar attributes by name
 - bind objects into columns and fetch them back
 
-## Meet the Object
+## The Object
 
 An `Object` is one **instance of an Oracle object type** — the client-side twin of a `t_sale` or `t_vendor`.
 
@@ -40,18 +40,18 @@ OCI_TypeInfo *tiv = OCI_TypeInfoGet(cn, OTEXT("t_vendor"), OCI_TIF_TYPE);
 OCI_Object *vendor = OCI_ObjectCreate(tiv);
 OCI_TypeInfoFree(tiv);
 
-OCI_ObjectSetInt   (vendor, OTEXT("CODE"), 134);
+OCI_ObjectSetInt32   (vendor, OTEXT("CODE"), 134);
 OCI_ObjectSetString(vendor, OTEXT("NAME"), OTEXT("JOHN SMITH"));
 
 OCI_Object *sale = OCI_ObjectCreate(OCI_TypeInfoGet(cn, OTEXT("t_sale"), OCI_TIF_TYPE));
-OCI_ObjectSetInt   (sale, OTEXT("CODE"),   1);
+OCI_ObjectSetInt32   (sale, OTEXT("CODE"),   1);
 OCI_ObjectSetDouble(sale, OTEXT("PRICE"),  12.99);
 OCI_ObjectSetObject(sale, OTEXT("VENDOR"), vendor);      /* nested object */
 OCI_ObjectSetDate  (sale, OTEXT("DATE_SALE"), date);
 
-OCI_Prepare(st, OTEXT("insert into sales values(:s)"));
-OCI_BindObject(st, OTEXT(":s"), sale);
-OCI_Execute(st);
+OCI_StatementPrepare(st, OTEXT("insert into sales values(:s)"));
+OCI_StatementBindObject(st, OTEXT(":s"), sale);
+OCI_StatementExecutePrepared(st);
 
 OCI_ObjectFree(sale);
 OCI_ObjectFree(vendor);
@@ -78,13 +78,13 @@ the parts:
 
 :::sample
 ```c
-OCI_ExecuteStmt(st, OTEXT("select value(s) from sales s"));
-OCI_Resultset *rs = OCI_GetResultset(st);
-while (OCI_FetchNext(rs))
+OCI_StatementExecute(st, OTEXT("select value(s) from sales s"));
+OCI_Resultset *rs = OCI_StatementGetResultset(st);
+while (OCI_ResultsetFetchNext(rs))
 {
-    OCI_Object *s = OCI_GetObject(rs, 0);          /* borrowed */
+    OCI_Object *s = OCI_ResultsetGetObject(rs, 0);          /* borrowed */
     printf("%d %s %.2f\n",
-           OCI_ObjectGetInt(s, OTEXT("CODE")),
+           OCI_ObjectGetInt32(s, OTEXT("CODE")),
            OCI_ObjectGetString(s, OTEXT("NAME")),
            OCI_ObjectGetDouble(s, OTEXT("PRICE")));
 }
@@ -107,6 +107,22 @@ for (auto &&row : st.GetResultset().Rows())
 - Names are the attribute names as declared — usually upper case in Oracle.
 - Each attribute carries its own null flag (`SetNull`/`IsNull` per attribute).
 - The object can recover its describing `TypeInfo` and its kind.
+
+## Putting it together — the typical sequence
+
+Object work mirrors the datatype pattern, plus a describe step:
+
+1. **Describe the type** — `OCI_TypeInfoGet` gives the attribute layout.
+2. **Create the object** — `OCI_ObjectCreate` from that TypeInfo.
+3. **Get/set attributes** — `ObjectSet`/`Get` by name and type.
+4. **Bind/fetch** — `StatementBindObject` into a column, `Get<Object>` back.
+5. **Free created objects** — fetched ones are borrowed.
+
+Hints: attributes are addressed by *name* — a typo'd name fails at access
+time, not describe time; `ObjectGetColl` is how you reach a nested collection
+attribute — it's still part of the same object; and the fetched Object's
+lifetime is the row's — the attributes you read are pointers into the row's
+buffer.
 
 ## Try it yourself
 

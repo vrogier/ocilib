@@ -1,6 +1,6 @@
 ---
 title: Implicit resultsets (12c+)
-part: 3
+part: 4
 level: intermediate
 oracle: "12.1"
 demos: [implicit_resultset.c, implicit_resultset.cpp]
@@ -11,7 +11,7 @@ demos: [implicit_resultset.c, implicit_resultset.cpp]
 **Objectives** — by the end of this page you will be able to:
 
 - consume multiple resultsets returned by `DBMS_SQL.RETURN_RESULT`
-- walk them with `OCI_GetNextResultset`
+- walk them with `OCI_StatementGetNextResultset`
 - know when implicit resultsets beat ref-cursor OUT params
 
 ## Concepts
@@ -37,7 +37,7 @@ asking for the *next* resultset advances through the queue until none remain:
 
 :::sample
 ```c
-OCI_ExecuteStmt(st, OTEXT(
+OCI_StatementExecute(st, OTEXT(
     "declare "
     "  c1 sys_refcursor; "
     "  c2 sys_refcursor; "
@@ -48,15 +48,15 @@ OCI_ExecuteStmt(st, OTEXT(
     "  dbms_sql.return_result(c2); "
     "end;"));
 
-OCI_Resultset *rs = OCI_GetResultset(st);
+OCI_Resultset *rs = OCI_StatementGetResultset(st);
 while (rs)
 {
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        printf("%s\n", OCI_GetString(rs, 0));
+        printf("%s\n", OCI_ResultsetGetString(rs, 0));
     }
     printf("---\n");
-    rs = OCI_GetNextResultset(st);            /* NULL when no more */
+    rs = OCI_StatementGetNextResultset(st);            /* NULL when no more */
 }
 ```
 
@@ -65,10 +65,12 @@ st.Execute("declare c sys_refcursor; begin "
            "  open c for select ename from employees; "
            "  dbms_sql.return_result(c); end;");
 for (Resultset rs = st.GetResultset(); rs; rs = st.GetNextResultset())
+{
     for (auto &&row : rs.Rows())
     {
         std::cout << row.Get<String>(0) << "\n";
     }
+}
 ```
 :::
 
@@ -83,6 +85,21 @@ for (Resultset rs = st.GetResultset(); rs; rs = st.GetNextResultset())
 
 Choose implicit for "return N lists" and 12c+ deployments; ref cursors when the
 procedure signature must be explicit or for older servers.
+
+## Putting it together — the typical sequence
+
+Implicit resultsets are the no-cursor-declaration alternative:
+
+1. **Execute the PL/SQL** — a block that does `DBMS_SQL.RETURN_RESULT` or
+   returns implicit cursors.
+2. **Walk the resultsets** — `OCI_StatementGetNextResultset` iterates the
+   implicit cursors the call produced, one after another.
+3. **Fetch each** — same `FetchNext` + `Get*` loop, repeated per resultset.
+
+Hints: implicit resultsets arrive in the order the PL/SQL returned them;
+`GetNextResultset` returns NULL when they're exhausted — that's the loop
+condition; and unlike ref cursors there's no bind — the resultsets appear on
+the statement after `Execute`, zero declaration needed.
 
 ## Try it yourself
 

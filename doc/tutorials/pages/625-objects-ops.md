@@ -41,7 +41,8 @@ the link between object values and object identity (page 640):
 
 :::sample
 ```c
-OCI_Ref *self = OCI_ObjectGetSelfRef(obj);   /* a REF pointing at obj */
+OCI_Reference *self = OCI_ReferenceCreate(OCI_ObjectGetTypeInfo(obj));
+OCI_ObjectGetSelfReference(obj, self);   /* a REF pointing at obj */
 ```
 
 ```cpp
@@ -91,6 +92,22 @@ printf("%s\n", buf);
 std::cout << obj.ToText() << "\n";
 ```
 :::
+
+## Putting it together — the typical sequence
+
+Object operations beyond plain get/set:
+
+1. **`ObjectAssign`** — copy one object's state into another.
+2. **`ObjectGetType`** — which TypeInfo backs this instance.
+3. **`ObjectGetSelfReference`** — mint a `REF` pointing at this object, for
+   binding into REF columns.
+4. **`ObjectIsNull`** — NULL objects are legal column values too.
+
+Hints: `GetSelfReference` fills a `OCI_Reference` you created first — caller
+provides the output handle; assigning copies *values*, not identity — two
+objects, one REF each; and a NULL object attribute reads as
+`IsNullAttribute` TRUE — distinguish from a zeroed attribute, which is a real
+value.
 
 ## Try it yourself
 

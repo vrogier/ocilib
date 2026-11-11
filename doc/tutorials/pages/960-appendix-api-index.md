@@ -16,29 +16,29 @@ Each family links to the tutorial page that teaches it.
 
 `OCI_AgentCreate`, `OCI_AgentFree`, `OCI_AgentGetAddress`, `OCI_AgentGetName`, `OCI_AgentSetAddress`, `OCI_AgentSetName`
 
-## `OCI_Allow*`
+## `OCI_StatementAllow*`
 
-`OCI_AllowRebinding`
+`OCI_StatementAllowRebinding`
 
 ## `OCI_Bind* — Bind` → [bind-management](bind-management.html)
 
-`OCI_BindArrayGetSize`, `OCI_BindArrayOfBigInts`, `OCI_BindArrayOfColls`, `OCI_BindArrayOfDates`, `OCI_BindArrayOfDoubles`, `OCI_BindArrayOfFiles`, `OCI_BindArrayOfFloats`, `OCI_BindArrayOfIntervals`, `OCI_BindArrayOfInts`, `OCI_BindArrayOfJsons`, `OCI_BindArrayOfLobs`, `OCI_BindArrayOfNumbers`, `OCI_BindArrayOfObjects`, `OCI_BindArrayOfRaws`, `OCI_BindArrayOfRefs`, `OCI_BindArrayOfShorts`, `OCI_BindArrayOfStrings`, `OCI_BindArrayOfTimestamps`, `OCI_BindArrayOfUnsignedBigInts`, `OCI_BindArrayOfUnsignedInts`, `OCI_BindArrayOfUnsignedShorts`, `OCI_BindArrayOfVectors`, `OCI_BindArraySetSize`, `OCI_BindBigInt`, `OCI_BindBoolean`, `OCI_BindColl`, `OCI_BindDate`, `OCI_BindDouble`, `OCI_BindFile`, `OCI_BindFloat`, `OCI_BindGetAllocationMode`, `OCI_BindGetData`, `OCI_BindGetDataCount`, `OCI_BindGetDataSize`, `OCI_BindGetDataSizeAtPos`, `OCI_BindGetDirection`, `OCI_BindGetName`, `OCI_BindGetStatement`, `OCI_BindGetSubtype`, `OCI_BindGetType`, `OCI_BindInt`, `OCI_BindInterval`, `OCI_BindIsNull`, `OCI_BindIsNullAtPos`, `OCI_BindJson`, `OCI_BindLob`, `OCI_BindLong`, `OCI_BindNumber`, `OCI_BindObject`, `OCI_BindRaw`, `OCI_BindRef`, `OCI_BindSetCharsetForm`, `OCI_BindSetDataSize`, `OCI_BindSetDataSizeAtPos`, `OCI_BindSetDirection`, `OCI_BindSetNotNull`, `OCI_BindSetNotNullAtPos`, `OCI_BindSetNull`, `OCI_BindSetNullAtPos`, `OCI_BindShort`, `OCI_BindStatement`, `OCI_BindString`, `OCI_BindTimestamp`, `OCI_BindUnsignedBigInt`, `OCI_BindUnsignedInt`, `OCI_BindUnsignedShort`, `OCI_BindVector`
+`OCI_StatementBindArrayGetSize`, `OCI_StatementBindInt64Array`, `OCI_StatementBindCollectionArray`, `OCI_StatementBindDateArray`, `OCI_StatementBindDoubleArray`, `OCI_StatementBindFileArray`, `OCI_StatementBindFloatArray`, `OCI_StatementBindIntervalArray`, `OCI_StatementBindInt32Array`, `OCI_StatementBindJsonArray`, `OCI_StatementBindLobArray`, `OCI_StatementBindNumberArray`, `OCI_StatementBindObjectArray`, `OCI_StatementBindRawArray`, `OCI_StatementBindReferenceArray`, `OCI_StatementBindInt16Array`, `OCI_StatementBindStringArray`, `OCI_StatementBindTimestampArray`, `OCI_StatementBindUInt64Array`, `OCI_StatementBindUInt32Array`, `OCI_StatementBindUInt16Array`, `OCI_StatementBindVectorArray`, `OCI_StatementBindArraySetSize`, `OCI_StatementBindInt64`, `OCI_StatementBindBoolean`, `OCI_StatementBindCollection`, `OCI_StatementBindDate`, `OCI_StatementBindDouble`, `OCI_StatementBindFile`, `OCI_StatementBindFloat`, `OCI_BindGetAllocationMode`, `OCI_BindGetData`, `OCI_BindGetDataCount`, `OCI_BindGetDataSize`, `OCI_BindGetDataSizeAtPos`, `OCI_BindGetDirection`, `OCI_BindGetName`, `OCI_BindGetStatement`, `OCI_BindGetSubtype`, `OCI_BindGetType`, `OCI_StatementBindInt32`, `OCI_StatementBindInterval`, `OCI_BindIsNull`, `OCI_BindIsNullAtPos`, `OCI_StatementBindJson`, `OCI_StatementBindLob`, `OCI_StatementBindLong`, `OCI_StatementBindNumber`, `OCI_StatementBindObject`, `OCI_StatementBindRaw`, `OCI_StatementBindReference`, `OCI_BindSetCharsetForm`, `OCI_BindSetDataSize`, `OCI_BindSetDataSizeAtPos`, `OCI_BindSetDirection`, `OCI_BindSetNotNull`, `OCI_BindSetNotNullAtPos`, `OCI_BindSetNull`, `OCI_BindSetNullAtPos`, `OCI_StatementBindInt16`, `OCI_StatementBindCursor`, `OCI_StatementBindString`, `OCI_StatementBindTimestamp`, `OCI_StatementBindUInt64`, `OCI_StatementBindUInt32`, `OCI_StatementBindUInt16`, `OCI_StatementBindVector`
 
-## `OCI_Break*`
+## `OCI_ConnectionBreak*`
 
-`OCI_Break`
+`OCI_ConnectionBreak`
 
-## `OCI_Coll* — Coll` → [collections-advanced](collections-advanced.html)
+## `OCI_Collection* — Collection` → [collections-advanced](collections-advanced.html)
 
-`OCI_CollAppend`, `OCI_CollArrayCreate`, `OCI_CollArrayFree`, `OCI_CollAssign`, `OCI_CollClear`, `OCI_CollCreate`, `OCI_CollDeleteElem`, `OCI_CollFree`, `OCI_CollGetCount`, `OCI_CollGetElem`, `OCI_CollGetMax`, `OCI_CollGetSize`, `OCI_CollGetType`, `OCI_CollGetTypeInfo`, `OCI_CollSetElem`, `OCI_CollToText`, `OCI_CollTrim`
+`OCI_CollectionAppend`, `OCI_CollectionArrayCreate`, `OCI_CollectionArrayFree`, `OCI_CollectionAssign`, `OCI_CollectionClear`, `OCI_CollectionCreate`, `OCI_CollectionDeleteElement`, `OCI_CollectionFree`, `OCI_CollectionGetCount`, `OCI_CollectionGetElement`, `OCI_CollectionGetMax`, `OCI_CollectionGetSize`, `OCI_CollectionGetType`, `OCI_CollectionGetTypeInfo`, `OCI_CollectionSetElement`, `OCI_CollectionToText`, `OCI_CollectionTrim`
 
 ## `OCI_Column* — Column` → [column-metadata](column-metadata.html)
 
-`OCI_ColumnGetCharUsed`, `OCI_ColumnGetCharsetForm`, `OCI_ColumnGetCollationID`, `OCI_ColumnGetDimension`, `OCI_ColumnGetFractionalPrecision`, `OCI_ColumnGetFullSQLType`, `OCI_ColumnGetLeadingPrecision`, `OCI_ColumnGetName`, `OCI_ColumnGetNullable`, `OCI_ColumnGetPrecision`, `OCI_ColumnGetPropertyFlags`, `OCI_ColumnGetSQLType`, `OCI_ColumnGetScale`, `OCI_ColumnGetSize`, `OCI_ColumnGetSubType`, `OCI_ColumnGetType`, `OCI_ColumnGetTypeInfo`, `OCI_ColumnHasJsonSchema`
+`OCI_ColumnGetCharUsed`, `OCI_ColumnGetCharsetForm`, `OCI_ColumnGetCollationID`, `OCI_ColumnGetDimension`, `OCI_ColumnGetFractionalPrecision`, `OCI_ColumnGetFullSqlType`, `OCI_ColumnGetLeadingPrecision`, `OCI_ColumnGetName`, `OCI_ColumnGetNullable`, `OCI_ColumnGetPrecision`, `OCI_ColumnGetPropertyFlags`, `OCI_ColumnGetSqlType`, `OCI_ColumnGetScale`, `OCI_ColumnGetSize`, `OCI_ColumnGetSubType`, `OCI_ColumnGetType`, `OCI_ColumnGetTypeInfo`, `OCI_ColumnHasJsonSchema`
 
-## `OCI_Commit*`
+## `OCI_ConnectionCommit*`
 
-`OCI_Commit`
+`OCI_ConnectionCommit`
 
 ## `OCI_Connection* — Connection` → [connection-strings](connection-strings.html)
 
@@ -56,21 +56,21 @@ Each family links to the tutorial page that teaches it.
 
 `OCI_DequeueCreate`, `OCI_DequeueFree`, `OCI_DequeueGet`, `OCI_DequeueGetConsumer`, `OCI_DequeueGetCorrelation`, `OCI_DequeueGetMode`, `OCI_DequeueGetNavigation`, `OCI_DequeueGetRelativeMsgID`, `OCI_DequeueGetVisibility`, `OCI_DequeueGetWaitTime`, `OCI_DequeueListen`, `OCI_DequeueSetAgentList`, `OCI_DequeueSetConsumer`, `OCI_DequeueSetCorrelation`, `OCI_DequeueSetMode`, `OCI_DequeueSetNavigation`, `OCI_DequeueSetRelativeMsgID`, `OCI_DequeueSetVisibility`, `OCI_DequeueSetWaitTime`, `OCI_DequeueSubscribe`, `OCI_DequeueUnsubscribe`
 
-## `OCI_Describe*`
+## `OCI_StatementDescribe*`
 
-`OCI_Describe`, `OCI_DescribeFmt`
+`OCI_StatementDescribe`, `OCI_StatementDescribeFormat`
 
-## `OCI_DirPath* — DirPath` → [direct-path](direct-path.html)
+## `OCI_DirectPath* — DirectPath` → [direct-path](direct-path.html)
 
-`OCI_DirPathAbort`, `OCI_DirPathConvert`, `OCI_DirPathCreate`, `OCI_DirPathFinish`, `OCI_DirPathFlushRow`, `OCI_DirPathFree`, `OCI_DirPathGetAffectedRows`, `OCI_DirPathGetCurrentRows`, `OCI_DirPathGetErrorColumn`, `OCI_DirPathGetErrorRow`, `OCI_DirPathGetMaxRows`, `OCI_DirPathGetRowCount`, `OCI_DirPathLoad`, `OCI_DirPathPrepare`, `OCI_DirPathReset`, `OCI_DirPathSave`, `OCI_DirPathSetBufferSize`, `OCI_DirPathSetCacheSize`, `OCI_DirPathSetColumn`, `OCI_DirPathSetConvertMode`, `OCI_DirPathSetCurrentRows`, `OCI_DirPathSetDateFormat`, `OCI_DirPathSetEntry`, `OCI_DirPathSetNoLog`, `OCI_DirPathSetParallel`
+`OCI_DirectPathAbort`, `OCI_DirectPathConvert`, `OCI_DirectPathCreate`, `OCI_DirectPathFinish`, `OCI_DirectPathFlushRow`, `OCI_DirectPathFree`, `OCI_DirectPathGetAffectedRows`, `OCI_DirectPathGetCurrentRows`, `OCI_DirectPathGetErrorColumn`, `OCI_DirectPathGetErrorRow`, `OCI_DirectPathGetMaxRows`, `OCI_DirectPathGetRowCount`, `OCI_DirectPathLoad`, `OCI_DirectPathPrepare`, `OCI_DirectPathReset`, `OCI_DirectPathSave`, `OCI_DirectPathSetBufferSize`, `OCI_DirectPathSetCacheSize`, `OCI_DirectPathSetColumn`, `OCI_DirectPathSetConvertMode`, `OCI_DirectPathSetCurrentRows`, `OCI_DirectPathSetDateFormat`, `OCI_DirectPathSetEntry`, `OCI_DirectPathSetNoLog`, `OCI_DirectPathSetParallel`
 
-## `OCI_Elem* — Elem` → [collections-advanced](collections-advanced.html)
+## `OCI_Element* — Element` → [collections-advanced](collections-advanced.html)
 
-`OCI_ElemCreate`, `OCI_ElemFree`, `OCI_ElemGetBigInt`, `OCI_ElemGetBoolean`, `OCI_ElemGetColl`, `OCI_ElemGetDate`, `OCI_ElemGetDouble`, `OCI_ElemGetFile`, `OCI_ElemGetFloat`, `OCI_ElemGetInt`, `OCI_ElemGetInterval`, `OCI_ElemGetLob`, `OCI_ElemGetNumber`, `OCI_ElemGetObject`, `OCI_ElemGetRaw`, `OCI_ElemGetRawSize`, `OCI_ElemGetRef`, `OCI_ElemGetShort`, `OCI_ElemGetString`, `OCI_ElemGetTimestamp`, `OCI_ElemGetUnsignedBigInt`, `OCI_ElemGetUnsignedInt`, `OCI_ElemGetUnsignedShort`, `OCI_ElemIsNull`, `OCI_ElemSetBigInt`, `OCI_ElemSetBoolean`, `OCI_ElemSetColl`, `OCI_ElemSetDate`, `OCI_ElemSetDouble`, `OCI_ElemSetFile`, `OCI_ElemSetFloat`, `OCI_ElemSetInt`, `OCI_ElemSetInterval`, `OCI_ElemSetLob`, `OCI_ElemSetNull`, `OCI_ElemSetNumber`, `OCI_ElemSetObject`, `OCI_ElemSetRaw`, `OCI_ElemSetRef`, `OCI_ElemSetShort`, `OCI_ElemSetString`, `OCI_ElemSetTimestamp`, `OCI_ElemSetUnsignedBigInt`, `OCI_ElemSetUnsignedInt`, `OCI_ElemSetUnsignedShort`
+`OCI_ElementCreate`, `OCI_ElementFree`, `OCI_ElementGetInt64`, `OCI_ElementGetBoolean`, `OCI_ElementGetCollection`, `OCI_ElementGetDate`, `OCI_ElementGetDouble`, `OCI_ElementGetFile`, `OCI_ElementGetFloat`, `OCI_ElementGetInt32`, `OCI_ElementGetInterval`, `OCI_ElementGetLob`, `OCI_ElementGetNumber`, `OCI_ElementGetObject`, `OCI_ElementGetRaw`, `OCI_ElementGetRawSize`, `OCI_ElementGetReference`, `OCI_ElementGetInt16`, `OCI_ElementGetString`, `OCI_ElementGetTimestamp`, `OCI_ElementGetUInt64`, `OCI_ElementGetUInt32`, `OCI_ElementGetUInt16`, `OCI_ElementIsNull`, `OCI_ElementSetInt64`, `OCI_ElementSetBoolean`, `OCI_ElementSetCollection`, `OCI_ElementSetDate`, `OCI_ElementSetDouble`, `OCI_ElementSetFile`, `OCI_ElementSetFloat`, `OCI_ElementSetInt32`, `OCI_ElementSetInterval`, `OCI_ElementSetLob`, `OCI_ElementSetNull`, `OCI_ElementSetNumber`, `OCI_ElementSetObject`, `OCI_ElementSetRaw`, `OCI_ElementSetReference`, `OCI_ElementSetInt16`, `OCI_ElementSetString`, `OCI_ElementSetTimestamp`, `OCI_ElementSetUInt64`, `OCI_ElementSetUInt32`, `OCI_ElementSetUInt16`
 
-## `OCI_Enable*`
+## `OCI_EnvironmentEnable*`
 
-`OCI_EnableWarnings`
+`OCI_EnvironmentEnableWarnings`
 
 ## `OCI_Enqueue* — Enqueue` → [aq-enqueue](aq-enqueue.html)
 
@@ -88,49 +88,45 @@ Each family links to the tutorial page that teaches it.
 
 `OCI_EventGetDatabase`, `OCI_EventGetObject`, `OCI_EventGetOperation`, `OCI_EventGetRowid`, `OCI_EventGetSubscription`, `OCI_EventGetType`
 
-## `OCI_Execute*`
+## `OCI_StatementExecute*`
 
-`OCI_Execute`, `OCI_ExecuteAndGetResultset`, `OCI_ExecuteStmt`, `OCI_ExecuteStmtAndGetResultset`, `OCI_ExecuteStmtFmt`
+`OCI_StatementExecutePrepared`, `OCI_StatementExecutePreparedAndGetResultset`, `OCI_StatementExecute`, `OCI_StatementExecuteAndGetResultset`, `OCI_StatementExecuteFormat`
 
-## `OCI_Fetch*`
+## `OCI_ResultsetFetch*`
 
-`OCI_FetchFirst`, `OCI_FetchLast`, `OCI_FetchNext`, `OCI_FetchPrev`, `OCI_FetchSeek`
+`OCI_ResultsetFetchFirst`, `OCI_ResultsetFetchLast`, `OCI_ResultsetFetchNext`, `OCI_ResultsetFetchPrev`, `OCI_ResultsetFetchSeek`
 
 ## `OCI_File* — File` → [bfiles](bfiles.html)
 
 `OCI_FileArrayCreate`, `OCI_FileArrayFree`, `OCI_FileAssign`, `OCI_FileClose`, `OCI_FileCreate`, `OCI_FileExists`, `OCI_FileFree`, `OCI_FileGetConnection`, `OCI_FileGetDirectory`, `OCI_FileGetName`, `OCI_FileGetOffset`, `OCI_FileGetSize`, `OCI_FileGetType`, `OCI_FileIsEqual`, `OCI_FileIsOpen`, `OCI_FileOpen`, `OCI_FileRead`, `OCI_FileSeek`, `OCI_FileSetName`
 
-## `OCI_Get*`
+## `OCI_*Get*`
 
-`OCI_GetAffectedRows`, `OCI_GetAutoCommit`, `OCI_GetBatchError`, `OCI_GetBatchErrorCount`, `OCI_GetBigInt`, `OCI_GetBigIntByName`, `OCI_GetBind`, `OCI_GetBindAllocation`, `OCI_GetBindByName`, `OCI_GetBindCount`, `OCI_GetBindIndex`, `OCI_GetBindMode`, `OCI_GetCharset`, `OCI_GetColl`, `OCI_GetCollByName`, `OCI_GetColumn`, `OCI_GetColumnByName`, `OCI_GetColumnCount`, `OCI_GetColumnIndex`, `OCI_GetCurrentRow`, `OCI_GetDBName`, `OCI_GetDataLength`, `OCI_GetDataSize`, `OCI_GetDataSizeByName`, `OCI_GetDatabase`, `OCI_GetDate`, `OCI_GetDateByName`, `OCI_GetDefaultLobPrefetchSize`, `OCI_GetDomainName`, `OCI_GetDouble`, `OCI_GetDoubleByName`, `OCI_GetFetchMode`, `OCI_GetFetchSize`, `OCI_GetFile`, `OCI_GetFileByName`, `OCI_GetFloat`, `OCI_GetFloatByName`, `OCI_GetFormat`, `OCI_GetImportMode`, `OCI_GetInstanceName`, `OCI_GetInstanceStartTime`, `OCI_GetInt`, `OCI_GetIntByName`, `OCI_GetInterval`, `OCI_GetIntervalByName`, `OCI_GetJson`, `OCI_GetJsonByName`, `OCI_GetLastError`, `OCI_GetLob`, `OCI_GetLobByName`, `OCI_GetLocaleString`, `OCI_GetLong`, `OCI_GetLongByName`, `OCI_GetLongMode`, `OCI_GetMaxCursors`, `OCI_GetNextResultset`, `OCI_GetNumber`, `OCI_GetNumberByName`, `OCI_GetOCICompileVersion`, `OCI_GetOCIRuntimeVersion`, `OCI_GetObject`, `OCI_GetObjectByName`, `OCI_GetParseBindNames`, `OCI_GetPassword`, `OCI_GetPieceSize`, `OCI_GetPrefetchMemory`, `OCI_GetPrefetchSize`, `OCI_GetRaw`, `OCI_GetRawByName`, `OCI_GetRef`, `OCI_GetRefByName`, `OCI_GetResultset`, `OCI_GetRowCount`, `OCI_GetSQLCommand`, `OCI_GetSQLVerb`, `OCI_GetServerMajorVersion`, `OCI_GetServerMinorVersion`, `OCI_GetServerName`, `OCI_GetServerRevisionVersion`, `OCI_GetServiceName`, `OCI_GetSessionMode`, `OCI_GetSessionTag`, `OCI_GetShort`, `OCI_GetShortByName`, `OCI_GetSql`, `OCI_GetSqlErrorPos`, `OCI_GetSqlIdentifier`, `OCI_GetStatement`, `OCI_GetStatementByName`, `OCI_GetStatementCacheSize`, `OCI_GetStatementType`, `OCI_GetStats`, `OCI_GetString`, `OCI_GetStringByName`, `OCI_GetStruct`, `OCI_GetSubscriptionPort`, `OCI_GetTimeout`, `OCI_GetTimestamp`, `OCI_GetTimestampByName`, `OCI_GetTrace`, `OCI_GetTransaction`, `OCI_GetUnsignedBigInt`, `OCI_GetUnsignedBigIntByName`, `OCI_GetUnsignedInt`, `OCI_GetUnsignedIntByName`, `OCI_GetUnsignedShort`, `OCI_GetUnsignedShortByName`, `OCI_GetUserData`, `OCI_GetUserName`, `OCI_GetVector`, `OCI_GetVectorByName`, `OCI_GetVersionConnection`, `OCI_GetVersionServer`, `OCI_GetXmlType`, `OCI_GetXmlTypeByName`
+`OCI_StatementGetAffectedRows`, `OCI_ConnectionGetAutoCommit`, `OCI_StatementGetBatchError`, `OCI_StatementGetBatchErrorCount`, `OCI_ResultsetGetInt64`, `OCI_ResultsetGetInt64ByName`, `OCI_StatementGetBind`, `OCI_StatementGetBindAllocation`, `OCI_StatementGetBindByName`, `OCI_StatementGetBindCount`, `OCI_StatementGetBindIndex`, `OCI_StatementGetBindMode`, `OCI_EnvironmentGetCharset`, `OCI_ResultsetGetColl`, `OCI_ResultsetGetCollByName`, `OCI_ResultsetGetColumn`, `OCI_ResultsetGetColumnByName`, `OCI_ResultsetGetColumnCount`, `OCI_ResultsetGetColumnIndex`, `OCI_ResultsetGetCurrentRow`, `OCI_ConnectionGetDatabaseName`, `OCI_ResultsetGetDataLength`, `OCI_ResultsetGetDataSize`, `OCI_ResultsetGetDataSizeByName`, `OCI_ConnectionGetConnectionString`, `OCI_ResultsetGetDate`, `OCI_ResultsetGetDateByName`, `OCI_ConnectionGetDefaultLobPrefetchSize`, `OCI_ConnectionGetDomainName`, `OCI_ResultsetGetDouble`, `OCI_ResultsetGetDoubleByName`, `OCI_StatementGetFetchMode`, `OCI_StatementGetFetchSize`, `OCI_ResultsetGetFile`, `OCI_ResultsetGetFileByName`, `OCI_ResultsetGetFloat`, `OCI_ResultsetGetFloatByName`, `OCI_EnvironmentGetFormat`, `OCI_EnvironmentGetImportMode`, `OCI_ConnectionGetInstanceName`, `OCI_ConnectionGetInstanceStartTime`, `OCI_ResultsetGetInt32`, `OCI_ResultsetGetInt32ByName`, `OCI_ResultsetGetInterval`, `OCI_ResultsetGetIntervalByName`, `OCI_ResultsetGetJson`, `OCI_ResultsetGetJsonByName`, `OCI_GetLastError`, `OCI_ResultsetGetLob`, `OCI_ResultsetGetLobByName`, `OCI_EnvironmentGetLocaleString`, `OCI_ResultsetGetLong`, `OCI_ResultsetGetLongByName`, `OCI_StatementGetLongMode`, `OCI_ConnectionGetMaxCursors`, `OCI_StatementGetNextResultset`, `OCI_ResultsetGetNumber`, `OCI_ResultsetGetNumberByName`, `OCI_EnvironmentGetOCICompileVersion`, `OCI_EnvironmentGetOCIRuntimeVersion`, `OCI_ResultsetGetObject`, `OCI_ResultsetGetObjectByName`, `OCI_StatementGetParseBindNames`, `OCI_ConnectionGetPassword`, `OCI_StatementGetPieceSize`, `OCI_StatementGetPrefetchMemory`, `OCI_StatementGetPrefetchSize`, `OCI_ResultsetGetRaw`, `OCI_ResultsetGetRawByName`, `OCI_ResultsetGetReference`, `OCI_ResultsetGetReferenceByName`, `OCI_StatementGetResultset`, `OCI_ResultsetGetRowCount`, `OCI_StatementGetSqlCommand`, `OCI_StatementGetSqlVerb`, `OCI_ConnectionGetServerMajorVersion`, `OCI_ConnectionGetServerMinorVersion`, `OCI_ConnectionGetServerName`, `OCI_ConnectionGetServerRevisionVersion`, `OCI_ConnectionGetServiceName`, `OCI_ConnectionGetSessionMode`, `OCI_ConnectionGetSessionTag`, `OCI_ResultsetGetInt16`, `OCI_ResultsetGetInt16ByName`, `OCI_StatementGetSql`, `OCI_StatementGetSqlErrorPos`, `OCI_StatementGetSqlIdentifier`, `OCI_ResultsetGetCursor`, `OCI_ResultsetGetCursorByName`, `OCI_ConnectionGetStatementCacheSize`, `OCI_StatementGetType`, `OCI_EnvironmentGetStats`, `OCI_ResultsetGetString`, `OCI_ResultsetGetStringByName`, `OCI_ResultsetGetStruct`, `OCI_EnvironmentGetSubscriptionPort`, `OCI_ConnectionGetTimeout`, `OCI_ResultsetGetTimestamp`, `OCI_ResultsetGetTimestampByName`, `OCI_ConnectionGetTrace`, `OCI_ConnectionGetTransaction`, `OCI_ResultsetGetUInt64`, `OCI_ResultsetGetUInt64ByName`, `OCI_ResultsetGetUInt32`, `OCI_ResultsetGetUInt32ByName`, `OCI_ResultsetGetUInt16`, `OCI_ResultsetGetUInt16ByName`, `OCI_HandleGetUserData`, `OCI_ConnectionGetUserName`, `OCI_ResultsetGetVector`, `OCI_ResultsetGetVectorByName`, `OCI_ConnectionGetVersion`, `OCI_ConnectionGetServerVersionString`, `OCI_ResultsetGetXmlType`, `OCI_ResultsetGetXmlTypeByName`
 
 ## `OCI_Handle*`
 
 `OCI_HandleGetEnvironment`
 
-## `OCI_Has*`
+## `OCI_HashTable* — HashTable` → [hash-tables](hash-tables.html)
 
-`OCI_HasError`
+`OCI_HashTableAddInt32`, `OCI_HashTableAddPointer`, `OCI_HashTableAddString`, `OCI_HashTableCreate`, `OCI_HashTableFree`, `OCI_HashTableGetEntry`, `OCI_HashTableGetInt32`, `OCI_HashTableGetPointer`, `OCI_HashTableGetSize`, `OCI_HashTableGetString`, `OCI_HashTableGetType`, `OCI_HashTableGetValue`, `OCI_HashTableLookup`
 
-## `OCI_Hash* — Hash` → [hash-tables](hash-tables.html)
+## `OCI_ConnectionImmediate* — Immediate` → [statement-lifecycle](statement-lifecycle.html)
 
-`OCI_HashAddInt`, `OCI_HashAddPointer`, `OCI_HashAddString`, `OCI_HashCreate`, `OCI_HashFree`, `OCI_HashGetEntry`, `OCI_HashGetInt`, `OCI_HashGetPointer`, `OCI_HashGetSize`, `OCI_HashGetString`, `OCI_HashGetType`, `OCI_HashGetValue`, `OCI_HashLookup`
-
-## `OCI_Immediate* — Immediate` → [statement-lifecycle](statement-lifecycle.html)
-
-`OCI_Immediate`, `OCI_ImmediateFmt`
+`OCI_ConnectionImmediate`, `OCI_ConnectionImmediateFormat`
 
 ## `OCI_Interval* — Interval` → [intervals](intervals.html)
 
 `OCI_IntervalAdd`, `OCI_IntervalArrayCreate`, `OCI_IntervalArrayFree`, `OCI_IntervalAssign`, `OCI_IntervalCheck`, `OCI_IntervalCompare`, `OCI_IntervalCreate`, `OCI_IntervalFree`, `OCI_IntervalFromText`, `OCI_IntervalFromTimeZone`, `OCI_IntervalGetDaySecond`, `OCI_IntervalGetType`, `OCI_IntervalGetYearMonth`, `OCI_IntervalSetDaySecond`, `OCI_IntervalSetYearMonth`, `OCI_IntervalSubtract`, `OCI_IntervalToText`
 
-## `OCI_Is*`
+## `OCI_*Is*`
 
-`OCI_IsConnected`, `OCI_IsNull`, `OCI_IsNullByName`, `OCI_IsRebindingAllowed`, `OCI_IsTAFCapable`
+`OCI_ConnectionIsAlive`, `OCI_ResultsetIsColumnNull`, `OCI_ResultsetIsColumnNullByName`, `OCI_StatementIsRebindingAllowed`, `OCI_ConnectionIsTAFCapable`
 
-## `OCI_Iter* — Iter` → [collections-advanced](collections-advanced.html)
+## `OCI_Iterator* — Iterator` → [collections-advanced](collections-advanced.html)
 
-`OCI_IterCreate`, `OCI_IterFree`, `OCI_IterGetCurrent`, `OCI_IterGetNext`, `OCI_IterGetPrev`
+`OCI_IteratorCreate`, `OCI_IteratorFree`, `OCI_IteratorGetCurrent`, `OCI_IteratorGetNext`, `OCI_IteratorGetPrev`
 
 ## `OCI_Json* — Json` → [json-columns](json-columns.html)
 
@@ -138,7 +134,7 @@ Each family links to the tutorial page that teaches it.
 
 ## `OCI_JsonNode* — JsonNode` → [json-dom](json-dom.html)
 
-`OCI_JsonNodeAppendItem`, `OCI_JsonNodeAssign`, `OCI_JsonNodeClear`, `OCI_JsonNodeCreate`, `OCI_JsonNodeCreateArray`, `OCI_JsonNodeCreateBinary`, `OCI_JsonNodeCreateBoolean`, `OCI_JsonNodeCreateDate`, `OCI_JsonNodeCreateInterval`, `OCI_JsonNodeCreateNull`, `OCI_JsonNodeCreateNumber`, `OCI_JsonNodeCreateObject`, `OCI_JsonNodeCreateString`, `OCI_JsonNodeCreateTimestamp`, `OCI_JsonNodeEquals`, `OCI_JsonNodeFree`, `OCI_JsonNodeGetBigInt`, `OCI_JsonNodeGetBigUInt`, `OCI_JsonNodeGetBinary`, `OCI_JsonNodeGetBoolean`, `OCI_JsonNodeGetByPath`, `OCI_JsonNodeGetDate`, `OCI_JsonNodeGetDouble`, `OCI_JsonNodeGetFieldByIndex`, `OCI_JsonNodeGetFieldByName`, `OCI_JsonNodeGetFieldCount`, `OCI_JsonNodeGetFieldName`, `OCI_JsonNodeGetFloat`, `OCI_JsonNodeGetInt`, `OCI_JsonNodeGetInterval`, `OCI_JsonNodeGetItem`, `OCI_JsonNodeGetItemCount`, `OCI_JsonNodeGetJson`, `OCI_JsonNodeGetNumber`, `OCI_JsonNodeGetParent`, `OCI_JsonNodeGetShort`, `OCI_JsonNodeGetString`, `OCI_JsonNodeGetTimestamp`, `OCI_JsonNodeGetType`, `OCI_JsonNodeGetUInt`, `OCI_JsonNodeGetUShort`, `OCI_JsonNodeHasField`, `OCI_JsonNodeInsertItem`, `OCI_JsonNodeIsNull`, `OCI_JsonNodeRemoveField`, `OCI_JsonNodeRemoveItem`, `OCI_JsonNodeRemoveItems`, `OCI_JsonNodeRenameField`, `OCI_JsonNodeSetBigInt`, `OCI_JsonNodeSetBigUInt`, `OCI_JsonNodeSetBinary`, `OCI_JsonNodeSetBoolean`, `OCI_JsonNodeSetDate`, `OCI_JsonNodeSetDouble`, `OCI_JsonNodeSetField`, `OCI_JsonNodeSetFloat`, `OCI_JsonNodeSetInt`, `OCI_JsonNodeSetInterval`, `OCI_JsonNodeSetItem`, `OCI_JsonNodeSetNull`, `OCI_JsonNodeSetNumber`, `OCI_JsonNodeSetShort`, `OCI_JsonNodeSetString`, `OCI_JsonNodeSetTimestamp`, `OCI_JsonNodeSetUInt`, `OCI_JsonNodeSetUShort`
+`OCI_JsonNodeAppendItem`, `OCI_JsonNodeAssign`, `OCI_JsonNodeClear`, `OCI_JsonNodeCreate`, `OCI_JsonNodeCreateArray`, `OCI_JsonNodeCreateBinary`, `OCI_JsonNodeCreateBoolean`, `OCI_JsonNodeCreateDate`, `OCI_JsonNodeCreateInterval`, `OCI_JsonNodeCreateNull`, `OCI_JsonNodeCreateNumber`, `OCI_JsonNodeCreateObject`, `OCI_JsonNodeCreateString`, `OCI_JsonNodeCreateTimestamp`, `OCI_JsonNodeEquals`, `OCI_JsonNodeFree`, `OCI_JsonNodeGetInt64`, `OCI_JsonNodeGetUInt64`, `OCI_JsonNodeGetBinary`, `OCI_JsonNodeGetBoolean`, `OCI_JsonNodeGetByPath`, `OCI_JsonNodeGetDate`, `OCI_JsonNodeGetDouble`, `OCI_JsonNodeGetFieldByIndex`, `OCI_JsonNodeGetFieldByName`, `OCI_JsonNodeGetFieldCount`, `OCI_JsonNodeGetFieldName`, `OCI_JsonNodeGetFloat`, `OCI_JsonNodeGetInt32`, `OCI_JsonNodeGetInterval`, `OCI_JsonNodeGetItem`, `OCI_JsonNodeGetItemCount`, `OCI_JsonNodeGetJson`, `OCI_JsonNodeGetNumber`, `OCI_JsonNodeGetParent`, `OCI_JsonNodeGetInt16`, `OCI_JsonNodeGetString`, `OCI_JsonNodeGetTimestamp`, `OCI_JsonNodeGetType`, `OCI_JsonNodeGetUInt32`, `OCI_JsonNodeGetUInt16`, `OCI_JsonNodeHasField`, `OCI_JsonNodeInsertItem`, `OCI_JsonNodeIsNull`, `OCI_JsonNodeRemoveField`, `OCI_JsonNodeRemoveItem`, `OCI_JsonNodeRemoveItems`, `OCI_JsonNodeRenameField`, `OCI_JsonNodeSetInt64`, `OCI_JsonNodeSetUInt64`, `OCI_JsonNodeSetBinary`, `OCI_JsonNodeSetBoolean`, `OCI_JsonNodeSetDate`, `OCI_JsonNodeSetDouble`, `OCI_JsonNodeSetField`, `OCI_JsonNodeSetFloat`, `OCI_JsonNodeSetInt32`, `OCI_JsonNodeSetInterval`, `OCI_JsonNodeSetItem`, `OCI_JsonNodeSetNull`, `OCI_JsonNodeSetNumber`, `OCI_JsonNodeSetInt16`, `OCI_JsonNodeSetString`, `OCI_JsonNodeSetTimestamp`, `OCI_JsonNodeSetUInt32`, `OCI_JsonNodeSetUInt16`
 
 ## `OCI_Lob* — Lob` → [lobs-basics](lobs-basics.html)
 
@@ -148,9 +144,9 @@ Each family links to the tutorial page that teaches it.
 
 `OCI_LongCreate`, `OCI_LongFree`, `OCI_LongGetBuffer`, `OCI_LongGetSize`, `OCI_LongGetType`, `OCI_LongRead`, `OCI_LongWrite`
 
-## `OCI_Msg* — Msg` → [aq-enqueue](aq-enqueue.html)
+## `OCI_Message* — Message` → [aq-enqueue](aq-enqueue.html)
 
-`OCI_MsgCreate`, `OCI_MsgFree`, `OCI_MsgGetAttemptCount`, `OCI_MsgGetCorrelation`, `OCI_MsgGetEnqueueDelay`, `OCI_MsgGetEnqueueTime`, `OCI_MsgGetExceptionQueue`, `OCI_MsgGetExpiration`, `OCI_MsgGetID`, `OCI_MsgGetObject`, `OCI_MsgGetOriginalID`, `OCI_MsgGetPriority`, `OCI_MsgGetRaw`, `OCI_MsgGetSender`, `OCI_MsgGetState`, `OCI_MsgReset`, `OCI_MsgSetConsumers`, `OCI_MsgSetCorrelation`, `OCI_MsgSetEnqueueDelay`, `OCI_MsgSetExceptionQueue`, `OCI_MsgSetExpiration`, `OCI_MsgSetObject`, `OCI_MsgSetOriginalID`, `OCI_MsgSetPriority`, `OCI_MsgSetRaw`, `OCI_MsgSetSender`
+`OCI_MessageCreate`, `OCI_MessageFree`, `OCI_MessageGetAttemptCount`, `OCI_MessageGetCorrelation`, `OCI_MessageGetEnqueueDelay`, `OCI_MessageGetEnqueueTime`, `OCI_MessageGetExceptionQueue`, `OCI_MessageGetExpiration`, `OCI_MessageGetID`, `OCI_MessageGetObject`, `OCI_MessageGetOriginalID`, `OCI_MessageGetPriority`, `OCI_MessageGetRaw`, `OCI_MessageGetSender`, `OCI_MessageGetState`, `OCI_MessageReset`, `OCI_MessageSetConsumers`, `OCI_MessageSetCorrelation`, `OCI_MessageSetEnqueueDelay`, `OCI_MessageSetExceptionQueue`, `OCI_MessageSetExpiration`, `OCI_MessageSetObject`, `OCI_MessageSetOriginalID`, `OCI_MessageSetPriority`, `OCI_MessageSetRaw`, `OCI_MessageSetSender`
 
 ## `OCI_Number* — Number` → [numbers](numbers.html)
 
@@ -158,23 +154,23 @@ Each family links to the tutorial page that teaches it.
 
 ## `OCI_Object* — Object` → [objects-attrs-complete](objects-attrs-complete.html)
 
-`OCI_ObjectArrayCreate`, `OCI_ObjectArrayFree`, `OCI_ObjectAssign`, `OCI_ObjectCreate`, `OCI_ObjectFree`, `OCI_ObjectGetBigInt`, `OCI_ObjectGetBoolean`, `OCI_ObjectGetColl`, `OCI_ObjectGetDate`, `OCI_ObjectGetDouble`, `OCI_ObjectGetFile`, `OCI_ObjectGetFloat`, `OCI_ObjectGetInt`, `OCI_ObjectGetInterval`, `OCI_ObjectGetLob`, `OCI_ObjectGetNumber`, `OCI_ObjectGetObject`, `OCI_ObjectGetRaw`, `OCI_ObjectGetRawSize`, `OCI_ObjectGetRef`, `OCI_ObjectGetSelfRef`, `OCI_ObjectGetShort`, `OCI_ObjectGetString`, `OCI_ObjectGetStruct`, `OCI_ObjectGetTimestamp`, `OCI_ObjectGetType`, `OCI_ObjectGetTypeInfo`, `OCI_ObjectGetUnsignedBigInt`, `OCI_ObjectGetUnsignedInt`, `OCI_ObjectGetUnsignedShort`, `OCI_ObjectIsNull`, `OCI_ObjectSetBigInt`, `OCI_ObjectSetBoolean`, `OCI_ObjectSetColl`, `OCI_ObjectSetDate`, `OCI_ObjectSetDouble`, `OCI_ObjectSetFile`, `OCI_ObjectSetFloat`, `OCI_ObjectSetInt`, `OCI_ObjectSetInterval`, `OCI_ObjectSetLob`, `OCI_ObjectSetNull`, `OCI_ObjectSetNumber`, `OCI_ObjectSetObject`, `OCI_ObjectSetRaw`, `OCI_ObjectSetRef`, `OCI_ObjectSetShort`, `OCI_ObjectSetString`, `OCI_ObjectSetTimestamp`, `OCI_ObjectSetUnsignedBigInt`, `OCI_ObjectSetUnsignedInt`, `OCI_ObjectSetUnsignedShort`, `OCI_ObjectToText`
+`OCI_ObjectArrayCreate`, `OCI_ObjectArrayFree`, `OCI_ObjectAssign`, `OCI_ObjectCreate`, `OCI_ObjectFree`, `OCI_ObjectGetInt64`, `OCI_ObjectGetBoolean`, `OCI_ObjectGetColl`, `OCI_ObjectGetDate`, `OCI_ObjectGetDouble`, `OCI_ObjectGetFile`, `OCI_ObjectGetFloat`, `OCI_ObjectGetInt32`, `OCI_ObjectGetInterval`, `OCI_ObjectGetLob`, `OCI_ObjectGetNumber`, `OCI_ObjectGetObject`, `OCI_ObjectGetRaw`, `OCI_ObjectGetRawSize`, `OCI_ObjectGetReference`, `OCI_ObjectGetSelfReference`, `OCI_ObjectGetInt16`, `OCI_ObjectGetString`, `OCI_ObjectGetStruct`, `OCI_ObjectGetTimestamp`, `OCI_ObjectGetType`, `OCI_ObjectGetTypeInfo`, `OCI_ObjectGetUInt64`, `OCI_ObjectGetUInt32`, `OCI_ObjectGetUInt16`, `OCI_ObjectIsNull`, `OCI_ObjectSetInt64`, `OCI_ObjectSetBoolean`, `OCI_ObjectSetColl`, `OCI_ObjectSetDate`, `OCI_ObjectSetDouble`, `OCI_ObjectSetFile`, `OCI_ObjectSetFloat`, `OCI_ObjectSetInt32`, `OCI_ObjectSetInterval`, `OCI_ObjectSetLob`, `OCI_ObjectSetNull`, `OCI_ObjectSetNumber`, `OCI_ObjectSetObject`, `OCI_ObjectSetRaw`, `OCI_ObjectSetReference`, `OCI_ObjectSetInt16`, `OCI_ObjectSetString`, `OCI_ObjectSetTimestamp`, `OCI_ObjectSetUInt64`, `OCI_ObjectSetUInt32`, `OCI_ObjectSetUInt16`, `OCI_ObjectToText`
 
-## `OCI_Parse*`
+## `OCI_StatementParse*`
 
-`OCI_Parse`, `OCI_ParseFmt`
+`OCI_StatementParse`, `OCI_StatementParseFormat`
 
-## `OCI_Ping*`
+## `OCI_ConnectionPing*`
 
-`OCI_Ping`
+`OCI_ConnectionPing`
 
 ## `OCI_Pool* — Pool` → [pooling-basics](pooling-basics.html)
 
 `OCI_PoolCreate`, `OCI_PoolFree`, `OCI_PoolGetBusyCount`, `OCI_PoolGetConnection`, `OCI_PoolGetConnectionSharded`, `OCI_PoolGetIncrement`, `OCI_PoolGetMax`, `OCI_PoolGetMin`, `OCI_PoolGetNoWait`, `OCI_PoolGetOpenedCount`, `OCI_PoolGetStatementCacheSize`, `OCI_PoolGetTimeout`, `OCI_PoolSetNoWait`, `OCI_PoolSetStatementCacheSize`, `OCI_PoolSetTimeout`
 
-## `OCI_Prepare*`
+## `OCI_StatementPrepare*`
 
-`OCI_Prepare`, `OCI_PrepareFmt`
+`OCI_StatementPrepare`, `OCI_StatementPrepareFormat`
 
 ## `OCI_Queue* — Queue` → [aq-setup](aq-setup.html)
 
@@ -184,57 +180,57 @@ Each family links to the tutorial page that teaches it.
 
 `OCI_QueueTableAlter`, `OCI_QueueTableCreate`, `OCI_QueueTableDrop`, `OCI_QueueTableMigrate`, `OCI_QueueTablePurge`
 
-## `OCI_Ref* — Ref` → [refs](refs.html)
+## `OCI_Reference* — Reference` → [refs](refs.html)
 
-`OCI_RefArrayCreate`, `OCI_RefArrayFree`, `OCI_RefAssign`, `OCI_RefCreate`, `OCI_RefFree`, `OCI_RefGetHexSize`, `OCI_RefGetObject`, `OCI_RefGetTypeInfo`, `OCI_RefIsNull`, `OCI_RefSetNull`, `OCI_RefToText`
+`OCI_ReferenceArrayCreate`, `OCI_ReferenceArrayFree`, `OCI_ReferenceAssign`, `OCI_ReferenceCreate`, `OCI_ReferenceFree`, `OCI_ReferenceGetHexSize`, `OCI_ReferenceGetObject`, `OCI_ReferenceGetTypeInfo`, `OCI_ReferenceIsNull`, `OCI_ReferenceSetNull`, `OCI_ReferenceToText`
 
-## `OCI_Register* — Register` → [rowid-returning](rowid-returning.html)
+## `OCI_StatementRegister* — Register` → [rowid-returning](rowid-returning.html)
 
-`OCI_RegisterBigInt`, `OCI_RegisterDate`, `OCI_RegisterDouble`, `OCI_RegisterFile`, `OCI_RegisterFloat`, `OCI_RegisterInt`, `OCI_RegisterInterval`, `OCI_RegisterJson`, `OCI_RegisterLob`, `OCI_RegisterNumber`, `OCI_RegisterObject`, `OCI_RegisterRaw`, `OCI_RegisterRef`, `OCI_RegisterShort`, `OCI_RegisterString`, `OCI_RegisterTimestamp`, `OCI_RegisterUnsignedBigInt`, `OCI_RegisterUnsignedInt`, `OCI_RegisterUnsignedShort`, `OCI_RegisterVector`
+`OCI_StatementRegisterInt64`, `OCI_StatementRegisterDate`, `OCI_StatementRegisterDouble`, `OCI_StatementRegisterFile`, `OCI_StatementRegisterFloat`, `OCI_StatementRegisterInt32`, `OCI_StatementRegisterInterval`, `OCI_StatementRegisterJson`, `OCI_StatementRegisterLob`, `OCI_StatementRegisterNumber`, `OCI_StatementRegisterObject`, `OCI_StatementRegisterRaw`, `OCI_StatementRegisterReference`, `OCI_StatementRegisterInt16`, `OCI_StatementRegisterString`, `OCI_StatementRegisterTimestamp`, `OCI_StatementRegisterUInt64`, `OCI_StatementRegisterUInt32`, `OCI_StatementRegisterUInt16`, `OCI_StatementRegisterVector`
 
-## `OCI_Release*`
+## `OCI_StatementRelease*`
 
-`OCI_ReleaseResultsets`
+`OCI_StatementReleaseResultsets`
 
 ## `OCI_Resultset* — Resultset` → [fetch-getters](fetch-getters.html)
 
 `OCI_ResultsetGetStatement`
 
-## `OCI_Rollback*`
+## `OCI_ConnectionRollback*`
 
-`OCI_Rollback`
+`OCI_ConnectionRollback`
 
-## `OCI_Server* — Server` → [server-output](server-output.html)
+## `OCI_Connection*ServerOutput — Server output` → [server-output](server-output.html)
 
-`OCI_ServerDisableOutput`, `OCI_ServerEnableOutput`, `OCI_ServerGetOutput`
+`OCI_ConnectionDisableServerOutput`, `OCI_ConnectionEnableServerOutput`, `OCI_ConnectionGetServerOutput`
 
-## `OCI_Set*`
+## `OCI_*Set*`
 
-`OCI_SetAutoCommit`, `OCI_SetBindAllocation`, `OCI_SetBindMode`, `OCI_SetDefaultLobPrefetchSize`, `OCI_SetErrorHandler`, `OCI_SetFetchMode`, `OCI_SetFetchSize`, `OCI_SetFormat`, `OCI_SetHAHandler`, `OCI_SetLongMode`, `OCI_SetPassword`, `OCI_SetPieceSize`, `OCI_SetPrefetchMemory`, `OCI_SetPrefetchSize`, `OCI_SetSessionTag`, `OCI_SetStatementCacheSize`, `OCI_SetStructNumericType`, `OCI_SetStructNumericTypeByName`, `OCI_SetSubscriptionPort`, `OCI_SetTAFHandler`, `OCI_SetTimeout`, `OCI_SetTrace`, `OCI_SetTransaction`, `OCI_SetUserData`, `OCI_SetUserPassword`
+`OCI_ConnectionSetAutoCommit`, `OCI_StatementSetBindAllocation`, `OCI_StatementSetBindMode`, `OCI_ConnectionSetDefaultLobPrefetchSize`, `OCI_EnvironmentSetErrorHandler`, `OCI_StatementSetFetchMode`, `OCI_StatementSetFetchSize`, `OCI_EnvironmentSetFormat`, `OCI_EnvironmentSetHAHandler`, `OCI_StatementSetLongMode`, `OCI_ConnectionSetPassword`, `OCI_StatementSetPieceSize`, `OCI_StatementSetPrefetchMemory`, `OCI_StatementSetPrefetchSize`, `OCI_ConnectionSetSessionTag`, `OCI_ConnectionSetStatementCacheSize`, `OCI_ResultsetSetStructNumericType`, `OCI_ResultsetSetStructNumericTypeByName`, `OCI_EnvironmentSetSubscriptionPort`, `OCI_ConnectionSetTAFHandler`, `OCI_ConnectionSetTimeout`, `OCI_ConnectionSetTrace`, `OCI_ConnectionSetTransaction`, `OCI_HandleSetUserData`, `OCI_EnvironmentSetUserPassword`
 
 ## `OCI_ShardingKey* — ShardingKey` → [sharding](sharding.html)
 
 `OCI_ShardingKeyAddDate`, `OCI_ShardingKeyAddNumber`, `OCI_ShardingKeyAddRaw`, `OCI_ShardingKeyAddString`, `OCI_ShardingKeyAddTimestamp`, `OCI_ShardingKeyCreate`, `OCI_ShardingKeyFree`, `OCI_ShardingKeyReset`, `OCI_ShardingKeyToText`
 
-## `OCI_SodaColl* — SodaColl` → [soda-basics](soda-basics.html)
+## `OCI_SodaCollection* — SodaCollection` → [soda-basics](soda-basics.html)
 
-`OCI_SodaCollCreateIndex`, `OCI_SodaCollDocCount`, `OCI_SodaCollDocCountWithFilter`, `OCI_SodaCollDrop`, `OCI_SodaCollDropIndex`, `OCI_SodaCollFind`, `OCI_SodaCollFindOne`, `OCI_SodaCollFindOneByKey`, `OCI_SodaCollFree`, `OCI_SodaCollFreeIndexNames`, `OCI_SodaCollGetConnection`, `OCI_SodaCollGetDataGuide`, `OCI_SodaCollGetMetadata`, `OCI_SodaCollGetName`, `OCI_SodaCollInsertDoc`, `OCI_SodaCollInsertMany`, `OCI_SodaCollIsMapped`, `OCI_SodaCollListIndexes`, `OCI_SodaCollRemove`, `OCI_SodaCollRemoveOneByKey`, `OCI_SodaCollReplaceOne`, `OCI_SodaCollReplaceOneByKey`, `OCI_SodaCollSave`, `OCI_SodaCollTruncate`
+`OCI_SodaCollectionCreateIndex`, `OCI_SodaCollectionDocumentCount`, `OCI_SodaCollectionDocumentCountWithFilter`, `OCI_SodaCollectionDrop`, `OCI_SodaCollectionDropIndex`, `OCI_SodaCollectionFind`, `OCI_SodaCollectionFindOne`, `OCI_SodaCollectionFindOneByKey`, `OCI_SodaCollectionFree`, `OCI_SodaCollectionFreeIndexNames`, `OCI_SodaCollectionGetConnection`, `OCI_SodaCollectionGetDataGuide`, `OCI_SodaCollectionGetMetadata`, `OCI_SodaCollectionGetName`, `OCI_SodaCollectionInsertDocument`, `OCI_SodaCollectionInsertMany`, `OCI_SodaCollectionIsMapped`, `OCI_SodaCollectionListIndexes`, `OCI_SodaCollectionRemove`, `OCI_SodaCollectionRemoveOneByKey`, `OCI_SodaCollectionReplaceOne`, `OCI_SodaCollectionReplaceOneByKey`, `OCI_SodaCollectionSave`, `OCI_SodaCollectionTruncate`
 
-## `OCI_SodaCollCursor* — SodaCollCursor` → [soda-advanced](soda-advanced.html)
+## `OCI_SodaCollectionCursor* — SodaCollectionCursor` → [soda-advanced](soda-advanced.html)
 
-`OCI_SodaCollCursorFree`, `OCI_SodaCollCursorGetNext`
+`OCI_SodaCollectionCursorFree`, `OCI_SodaCollectionCursorGetNext`
 
-## `OCI_SodaDb* — SodaDb` → [soda-basics](soda-basics.html)
+## `OCI_SodaDatabase* — SodaDatabase` → [soda-basics](soda-basics.html)
 
-`OCI_SodaDbCreate`, `OCI_SodaDbCreateColl`, `OCI_SodaDbFree`, `OCI_SodaDbFreeCollectionNames`, `OCI_SodaDbGetCollectionNames`, `OCI_SodaDbGetColls`, `OCI_SodaDbGetConnection`, `OCI_SodaDbOpenColl`
+`OCI_SodaDatabaseCreate`, `OCI_SodaDatabaseCreateCollection`, `OCI_SodaDatabaseFree`, `OCI_SodaDatabaseFreeCollectionNames`, `OCI_SodaDatabaseGetCollectionNames`, `OCI_SodaDatabaseGetCollections`, `OCI_SodaDatabaseGetConnection`, `OCI_SodaDatabaseOpenCollection`
 
-## `OCI_SodaDoc* — SodaDoc` → [soda-basics](soda-basics.html)
+## `OCI_SodaDocument* — SodaDocument` → [soda-basics](soda-basics.html)
 
-`OCI_SodaDocCreateFromJson`, `OCI_SodaDocCreateFromText`, `OCI_SodaDocFree`, `OCI_SodaDocGetCreatedOn`, `OCI_SodaDocGetIsJson`, `OCI_SodaDocGetJson`, `OCI_SodaDocGetKey`, `OCI_SodaDocGetLastModified`, `OCI_SodaDocGetMediaType`, `OCI_SodaDocGetText`, `OCI_SodaDocGetVersion`
+`OCI_SodaDocumentCreateFromJson`, `OCI_SodaDocumentCreateFromText`, `OCI_SodaDocumentFree`, `OCI_SodaDocumentGetCreatedOn`, `OCI_SodaDocumentGetIsJson`, `OCI_SodaDocumentGetJson`, `OCI_SodaDocumentGetKey`, `OCI_SodaDocumentGetLastModified`, `OCI_SodaDocumentGetMediaType`, `OCI_SodaDocumentGetText`, `OCI_SodaDocumentGetVersion`
 
-## `OCI_SodaDocCursor* — SodaDocCursor` → [soda-basics](soda-basics.html)
+## `OCI_SodaDocumentCursor* — SodaDocumentCursor` → [soda-basics](soda-basics.html)
 
-`OCI_SodaDocCursorFree`, `OCI_SodaDocCursorGetNext`
+`OCI_SodaDocumentCursorFree`, `OCI_SodaDocumentCursorGetNext`
 
 ## `OCI_SodaOptions* — SodaOptions` → [soda-advanced](soda-advanced.html)
 
@@ -246,7 +242,7 @@ Each family links to the tutorial page that teaches it.
 
 ## `OCI_Subscription* — Subscription` → [notifications](notifications.html)
 
-`OCI_SubscriptionAddStatement`, `OCI_SubscriptionGetConnection`, `OCI_SubscriptionGetName`, `OCI_SubscriptionGetTimeout`, `OCI_SubscriptionRegister`, `OCI_SubscriptionUnregister`
+`OCI_SubscriptionAddStatement`, `OCI_SubscriptionGetConnection`, `OCI_SubscriptionGetName`, `OCI_SubscriptionGetTimeout`, `OCI_SubscriptionCreate`, `OCI_SubscriptionUnregister`
 
 ## `OCI_Timestamp* — Timestamp` → [timestamps](timestamps.html)
 

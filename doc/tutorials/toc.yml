@@ -8,10 +8,10 @@
 parts:
   0: Getting started
   1: Connections & environments
-  2: SQL, fetching & binding
-  3: PL/SQL
-  4: Transactions, pooling & threads
-  5: Oracle data types
+  2: Oracle data types
+  3: SQL, fetching & binding
+  4: PL/SQL
+  5: Transactions, pooling & threads
   6: Object-relational API
   7: Messaging & notifications
   8: Bulk & administration

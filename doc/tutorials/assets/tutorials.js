@@ -121,11 +121,55 @@
         d.addEventListener("toggle", persistNavState);
     });
 
-    /* -------------------------------------------------------------- mobile nav */
+    /* ------------------------------------------------- sidebar scroll position */
 
     var navToggle = document.getElementById("nav-toggle");
     var sidebar = document.getElementById("sidebar");
     var scrim = document.getElementById("sidebar-scrim");
+
+    var SCROLL_KEY = "ocilib-tut-nav-scroll";
+    var here = location.pathname.split("/").pop() || "index.html";
+    var scrollTimer = null;
+
+    function saveNavScroll() {
+        try {
+            sessionStorage.setItem(SCROLL_KEY,
+                JSON.stringify({ page: here, top: sidebar.scrollTop }));
+        } catch (e) { }
+    }
+
+    if (sidebar) {
+        // keep the scroll offset for same-page reloads (F5, back button)
+        sidebar.addEventListener("scroll", function () {
+            clearTimeout(scrollTimer);
+            scrollTimer = setTimeout(saveNavScroll, 150);
+        });
+        window.addEventListener("pagehide", saveNavScroll);
+
+        // restore it when the page being opened is the one that was saved
+        var restored = false;
+        try {
+            var savedScroll = JSON.parse(sessionStorage.getItem(SCROLL_KEY) || "null");
+            if (savedScroll && savedScroll.page === here) {
+                sidebar.scrollTop = savedScroll.top;
+                restored = true;
+            }
+        } catch (e) { }
+
+        // otherwise bring the current page's nav entry into view
+        if (!restored) {
+            var active = sidebar.querySelector("li.active");
+            if (active) {
+                var sb = sidebar.getBoundingClientRect();
+                var ar = active.getBoundingClientRect();
+                if (ar.top < sb.top || ar.bottom > sb.bottom) {
+                    sidebar.scrollTop += ar.top - sb.top - Math.round(sb.height / 3);
+                }
+            }
+        }
+    }
+
+    /* -------------------------------------------------------------- mobile nav */
 
     function closeNav() {
         if (sidebar) sidebar.classList.remove("open");

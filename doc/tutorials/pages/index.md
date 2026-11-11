@@ -6,7 +6,7 @@ title: Welcome
 
 **OCILIB** is a free, open-source C and C++ driver for Oracle Database.
 
-It is proven, mature technology — maintained by Vincent Rogier for nearly 20 years and distributed under the Apache License 2.0.
+It is proven, mature technology — actively maintained for nearly 20 years and distributed under the Apache License 2.0.
 
 OCILIB wraps the low-level Oracle Call Interface (OCI) — the same C library that Oracle's own drivers use — in a clean, object-oriented API, while still exposing the full power of Oracle.
 
@@ -23,7 +23,7 @@ OCILIB keeps the power and removes the pain:
   LOB, object, collection…) is an opaque `OCI_<Type>` handle with a `Create`/`Free`
   lifecycle in C, and an RAII class in C++.
 - **Typed API** — no `OCIAttrGet`/`OCIAttrSet` generic calls; you call strongly-typed
-  functions like `OCI_GetString(rs, 0)` or `OCI_BindDate(st, ":d", &date)`.
+  functions like `OCI_ResultsetGetString(rs, 0)` or `OCI_StatementBindDate(st, ":d", &date)`.
 - **Full Oracle coverage** — scalar and LOB types, dates/timestamps/intervals, objects,
   collections, REFs, AQ messaging, change notification, direct path loading, JSON DOM,
   SODA document store, sharding, and more.
@@ -102,10 +102,10 @@ Your choice is remembered across all pages.
 |------|---------------------|
 | 0 — Getting started | Install Oracle client + OCILIB on Windows/Linux, first program, first connection, error handling, diagnostics logging |
 | 1 — Connections & environments | Connection strings, session modes, ping/break, introspection |
-| 2 — SQL, fetching & binding | Statements, resultsets, every getter, bind variables, scrollable cursors, bulk fetch |
-| 3 — PL/SQL | Blocks, OUT parameters, ref cursors, index-by tables, `DBMS_OUTPUT` |
-| 4 — Transactions, pooling & threads | Commit/rollback, transaction objects, connection/session pools, multithreading |
-| 5 — Oracle data types | Charsets, dates, timestamps, intervals, numbers, RAW, vectors, LOBs, BFILEs, XML, JSON |
+| 2 — Oracle data types | Charsets, dates, timestamps, intervals, numbers, RAW, vectors, LOBs, BFILEs, XML, JSON, PL/SQL BOOLEAN & RECORD, user-defined types |
+| 3 — SQL, fetching & binding | Statements, resultsets, every getter, bind variables, scrollable cursors, bulk fetch |
+| 4 — PL/SQL | Blocks, OUT parameters, ref cursors, index-by tables, `DBMS_OUTPUT` |
+| 5 — Transactions, pooling & threads | Commit/rollback, transaction objects, connection/session pools, multithreading |
 | 6 — Object-relational API | Type describe, objects, collections, REFs |
 | 7 — Messaging & notifications | Advanced Queuing, publish/subscribe, change notification (CQN) |
 | 8 — Bulk & administration | Array binding, direct path loading, database startup/shutdown |

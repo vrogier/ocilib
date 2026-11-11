@@ -14,7 +14,7 @@ demos: [queue.c]
 - tune dequeue behavior: wait, navigation, visibility, consumer, correlation
 - inspect message state and metadata
 
-## Meet the Dequeue endpoint
+## The Dequeue endpoint
 
 The `Dequeue` is the consuming endpoint — bound to the queue's TypeInfo+name like `Enqueue`, it pulls `Msg` objects off the queue.
 
@@ -23,14 +23,14 @@ Pulls are transactional: consuming a message marks it removed *inside your trans
 :::sample
 ```c
 OCI_Dequeue *deq = OCI_DequeueCreate(inf, OTEXT("message_queue"));
-OCI_Msg *msg = OCI_DequeueGet(deq);               /* blocks per wait settings */
+OCI_Message *msg = OCI_DequeueGet(deq);               /* blocks per wait settings */
 if (msg)
 {
-    OCI_Object *obj = OCI_MsgGetObject(msg);      /* payload as object */
+    OCI_Object *obj = OCI_MessageGetObject(msg);      /* payload as object */
     printf("%s\n", OCI_ObjectGetString(obj, OTEXT("TITLE")));
-    OCI_MsgFree(msg);
+    OCI_MessageFree(msg);
 }
-OCI_Commit(con);                                  /* dequeue is transactional too */
+OCI_ConnectionCommit(con);                                  /* dequeue is transactional too */
 ```
 
 ```cpp
@@ -86,6 +86,23 @@ if (a)
 Attempt count, enqueue time, state (READY/WAITING/PROCESSED/EXPIRED), id,
 correlation, sender, original id, exception queue — everything needed for
 poison-message handling and routing logic (page 715's table).
+
+## Putting it together — the typical sequence
+
+Dequeueing pulls a message — the read side:
+
+1. **Dequeue** — `OCI_DequeueGet(queue)` blocks for the next message (or
+   times out per `DequeueSetWaitTime`).
+2. **Read the `OCI_Msg`** — `MsgGet` attributes: payload, sender, dequeue
+   count.
+3. **Acknowledge** — dequeue modes (`OCI_DM_*`) decide whether the message is
+   consumed or just browsed.
+4. **Repeat** — the dequeue loop is the consumer's heartbeat.
+
+Hints: `DM_REMOVE` deletes on dequeue (default), `DM_BROWSE` peeks — choose
+per consumer role; `DequeueSetWaitTime` keeps the call from blocking forever —
+`OCI_NOWAIT` returns immediately; and high `deq_count` means repeated
+delivery — the poison-message signal to watch.
 
 ## Try it yourself
 

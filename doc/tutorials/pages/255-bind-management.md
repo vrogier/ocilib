@@ -1,7 +1,7 @@
 ---
 title: Managing binds — direction, NULLs, rebinding
 navtitle: Managing binds
-part: 2
+part: 3
 level: intermediate
 ---
 
@@ -27,12 +27,12 @@ return a value:
 
 !!! note "DML `RETURNING` is different"
     `insert … returning col into :v` does **not** use direction flags — it uses
-    `OCI_Register*` output placeholders whose values come back as a resultset.
+    `OCI_StatementRegister*` output placeholders whose values come back as a resultset.
     That's page 280; keep `OUT` for PL/SQL parameters.
 
 :::sample
 ```c
-OCI_Bind *b = OCI_GetBindByName(st, OTEXT(":new_sal"));
+OCI_Bind *b = OCI_StatementGetBindByName(st, OTEXT(":new_sal"));
 OCI_BindSetDirection(b, OCI_BDM_OUT);
 /* …after Execute… */
 OCI_Double *out = OCI_BindGetData(b);        /* the returned value */
@@ -66,10 +66,10 @@ own metadata:
 
 | C function | C++ method | Returns |
 |------------|------------|---------|
-| `OCI_GetBindCount` | `GetBindCount()` | how many binds |
-| `OCI_GetBind` | `GetBind(index)` | bind by position |
-| `OCI_GetBindByName` | `GetBind(name)` | bind by `:name` |
-| `OCI_GetBindIndex` | `GetBindIndex(name)` | position of a named bind |
+| `OCI_StatementGetBindCount` | `GetBindCount()` | how many binds |
+| `OCI_StatementGetBind` | `GetBind(index)` | bind by position |
+| `OCI_StatementGetBindByName` | `GetBind(name)` | bind by `:name` |
+| `OCI_StatementGetBindIndex` | `GetBindIndex(name)` | position of a named bind |
 | `OCI_BindGetName` | `BindInfo::GetName()` | `":name"` |
 | `OCI_BindGetType` | `BindInfo::GetType()` | bind kind |
 | `OCI_BindGetSubtype` | `GetSubType()` | subtype detail |
@@ -80,8 +80,8 @@ own metadata:
 | `OCI_BindGetDirection` | `GetDirection()` | current direction |
 | `OCI_BindGetAllocationMode` | `GetAllocationMode()` | your buffer vs internal |
 | `OCI_BindGetStatement` | `GetStatement()` | statement handle for statement binds |
-| `OCI_GetBindAllocation` | `GetBindAllocation()` | statement-level buffer policy |
-| `OCI_GetBindMode` | `GetBindMode()` | statement-level bind policy |
+| `OCI_StatementGetBindAllocation` | `GetBindAllocation()` | statement-level buffer policy |
+| `OCI_StatementGetBindMode` | `GetBindMode()` | statement-level bind policy |
 
 ## Rebinding — when the statement re-attaches your variables
 
@@ -89,10 +89,30 @@ Normally you bind once and re-execute many times. But if you re-prepare *differe
 SQL on the same statement, or need new buffers, rebinding policy matters:
 
 - **Allow rebinding** — let the next bind call replace an existing bind of the same
-  name instead of erroring (`OCI_AllowRebinding`; `IsRebindingAllowed` queries it).
+  name instead of erroring (`OCI_StatementAllowRebinding`; `IsRebindingAllowed` queries it).
 - **Buffer allocation mode** — switch between your buffers (`OCI_BAM_EXTERNAL`, the
   default) and internally-owned buffers (`OCI_BAM_INTERNAL`) for binds the library
   allocates itself, e.g. `RETURNING` targets.
+
+## Putting it together — the typical sequence
+
+Bind management covers the bookkeeping around a bound statement:
+
+1. **Inspect** — `OCI_StatementGetBindCount`, `GetBind`, `GetBindByName`,
+   `GetBindIndex` — asking "what placeholders are live?".
+2. **Adjust** — `BindSetDataSize`, `BindSetCharsetForm`, `BindSetDirection` —
+   per-bind tweaks after creation.
+3. **Rebind** — `OCI_StatementBindAgain` re-binds a different variable to the
+   same placeholder — cheaper than unbind+rebind when the loop variable
+   changes.
+4. **Clean** — binds die with the statement; `OCI_StatementFree` releases them
+   all.
+
+Hints: `BindSetDataSize` matters for `OUT` binds — the server needs to know
+your buffer's capacity before it writes into it; `GetBindIndex` is the
+debugging tool for "which bind is the third `:x`?"; and direction (`IN`/`OUT`/
+`IN OUT`) is a bind-time hint the server checks at execute — get it right
+there, not in your app code.
 
 ## Try it yourself
 
@@ -110,6 +130,6 @@ SQL on the same statement, or need new buffers, rebinding policy matters:
 ## Recap
 
 - `OCI_BDM_IN/OUT/IN_OUT` on the `OCI_Bind` object; NULL via `BindSetNull{,AtPos}`.
-- `OCI_GetBind{,ByName,Index,Count}` enumerate; `BindGet*` inspect.
+- `OCI_StatementGetBind{,ByName,Index,Count}` enumerate; `BindGet*` inspect.
 
 **Next:** prepare-once/execute-many in practice — the re-execution pattern.

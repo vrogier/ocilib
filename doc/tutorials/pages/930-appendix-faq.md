@@ -28,10 +28,10 @@ part: 10
 | Symptom | Likely issue |
 |---------|--------------|
 | `ORA-00942` on samples | `tutorial-schema.sql` not run |
-| `ORA-06502` PL/SQL buffer | bound buffer too small / wrong `OCI_BindString` size |
-| Fetch returns nothing | forgot `OCI_Execute` after `OCI_Prepare`, or wrong fetch order |
-| NULL crashes on get | check `OCI_IsNull` / use `GetOptional<T>` |
-| `ORA-01013` appears | expected — something called `OCI_Break` |
+| `ORA-06502` PL/SQL buffer | bound buffer too small / wrong `OCI_StatementBindString` size |
+| Fetch returns nothing | forgot `OCI_StatementExecutePrepared` after `OCI_StatementPrepare`, or wrong fetch order |
+| NULL crashes on get | check `OCI_ResultsetIsColumnNull` / use `GetOptional<T>` |
+| `ORA-01013` appears | expected — something called `OCI_ConnectionBreak` |
 | "It worked in SQL*Plus but not here" | autocommit off; uncommitted DML invisible elsewhere |
 
 ## Link/build errors

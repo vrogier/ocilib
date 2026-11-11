@@ -15,7 +15,7 @@ sql: collections.sql
 - bind/fetch collection columns
 - get sizes, max sizes and element handles
 
-## Meet the collection and the element
+## The collection and the element
 
 Oracle has two collection flavors: bounded `VARRAY(n)` and unbounded nested tables (`table of …`).
 
@@ -37,18 +37,18 @@ create table vendors (code number, products product_varray_t);
 :::sample
 ```c
 OCI_TypeInfo *ti = OCI_TypeInfoGet(cn, OTEXT("product_varray_t"), OCI_TIF_TYPE);
-OCI_Coll *coll = OCI_CollCreate(ti);          /* element type from the TypeInfo */
+OCI_Collection *coll = OCI_CollectionCreate(ti);          /* element type from the TypeInfo */
 
-OCI_Elem *e = OCI_ElemCreate(ti);             /* a product_t element slot      */
-OCI_Object *p = OCI_ElemGetObject(e);         /* object element → set attrs    */
-OCI_ObjectSetInt   (p, OTEXT("CODE"), 123);
+OCI_Element *e = OCI_ElementCreate(ti);             /* a product_t element slot      */
+OCI_Object *p = OCI_ElementGetObject(e);         /* object element → set attrs    */
+OCI_ObjectSetInt32   (p, OTEXT("CODE"), 123);
 OCI_ObjectSetString(p, OTEXT("NAME"), OTEXT("usb key"));
-OCI_CollAppend(coll, e);
-OCI_ElemFree(e);
+OCI_CollectionAppend(coll, e);
+OCI_ElementFree(e);
 
-OCI_Prepare(st, OTEXT("insert into vendors values(1, :c)"));
-OCI_BindColl(st, OTEXT(":c"), coll);
-OCI_Execute(st);
+OCI_StatementPrepare(st, OTEXT("insert into vendors values(1, :c)"));
+OCI_StatementBindCollection(st, OTEXT(":c"), coll);
+OCI_StatementExecutePrepared(st);
 ```
 
 ```cpp
@@ -71,8 +71,8 @@ Scalar collections (`table of varchar2`) are simpler — set the element's scala
 
 :::sample
 ```c
-OCI_ElemSetString(e, OTEXT("hello"));
-OCI_CollAppend(coll, e);
+OCI_ElementSetString(e, OTEXT("hello"));
+OCI_CollectionAppend(coll, e);
 ```
 
 ```cpp
@@ -85,29 +85,29 @@ coll.Append(e);
 
 | C function | C++ method | Meaning |
 |------------|------------|---------|
-| `OCI_CollGetSize` | `GetSize()` | current element count |
-| `OCI_CollGetMax` | `GetMax()` | capacity (VARRAY bound; 0 = unbounded) |
-| `OCI_CollGetCount` | `GetCount()` | same as size for most cases |
-| `OCI_CollGetType` | `GetType()` | element/collection type info |
-| `OCI_CollGetTypeInfo` | `GetTypeInfo()` | describing TypeInfo |
-| `OCI_CollGetElem` | `Get<Elem>(i)` / typed `Get(i)` | element at index `i` (0-based) |
-| `OCI_CollSetElem` | `Set` | replace element `i` |
-| `OCI_CollClear` | `Clear()` | empty it |
-| `OCI_CollTrim` | `Trim(n)` | drop trailing elements |
-| `OCI_CollDeleteElem` | `DeleteElem(i)` | remove element `i` |
-| `OCI_CollAssign` | `Assign` | copy |
-| `OCI_CollToText` | `ToText()` | debug dump |
+| `OCI_CollectionGetSize` | `GetSize()` | current element count |
+| `OCI_CollectionGetMax` | `GetMax()` | capacity (VARRAY bound; 0 = unbounded) |
+| `OCI_CollectionGetCount` | `GetCount()` | same as size for most cases |
+| `OCI_CollectionGetType` | `GetType()` | element/collection type info |
+| `OCI_CollectionGetTypeInfo` | `GetTypeInfo()` | describing TypeInfo |
+| `OCI_CollectionGetElement` | `Get<Elem>(i)` / typed `Get(i)` | element at index `i` (0-based) |
+| `OCI_CollectionSetElement` | `Set` | replace element `i` |
+| `OCI_CollectionClear` | `Clear()` | empty it |
+| `OCI_CollectionTrim` | `Trim(n)` | drop trailing elements |
+| `OCI_CollectionDeleteElement` | `DeleteElem(i)` | remove element `i` |
+| `OCI_CollectionAssign` | `Assign` | copy |
+| `OCI_CollectionToText` | `ToText()` | debug dump |
 
 ## Fetching
 
 :::sample
 ```c
-OCI_Coll *c = OCI_GetColl(rs, 0);                 /* borrowed */
-for (OCI_UInt32 i = 0; i < OCI_CollGetSize(c); ++i)
+OCI_Collection *c = OCI_ResultsetGetColl(rs, 0);                 /* borrowed */
+for (OCI_UInt32 i = 0; i < OCI_CollectionGetSize(c); ++i)
 {
-    OCI_Elem *e = OCI_CollGetElem(c, i);
-    printf("%s\n", OCI_ElemGetString(e));
-    OCI_ElemFree(e);
+    OCI_Element *e = OCI_CollectionGetElement(c, i);
+    printf("%s\n", OCI_ElementGetString(e));
+    OCI_ElementFree(e);
 }
 ```
 
@@ -140,6 +140,25 @@ for (auto &&p : prods)
 }
 ```
 
+## Putting it together — the typical sequence
+
+Collections are array-typed columns — VARRAYs and nested tables:
+
+1. **Describe the collection type** — `TypeInfoGet` on the collection type
+   itself.
+2. **Create or fetch** — `CollectionCreate` for building, `Get<Collection>`
+   on a fetched column.
+3. **Walk elements** — `CollectionGetCount`, `GetElem`/`GetElem2` per index,
+   `CollectionNext` to iterate.
+4. **Mutate** — `Append`, `DeleteElem`, `SetElem` for writes; fetched
+   collections are borrowed.
+5. **Bind** — `StatementBindColl` for passing a collection as a parameter.
+
+Hints: `GetElem` returns a borrowed element — `GetElem2` gives one you can
+modify; `CollectionNext` is the iteration idiom — `Reset` rewinds it; and
+VARRAYs are bounded (max size in the type), nested tables aren't —
+`CollectionGetMax` reports the bound or 0 for unbounded.
+
 ## Try it yourself
 
 1. Build a `table of varchar2` of employee names and insert it.
@@ -157,4 +176,4 @@ for (auto &&p : prods)
 - `TypeInfo` → `CollCreate` → `ElemCreate`+fill → `CollAppend` → `BindColl`;
   fetched via `GetColl` + `CollGetElem`.
 
-**Next:** iterating collections with `OCI_Iter` and nested collections.
+**Next:** iterating collections with `OCI_Iterator` and nested collections.

@@ -31,29 +31,29 @@ objects. Exactly the nesting the API was built for.
 
 :::sample
 ```c
-OCI_ExecuteStmt(st, OTEXT("select shape from shapes"));
-OCI_Resultset *rs = OCI_GetResultset(st);
-while (OCI_FetchNext(rs))
+OCI_StatementExecute(st, OTEXT("select shape from shapes"));
+OCI_Resultset *rs = OCI_StatementGetResultset(st);
+while (OCI_ResultsetFetchNext(rs))
 {
-    OCI_Object *poly = OCI_GetObject(rs, 0);
+    OCI_Object *poly = OCI_ResultsetGetObject(rs, 0);
     printf("polygon %d (%s):\n",
-           OCI_ObjectGetInt(poly, OTEXT("ID")),
+           OCI_ObjectGetInt32(poly, OTEXT("ID")),
            OCI_ObjectGetString(poly, OTEXT("NAME")));
 
-    OCI_Coll *pts = OCI_ObjectGetColl(poly, OTEXT("POINTS"));   /* owned */
-    OCI_Iter *it  = OCI_IterCreate(pts);
-    OCI_Elem *e;
-    while ((e = OCI_IterGetNext(it)))
+    OCI_Collection *pts = OCI_ObjectGetColl(poly, OTEXT("POINTS"));   /* owned */
+    OCI_Iterator *it  = OCI_IteratorCreate(pts);
+    OCI_Element *e;
+    while ((e = OCI_IteratorGetNext(it)))
     {
-        OCI_Object *pt = OCI_ElemGetObject(e);                  /* owned */
+        OCI_Object *pt = OCI_ElementGetObject(e);                  /* owned */
         printf("   (%d, %d)\n",
-               OCI_ObjectGetInt(pt, OTEXT("X")),
-               OCI_ObjectGetInt(pt, OTEXT("Y")));
+               OCI_ObjectGetInt32(pt, OTEXT("X")),
+               OCI_ObjectGetInt32(pt, OTEXT("Y")));
         OCI_ObjectFree(pt);
-        OCI_ElemFree(e);
+        OCI_ElementFree(e);
     }
-    OCI_IterFree(it);
-    OCI_CollFree(pts);
+    OCI_IteratorFree(it);
+    OCI_CollectionFree(pts);
     OCI_ObjectFree(poly);
 }
 ```
@@ -83,17 +83,17 @@ for (auto &&row : st.GetResultset().Rows())
 ```c
 OCI_TypeInfo *ti = OCI_TypeInfoGet(cn, OTEXT("polygon_t"), OCI_TIF_TYPE);
 OCI_Object *poly = OCI_ObjectCreate(ti);
-OCI_ObjectSetInt(poly, OTEXT("ID"), 1);
+OCI_ObjectSetInt32(poly, OTEXT("ID"), 1);
 OCI_ObjectSetString(poly, OTEXT("NAME"), OTEXT("triangle"));
 
 OCI_TypeInfo *cti = OCI_TypeInfoGet(cn, OTEXT("points_t"), OCI_TIF_TYPE);
-OCI_Coll *pts = OCI_CollCreate(cti);
-/* append point_t elems built via OCI_ElemCreate + ElemGetObject + ObjectSetInt */
+OCI_Collection *pts = OCI_CollectionCreate(cti);
+/* append point_t elems built via OCI_ElementCreate + ElemGetObject + ObjectSetInt */
 OCI_ObjectSetColl(poly, OTEXT("POINTS"), pts);
 
-OCI_Prepare(st, OTEXT("insert into shapes values(:i, :p)"));
-OCI_BindObject(st, OTEXT(":p"), poly);
-OCI_Execute(st);
+OCI_StatementPrepare(st, OTEXT("insert into shapes values(:i, :p)"));
+OCI_StatementBindObject(st, OTEXT(":p"), poly);
+OCI_StatementExecutePrepared(st);
 ```
 
 ```cpp
@@ -123,6 +123,23 @@ TypeInfo (describe) → ObjectCreate / CollCreate / ElemCreate
 
 And on the way back: `GetObject` → `ObjectGetColl` → `IterGetNext` →
 `ElemGetObject` → `ObjectGet*` — owned handles freed as you go.
+
+## Putting it together — the typical sequence
+
+The geometry case study shows the object API earning its keep:
+
+1. **Describe `MDSYS.SDO_GEOMETRY`** — `TypeInfoGet` on the spatial type.
+2. **Build the object** — `ObjectCreate` + `Set` attributes per field.
+3. **Handle the nested types** — `SDO_POINT`, `SDO_ELEM_INFO_ARRAY` are
+   objects/collections *inside* the outer object — `ObjectGetColl` reaches
+   them.
+4. **Bind into spatial queries** — `SDO_*` operators in SQL take the bound
+   object directly.
+
+Hints: `SDO_ELEM_INFO`/`SDO_ORDINATES` are VARRAYs of number — the collection
+API fills them, not `Set` on a flat struct; the SDO type is nested 3 deep —
+describe once, reuse the TypeInfos; and `ObjectGetStruct` fills a C struct
+mirror of the object when you need the whole row at once.
 
 ## Try it yourself
 

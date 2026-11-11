@@ -1,7 +1,7 @@
 ---
 title: Scrollable resultsets — fetch in any direction
 navtitle: Scrollable resultsets
-part: 2
+part: 3
 level: intermediate
 demos: [scroll.c, scroll.cpp]
 ---
@@ -21,9 +21,9 @@ server to keep the whole result addressable:
 
 :::sample
 ```c
-OCI_SetFetchMode(st, OCI_SFM_SCROLLABLE);
-OCI_ExecuteStmt(st, OTEXT("select empno, ename from employees order by empno"));
-OCI_Resultset *rs = OCI_GetResultset(st);
+OCI_StatementSetFetchMode(st, OCI_SFM_SCROLLABLE);
+OCI_StatementExecute(st, OTEXT("select empno, ename from employees order by empno"));
+OCI_Resultset *rs = OCI_StatementGetResultset(st);
 ```
 
 ```cpp
@@ -42,11 +42,11 @@ auto rs = st.GetResultset();
 
 | C function | C++ method | Movement |
 |------------|------------|----------|
-| `OCI_FetchNext` | `Next()` | next row |
-| `OCI_FetchPrev` | `Prev()` | previous row |
-| `OCI_FetchFirst` | `First()` | jump to row 1 |
-| `OCI_FetchLast` | `Last()` | jump to last row — also reveals the total |
-| `OCI_FetchSeek` | `Seek(mode, offset)` | absolute or relative jump |
+| `OCI_ResultsetFetchNext` | `Next()` | next row |
+| `OCI_ResultsetFetchPrev` | `Prev()` | previous row |
+| `OCI_ResultsetFetchFirst` | `First()` | jump to row 1 |
+| `OCI_ResultsetFetchLast` | `Last()` | jump to last row — also reveals the total |
+| `OCI_ResultsetFetchSeek` | `Seek(mode, offset)` | absolute or relative jump |
 
 Seek directions:
 
@@ -57,14 +57,14 @@ Seek directions:
 
 :::sample
 ```c
-OCI_FetchLast(rs);                                  /* land on last row        */
-printf("total rows: %u\n", OCI_GetRowCount(rs));    /* full count now known    */
+OCI_ResultsetFetchLast(rs);                                  /* land on last row        */
+printf("total rows: %u\n", OCI_ResultsetGetRowCount(rs));    /* full count now known    */
 
-OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE, 2);             /* row 3                   */
-OCI_FetchSeek(rs, OCI_SFD_RELATIVE, -1);            /* back one → row 2        */
-while (OCI_FetchPrev(rs))                           /* walk to the top         */
+OCI_ResultsetFetchSeek(rs, OCI_SFD_ABSOLUTE, 2);             /* row 3                   */
+OCI_ResultsetFetchSeek(rs, OCI_SFD_RELATIVE, -1);            /* back one → row 2        */
+while (OCI_ResultsetFetchPrev(rs))                           /* walk to the top         */
 {
-    printf("%s\n", OCI_GetString(rs, 1));
+    printf("%s\n", OCI_ResultsetGetString(rs, 1));
 }
 ```
 
@@ -99,11 +99,28 @@ it += 2;              // absolute-ish navigation
 it[0];                // seek to a row — std::input_iterator + extras
 ```
 
+## Putting it together — the typical sequence
+
+Scrollable cursors add random access to the forward-only default:
+
+1. **Set the mode** — `OCI_StatementSetFetchMode(st, OCI_SFM_SCROLLABLE)` at
+   prepare time, before execute.
+2. **Fetch in any direction** — `FetchNext`, `FetchPrev`, `FetchFirst`,
+   `FetchLast`, `FetchSeek` to an absolute row.
+3. **Pay the cost** — scrollable cursors buffer rows server-side; they're for
+   UI grids and jump-around tools, not bulk pipelines.
+
+Hints: forward-only is the default and the fastest — only opt into scrolling
+when you actually need `Prev`/`Seek`; `FetchSeek` takes a 0-based row index —
+jumping past the end returns FALSE, not an error; and scrollable mode is a
+statement property — set it *before* `Execute`, changing it after has no
+effect on the current cursor.
+
 ## Try it yourself
 
 1. Print employees in reverse order with `FetchLast` + `FetchPrev`.
 2. Implement "page 3 of 10 rows per page" with `OCI_SFD_ABSOLUTE` seeks.
-3. Compare `OCI_GetRowCount` before/after `FetchLast` in both fetch modes.
+3. Compare `OCI_ResultsetGetRowCount` before/after `FetchLast` in both fetch modes.
 
 ## Common pitfalls
 

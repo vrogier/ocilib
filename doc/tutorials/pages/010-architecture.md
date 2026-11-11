@@ -9,8 +9,8 @@ level: beginner
 
 **Objectives** — by the end of this page you will be able to:
 
-- recognize the handle types OCILIB exposes and how they relate
-- predict the lifecycle (Create → use → Free) of any OCILIB object
+- recognize the objects OCILIB exposes and how they relate
+- predict the lifecycle (create → use → free) of any OCILIB object
 - tell owned handles from borrowed (transient) handles
 - map a C API call to its C++ equivalent at a glance
 
@@ -18,56 +18,123 @@ level: beginner
 
 OCILIB exposes every Oracle resource as an **opaque handle**: a `struct` you cannot see inside, always used through a pointer.
 
-The naming convention is uniform — once you know it, you can guess most of the API:
+The naming convention is uniform — once you know it, you can guess most of the API.
+The C++ API mirrors it 1:1:
 
-| Pattern | Meaning | Example |
-|---------|---------|---------|
-| `OCI_<Type>` | handle type | `OCI_Connection`, `OCI_Statement` |
-| `OCI_<Type>Create…()` | constructor | `OCI_ConnectionCreate()` |
-| `OCI_<Type>Free()` | destructor | `OCI_ConnectionFree()` |
-| `OCI_<Type><Action>()` | method | `OCI_StatementSetFetchSize()` |
-| `OCI_<Type>Get/Set<Prop>()` | property | `OCI_LobGetLength()` |
-| `OCI_<PREFIX>_*` | constant | `OCI_SESSION_DEFAULT`, `OCI_CLOB` |
-
-The C++ API mirrors this 1:1 — `OCI_ConnectionCreate` becomes
-`ocilib::Connection(env, db, usr, pwd)`, `OCI_FetchNext` becomes `rs.Next()`, and so on.
+| C pattern | C++ equivalent | Role | Example |
+|-----------|----------------|------|---------|
+| `OCI_<Type>` | `ocilib::<Type>` | handle type / wrapper class | `OCI_Connection` ↔ `ocilib::Connection` |
+| `OCI_<Type>Create…()` | `ocilib::<Type>(…)` | constructor | `OCI_ConnectionCreate(env, …)` ↔ `Connection cn(env, …)` |
+| `OCI_<Type>Free()` | destructor — RAII | end of life | `OCI_ConnectionFree(cn)` ↔ end of `cn`'s scope |
+| `OCI_<Type><Action>()` | `<obj>.<Action>()` | method | `OCI_StatementExecute(st, …)` ↔ `st.Execute(…)` |
+| `OCI_<Type>Get/Set<Prop>()` | `<obj>.Get/Set<Prop>()` | property | `OCI_LobGetLength(lob)` ↔ `lob.GetLength()` |
+| `OCI_<PREFIX>_*` | `<Type>::<Member>` | constant / enum member | `OCI_SESSION_SYSDBA` ↔ `Environment::SessionSysDba` |
 
 ## The ownership tree
 
 Handles are not independent — they form a tree rooted at the **environment**:
 
 ```text
-OCI_Environment                    ← OCI_EnvironmentCreate / OCI_EnvironmentFree
-└── OCI_Connection                 ← OCI_ConnectionCreate / OCI_ConnectionFree
-    ├── OCI_Statement              ← OCI_StatementCreate / OCI_StatementFree
-    │   ├── OCI_Resultset          ← OCI_GetResultset      (borrowed — never freed)
-    │   └── OCI_Bind               ← OCI_BindXxx           (owned by statement)
-    ├── OCI_Transaction            ← OCI_TransactionCreate / Free
-    └── …
-└── OCI_Pool                       ← OCI_PoolCreate / OCI_PoolFree
-    └── OCI_Connection             ← OCI_PoolGetConnection  (borrowed — released, not freed)
+environment                        ← created once, freed last
+├── connection                     ← one per database session
+│   ├── statement                  ← one per SQL command
+│   │   ├── resultset              ← borrowed — never freed
+│   │   │   └── column             ← borrowed — never freed
+│   │   └── bind                   ← owned by the statement
+│   └── transaction                ← optional explicit unit of work
+└── pool                           ← a group of reusable connections
+    └── connection                 ← borrowed — returned to the pool
 ```
+
+Each concept maps to one handle type in C and one wrapper class in C++ — the
+complete inventory is listed at the bottom of this page:
+
+| Concept | C handle type | C++ wrapper | Born by | Dies by |
+|---------|---------------|-------------|---------|---------|
+| environment | `OCI_Environment` | `ocilib::Environment` | `OCI_EnvironmentCreate` | `OCI_EnvironmentFree` |
+| connection | `OCI_Connection` | `ocilib::Connection` | `OCI_ConnectionCreate` | `OCI_ConnectionFree` |
+| statement | `OCI_Statement` | `ocilib::Statement` | `OCI_StatementCreate` | `OCI_StatementFree` |
+| resultset | `OCI_Resultset` | `ocilib::Resultset` | `OCI_StatementGetResultset` | never — dies with its statement |
+| column | `OCI_Column` | `ocilib::Column` | `OCI_ResultsetGetColumn` | never — dies with its statement |
+| bind | `OCI_Bind` | `ocilib::BindInfo` | `OCI_StatementBindXxx` factories + `OCI_Bind*` methods | never — dies with its statement |
+| transaction | `OCI_Transaction` | `ocilib::Transaction` | `OCI_TransactionCreate` | `OCI_TransactionFree` |
+| pool | `OCI_Pool` | `ocilib::Pool` | `OCI_PoolCreate` | `OCI_PoolFree` |
+| pooled connection | `OCI_Connection` | `ocilib::Connection` | `OCI_PoolGetConnection` | `OCI_ConnectionFree` — returns it to the pool |
 
 Three rules cover every case:
 
-1. **Create/Free pairs.** Anything you `Create`, you must `Free` — before freeing its
+1. **Create/free pairs.** Anything you create, you free — before freeing its
    parent. Children die with their parent anyway, so the safe order is always
    *leaf → root*.
-2. **Borrowed handles are never freed.** `OCI_GetResultset()`, `OCI_GetColumn()`,
-   `OCI_PoolGetConnection()` hand you objects owned by someone else. Use them, don't
+2. **Borrowed handles are never freed.** Resultsets, columns and pooled
+   connections are handed to you by the object that owns them. Use them, don't
    free them. In C++ these are acquired *transiently* and release their parent
    automatically.
-3. **The C++ layer removes rule 1 entirely.** `ocilib::Connection con(env, …)` frees
-   itself when it goes out of scope — and exceptions unwind everything correctly.
+3. **The C++ layer removes rule 1 entirely.** A `Connection` object frees its
+   handle when it goes out of scope — and exceptions unwind everything correctly.
+
+## Every handle type
+
+The same pattern extends to every OCILIB object. Here is the complete inventory —
+the parent is always the object that creates (or lends) the handle:
+
+| C type | C++ wrapper | Parent |
+|--------|-------------|--------|
+| `OCI_Environment` | `ocilib::Environment` | — (root) |
+| `OCI_Pool` | `ocilib::Pool` | environment |
+| `OCI_Connection` | `ocilib::Connection` | environment — or a pool |
+| `OCI_Transaction` | `ocilib::Transaction` | connection |
+| `OCI_Statement` | `ocilib::Statement` | connection |
+| `OCI_Resultset` | `ocilib::Resultset` | statement |
+| `OCI_Column` | `ocilib::Column` | resultset |
+| `OCI_Bind` | `ocilib::BindInfo` | statement |
+| `OCI_Error` | `ocilib::Exception` | — (delivered to your error handler) |
+| `OCI_Number` | `ocilib::Number` | environment |
+| `OCI_Date` | `ocilib::Date` | environment |
+| `OCI_Timestamp` | `ocilib::Timestamp` | environment |
+| `OCI_Interval` | `ocilib::Interval` | environment |
+| `OCI_Lob` | `ocilib::Lob` | connection — or statement when fetched |
+| `OCI_File` | `ocilib::File` | connection — or statement when fetched |
+| `OCI_Long` | `ocilib::Long` | statement |
+| `OCI_Json` | `ocilib::Json` | connection — or statement when fetched |
+| `OCI_JsonNode` | `ocilib::JsonNode` | a JSON document — or a parent node |
+| `OCI_Vector` | `ocilib::Vector` | connection — or statement when fetched |
+| `OCI_XmlType` | `ocilib::XmlType` | statement |
+| `OCI_TypeInfo` | `ocilib::TypeInfo` | connection |
+| `OCI_Object` | `ocilib::Object` | type info — or statement when fetched |
+| `OCI_Collection` | `ocilib::Collection` | type info — or statement when fetched |
+| `OCI_Element` | `ocilib::CollectionElement` | collection |
+| `OCI_Iterator` | — | collection |
+| `OCI_Reference` | `ocilib::Reference` | type info — or statement when fetched |
+| `OCI_HashTable` | — | environment |
+| `OCI_Subscription` | `ocilib::Subscription` | connection |
+| `OCI_Event` | `ocilib::Event` | subscription |
+| `OCI_Message` | `ocilib::Message` | type info — or a dequeue |
+| `OCI_Agent` | `ocilib::Agent` | connection |
+| `OCI_Enqueue` | `ocilib::Enqueue` | type info |
+| `OCI_Dequeue` | `ocilib::Dequeue` | type info |
+| `OCI_SodaDatabase` | `ocilib::SodaDatabase` | connection |
+| `OCI_SodaCollection` | `ocilib::SodaCollection` | SODA database |
+| `OCI_SodaDocument` | `ocilib::SodaDocument` | SODA database — or a doc cursor |
+| `OCI_SodaOptions` | `ocilib::SodaOptions` | SODA database |
+| `OCI_SodaCollectionCursor` | `ocilib::SodaCollectionCursor` | SODA database |
+| `OCI_SodaDocumentCursor` | `ocilib::SodaDocumentCursor` | SODA collection |
+| `OCI_DirectPath` | `ocilib::DirectPath` | type info |
+| `OCI_ShardingKey` | `ocilib::ShardingKey` | environment |
+
+A few types have no C++ twin (`—`) because the C++ layer covers the job
+differently — collections are iterated with C++-style iterators instead of an
+`OCI_Iterator` handle, for instance.
 
 ## Errors: the fourth leg
 
-Every call that can fail either returns `FALSE`/NULL (C) or throws
+Every call that can fail either returns `FALSE`/NULL (C) or throws an
 `ocilib::Exception` (C++). In C, two channels deliver the details:
 
-- your **error handler callback** (installed at `OCI_EnvironmentCreate`), invoked
-  immediately with a filled `OCI_Error`;
-- `OCI_GetLastError()` — poll the last error of the calling thread any time.
+- your **error handler callback** — installed when the environment is created,
+  invoked immediately with a filled error object;
+- the **last-error poll** — `OCI_GetLastError()` returns the calling thread's
+  most recent error at any time.
 
 ## The two build flavors
 
@@ -93,7 +160,7 @@ thanks to the `otext`/`OTEXT()` abstraction you will see in every sample.
 ## Recap
 
 - Handles are opaque, named `OCI_<Type>`, with uniform Create/Free/Get/Set naming.
-- Ownership is a tree rooted at `OCI_Environment`; borrowed handles are never freed.
+- Ownership is a tree rooted at the environment; borrowed handles are never freed.
 - C returns `FALSE`/NULL + error callback; C++ throws `ocilib::Exception`.
 - ANSI/Unicode and linkage/runtime import are build-time choices; your code does not change.
 

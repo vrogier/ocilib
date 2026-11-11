@@ -30,8 +30,8 @@ create table dept_obj  of dept_t;
    attribute tree (members → varray → emp_t attrs).
 2. Build one `dept_t` programmatically: `Deptno=20`, `Members` = a `emp_list_t`
    collection with two `emp_t` elements; bind it into `dept_obj`.
-3. Fetch it back and walk `MEMBERS` with `OCI_Iter`, printing each `ENAME`/`SAL`.
-4. For one member, set `mgr = OCI_ObjectGetSelfRef(other_emp_obj)` and update.
+3. Fetch it back and walk `MEMBERS` with `OCI_Iterator`, printing each `ENAME`/`SAL`.
+4. For one member, set `mgr = OCI_ObjectGetSelfReference(other_emp_obj)` and update.
 5. Dump everything once with `OCI_ObjectToText` for comparison.
 
 ## Acceptance checks
@@ -48,7 +48,7 @@ create table dept_obj  of dept_t;
 | TypeInfo describe | 610 |
 | Object create/get/set, NULLs | 615–620 |
 | Assign/inheritance/self-ref | 625/640 |
-| Collections + `OCI_Iter` | 630/635 |
+| Collections + `OCI_Iterator` | 630/635 |
 | End-to-end nested graph | 645 |
 
 Part 6 done — the whole object-relational API is yours. Next: messaging — AQ and

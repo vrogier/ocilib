@@ -1,7 +1,7 @@
 ---
 title: Column metadata — OCI_Column attributes
 navtitle: Column metadata
-part: 2
+part: 3
 level: intermediate
 ---
 
@@ -13,7 +13,7 @@ level: intermediate
 - read every column attribute: name, type, size, precision, nullability…
 - build a generic "describe resultset" routine
 
-## Meet the column descriptor
+## The column descriptor
 
 A **column** is a read-only descriptor of one result-set column — everything `describe`-style metadata knows about it: name, type, size, precision, nullability.
 
@@ -21,10 +21,10 @@ You don't create columns: ask the resultset for them, they're **borrowed** (owne
 
 :::sample
 ```c
-OCI_UInt32 n = OCI_GetColumnCount(rs);
+OCI_UInt32 n = OCI_ResultsetGetColumnCount(rs);
 for (OCI_UInt32 i = 0; i < n; ++i)
 {
-    OCI_Column *col = OCI_GetColumn(rs, i);             /* or OCI_GetColumnByName */
+    OCI_Column *col = OCI_ResultsetGetColumn(rs, i);             /* or OCI_ResultsetGetColumnByName */
     /* … read attributes … */
 }
 ```
@@ -44,8 +44,8 @@ for (UInt32 i = 0; i < rs.GetColumnCount(); ++i)
 |------------|------------|---------|
 | `OCI_ColumnGetName` | `GetName()` | column name (as returned, usually UPPER) |
 | `OCI_ColumnGetType` | `GetType()` | OCILIB type class (`OCI_CDT_*`: numeric, text, lob, object…) |
-| `OCI_ColumnGetSQLType` | `GetSQLType()` | SQL type name (`"NUMBER"`, `"TIMESTAMP"`…) |
-| `OCI_ColumnGetFullSQLType` | `GetFullSQLType()` | SQL type with precision (`"TIMESTAMP(6) WITH TIME ZONE"`) |
+| `OCI_ColumnGetSqlType` | `GetSQLType()` | SQL type name (`"NUMBER"`, `"TIMESTAMP"`…) |
+| `OCI_ColumnGetFullSqlType` | `GetFullSQLType()` | SQL type with precision (`"TIMESTAMP(6) WITH TIME ZONE"`) |
 | `OCI_ColumnGetSubType` | `GetSubType()` | subtype detail (e.g. CLOB vs BLOB) |
 | `OCI_ColumnGetSize` | `GetSize()` | declared size (chars/bytes) |
 | `OCI_ColumnGetPrecision` | `GetPrecision()` | NUMBER precision |
@@ -67,13 +67,13 @@ for (UInt32 i = 0; i < rs.GetColumnCount(); ++i)
 ```c
 static void describe_resultset(OCI_Resultset *rs)
 {
-    for (OCI_UInt32 i = 0; i < OCI_GetColumnCount(rs); ++i)
+    for (OCI_UInt32 i = 0; i < OCI_ResultsetGetColumnCount(rs); ++i)
     {
-        OCI_Column *col = OCI_GetColumn(rs, i);
+        OCI_Column *col = OCI_ResultsetGetColumn(rs, i);
         printf("#%-2u %-20s %-15s size=%-4u prec=%u scale=%u %s\n",
                i,
                OCI_ColumnGetName(col),
-               OCI_ColumnGetSQLType(col),
+               OCI_ColumnGetSqlType(col),
                OCI_ColumnGetSize(col),
                OCI_ColumnGetPrecision(col),
                OCI_ColumnGetScale(col),
@@ -100,12 +100,31 @@ static void describe_resultset(Resultset &rs)
 C++ equivalent: `rs.GetColumn(i)` → `Column` object with the same getters
 (`col.GetName()`, `col.GetSQLType()`, `col.GetNullable()`, `col.HasJsonSchema()`…).
 
+## Putting it together — the typical sequence
+
+Column metadata answers "what did the SELECT actually return":
+
+1. **Get the column count** — `OCI_ResultsetGetColumnCount`.
+2. **Loop the columns** — `OCI_ResultsetGetColumn(rs, i)` returns a
+   `OCI_Column` per position.
+3. **Read the attributes** — `GetName`, `GetType`, `GetSize`, `GetPrecision`,
+   `GetScale`, `GetNullable`, `GetCharsetForm` — the describe-level detail of
+   each result column.
+4. **Branch on it** — pick the right getter per column *type* at runtime, the
+   basis of generic dump tools.
+
+Hints: `GetColumn` returns a borrowed describe object — freed with the
+resultset; `GetDataSize` on a column gives the *declared* size, while
+`GetDataSize` on a row gives the *actual* bytes — different questions; and
+generic tools (`SELECT *` of unknown shape) always walk columns by type
+before choosing getters.
+
 ## Try it yourself
 
 1. Run the dump against `select * from employees` — match each row to `describe` output.
 2. Describe a query with expressions (`select sal*1.1 raise …`) and see what
    `GetSQLType` reports.
-3. Print `OCI_ColumnGetFullSQLType` on a `TIMESTAMP WITH TIME ZONE` column.
+3. Print `OCI_ColumnGetFullSqlType` on a `TIMESTAMP WITH TIME ZONE` column.
 
 ## Common pitfalls
 
@@ -116,7 +135,7 @@ C++ equivalent: `rs.GetColumn(i)` → `Column` object with the same getters
 
 ## Recap
 
-- `OCI_GetColumn(rs, i)` → full per-column metadata for generic tooling.
+- `OCI_ResultsetGetColumn(rs, i)` → full per-column metadata for generic tooling.
 - `OCI_CDT_*` type class + `GetSQLType` name + size/precision/nullable cover a describe.
 
 **Next:** feeding values *in* — bind variables, part 1.

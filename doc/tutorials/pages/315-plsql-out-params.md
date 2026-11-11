@@ -1,7 +1,7 @@
 ---
 title: Procedures, functions & OUT parameters
 navtitle: Procedures & OUT params
-part: 3
+part: 4
 level: intermediate
 ---
 
@@ -43,14 +43,14 @@ writes back. Find the bind by name and flip its direction to `OUT`:
 OCI_Int32  empno = 7566;
 OCI_Double pct = 10, new_sal = 0;
 
-OCI_Prepare(st, OTEXT("begin raise_sal(:empno, :pct, :new_sal); end;"));
-OCI_BindInt   (st, OTEXT(":empno"),   &empno);
-OCI_BindDouble(st, OTEXT(":pct"),     &pct);
-OCI_BindDouble(st, OTEXT(":new_sal"), &new_sal);
+OCI_StatementPrepare(st, OTEXT("begin raise_sal(:empno, :pct, :new_sal); end;"));
+OCI_StatementBindInt32   (st, OTEXT(":empno"),   &empno);
+OCI_StatementBindDouble(st, OTEXT(":pct"),     &pct);
+OCI_StatementBindDouble(st, OTEXT(":new_sal"), &new_sal);
 
-OCI_BindSetDirection(OCI_GetBindByName(st, OTEXT(":new_sal")), OCI_BDM_OUT);
+OCI_BindSetDirection(OCI_StatementGetBindByName(st, OTEXT(":new_sal")), OCI_BDM_OUT);
 
-OCI_Execute(st);
+OCI_StatementExecutePrepared(st);
 printf("new salary: %.2f\n", new_sal);
 ```
 
@@ -76,11 +76,11 @@ A function's return value is just one more placeholder, conventionally `:f` or
 :::sample
 ```c
 OCI_Int32 n = 0;
-OCI_Prepare(st, OTEXT("begin :n := dept_headcount(:d); end;"));
-OCI_BindInt(st, OTEXT(":n"), &n);
-OCI_BindInt(st, OTEXT(":d"), &deptno);
-OCI_BindSetDirection(OCI_GetBindByName(st, OTEXT(":n")), OCI_BDM_OUT);
-OCI_Execute(st);
+OCI_StatementPrepare(st, OTEXT("begin :n := dept_headcount(:d); end;"));
+OCI_StatementBindInt32(st, OTEXT(":n"), &n);
+OCI_StatementBindInt32(st, OTEXT(":d"), &deptno);
+OCI_BindSetDirection(OCI_StatementGetBindByName(st, OTEXT(":n")), OCI_BDM_OUT);
+OCI_StatementExecutePrepared(st);
 ```
 
 ```cpp
@@ -92,11 +92,32 @@ st.ExecutePrepared();
 ```
 :::
 
+## Putting it together — the typical sequence
+
+OUT parameters are where binds get interesting — the same call, two
+directions:
+
+1. **Declare a host variable** for the OUT slot — it must exist before the
+   bind.
+2. **Bind it as OUT** — `StatementBind*` on the placeholder; OCILIB doesn't
+   need a direction flag, the PL/SQL signature decides.
+3. **Execute** — the block writes into your variable.
+4. **Read the variable** — it's now filled with whatever the PL/SQL assigned.
+
+`IN OUT` is the same with a pre-seeded value: set before execute, read after.
+The buffer rules matter most on OUT string/raw binds — pass capacity in via
+`BindSetDataSize`, the server refuses to write more than you declared.
+
+Hints: an OUT bind's variable must outlive the execute — stack-allocate it
+before the call; `OUT VARCHAR2` needs `BindSetDataSize` or the server truncates
+to a default; and `IN OUT` params are just `IN` + `OUT` on the same slot —
+read the value after `Execute` exactly like an `OUT`.
+
 ## Try it yourself
 
 1. Add an `IN OUT p_factor` parameter — pass a multiplier in, get the applied
    factor back.
-2. Call `sys.dbms_lock.sleep(1)` through a block — then cancel it with `OCI_Break`
+2. Call `sys.dbms_lock.sleep(1)` through a block — then cancel it with `OCI_ConnectionBreak`
    from another thread (page 130 synergy).
 
 ## Common pitfalls

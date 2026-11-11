@@ -71,7 +71,7 @@ con.QueueStart("message_queue", true, true);
 | `OCI_AGM_NONE` | `Message::MessageGroupingNone` | no grouping |
 | `OCI_AGM_TRANSACTIONNAL` | `Message::MessageGroupingTransactional` | grouped by transaction |
 
-## Meet the client-side trio
+## The client-side trio
 
 Three objects bridge your program to a queue — and all hang off the payload's
 `TypeInfo` (Part 6 pays off here: **AQ payloads are objects**):
@@ -81,6 +81,23 @@ Three objects bridge your program to a queue — and all hang off the payload's
   (`EnqueueCreate(ti, name)` / `Enqueue(ti, name)`).
 - **Msg / Message** — a message shell carrying an `Object` payload (or raw bytes
   for RAW queues).
+
+## Putting it together — the typical sequence
+
+AQ needs server setup before any client call:
+
+1. **Create the queue server-side** — `DBMS_AQADM.CREATE_QUEUE` +
+   `CREATE_QUEUE_TABLE` + `START_QUEUE`, or a `QUEUE TABLE` with typed
+   payload.
+2. **Get a `OCI_Queue` handle** — `OCI_QueueCreate(con, "qname", type)` on
+   the client.
+3. **Enqueue/dequeue** — the two verbs, detailed on the next pages.
+
+Hints: the queue must be *started* server-side — `START_QUEUE` is the
+commonly-forgotten step; the payload type determines which OCILIB calls
+apply — `OCI_Object` payloads for typed queues, `OCI_Raw`/text for generic;
+and dequeue without a started queue hangs or errors — `GET_QUEUE_STATUS`
+server-side is the health check.
 
 ## Try it yourself
 

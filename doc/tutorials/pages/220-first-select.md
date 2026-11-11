@@ -1,6 +1,6 @@
 ---
 title: Running your first SELECT
-part: 2
+part: 3
 level: beginner
 demos: [fetch.c, fetch.cpp]
 sql: tutorial-schema.sql
@@ -15,7 +15,7 @@ sql: tutorial-schema.sql
 - handle `NULL` values correctly
 - use the C++ `Resultset` range-for loop
 
-## Meet the resultset
+## The resultset
 
 Running a `SELECT` on a statement produces a **resultset** — the cursor over the
 rows the server has waiting. Two facts define how you use it:
@@ -42,8 +42,8 @@ We query `employees` from `tutorial-schema.sql` and print a small report. Steps:
 1. Create environment + connection (as in the previous lesson — elided below? No —
    the sample stays complete so it compiles as-is).
 2. Create a statement, execute the SELECT.
-3. Loop `OCI_FetchNext`, printing columns by index.
-4. Use `OCI_GetColumnCount`/`OCI_IsNull` to be safe on the nullable `comm` column.
+3. Loop `OCI_ResultsetFetchNext`, printing columns by index.
+4. Use `OCI_ResultsetGetColumnCount`/`OCI_ResultsetIsColumnNull` to be safe on the nullable `comm` column.
 
 ## Full example
 
@@ -69,23 +69,23 @@ int main(void)
 
     OCI_Statement *st = OCI_StatementCreate(cn);
 
-    OCI_ExecuteStmt(st, "select empno, ename, sal, comm from employees order by empno");
+    OCI_StatementExecute(st, "select empno, ename, sal, comm from employees order by empno");
 
-    OCI_Resultset *rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    OCI_Resultset *rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
-        printf("%5i %-10s %8.2f", OCI_GetInt(rs, 0), OCI_GetString(rs, 1),
-               OCI_GetDouble(rs, 2));
+        printf("%5i %-10s %8.2f", OCI_ResultsetGetInt32(rs, 0), OCI_ResultsetGetString(rs, 1),
+               OCI_ResultsetGetDouble(rs, 2));
 
-        if (!OCI_IsNull(rs, 4))                 /* comm is nullable */
+        if (!OCI_ResultsetIsColumnNull(rs, 4))                 /* comm is nullable */
         {
-            printf("  comm=%.2f", OCI_GetDouble(rs, 3));
+            printf("  comm=%.2f", OCI_ResultsetGetDouble(rs, 3));
         }
 
         printf("\n");
     }
 
-    printf("=> %u row(s)\n", OCI_GetRowCount(rs));
+    printf("=> %u row(s)\n", OCI_ResultsetGetRowCount(rs));
 
     OCI_StatementFree(st);                      /* frees rs with it */
     OCI_ConnectionFree(cn);
@@ -146,20 +146,40 @@ int main()
 => 8 row(s)
 ```
 
+## Putting it together — the typical sequence
+
+Your first SELECT is the template every query follows:
+
+1. **Prepare** the SQL — one call.
+2. **Execute** — the statement now holds an internal cursor.
+3. **Get the resultset** — `OCI_StatementGetResultset` hands you the cursor.
+4. **Fetch rows** — `OCI_ResultsetFetchNext` walks forward, one row at a time,
+   FALSE at EOF.
+5. **Get values** — `OCI_ResultsetGet*` by index (0-based in the SELECT list)
+   or by name.
+6. **Free** — the statement owns the resultset; freeing it kills both.
+
+The one-call variants (`ExecuteStmt`, `ImmediateFormat`) collapse steps 1–4 for
+queries you run once — reach for them when you don't need to re-execute.
+
+Hints: indexes are **0-based** — `GetX(rs, 0)` is the *first* column; `IsColumnNull` before
+reading nullable columns, or you'll dereference borrowed NULL; and always
+check `FetchNext` — an empty resultset exits the loop silently.
+
 ## Try it yourself
 
-1. Replace index `2` by the column name: `OCI_GetString(rs, OTEXT("ename"))` —
+1. Replace index `2` by the column name: `OCI_ResultsetGetString(rs, OTEXT("ename"))` —
    getters accept names too (`rs.Get<String>("ename")` in C++).
 2. Add `dname` via `join departments d using (deptno)` and print it.
-3. Print `OCI_GetColumnCount(rs)` and loop columns generically by index.
+3. Print `OCI_ResultsetGetColumnCount(rs)` and loop columns generically by index.
 4. In C++, try `while (rs++)` instead of the range-`for`.
 
 ## Common pitfalls
 
 - **Reading before fetching** — getters only see the *current* row; call
-  `OCI_FetchNext` first.
-- **Using a 1-based index** — columns start at 0. `OCI_GetX(rs, 1)` reads the *second* column, not the first.
-- **Getting a NULL `comm` as a number** — always test `OCI_IsNull` (C) or use
+  `OCI_ResultsetFetchNext` first.
+- **Using a 1-based index** — columns start at 0. `OCI_ResultsetGetXxx(rs, 1)` reads the *second* column, not the first.
+- **Getting a NULL `comm` as a number** — always test `OCI_ResultsetIsColumnNull` (C) or use
   `GetOptional<T>` (C++) on nullable columns.
 - **`ORA-00942: table or view does not exist`** — you forgot to run
   [`assets/sql/tutorial-schema.sql`](assets/sql/tutorial-schema.sql) as the connecting user.

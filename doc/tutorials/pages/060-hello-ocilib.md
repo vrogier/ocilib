@@ -14,7 +14,7 @@ level: beginner
 - pick the right environment flags for your application
 - point OCILIB at a non-standard Oracle client location
 
-## Meet the environment
+## The environment
 
 The **environment** is OCILIB's root object — the context in which everything else
 exists. Creating it does three jobs at once:
@@ -37,7 +37,7 @@ Oracle client, and a set of flags:
 ```c
 OCI_Environment *OCI_EnvironmentCreate
 (
-    OCI_ErrorHandler  handler,   /* your error callback (may be NULL) */
+    POCI_ERROR       handler,   /* your error callback (may be NULL) */
     const otext      *libpath,   /* Oracle client path (may be NULL) */
     unsigned int      mode       /* environment flags */
 );
@@ -58,7 +58,7 @@ ocilib::Environment env(mode, libpath);
 | C enum | C++ enum | Meaning |
 |--------|----------|---------|
 | `OCI_ENV_DEFAULT` | `Environment::Default` | plain single-threaded app |
-| `OCI_ENV_THREADED` | `Environment::Threaded` | app uses multiple threads (Part 4) |
+| `OCI_ENV_THREADED` | `Environment::Threaded` | app uses multiple threads (Part 5) |
 | `OCI_ENV_EVENTS` | `Environment::Events` | subscriptions/HA events (Part 7) |
 
 Destroying the environment releases everything — do it **once**, **last**, after
@@ -144,6 +144,22 @@ On **every** failed public call — connection failures, SQL syntax errors, cons
 
 A handler that prints is great for learning; real apps usually log and let last-error polling carry details to the call site.
 
+## Putting it together — the typical sequence
+
+Every OCILIB program — hello-world or production — runs the same five steps:
+
+1. **Create the environment** — `OCI_EnvironmentCreate(handler, NULL, flags)`
+   or `Environment env;` in C++. Nothing works without it.
+2. **Connect** — `OCI_ConnectionCreate` with db string, user, password.
+3. **Do work** — statements, fetches, binds; this is where your code lives.
+4. **Disconnect** — `OCI_ConnectionFree` releases the session.
+5. **Free the environment** — last, after every child handle is gone.
+
+Hints: order matters — environment first, free last, children in between;
+the C++ `Environment` is RAII — the ctor/dtor bracket the same calls; and the
+error handler you register at step 1 is what `OCI_GetLastError` consults
+throughout — write it before you need it.
+
 ## Try it yourself
 
 1. Pass a bogus `libpath` — observe the environment creation fail cleanly.
@@ -158,7 +174,7 @@ A handler that prints is great for learning; real apps usually log and let last-
 - **Two environments, one program** — allowed since v5, but each owns its handles;
   mixing handles across environments fails fast. Keep one env unless you have a reason.
 - **Forgetting the threaded flag** in a multithreaded app — undefined behavior; see
-  the threading page in Part 4.
+  the threading page in Part 5.
 
 ## Recap
 

@@ -68,6 +68,24 @@ Resultset rs = st.GetResultset();       // borrowed — releases automatically
 When `st` goes out of scope it frees the statement; `rs` releases the borrowed
 resultset; `con` disconnects; `env` unloads OCI — all automatically, in order.
 
+## Putting it together — the typical sequence
+
+Environment setup happens once, at process start, before anything else:
+
+1. **Create the environment** — `OCI_EnvironmentCreate(handler, NULL, flags)`:
+   the error handler callback goes here, the mode flags (threaded, events)
+   lock in the OCILIB feature set.
+2. **Register the error handler** — the C API reports via return codes; the
+   callback is where you log *why*.
+3. **Everything else is scoped to it**: connections, datatypes, pools all live
+   under the environment — creating them without one doesn't exist.
+4. **Free it last** — `OCI_EnvironmentFree` tears down every child handle.
+
+Hints: the environment is the *root* of the ownership tree — freeing it frees
+the children, so order matters; `OCI_ENV_THREADED` is required before
+`OCI_Thread*` APIs work; and the error handler is C-only — C++ translates the
+same failures into `ocilib::Exception` throws.
+
 ## Try it yourself
 
 1. Deliberately free a connection *after* its environment — observe the error path.
@@ -80,5 +98,5 @@ resultset; `con` disconnects; `env` unloads OCI — all automatically, in order.
 - Borrowed handles (resultsets, pool connections, columns) are never freed.
 - Multiple environments are legal in v5 but handles stay inside their own.
 
-**Checkpoint:** you now own every connection concept. Part 2 puts them to work — SQL
+**Checkpoint:** you now own every connection concept. Part 3 puts them to work — SQL
 execution, fetching, and binding.

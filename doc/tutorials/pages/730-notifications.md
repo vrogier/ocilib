@@ -14,7 +14,7 @@ demos: [notification.c, notification.cpp]
 - read event contents: type, object, rowid, operation
 - scope notifications to specific statements
 
-## Meet the subscription and the event
+## The subscription and the event
 
 **Continuous Query Notification** lets the database *push* events to your app when
 data changes — no polling.
@@ -37,12 +37,12 @@ void event_handler(OCI_Event *event)
 
 OCI_Environment *env = OCI_EnvironmentCreate(err, NULL, OCI_ENV_EVENTS);
 /* … connect … */
-OCI_SetSubscriptionPort(env, 5468);
+OCI_EnvironmentSetSubscriptionPort(env, 5468);
 
-OCI_Subscription *sub = OCI_SubscriptionRegister(
+OCI_Subscription *sub = OCI_SubscriptionCreate(
     con, OTEXT("sub-00"), OCI_CNT_ALL, event_handler, OCI_SRM_DEFAULT, 0);
 
-OCI_Prepare(st, OTEXT("select * from employees"));
+OCI_StatementPrepare(st, OTEXT("select * from employees"));
 OCI_SubscriptionAddStatement(sub, st);       /* watch objects this stmt touches */
 
 /* … when done … */
@@ -100,6 +100,22 @@ are fine.
 - Attach statements to scope the subscription to the objects they touch.
 - Name/timeout/connection inspect the registration.
 - Unregistering releases it server-side too.
+
+## Putting it together — the typical sequence
+
+Database change notification is a subscription + callback model:
+
+1. **Create the subscription** — `OCI_SubscriptionCreate(con, name, type,
+   callback)` for query-change or object-change events.
+2. **Register statements** — `StatementRegister` on the queries you want
+   watched.
+3. **Get callbacks** — your handler fires when the data changes; `OCI_Event`
+   tells you what.
+4. **Unregister** — `SubscriptionUnregister` cleans up server-side.
+
+Hints: the environment needs `OCI_ENV_EVENTS` at creation for notifications
+to work; the callback runs on a notification thread — don't block it; and
+`Register` is per-statement — you watch specific queries, not "the table".
 
 ## Try it yourself
 

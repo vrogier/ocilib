@@ -1,6 +1,6 @@
 ---
 title: Pool tuning & monitoring
-part: 4
+part: 5
 level: intermediate
 ---
 
@@ -69,6 +69,23 @@ are checked out:
 - Timeout/NoWait exhausted → checkout returns NULL/throws — always check.
 - Dead pooled session → OCI drops it transparently; ping on checkout if you want
   certainty.
+
+## Putting it together — the typical sequence
+
+Pool tuning is matching the pool's growth curve to your load:
+
+1. **Min connections** — the warm floor, kept open idle.
+2. **Max connections** — the cap; beyond it `PoolGetConnection` blocks or
+   errors.
+3. **Increment** — how many to add per growth step.
+4. **`OCI_PoolSetTimeout`** — how long a borrower waits before failing.
+5. **`OCI_PoolSetNoWait`** — fail immediately instead of blocking when full.
+
+Hints: min = your average concurrency, max = your spike; a pool that grows
+and shrinks constantly is worse than a static one — set min to your working
+set; `NoWait` is for latency-sensitive paths that prefer an error over a wait;
+and pool exhaustion shows as `PoolGetConnection` timeout — monitor it before
+raising max blindly.
 
 ## Try it yourself
 

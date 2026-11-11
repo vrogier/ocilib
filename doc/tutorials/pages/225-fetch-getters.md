@@ -1,7 +1,7 @@
 ---
 title: Fetching rows — getters, indexes & NULLs
 navtitle: Fetching rows
-part: 2
+part: 3
 level: beginner
 demos: [fetch.c, fetch.cpp]
 ---
@@ -26,11 +26,11 @@ that drive it:
 
 | C function | C++ method | Role |
 |------------|------------|------|
-| `OCI_FetchNext` | `Next()` / `operator++` | advance to the next row; `FALSE`/`false` at the end |
-| `OCI_GetCurrentRow` | `GetCurrentRow()` | 0-based index of the row you're on |
-| `OCI_GetRowCount` | `GetCount()` | rows fetched so far |
-| `OCI_GetColumnCount` | `GetColumnCount()` | how many columns the row has |
-| `OCI_GetColumnIndex` | `GetColumnIndex(name)` | resolve a column name to its index |
+| `OCI_ResultsetFetchNext` | `Next()` / `operator++` | advance to the next row; `FALSE`/`false` at the end |
+| `OCI_ResultsetGetCurrentRow` | `GetCurrentRow()` | 0-based index of the row you're on |
+| `OCI_ResultsetGetRowCount` | `GetCount()` | rows fetched so far |
+| `OCI_ResultsetGetColumnCount` | `GetColumnCount()` | how many columns the row has |
+| `OCI_ResultsetGetColumnIndex` | `GetColumnIndex(name)` | resolve a column name to its index |
 
 ## By index or by name
 
@@ -38,13 +38,13 @@ Every getter comes in pairs — the `ByName` variant resolves the name to an ind
 
 :::sample
 ```c
-while (OCI_FetchNext(rs))
+while (OCI_ResultsetFetchNext(rs))
 {
     printf("%6d %-12s %8.2f\n",
-           OCI_GetInt(rs, 0),                          /* by index    */
-           OCI_GetString(rs, 1),
-           OCI_GetDouble(rs, OCI_GetColumnIndex(rs, OTEXT("sal"))));
-    /* or directly: OCI_GetDoubleByName(rs, OTEXT("sal")) */
+           OCI_ResultsetGetInt32(rs, 0),                          /* by index    */
+           OCI_ResultsetGetString(rs, 1),
+           OCI_ResultsetGetDouble(rs, OCI_ResultsetGetColumnIndex(rs, OTEXT("sal"))));
+    /* or directly: OCI_ResultsetGetDoubleByName(rs, OTEXT("sal")) */
 }
 ```
 
@@ -65,8 +65,8 @@ loops.
 
 | C function | C++ method | Role |
 |------------|------------|------|
-| `OCI_IsNull` | `IsNull` | test the column **before** reading |
-| `OCI_IsNullByName` | `IsNull` (by name) | same, resolved by column name |
+| `OCI_ResultsetIsColumnNull` | `IsNull` | test the column **before** reading |
+| `OCI_ResultsetIsColumnNullByName` | `IsNull` (by name) | same, resolved by column name |
 | — | `GetOptional<T>` | returns `std::optional<T>` — `nullopt` when NULL |
 
 Getting a NULL numeric returns `0`; a NULL string returns `NULL` — never rely on it,
@@ -86,11 +86,30 @@ if (auto comm = row.GetOptional<double>(4))
   mode (page 275) the full count is known upfront.
 - Rows-affected-on-the-statement is the DML counterpart — don't confuse the two.
 
+## Putting it together — the typical sequence
+
+The fetch loop is muscle memory in OCILIB — it never changes shape:
+
+1. **Execute** the SELECT.
+2. **`FetchNext` in a `while`** — FALSE at EOF, row data live inside the loop.
+3. **Pick the getter that matches the column**: `GetInt32` for `NUMBER` ints,
+   `GetString` for `VARCHAR2`, `GetDouble` for `NUMBER` floats — each returns
+   a typed value or a borrowed handle.
+4. **Borrowed vs owned**: `GetString`/`GetLob`/`GetObject` return pointers the
+   *row* owns — never free them, never keep them past the next `FetchNext`.
+5. **`IsColumnNull` first** on anything nullable — the getters don't protect
+   you from NULL columns.
+
+Hints: `GetString` works on *any* column — it converts — so when you're
+unsure of the SQL type, text is the safe read; by-name getters are slower than
+by-index but self-documenting; and the biggest beginner bug is storing the
+`otext*` past the next fetch — the row buffer is reused, copy if you need it.
+
 ## Try it yourself
 
 1. Fetch `empno, ename, comm` and replace NULL comm with `0.00` in the output —
-   once with `OCI_IsNull`, once (C++) with `GetOptional`.
-2. Print `OCI_GetCurrentRow` inside the loop and `OCI_GetRowCount` after it.
+   once with `OCI_ResultsetIsColumnNull`, once (C++) with `GetOptional`.
+2. Print `OCI_ResultsetGetCurrentRow` inside the loop and `OCI_ResultsetGetRowCount` after it.
 3. Select a column alias `ename employee` and fetch it by the alias name.
 
 ## Common pitfalls

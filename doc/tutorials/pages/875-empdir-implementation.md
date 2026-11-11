@@ -51,7 +51,7 @@ void err_handler(OCI_Error *err) { fprintf(stderr, "%s\n", OCI_ErrorGetString(er
 
 static OCI_Connection *checkout(void)
 {
-    return OCI_PoolGetConnection(g_pool);   /* free() releases back to the pool */
+    return OCI_PoolGetConnection(g_env, g_pool, NULL);   /* free() releases back to the pool */
 }
 
 /* ------------------------------------------------------------------ list */
@@ -63,23 +63,23 @@ static int cmd_list(int dept)
 
     if (dept)
     {
-        OCI_Prepare(st, "select empno, ename, job, sal from employees "
+        OCI_StatementPrepare(st, "select empno, ename, job, sal from employees "
                         "where deptno = :d order by empno");
-        OCI_BindInt(st, ":d", &dept);
+        OCI_StatementBindInt32(st, ":d", &dept);
     }
     else
     {
-        OCI_Prepare(st, "select empno, ename, job, sal from employees order by empno");
+        OCI_StatementPrepare(st, "select empno, ename, job, sal from employees order by empno");
     }
 
-    OCI_Execute(st);
-    OCI_Resultset *rs = OCI_GetResultset(st);
+    OCI_StatementExecutePrepared(st);
+    OCI_Resultset *rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
         printf("%5i  %-10s  %-9s  %8.2f\n",
-               OCI_GetInt(rs, 0), OCI_GetString(rs, 1),
-               OCI_GetString(rs, 2), OCI_GetDouble(rs, 3));
+               OCI_ResultsetGetInt32(rs, 0), OCI_ResultsetGetString(rs, 1),
+               OCI_ResultsetGetString(rs, 2), OCI_ResultsetGetDouble(rs, 3));
     }
 
     OCI_StatementFree(st);
@@ -94,19 +94,19 @@ static int cmd_get(int empno)
     OCI_Connection *cn = checkout();
     OCI_Statement  *st = OCI_StatementCreate(cn);
 
-    OCI_Prepare(st, "select ename, job, sal, hiredate from employees where empno = :e");
-    OCI_BindInt(st, ":e", &empno);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, "select ename, job, sal, hiredate from employees where empno = :e");
+    OCI_StatementBindInt32(st, ":e", &empno);
+    OCI_StatementExecutePrepared(st);
 
-    OCI_Resultset *rs = OCI_GetResultset(st);
-    if (OCI_FetchNext(rs))
+    OCI_Resultset *rs = OCI_StatementGetResultset(st);
+    if (OCI_ResultsetFetchNext(rs))
     {
-        OCI_Date *d = OCI_GetDate(rs, 3);
+        OCI_Date *d = OCI_ResultsetGetDate(rs, 3);
         otext buf[64];
         OCI_DateToText(d, OTEXT("YYYY-MM-DD"), 63, buf);
         printf("%s  %s  %.2f  %s\n",
-               OCI_GetString(rs, 0), OCI_GetString(rs, 1),
-               OCI_GetDouble(rs, 2), buf);
+               OCI_ResultsetGetString(rs, 0), OCI_ResultsetGetString(rs, 1),
+               OCI_ResultsetGetDouble(rs, 2), buf);
     }
     else
     {
@@ -126,17 +126,17 @@ static int cmd_add(int empno, const otext *name, const otext *job,
     OCI_Connection *cn = checkout();
     OCI_Statement  *st = OCI_StatementCreate(cn);
 
-    OCI_Prepare(st, "insert into employees (empno, ename, job, sal, deptno) "
+    OCI_StatementPrepare(st, "insert into employees (empno, ename, job, sal, deptno) "
                     "values (:e, :n, :j, :s, :d)");
-    OCI_BindInt(st, ":e", &empno);
-    OCI_BindString(st, ":n", (otext *) name, 30);
-    OCI_BindString(st, ":j", (otext *) job, 20);
-    OCI_BindDouble(st, ":s", &sal);
-    OCI_BindInt(st, ":d", &deptno);
-    OCI_Execute(st);
+    OCI_StatementBindInt32(st, ":e", &empno);
+    OCI_StatementBindString(st, ":n", (otext *) name, 30);
+    OCI_StatementBindString(st, ":j", (otext *) job, 20);
+    OCI_StatementBindDouble(st, ":s", &sal);
+    OCI_StatementBindInt32(st, ":d", &deptno);
+    OCI_StatementExecutePrepared(st);
 
-    printf("%u row(s) inserted\n", OCI_GetAffectedRows(st));
-    OCI_Commit(cn);
+    printf("%u row(s) inserted\n", OCI_StatementGetAffectedRows(st));
+    OCI_ConnectionCommit(cn);
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
@@ -150,16 +150,16 @@ static int cmd_raise(int deptno, double pct)
     OCI_Connection *cn = checkout();
     OCI_Statement  *st = OCI_StatementCreate(cn);
 
-    OCI_Prepare(st, "update employees set sal = sal * (1 + :p / 100) "
+    OCI_StatementPrepare(st, "update employees set sal = sal * (1 + :p / 100) "
                     "where deptno = :d returning empno into :e");
 
-    OCI_BindDouble(st, ":p", &pct);
-    OCI_BindInt(st, ":d", &deptno);
-    OCI_RegisterInt(st, ":e");
-    OCI_Execute(st);
+    OCI_StatementBindDouble(st, ":p", &pct);
+    OCI_StatementBindInt32(st, ":d", &deptno);
+    OCI_StatementRegisterInt32(st, ":e");
+    OCI_StatementExecutePrepared(st);
 
-    printf("%u salary update(s)\n", OCI_GetAffectedRows(st));
-    OCI_Commit(cn);
+    printf("%u salary update(s)\n", OCI_StatementGetAffectedRows(st));
+    OCI_ConnectionCommit(cn);
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
@@ -171,12 +171,16 @@ static int cmd_raise(int deptno, double pct)
 static int cmd_import(const char *csv)
 {
     FILE *f = fopen(csv, "r");
-    if (!f) { fprintf(stderr, "cannot open %s\n", csv); return 1; }
+    if (!f)
+    {
+        fprintf(stderr, "cannot open %s\n", csv);
+        return 1;
+    }
 
     OCI_Connection *cn = checkout();
     OCI_Statement  *st = OCI_StatementCreate(cn);
 
-    OCI_Prepare(st, "insert into employees (empno, ename, sal) values (:e, :n, :s)");
+    OCI_StatementPrepare(st, "insert into employees (empno, ename, sal) values (:e, :n, :s)");
 
     const int BATCH = 64;
     int      empno[64];
@@ -184,10 +188,10 @@ static int cmd_import(const char *csv)
     double   sal[64];
     int      count = 0;
 
-    OCI_BindArraySetSize(st, BATCH);
-    OCI_BindArrayOfInts(st, ":e", empno, 0);
-    OCI_BindArrayOfStrings(st, ":n", (otext *) ename, 30, 0);
-    OCI_BindArrayOfDoubles(st, ":s", sal, 0);
+    OCI_StatementBindArraySetSize(st, BATCH);
+    OCI_StatementBindInt32Array(st, ":e", empno, 0);
+    OCI_StatementBindStringArray(st, ":n", (otext *) ename, 30, 0);
+    OCI_StatementBindDoubleArray(st, ":s", sal, 0);
 
     char line[256];
     while (fgets(line, sizeof(line), f))
@@ -195,19 +199,19 @@ static int cmd_import(const char *csv)
         sscanf(line, "%d,%30[^,],%lf", &empno[count], ename[count], &sal[count]);
         if (++count == BATCH)
         {
-            OCI_BindArraySetSize(st, count);
-            OCI_Execute(st);
+            OCI_StatementBindArraySetSize(st, count);
+            OCI_StatementExecutePrepared(st);
             count = 0;
         }
     }
     if (count)
     {
-        OCI_BindArraySetSize(st, count);
-        OCI_Execute(st);
+        OCI_StatementBindArraySetSize(st, count);
+        OCI_StatementExecutePrepared(st);
     }
 
-    printf("%u row(s) imported\n", OCI_GetAffectedRows(st));
-    OCI_Commit(cn);
+    printf("%u row(s) imported\n", OCI_StatementGetAffectedRows(st));
+    OCI_ConnectionCommit(cn);
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
@@ -228,12 +232,12 @@ static int cmd_watch(void)
 {
     OCI_Connection *cn = checkout();
     OCI_Statement  *st = OCI_StatementCreate(cn);
-    OCI_Subscription *sub = OCI_SubscriptionRegister(
+    OCI_Subscription *sub = OCI_SubscriptionCreate(
         cn, OTEXT("empdir-watch"), OCI_CNT_ALL, on_change, OCI_SRM_DEFAULT, 0);
 
-    OCI_Prepare(st, "select empno from employees");
+    OCI_StatementPrepare(st, "select empno from employees");
     OCI_SubscriptionAddStatement(sub, st);     /* watch objects this stmt touches */
-    OCI_Execute(st);
+    OCI_StatementExecutePrepared(st);
     printf("watching employees — run DML in another session, Ctrl+C to stop\n");
 
     getchar();   /* stay subscribed until the user stops the program */
@@ -251,17 +255,17 @@ static int cmd_jobs_submit(const otext *title, const otext *content)
     OCI_Connection *cn = checkout();
     OCI_TypeInfo *inf = OCI_TypeInfoGet(cn, OTEXT("job_t"), OCI_TIF_TYPE);
     OCI_Enqueue  *enq = OCI_EnqueueCreate(inf, OTEXT("job_queue"));
-    OCI_Msg      *msg = OCI_MsgCreate(inf);
+    OCI_Message      *msg = OCI_MessageCreate(inf);
     OCI_Object   *job = OCI_ObjectCreate(inf);
 
     OCI_ObjectSetString(job, OTEXT("title"),   (otext *) title);
     OCI_ObjectSetString(job, OTEXT("content"), (otext *) content);
-    OCI_MsgSetObject(msg, job);
+    OCI_MessageSetObject(msg, job);
     OCI_EnqueuePut(enq, msg);
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 
     OCI_ObjectFree(job);
-    OCI_MsgFree(msg);
+    OCI_MessageFree(msg);
     OCI_EnqueueFree(enq);
     OCI_TypeInfoFree(inf);
     OCI_ConnectionFree(cn);
@@ -273,16 +277,16 @@ static int cmd_jobs_work(void)
     OCI_Connection *cn = checkout();
     OCI_TypeInfo *inf = OCI_TypeInfoGet(cn, OTEXT("job_t"), OCI_TIF_TYPE);
     OCI_Dequeue  *deq = OCI_DequeueCreate(inf, OTEXT("job_queue"));
-    OCI_Msg      *msg;
+    OCI_Message      *msg;
 
     while ((msg = OCI_DequeueGet(deq)) != NULL)
     {
-        OCI_Object *job = OCI_MsgGetObject(msg);
+        OCI_Object *job = OCI_MessageGetObject(msg);
         printf("job: %s — %s\n",
                OCI_ObjectGetString(job, OTEXT("title")),
                OCI_ObjectGetString(job, OTEXT("content")));
     }
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 
     OCI_DequeueFree(deq);
     OCI_TypeInfoFree(inf);
@@ -297,18 +301,18 @@ static int cmd_profile(int empno)
     OCI_Connection *cn = checkout();
     OCI_Statement  *st = OCI_StatementCreate(cn);
 
-    OCI_Prepare(st, "select profile from employees where empno = :e");
-    OCI_BindInt(st, ":e", &empno);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, "select profile from employees where empno = :e");
+    OCI_StatementBindInt32(st, ":e", &empno);
+    OCI_StatementExecutePrepared(st);
 
-    OCI_Resultset *rs = OCI_GetResultset(st);
-    if (OCI_FetchNext(rs) && !OCI_IsNull(rs, 1))
+    OCI_Resultset *rs = OCI_StatementGetResultset(st);
+    if (OCI_ResultsetFetchNext(rs) && !OCI_ResultsetIsColumnNull(rs, 1))
     {
-        OCI_Json *doc = OCI_GetJson(rs, 0);
+        OCI_Json *doc = OCI_ResultsetGetJson(rs, 0);
         OCI_JsonNode *root = OCI_JsonGetRoot(doc);
 
         const otext *skill = OTEXT("<none>");
-        OCI_JsonNode *skills = OCI_JsonNodeGetField(root, OTEXT("skills"));
+        OCI_JsonNode *skills = OCI_JsonNodeGetFieldByName(root, OTEXT("skills"));
         if (skills && OCI_JsonNodeGetItemCount(skills))
         {
             skill = OCI_JsonNodeGetString(OCI_JsonNodeGetItem(skills, 0), NULL);
@@ -334,7 +338,7 @@ int main(int argc, char **argv)
 {
     g_env = OCI_EnvironmentCreate(err_handler, NULL,
                                   OCI_ENV_THREADED | OCI_ENV_EVENTS);
-    OCI_SetSubscriptionPort(g_env, 5468);
+    OCI_EnvironmentSetSubscriptionPort(g_env, 5468);
     g_pool = OCI_PoolCreate(g_env, getenv("OCILIB_DEMO_DB"),
                           getenv("OCILIB_DEMO_USR"), getenv("OCILIB_DEMO_PWD"),
                           OCI_POOL_CONNECTION, OCI_SESSION_DEFAULT, 2, 8, 1);
@@ -482,7 +486,11 @@ static int cmd_raise(int deptno, double pct)
 static int cmd_import(const char *csv)
 {
     std::ifstream f(csv);
-    if (!f) { std::cerr << "cannot open " << csv << "\n"; return 1; }
+    if (!f)
+    {
+        std::cerr << "cannot open " << csv << "\n";
+        return 1;
+    }
 
     Connection con = checkout();
     Statement  st(con);
@@ -683,7 +691,7 @@ int main(int argc, char **argv)
 
 1. Compile the C version (`cl /std:c11` or `gcc -std=c11 -locilib`) and run
    `list`, `get`, `add` against `tutorial-schema.sql`.
-2. Extend `import` with a `--mode=dirpath` switch using `OCI_DirPath` (page 815).
+2. Extend `import` with a `--mode=dirpath` switch using `OCI_DirectPath` (page 815).
 3. Change `watch` to `OCI_CNT_ROWS` and observe rowids instead of objects.
 4. Add `empdir export <empno>` writing the employee as a JSON document.
 
