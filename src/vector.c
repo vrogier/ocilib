@@ -431,13 +431,13 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
         /* context */ OCI_IPC_VECTOR, vect
     );
 
-    char *ansi_str = NULL;
+    char *mbcs_str = NULL;
 
     CHECK_PTR(OCI_IPC_VECTOR, vect);
     CHECK_PTR(OCI_IPC_VOID, str);
     CHECK_VECTOR_ENABLED(vect->con);
 
-    ub4 ansi_size = (ub4) (size == 0 ? ostrlen(str)  : size);
+    ub4 mbcs_size = (ub4) (size == 0 ? ostrlen(str)  : size);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
@@ -445,12 +445,12 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
 
     if (IS_WIDE_ENV())
     {
-        ansi_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)ansi_size+1, (OCI_Size)1, TRUE);
-        OcilibStringNativeToAnsi(str, ansi_str, (OCI_Int32) ansi_size);
+        mbcs_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)mbcs_size+1, (OCI_Size)1, TRUE);
+        OcilibStringNativeToMbcs(str, mbcs_str, (OCI_Int32) mbcs_size);
     }
     else
     {
-        ansi_str = (char*) str;
+        mbcs_str = (char*) str;
     }
 
     CHECK_OCI
@@ -461,8 +461,8 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
         vect->con->err,
         (ub1) format,
         (ub4) dimensions,
-        (const OraText*) ansi_str,
-        (ub4) ansi_size,
+        (const OraText*) mbcs_str,
+        (ub4) mbcs_size,
         OCI_DEFAULT
     );
 
@@ -483,7 +483,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
     (
         if (IS_WIDE_ENV())
         {
-            OcilibMemoryFree(vect->con->env, ansi_str);
+            OcilibMemoryFree(vect->con->env, mbcs_str);
         }
     );
 }
@@ -506,13 +506,13 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
         /* context */ OCI_IPC_VECTOR, vect
     );
 
-    char *ansi_str = NULL;
+    char *mbcs_str = NULL;
 
     CHECK_PTR(OCI_IPC_VECTOR, vect);
     CHECK_PTR(OCI_IPC_VOID, size);
     CHECK_VECTOR_ENABLED(vect->con);
 
-    ub4 ansi_size = (ub4) *size;
+    ub4 mbcs_size = (ub4) *size;
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
@@ -526,7 +526,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
         OCI_UInt32 elem_size = (format == OCI_VEC_FLOAT32 || format == OCI_VEC_FLOAT64) ?
                                OCI_SIZE_NUM_VECTOR_FLOAT : OCI_SIZE_NUM_VECTOR_INT;
 
-        ansi_size = (ub4) (2 + (elem_size + 2) * dimensions);
+        mbcs_size = (ub4) (2 + (elem_size + 2) * dimensions);
     }
     else
     {
@@ -534,11 +534,11 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
 
         if (IS_WIDE_ENV())
         {
-            ansi_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)ansi_size+1, (OCI_Size)1, TRUE);
+            mbcs_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)mbcs_size+1, (OCI_Size)1, TRUE);
         }
         else
         {
-            ansi_str = (char*) str;
+            mbcs_str = (char*) str;
         }
 
         CHECK_OCI
@@ -547,22 +547,22 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
             OCIVectorToText,
             vect->handle,
             vect->con->err,
-            (OraText*)ansi_str,
-            &ansi_size,
+            (OraText*)mbcs_str,
+            &mbcs_size,
             OCI_DEFAULT
         );
 
         if (IS_WIDE_ENV())
         {
-            OcilibStringMbcsToNative(ansi_str, str, (OCI_Int32) ansi_size);
+            OcilibStringMbcsToNative(mbcs_str, str, (OCI_Int32) mbcs_size);
         }
         else
         {
-            str[ansi_size] = 0;
+            str[mbcs_size] = 0;
         }
     }
 
-    *size = (OCI_UInt32)ansi_size;
+    *size = (OCI_UInt32)mbcs_size;
 
 #else
 
@@ -579,7 +579,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
     (
         if (IS_WIDE_ENV())
         {
-            OcilibMemoryFree(vect->con->env, ansi_str);
+            OcilibMemoryFree(vect->con->env, mbcs_str);
         }
     );
 }

@@ -32,9 +32,9 @@ The repo ships prebuilt binaries in `lib32\` and `lib64\`:
 
 | File | Charset | Arch |
 |------|---------|------|
-| `lib64\ociliba.dll` + `.lib` | ANSI (`char`) | x64 |
-| `lib64\ocilibw.dll` + `.lib` | UNICODE (UTF-16) | x64 |
-| `lib32\ociliba.dll` / `ocilibw.dll` | same, 32-bit | x86 |
+| `lib64\ocilibm.dll` + `.lib` | MBCS (`char`) | x64 |
+| `lib64\ocilibw.dll` + `.lib` | Wide (UTF-16) | x64 |
+| `lib32\ocilibm.dll` / `ocilibw.dll` | same, 32-bit | x86 |
 
 Wire them into a `.vcxproj` manually:
 
@@ -44,31 +44,31 @@ Wire them into a `.vcxproj` manually:
   <LibraryPath>$(OcilibRoot)lib64;$(LibraryPath)</LibraryPath>
 </PropertyGroup>
 <ItemDefinitionGroup>
-  <Link><AdditionalDependencies>ociliba.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+  <Link><AdditionalDependencies>ocilibm.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
 </ItemDefinitionGroup>
 ```
 
-Plus `ociliba.dll` (or `ocilibw.dll`) next to your `.exe` — that's the whole setup.
+Plus `ocilibm.dll` (or `ocilibw.dll`) next to your `.exe` — that's the whole setup.
 
-!!! tip "ANSI or UNICODE?"
-    `ociliba*` = `char` strings, `ocilibw*` = UTF-16 (`otext` = `unsigned short`).
-    Pick **ANSI** unless you specifically want wide strings — samples assume ANSI.
+!!! tip "MBCS or wide?"
+    `ocilibm*` = `char` strings, `ocilibw*` = UTF-16 (`otext` = `unsigned short`).
+    Pick **MBCS** unless you specifically want wide strings — samples assume MBCS.
 
 ## Option C — build from source (uncommon)
 
 You only need this to patch/debug the library itself: open
-`proj\dll\ocilib_dll.sln` and build `Release - ANSI|UNICODE` × `Win32|x64`, or build
+`proj\dll\ocilib_dll.sln` and build `Release - MBCS|WIDE` × `Win32|x64`, or build
 from a developer prompt with `VsDevCmd.bat` + `msbuild`:
 
 ```powershell
 # Visual Studio 2026 (v145 toolset)
-cmd /c '"c:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=amd64 && msbuild proj\dll\ocilib_dll.sln /p:Configuration="Release - ANSI" /p:Platform=x64'
+cmd /c '"c:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\VsDevCmd.bat" -arch=amd64 && msbuild proj\dll\ocilib_dll.sln /p:Configuration="Release - MBCS" /p:Platform=x64'
 
 # Visual Studio 2022  (v143 toolset) — same command, VS17 path 
-cmd /c '"c:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64 && msbuild proj\dll\ocilib_dll.sln /p:Configuration="Release - ANSI" /p:Platform=x64'
+cmd /c '"c:\Program Files\Microsoft Visual Studio\2022\Community\Common7\Tools\VsDevCmd.bat" -arch=amd64 && msbuild proj\dll\ocilib_dll.sln /p:Configuration="Release - MBCS" /p:Platform=x64'
 ```
 
-For Unicode: `/p:Configuration="Release - UNICODE"`. For 32-bit:
+For wide: `/p:Configuration="Release - WIDE"`. For 32-bit:
 `VsDevCmd.bat -arch=x86` + `/p:Platform=Win32`.
 
 !!! note "`VsDevCmd.bat`, not `LaunchDevCmd.bat`"
@@ -86,7 +86,7 @@ Outputs land in `lib32\`/`lib64\` exactly like the shipped ones.
 
 - **Missing `oci.dll`** — NuGet ships OCILIB, not the Oracle client; Instant Client
   must be on `PATH`.
-- **Mixing `ociliba`/`ocilibw`** — import lib must match your intended charset.
+- **Mixing `ocilibm`/`ocilibw`** — import lib must match your intended charset.
 - **32/64-bit mixup** — app bitness must match the Instant Client's.
 
 ## Recap

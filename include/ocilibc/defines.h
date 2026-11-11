@@ -1146,11 +1146,11 @@
 *
 * - "OCILIB_WORKAROUND_UTF16_COLUMN_NAME": This variable enables an experimental workaround for the Oracle bug 9838993:
 *    - When executing select statements, OCILIB queries column names against the Oracle Client
-*    - Unicode builds of OCILIB initialize Oracle client into UTF16 mode
+*    - wide builds of OCILIB initialize Oracle client into UTF16 mode
 *    - In such environments, a memory leak occurs when statements are re-executed multiple times followed by retrieving the resultset
 *    - This workaround retrieves column names using direct access to undocumented Oracle structures instead of using buggy Oracle calls
 *    - As Oracle undocumented structures may change upon versions, this workaround is provided as-is in case the Oracle bug represents an real issue for applications
-*    - This workaround has been tested with 32bit and 64bit Oracle 12g clients and Unicode OCILIB builds
+*    - This workaround has been tested with 32bit and 64bit Oracle 12g clients and wide OCILIB builds
 */
 
 #define VAR_OCILIB_WORKAROUND_UTF16_COLUMN_NAME "OCILIB_WORKAROUND_UTF16_COLUMN_NAME"

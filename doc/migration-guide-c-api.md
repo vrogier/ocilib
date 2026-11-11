@@ -46,6 +46,7 @@ For the C++ layer (`ocilib.hpp`), see `migration-guide-cpp-api.md`.
 | 13 | `compat.h` recreated with v4→v5 aliases — v3-era macros are gone | Low–Medium |
 | 14 | `OCI_GetAllocatedBytes` removed; use `OCI_GetStats(env, OCI_UST_BYTES)` | Trivial |
 | 15 | New typed typedefs replace bare `unsigned int` parameters | None (source-compatible) |
+| 16 | Charset build flag `OCI_CHARSET_ANSI` → `OCI_CHARSET_MBCS` (binaries `ociliba` → `ocilibm`, configs `Release - ANSI` → `Release - MBCS`, `--with-oracle-charset=mbcs`) | Trivial (old names still work) |
 
 **Overall estimate:** a typical application (connect → statement → fetch) migrates in
 **under an hour** — mostly mechanical edits caught by the compiler. Applications that
@@ -619,6 +620,19 @@ resource manager integration outside OCILIB (or stay on v4 for that component).
 now defines every v4 API name as a macro mapping to its v5 equivalent (see
 [Appendix A](#appendix-a--renamed-symbols-v4--v5)). Define `OCI_NO_COMPAT` before
 including `ocilib.h` to disable the aliases.
+
+The same treatment applies to the charset **build flag**: `OCI_CHARSET_ANSI` was
+renamed `OCI_CHARSET_MBCS` — "ANSI" was misleading, the build covers ANSI
+codepages *and* UTF-8 (whatever `NLS_LANG` configures). Mapped for you:
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_CHARSET_ANSI` (build macro) | `OCI_CHARSET_MBCS` (mapped in `platform.h`; the flag stays *defined* on MBCS builds so `#ifdef`s keep working) |
+| `OCI_CHAR_ANSI` | `OCI_CHAR_MBCS` (via `compat.h`) |
+| `ocilib::Environment::CharsetAnsi` | `CharsetMbcs` (no alias — update switch/case labels) |
+| `--with-oracle-charset=ansi` | `=mbcs` (`ansi` still accepted) |
+| `Release - ANSI` MSBuild config | `Release - MBCS` |
+| `ociliba.dll`/`.lib` | `ocilibm.dll`/`.lib` |
 
 The **v3-era** backward-compatibility macros that the old file contained are gone
 — rename each usage to its modern equivalent:

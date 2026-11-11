@@ -56,7 +56,7 @@ OCI_SYM_LOCAL void OcilibStringTranslate
 #define OcilibStringMbcsToNative(s, d, l) \
         OcilibStringTranslate((void *) (s), (void *) (d), l, sizeof(char),   sizeof(otext))
 
-#define OcilibStringNativeToAnsi(s, d, l) \
+#define OcilibStringNativeToMbcs(s, d, l) \
         OcilibStringTranslate((void *) (s), (void *) (d), l, sizeof(otext),  sizeof(char))
 
 #define OcilibStringUTF16ToUTF32(s, d, l) \

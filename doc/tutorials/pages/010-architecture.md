@@ -140,8 +140,8 @@ Every call that can fail either returns `FALSE`/NULL (C) or throws an
 
 | Flavor | Compile define | Meaning |
 |--------|----------------|---------|
-| ANSI | `OCI_CHARSET_ANSI` | `otext` = `char`, strings are bytes |
-| Unicode | `OCI_CHARSET_WIDE` | `otext` = `unsigned short` (UTF-16) |
+| MBCS | `OCI_CHARSET_MBCS` | `otext` = `char`, strings are bytes |
+| Wide | `OCI_CHARSET_WIDE` | `otext` = `wchar_t` (UTF-16) |
 
 | Import | Compile define | Meaning |
 |--------|----------------|---------|
@@ -162,6 +162,6 @@ thanks to the `otext`/`OTEXT()` abstraction you will see in every sample.
 - Handles are opaque, named `OCI_<Type>`, with uniform Create/Free/Get/Set naming.
 - Ownership is a tree rooted at the environment; borrowed handles are never freed.
 - C returns `FALSE`/NULL + error callback; C++ throws `ocilib::Exception`.
-- ANSI/Unicode and linkage/runtime import are build-time choices; your code does not change.
+- MBCS/wide charset and linkage/runtime import are build-time choices; your code does not change.
 
 **Next:** get the two things every sample needs — an Oracle database and the Instant Client.

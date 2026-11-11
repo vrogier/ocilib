@@ -30,7 +30,7 @@ Before moving to Part 1, make sure all of these are true for **you**:
 | `ORA-12541` / `ORA-12514` | DB down / wrong service name | start XE/container; check `lsnrctl status` |
 | `ORA-01017` | wrong credentials | re-export `OCILIB_DEMO_*` |
 | `ORA-00942` on samples | schema not loaded | run `tutorial-schema.sql` |
-| Link error `OCI_*` unresolved (Windows) | wrong import lib | `ociliba.lib` ≠ `ocilibw.lib` |
+| Link error `OCI_*` unresolved (Windows) | wrong import lib | `ocilibm.lib` ≠ `ocilibw.lib` |
 | `libocilib.so` not found at run time | missing `ldconfig`/`LD_LIBRARY_PATH` | `sudo ldconfig` or export the path |
 
 ## Mini-exercise (no solution given)

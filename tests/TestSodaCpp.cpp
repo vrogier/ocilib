@@ -402,7 +402,7 @@ namespace TestCppApi
         /* ListIndexes / GetDataGuide covered in the C BulkSaveIndexAndMeta and
            the MBCS-guarded IndexCreateDropList tests — index ops aren't
            callable here: CreateIndex errors (ORA-40671) and IndexDrop SEGVs
-           inside the Oracle client in UNICODE builds */
+           inside the Oracle client in wide builds */
 
         con.Commit();
         ASSERT_TRUE(coll.Drop());
@@ -410,7 +410,7 @@ namespace TestCppApi
 
 #ifdef OCI_CHARSET_MBCS
 
-    /* The OCISodaIndex* calls work in MBCS builds; in UNICODE builds they fail
+    /* The OCISodaIndex* calls work in MBCS builds; in wide builds they fail
        inside the Oracle client (ORA-40671 / OCI-22303, IndexDrop even SEGVs) —
        the real assertions live here */
     TEST(TestSodaCpp, IndexCreateDropList)

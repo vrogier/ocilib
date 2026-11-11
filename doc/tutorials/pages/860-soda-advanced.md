@@ -86,10 +86,10 @@ Json guide = coll.GetDataGuide();                 /* inferred schema */
 ```
 :::
 
-!!! warning "UNICODE build caveat"
+!!! warning "Wide build caveat"
     `SodaCollCreateIndex`/`DropIndex`/`ListIndexes` and `OCI_SRM_SECURE_NOTIFICATION`
     fail **inside the Oracle client** under `OCI_CHARSET_WIDE` (verified on 23ai) —
-    ANSI builds unaffected. See the v5 notes.
+    MBCS builds unaffected. See the v5 notes.
 
 ## Collection admin
 

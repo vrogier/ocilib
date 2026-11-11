@@ -56,7 +56,7 @@ namespace ocilib
  *
  * @note
  * - for MBCS builds, String is equivalent to std::string
- * - for UNICODE builds, String is equivalent to std::wstring
+ * - for wide builds, String is equivalent to std::wstring
  *
  */
     typedef std::basic_string<otext, std::char_traits<otext>, std::allocator<otext> > String;

@@ -24,7 +24,7 @@ facts like the server version. All available without any round-trip:
 | `OCI_EnvironmentGetOCICompileVersion` | `Environment::GetCompileVersion()` | OCI headers OCILIB was **compiled** against |
 | `OCI_EnvironmentGetOCIRuntimeVersion` | `Environment::GetRuntimeVersion()` | Oracle client loaded **at run time** (`MMmmRR`, e.g. `230500`) |
 | `OCI_EnvironmentGetImportMode` | `GetImportMode()` | `ImportLinkage` or `ImportRuntime` |
-| `OCI_EnvironmentGetCharset` | `GetCharset()` | `CharsetAnsi` or `CharsetWide` |
+| `OCI_EnvironmentGetCharset` | `GetCharset()` | `CharsetMbcs` or `CharsetWide` |
 | `OCI_ConnectionGetVersion` | `Connection::GetVersion()` | negotiated OCI version for the connection |
 | `OCI_ConnectionGetServerVersionString` | `Connection::GetServerVersion()` | server version **string** (`"23.5.0.0"`) |
 

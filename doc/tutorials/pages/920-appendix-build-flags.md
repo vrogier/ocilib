@@ -11,10 +11,9 @@ part: 10
 | Option | Effect |
 |--------|--------|
 | `--with-oracle-import=(linkage\|runtime)` | link `-lclntsh` vs `dlopen` at run time |
-| `--with-oci-include=` / `--with-oci-lib=` | Oracle SDK/lib paths (linkage) |
-| `--with-oracle-charset=(ansi\|wide)` | `otext` = char vs UTF-16 |
+| `--with-oracle-headers-path=` / `--with-oracle-lib-path=` | OCI headers/library paths (linkage mode) |
+| `--with-oracle-charset=(mbcs\|wide)` | `otext` = char vs UTF-16 |
 | `--enable-static` / `--enable-shared` | library flavor(s) |
-| `--enable-unicode` | wide charset shortcut |
 | `--enable-warnings=(no\|yes\|paranoid)` | dev diagnostics level |
 | `--enable-werror` | warnings as errors (CI only — never ship) |
 | `--enable-sanitizers[=list]` | ASan/UBSan/TSan dev builds |
@@ -24,14 +23,14 @@ part: 10
 
 | Define | Meaning |
 |--------|---------|
-| `OCI_CHARSET_ANSI` / `OCI_CHARSET_WIDE` | string flavor of this build |
+| `OCI_CHARSET_MBCS` / `OCI_CHARSET_WIDE` | string flavor of this build |
 | `OCI_IMPORT_LINKAGE` / `OCI_IMPORT_RUNTIME` | OCI loading mode |
 | `OCILIB_MAJOR/MINOR/REVISION_VERSION` | library version (platform.h) |
 
 ## Windows configurations
 
-`proj/dll/ocilib_dll.sln` — `Release - ANSI`/`Release - UNICODE` × `Win32`/`x64`
-→ `lib32|64\ociliba|w.{dll,lib}` + `.pdb`.
+`proj/dll/ocilib_dll.sln` — `Release - MBCS`/`Release - WIDE` × `Win32`/`x64`
+→ `lib32|64\ocilibm|w.{dll,lib}` + `.pdb`.
 
 ## Environment flags (`OCI_EnvironmentCreate` mode)
 

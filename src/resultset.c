@@ -503,7 +503,7 @@ static OCI_Boolean OcilibResultsetFetchData
     /* finalize dynamic fetch */
     CHECK(OcilibResultFinalizeDynamicFetch(rs));
 
-    /* check string buffer for Unicode builds that need buffer expansion */
+    /* check string buffer for wide builds that need buffer expansion */
 
     if (rs->stmt->con->env->use_wide_char_conv)
     {
@@ -914,7 +914,7 @@ OCI_Boolean OcilibResultsetFetchNext
 
         if (rs->row_abs == 0)
         {
-            /* check string buffer once for Unicode build */
+            /* check string buffer once for wide build */
 
             if (rs->stmt->con->env->use_wide_char_conv)
             {

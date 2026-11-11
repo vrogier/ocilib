@@ -92,7 +92,7 @@ sub.Unregister();
 | `OCI_CNT_ALL` | `Subscription::NotifyAll` | everything |
 
 The secure-notification mode flag (19.4+) requests client-initiated secure
-notification — **UNICODE builds hit a known Oracle client bug** on it; ANSI builds
+notification — **wide builds hit a known Oracle client bug** on it; MBCS builds
 are fine.
 
 ## Subscription management
@@ -129,7 +129,7 @@ to work; the callback runs on a notification thread — don't block it; and
 - **No `OCI_ENV_EVENTS`** — registration fails; flag first.
 - **Firewall blocks the port** — `SetSubscriptionPort` must be reachable.
 - **Expecting rowid on `OCI_CNT_OBJECTS`** — row-level data needs `OCI_CNT_ROWS`.
-- **UNICODE + `SRM_SECURE_NOTIFICATION`** — known Oracle client limitation (v5 notes).
+- **wide + `SRM_SECURE_NOTIFICATION`** — known Oracle client limitation (v5 notes).
 
 ## Recap
 

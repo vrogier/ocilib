@@ -244,7 +244,7 @@ OCI_Message * OcilibDequeueGetMessage
     OCI_Int32 dbsize = -1;
     dbtext  * dbstr  = NULL;
 
-    char* ansi_queue_name = NULL;
+    char* mbcs_queue_name = NULL;
 
     CHECK_PTR(OCI_IPC_DEQUEUE, dequeue);
 
@@ -283,7 +283,7 @@ OCI_Message * OcilibDequeueGetMessage
 
     while (OCI_ERROR == ret && ++attempt_count <= attempt_max)
     {
-        void* name = attempt_count == 1 ? (void*)dbstr : (void*) ansi_queue_name;
+        void* name = attempt_count == 1 ? (void*)dbstr : (void*) mbcs_queue_name;
 
         OCI_CALL(ret, OCIAQDeq, dequeue->typinf->con->handle, dequeue->typinf->con->err,
                  (OraText *)name, dequeue->handle, dequeue->msg->handle,
@@ -308,8 +308,8 @@ OCI_Message * OcilibDequeueGetMessage
                  */
 
                 const OCI_Int32 len = (OCI_Int32)ostrlen(dequeue->name);
-                ansi_queue_name = OcilibMemoryAlloc(dequeue->typinf->con->env, OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
-                OcilibStringNativeToAnsi(dequeue->name, ansi_queue_name, len);
+                mbcs_queue_name = OcilibMemoryAlloc(dequeue->typinf->con->env, OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
+                OcilibStringNativeToMbcs(dequeue->name, mbcs_queue_name, len);
             }
             else
 
@@ -359,7 +359,7 @@ OCI_Message * OcilibDequeueGetMessage
     (
         OcilibStringReleaseDBString(dequeue->typinf->con->env,dbstr);
 
-        FREE(ansi_queue_name);
+        FREE(mbcs_queue_name);
     );
 }
 

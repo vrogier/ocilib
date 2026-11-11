@@ -405,7 +405,7 @@ dbtext* OcilibStringGetDBAnsiString
 
         if (NULL != dst)
         {
-            OcilibStringNativeToAnsi(src, dst, len);
+            OcilibStringNativeToMbcs(src, dst, len);
         }
     }
     else

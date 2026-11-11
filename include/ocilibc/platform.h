@@ -215,7 +215,7 @@
  * end: SQL text, object names, fetched data and bound values are all UTF-8
  * between your application and Oracle.
  *
- * @par Option OCI_CHARSET_WIDE — the "Unicode" build
+ * @par Option OCI_CHARSET_WIDE — the "wide" build
  *
  *  - otext    -->    wchar_t
  *  - OTEXT(x) -->    L ## x

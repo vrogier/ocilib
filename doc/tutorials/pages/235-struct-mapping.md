@@ -34,7 +34,7 @@ the work:
 typedef struct
 {
     OCI_Int32  empno;
-    otext     *ename;          /* char* on ANSI builds — a borrowed pointer */
+    otext     *ename;          /* char* on MBCS builds — a borrowed pointer */
     OCI_Float  sal;
     OCI_Float  comm;
 } employee_t;

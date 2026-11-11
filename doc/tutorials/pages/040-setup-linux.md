@@ -9,7 +9,7 @@ level: beginner
 **Objectives** — by the end of this page you will be able to:
 
 - build and install OCILIB with autotools
-- choose linkage vs runtime Oracle import, ANSI vs wide charset, static vs shared
+- choose linkage vs runtime Oracle import, MBCS vs wide charset, static vs shared
 - link your program with `-locilib` or pkg-config
 
 ## The short version
@@ -20,7 +20,7 @@ make
 sudo make install
 ```
 
-That builds `libocilib.so` (ANSI, **linkage** import, shared) and installs it to
+That builds `libocilib.so` (MBCS, **linkage** import, shared) and installs it to
 `/usr/local` — headers in `include/`, library + `ocilib.pc` in `lib/`. The default
 **linkage** mode needs the Oracle Instant Client **SDK** (headers + `libclntsh.so`)
 reachable at configure time — pass `--with-oci-include`/`--with-oci-lib` if they're
@@ -32,7 +32,7 @@ not in the standard locations.
 |--------|--------|-------|
 | `--with-oracle-import` | `linkage` \| `runtime` | **`linkage` is the default** (needs Instant Client + SDK at build time). `runtime` is opt-in: OCILIB `dlopen`s `libclntsh.so` itself — builds with **no Oracle SDK** (headers vendored in `src/oci/`). |
 | `--with-oci-include` / `--with-oci-lib` | paths | for `linkage` in non-standard locations |
-| `--with-oracle-charset` | `ansi` \| `wide` | `ansi` = `char` (start here); `wide` = UTF-16 |
+| `--with-oracle-charset` | `mbcs` \| `wide` | `mbcs` = `char` (start here); `wide` = UTF-16 |
 | `--enable-static` / `--enable-shared` | yes/no | shared is default |
 | `--enable-warnings` | `no`/`yes`/`paranoid` | dev diagnostics |
 

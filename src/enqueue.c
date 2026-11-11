@@ -138,7 +138,7 @@ OCI_Boolean OcilibEnqueuePut
     OCI_Int32 dbsize = -1;
     dbtext  * dbstr  = NULL;
 
-    char* ansi_queue_name = NULL;
+    char* mbcs_queue_name = NULL;
 
     CHECK_PTR(OCI_IPC_ENQUEUE, enqueue);
     CHECK_PTR(OCI_IPC_MSG,     msg);
@@ -179,7 +179,7 @@ OCI_Boolean OcilibEnqueuePut
 
     while (OCI_ERROR == ret && ++attempt_count <= attempt_max)
     {
-        void* name = attempt_count == 1 ? (void*)dbstr : (void*) ansi_queue_name;
+        void* name = attempt_count == 1 ? (void*)dbstr : (void*) mbcs_queue_name;
 
         OCI_CALL(ret, OCIAQEnq, enqueue->typinf->con->handle, enqueue->typinf->con->err,
                  (OraText*)name, enqueue->handle, msg->handle,
@@ -203,8 +203,8 @@ OCI_Boolean OcilibEnqueuePut
                  */
 
                 const OCI_Int32 len = (OCI_Int32)ostrlen(enqueue->name);
-                ansi_queue_name = OcilibMemoryAlloc(enqueue->typinf->con->env, OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
-                OcilibStringNativeToAnsi(enqueue->name, ansi_queue_name, len);
+                mbcs_queue_name = OcilibMemoryAlloc(enqueue->typinf->con->env, OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
+                OcilibStringNativeToMbcs(enqueue->name, mbcs_queue_name, len);
             }
             else
 
@@ -223,7 +223,7 @@ OCI_Boolean OcilibEnqueuePut
     (
         OcilibStringReleaseDBString(enqueue->typinf->con->env, dbstr);
 
-        FREE(ansi_queue_name);
+        FREE(mbcs_queue_name);
     );
 }
 

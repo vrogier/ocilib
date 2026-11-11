@@ -686,9 +686,9 @@ namespace ocilib
         */
         enum CharsetModeValues
         {
-            /** Environment is ANSI or UTF8 string (char based MBCS) */
+            /** Environment uses MBCS strings (char — ANSI codepages or UTF-8) */
             CharsetMbcs = OCI_CHAR_MBCS,
-            /** Environment is UNICODE using wide character string  */
+            /** Environment uses wide character strings (wchar_t — UTF-16) */
             CharsetWide = OCI_CHAR_WIDE,
         };
 
@@ -8934,7 +8934,7 @@ namespace ocilib
 
             /** Client initiates the notification listener connection (Oracle client 12c and above).
                 Warning: Oracle client bug (not an OCILIB bug) — fails inside the Oracle client in
-                UNICODE (OCI_CHARSET_WIDE) builds; MBCS builds work. Verified with Oracle 23ai;
+                wide (OCI_CHARSET_WIDE) builds; MBCS builds work. Verified with Oracle 23ai;
                 a future client release may fix this */
             ModeSecureNotification = OCI_SRM_SECURE_NOTIFICATION
         };
@@ -11346,7 +11346,7 @@ namespace ocilib
          *
          * @warning
          * Oracle client bug (not an OCILIB bug): fails inside the Oracle
-         * client in UNICODE (OCI_CHARSET_WIDE) builds — ORA-40671; MBCS
+         * client in wide (OCI_CHARSET_WIDE) builds — ORA-40671; MBCS
          * builds work. Verified with Oracle 23ai; a future client release
          * may fix this.
          */
@@ -11358,7 +11358,7 @@ namespace ocilib
          *
          * @warning
          * Oracle client bug (not an OCILIB bug): fails inside the Oracle
-         * client in UNICODE (OCI_CHARSET_WIDE) builds — can even crash the
+         * client in wide (OCI_CHARSET_WIDE) builds — can even crash the
          * process; MBCS builds work. Verified with Oracle 23ai; a future
          * client release may fix this.
          *
@@ -11380,7 +11380,7 @@ namespace ocilib
          *
          * @warning
          * Oracle client bug (not an OCILIB bug): fails inside the Oracle
-         * client in UNICODE (OCI_CHARSET_WIDE) builds — OCI-22303; MBCS
+         * client in wide (OCI_CHARSET_WIDE) builds — OCI-22303; MBCS
          * builds work. Verified with Oracle 23ai; a future client release
          * may fix this.
          *

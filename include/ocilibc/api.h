@@ -243,7 +243,7 @@ OCI_SYM_PUBLIC OCI_ImportMode OCI_API OCI_EnvironmentGetImportMode
  * @return
  * The character set mode used by OCILIB. Possible values are:
  * - OCI_CHAR_MBCS : multibyte character set (single-byte codepage or UTF-8).
- * - OCI_CHAR_WIDE : Unicode (wide character) character set.
+ * - OCI_CHAR_WIDE : wide character (UTF-16) character set.
  *
  */
 
@@ -18046,7 +18046,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableMigrate
    * @warning
    * Oracle client bug (not an OCILIB bug): the mode
    * OCI_SRM_SECURE_NOTIFICATION currently fails inside the Oracle client
-   * itself when the library is built in OCI_CHARSET_WIDE mode (UNICODE
+   * itself when the library is built in OCI_CHARSET_WIDE mode (wide
    * builds). MBCS builds work correctly. Verified with Oracle 23ai; a future
    * Oracle client release may fix this.
    *
@@ -19637,7 +19637,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollectionInsertMany
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexCreate() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (UNICODE builds) — ORA-40671 is returned. MBCS
+ * OCI_CHARSET_WIDE mode (wide builds) — ORA-40671 is returned. MBCS
  * builds work correctly. Verified with Oracle 23ai; a future Oracle client
  * release may fix this.
  *
@@ -19662,7 +19662,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollectionCreateIndex
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexDrop() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (UNICODE builds) — it can even crash the process.
+ * OCI_CHARSET_WIDE mode (wide builds) — it can even crash the process.
  * MBCS builds work correctly. Verified with Oracle 23ai; a future Oracle
  * client release may fix this.
  *
@@ -19709,7 +19709,7 @@ OCI_SYM_PUBLIC OCI_SodaDocument* OCI_API OCI_SodaCollectionGetDataGuide
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexList() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (UNICODE builds) — OCI-22303 is returned. MBCS
+ * OCI_CHARSET_WIDE mode (wide builds) — OCI-22303 is returned. MBCS
  * builds work correctly. Verified with Oracle 23ai; a future Oracle client
  * release may fix this.
  *

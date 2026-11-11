@@ -575,6 +575,10 @@ is no longer supported through OCILIB.
 - **`ocilib::String` / `ocilib::StringView` added** — `ocilib::String` is the new
   canonical name for the string type (`ostring` remains as an alias);
   `StringView` is `std::basic_string_view<otext>`.
+- **`Environment::CharsetAnsi` → `Environment::CharsetMbcs`** — the `OCI_CHARSET_ANSI`
+  build flag is now `OCI_CHARSET_MBCS` (multibyte: ANSI codepages *or* UTF-8).
+  `OCI_CHAR_ANSI` maps to `OCI_CHAR_MBCS` via `compat.h`. Windows binaries are
+  `ocilibm`/`ocilibw` and MSBuild configs are `Release - MBCS`.
 - **Internal header layout changed** (`detail/core/*`, `detail/support/*` reorganized,
   some files removed: `Mutex.hpp`, `Thread.hpp`, `ThreadKey.hpp`, `ManagedBuffer.hpp`,
   `Synchronizable.hpp`, `ConcurrentList.hpp`, `ConcurrentMap.hpp`,

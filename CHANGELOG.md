@@ -41,7 +41,7 @@
   - Added save (upsert) APIs: `OCI_SodaCollectionSave()`
   - Added metadata APIs: `OCI_SodaCollectionGetDataGuide()`, `OCI_SodaDatabaseGetCollectionNames()`, `OCI_SodaDatabaseFreeCollectionNames()`
   - Added index management APIs: `OCI_SodaCollectionCreateIndex()`, `OCI_SodaCollectionDropIndex()`, `OCI_SodaCollectionListIndexes()`, `OCI_SodaCollectionFreeIndexNames()`
-    - Note: the underlying `OCISodaIndex*` OCI calls currently fail inside the Oracle client itself under `OCI_CHARSET_WIDE` (UNICODE builds), verified on Oracle 23ai — an Oracle client bug, not an OCILIB bug; ANSI builds work correctly
+    - Note: the underlying `OCISodaIndex*` OCI calls currently fail inside the Oracle client itself under `OCI_CHARSET_WIDE` (wide builds), verified on Oracle 23ai — an Oracle client bug, not an OCILIB bug; MBCS builds work correctly
   - Oracle 23ai JSON/SODA additions
     - `OCI_JsonValidate()` — validate a JSON document against a JSON schema; returns FALSE on failure with an error-report document via the `errors` out-parameter
     - `OCI_ColumnHasJsonSchema()` — report whether a column has a JSON schema constraint

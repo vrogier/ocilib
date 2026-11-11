@@ -10,7 +10,7 @@ demos: [format.c]
 
 **Objectives** — by the end of this page you will be able to:
 
-- write source code that compiles on ANSI and Unicode builds unchanged
+- write source code that compiles on MBCS and wide builds unchanged
 - convert dates/numbers to text with `OCI_EnvironmentSetFormat`-style helpers
 - use `ocilib::String`/`StringView` correctly in C++
 
@@ -22,8 +22,8 @@ Oracle keeps two character sets per database: the **database charset** (used by
 form* flag saying which world they live in — that is the `OCI_CSF_*` value you
 can read off a column or force on a bind.
 
-On the client side OCILIB compiles in two flavors — ANSI (`ociliba`, `otext` =
-`char`) and UNICODE (`ocilibw`, `otext` = wide) — and converts to/from the
+On the client side OCILIB compiles in two flavors — MBCS (`ocilibm`, `otext` =
+`char`) and wide (`ocilibw`, `otext` = wide) — and converts to/from the
 server's encoding for you. The `otext`/`OTEXT()` abstraction is what lets the
 same source build against both: your literal adapts to whichever `otext` is.
 `OCI_EnvironmentGetCharset` reports which mode your build is running, and
@@ -33,17 +33,18 @@ locale rules instead of the session defaults.
 
 That is also where the classic bugs come from: `sizeof` on wide builds counts
 *bytes*, not characters; `strlen` does not exist for `otext`; and passing a raw
-`char*` literal where `otext*` is expected compiles silently on ANSI and breaks
+`char*` literal where `otext*` is expected compiles silently on MBCS and breaks
 on wide builds. The sections below exist to make those mistakes impossible.
 
 ## The `otext` contract
 
-OCILIB ships two string personalities:
+OCILIB ships two string personalities — the full story of what each build
+does to OCI is on the [charset builds page](charsets.html):
 
 | Build | `otext` | `OTEXT("x")` | `ocilib::String` |
 |-------|---------|--------------|------------------|
-| ANSI (`OCI_CHARSET_ANSI`) | `char` | `"x"` | `std::string` |
-| Unicode (`OCI_CHARSET_WIDE`) | `unsigned short` | `L"x"`-style literal | `std::wstring` |
+| MBCS (`OCI_CHARSET_MBCS`) | `char` | `"x"` | `std::string` |
+| Wide (`OCI_CHARSET_WIDE`) | `wchar_t` | `L"x"` | `std::wstring` |
 
 Rules for portable code:
 
@@ -99,7 +100,7 @@ env.SetFormat(FormatType::FormatDate, "YYYY-MM-DD");
 - `ocilib::String` = `std::basic_string<otext>` — what every C++ API returns.
 - `ocilib::StringView` = `std::basic_string_view<otext>` — zero-copy view where the
   API offers it.
-- Plain `const char*` literals work with C++ APIs **on ANSI builds**; write
+- Plain `const char*` literals work with C++ APIs **on MBCS builds**; write
   `OTEXT(…)`/`String` when you want portability.
 
 ## Scenario — charset-form columns (NCHAR/NVARCHAR2)
@@ -146,11 +147,11 @@ Your build flavor is fixed at compile time — ask the environment what it is:
 :::sample
 ```c
 printf("env charset: %s\n",
-       OCI_EnvironmentGetCharset(env) == OCI_CHAR_WIDE ? "wide" : "ansi");
+       OCI_EnvironmentGetCharset(env) == OCI_CHAR_WIDE ? "wide" : "mbcs");
 ```
 
 ```cpp
-std::cout << (env.GetCharset() == Environment::CharsetWide ? "wide" : "ansi") << '\n';
+std::cout << (env.GetCharset() == Environment::CharsetWide ? "wide" : "mbcs") << '\n';
 ```
 :::
 
@@ -180,7 +181,7 @@ String v = rs.Get<String>(0);
 
 When you work with text in OCILIB, the order of decisions is usually this:
 
-1. **Pick your build flavor first.** ANSI (`ociliba`) vs UNICODE (`ocilibw`)
+1. **Pick your build flavor first.** MBCS (`ocilibm`) vs wide (`ocilibw`)
    decides what `otext` is — you cannot mix libraries, so this choice is made
    once, at link time.
 2. **Write every SQL literal and string through `OTEXT(...)`** (or `String` in
@@ -201,15 +202,15 @@ zero-copy borrow of text the row still owns.
 
 ## Try it yourself
 
-1. Build the same source against `ociliba` (ANSI) and `ocilibw` (UNICODE) — `OTEXT`
+1. Build the same source against `ocilibm` (MBCS) and `ocilibw` (wide) — `OTEXT`
    is what makes it work.
 2. Set a custom date format and watch the string getters' output change.
 3. Check the environment's charset value on your build.
 
 ## Common pitfalls
 
-- **Passing `char*` to `otext*` params** — compiles on ANSI, explodes on wide builds.
-- **Using `strlen` on `otext*`** — ANSI-only; keep to API-provided lengths.
+- **Passing `char*` to `otext*` params** — compiles on MBCS, explodes on wide builds.
+- **Using `strlen` on `otext*`** — MBCS-only; keep to API-provided lengths.
 - **`sizeof` vs char count** — on wide builds they differ by 2×.
 
 ## Recap

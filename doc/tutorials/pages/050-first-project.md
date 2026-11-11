@@ -10,7 +10,7 @@ level: beginner
 
 - lay out a minimal C and C++ OCILIB application
 - compile and link it with gcc, MSVC or CMake
-- use `otext`/`OTEXT()` so your source works on ANSI *and* Unicode builds
+- use `otext`/`OTEXT()` so your source works on MBCS *and* wide builds
 
 ## The skeleton
 
@@ -82,9 +82,9 @@ g++  -std=c++17 app.cpp $(pkg-config --cflags --libs ocilib) -o app
 ```
 
 ```powershell
-# Windows (x64 ANSI build of ocilib)
-cl /std:c17   /I include app.c   /link lib64\ociliba.lib
-cl /std:c++17 /I include app.cpp /link lib64\ociliba.lib
+# Windows (x64 MBCS build of ocilib)
+cl /std:c17   /I include app.c   /link lib64\ocilibm.lib
+cl /std:c++17 /I include app.cpp /link lib64\ocilibm.lib
 ```
 
 ```cmake
@@ -92,7 +92,7 @@ cl /std:c++17 /I include app.cpp /link lib64\ociliba.lib
 cmake_minimum_required(VERSION 3.20)
 project(ocilib_app C CXX)
 
-find_library(OCILIB_LIB NAMES ociliba ocilib
+find_library(OCILIB_LIB NAMES ocilibm ocilib
              PATHS ${OCILIB_ROOT}/lib64 /usr/local/lib)
 find_path(OCILIB_INC NAMES ocilib.h
           PATHS ${OCILIB_ROOT}/include /usr/local/include)
@@ -105,7 +105,7 @@ target_link_libraries(app PRIVATE ${OCILIB_LIB})
 
 ## Strings the OCILIB way: `otext` and `OTEXT()`
 
-Because the same code must compile against ANSI (`char`) and Unicode (`unsigned short`)
+Because the same code must compile against MBCS (`char`) and wide (`wchar_t`)
 builds, OCILIB never uses plain string literals for API calls:
 
 - **`otext`** — the character type of the build (`char` or `unsigned short`)
@@ -114,10 +114,10 @@ builds, OCILIB never uses plain string literals for API calls:
 
 ```c
 OCI_StatementExecute(st, OTEXT("select ename from employees"));   /* portable */
-OCI_StatementExecute(st, "select ename from employees");          /* ANSI builds only */
+OCI_StatementExecute(st, "select ename from employees");          /* MBCS build only */
 ```
 
-Plain `const char*` literals happen to compile on ANSI builds, and C++ samples accept
+Plain `const char*` literals happen to compile on MBCS builds, and C++ samples accept
 `const char*` too — but get in the `OTEXT()` habit early; it is free and portable.
 
 ## Try it yourself
@@ -129,8 +129,8 @@ Plain `const char*` literals happen to compile on ANSI builds, and C++ samples a
 
 ## Common pitfalls
 
-- **Linking the wrong lib name on Windows** — `ociliba.lib` (ANSI) vs `ocilibw.lib`
-  (UNICODE); they are not interchangeable.
+- **Linking the wrong lib name on Windows** — `ocilibm.lib` (MBCS) vs `ocilibw.lib`
+  (wide); they are not interchangeable.
 - **`fatal error: ocilib.h: No such file`** — include dir missing; point at the repo's
   `include/` or the install `include/`.
 - **It builds but does nothing** — correct! The skeleton only creates and frees the
@@ -139,7 +139,7 @@ Plain `const char*` literals happen to compile on ANSI builds, and C++ samples a
 ## Recap
 
 - One include, one env object, try/catch (C++) or NULL check (C).
-- `pkg-config --cflags --libs ocilib` on Linux; `ociliba.lib`/`ocilibw.lib` on Windows.
+- `pkg-config --cflags --libs ocilib` on Linux; `ocilibm.lib`/`ocilibw.lib` on Windows.
 - `otext`/`OTEXT()`/`ocilib::String` keep your code charset-agnostic.
 
 **Next:** make the environment actually *do* something — error handlers and env flags.

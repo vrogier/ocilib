@@ -857,7 +857,7 @@ void test_plsql(void)
     {
         OCI_UInt32 version = OCI_EnvironmentGetOCIRuntimeVersion(env);
 
-        /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
+        /* Oracle 8i has some troubles with SERVER OUTPUT in wide builds */
 
         if (version < OCI_9_0) 
             return;

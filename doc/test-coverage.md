@@ -2,8 +2,8 @@
 
 | Metric | Value |
 |---|---|
-| Configuration | Release - ANSI|x64 (OCI_CHARSET_ANSI) |
-| Test executable | tests\x64\Release - ANSI\ocilib_tests.exe |
+| Configuration | Release - MBCS|x64 (OCI_CHARSET_MBCS) |
+| Test executable | tests\x64\Release - MBCS\ocilib_tests.exe |
 | Overall line coverage | 96.43% |
 | Covered lines | 14543 |
 | Total lines | 15081 |

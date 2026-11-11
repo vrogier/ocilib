@@ -52,6 +52,6 @@ Macros: `OCI_VER_MAJ/MIN/REV(v)`, `OCI_VER_MAKE(x,y,z)`, `OCI_12_2`, `OCI_21_1`,
 ## Client-side limitations
 
 - `OCI_CHARSET_WIDE` + `OCISodaIndex*`/`OCI_SRM_SECURE_NOTIFICATION` — known
-  Oracle client bug on 23ai; ANSI unaffected.
+  Oracle client bug on 23ai; MBCS unaffected.
 - Some attributes return defaults on older clients — check `OCIRuntimeVersion`
   before relying on them.

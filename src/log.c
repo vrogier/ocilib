@@ -143,10 +143,10 @@ OCI_Boolean OcilibLogStrEquals
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibLogAnsiToNative
+ * OcilibLogMbcsToNative
  * --------------------------------------------------------------------------------------------- */
 
-static void OcilibLogAnsiToNative
+static void OcilibLogMbcsToNative
 (
     const char *src,
     otext      *dst,
@@ -503,7 +503,7 @@ static OCI_Boolean OcilibLogInitializeUnlocked(void)
 
         if (output_str && output_str[0])
         {
-            OcilibLogAnsiToNative(output_str, OcilibLogger.output_path, OCI_SIZE_BUFFER);
+            OcilibLogMbcsToNative(output_str, OcilibLogger.output_path, OCI_SIZE_BUFFER);
 
             if (OcilibLogStrEquals(output_str, "STDERR"))
             {
@@ -620,20 +620,20 @@ void OcilibLogWrite
 
     OcilibLogGetTime(&year, &month, &day, &hour, &min, &sec, &msec);
 
-    OcilibLogAnsiToNative(OcilibLogGetLevelName(level),        level_text, OCILIB_LOG_COUNT(level_text));
-    OcilibLogAnsiToNative(OcilibLogGetCategoryName(category),  cat_text,   OCILIB_LOG_COUNT(cat_text));
+    OcilibLogMbcsToNative(OcilibLogGetLevelName(level),        level_text, OCILIB_LOG_COUNT(level_text));
+    OcilibLogMbcsToNative(OcilibLogGetCategoryName(category),  cat_text,   OCILIB_LOG_COUNT(cat_text));
     if (step && step[0])
     {
         char step_buf[32];
 
         snprintf(step_buf, sizeof(step_buf), "%s ", step);
-        OcilibLogAnsiToNative(step_buf, step_text, OCILIB_LOG_COUNT(step_text));
+        OcilibLogMbcsToNative(step_buf, step_text, OCILIB_LOG_COUNT(step_text));
     }
     else
     {
         step_text[0] = 0;
     }
-    OcilibLogAnsiToNative(function ? function : "",            func_text,  OCILIB_LOG_COUNT(func_text));
+    OcilibLogMbcsToNative(function ? function : "",            func_text,  OCILIB_LOG_COUNT(func_text));
 
     OcilibLogSnprintf(prefix, OCILIB_LOG_COUNT(prefix),
                       OTEXT("%04d-%02d-%02d %02d:%02d:%02d.%03d [%s] [%s] %s%s%s"),

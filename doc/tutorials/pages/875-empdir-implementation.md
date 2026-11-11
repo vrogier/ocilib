@@ -351,7 +351,7 @@ int main(int argc, char **argv)
     else if (!strcmp(cmd, "get") && argc > 2)
         rc = cmd_get(atoi(argv[2]));
     else if (!strcmp(cmd, "add") && argc > 6)
-        /* ANSI build: argv strings are already otext */
+        /* MBCS build: argv strings are already otext */
         rc = cmd_add(atoi(argv[2]), argv[3], argv[4],
                      atof(argv[5]), atoi(argv[6]));
     else if (!strcmp(cmd, "raise") && argc > 3)

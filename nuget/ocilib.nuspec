@@ -7,13 +7,13 @@
     <summary>
 OCILIB is an open source and cross platform Oracle Driver delivering efficient access to Oracle databases. 
 It provides a rich, full featured and easy to use sets of C and C++ APIs.
-This package targets Windows Platforms and provides runtime x86 and x64 libraries, in ANSI and Unicode flavors.
+This package targets Windows Platforms and provides runtime x86 and x64 libraries, in MBCS and wide flavors.
 It requires Oracle Client libraries (Regular or instant client).
 	</summary>
     <description>
 OCILIB is an open source and cross platform Oracle Driver delivering efficient access to Oracle databases. 
 It provides a rich, full featured and easy to use sets of C and C++ APIs.
-This package targets Windows Platforms and provides runtime x86 and x64 libraries, in ANSI and Unicode flavors.
+This package targets Windows Platforms and provides runtime x86 and x64 libraries, in MBCS and wide flavors.
 It requires Oracle Client libraries (Regular or instant client).
 	</description>
 	<authors>Vincent Rogier</authors>

@@ -866,7 +866,7 @@ void test_plsql(void)
     ocout << otext("Result : ") << res << oendl;
 
 #ifndef OCI_CHARSET_MBCS
-    /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
+    /* Oracle 8i has some troubles with SERVER OUTPUT in wide builds */
     if (env.GetRuntimeVersion() < Oracle9iR1)
         return;
 #endif

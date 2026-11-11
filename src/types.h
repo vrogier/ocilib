@@ -296,7 +296,7 @@ struct OCI_Environment
     OCI_Boolean nls_utf8;                         /* is UFT8 enabled for data strings ? */
     OCI_Boolean use_lob_ub8;                      /* use 64 bits integers for lobs ? */
     OCI_Boolean use_scrollable_cursors;           /* use Oracle 9i fetch API */
-    OCI_Boolean use_wide_char_conv;               /* are we on a unix like platform with unicode */
+    OCI_Boolean use_wide_char_conv;               /* are we on a unix like platform with wide */
     OCI_Boolean warnings_on;                      /* warnings enabled ? */
     OCI_Boolean env_vars[OCI_VARS_COUNT];         /* specific environment variables */
 };

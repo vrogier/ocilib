@@ -27,7 +27,7 @@ OCILIB keeps the power and removes the pain:
 - **Full Oracle coverage** — scalar and LOB types, dates/timestamps/intervals, objects,
   collections, REFs, AQ messaging, change notification, direct path loading, JSON DOM,
   SODA document store, sharding, and more.
-- **Cross-platform** — Windows, Linux and Unixes; 32/64-bit; ANSI or Unicode builds;
+- **Cross-platform** — Windows, Linux and Unixes; 32/64-bit; MBCS or wide builds;
   Oracle client linked at compile time **or loaded at runtime** (no Oracle SDK needed
   to build).
 - **Two APIs, one engine** — a C API for maximum portability and a header-only C++17
@@ -100,7 +100,7 @@ Your choice is remembered across all pages.
 
 | Part | What you will learn |
 |------|---------------------|
-| 0 — Getting started | Install Oracle client + OCILIB on Windows/Linux, first program, first connection, error handling, diagnostics logging |
+| 0 — Getting started | Install Oracle client + OCILIB on Windows/Linux, MBCS vs wide charset builds, first program, first connection, error handling, diagnostics logging |
 | 1 — Connections & environments | Connection strings, session modes, ping/break, introspection |
 | 2 — Oracle data types | Charsets, dates, timestamps, intervals, numbers, RAW, vectors, LOBs, BFILEs, XML, JSON, PL/SQL BOOLEAN & RECORD, user-defined types |
 | 3 — SQL, fetching & binding | Statements, resultsets, every getter, bind variables, scrollable cursors, bulk fetch |
