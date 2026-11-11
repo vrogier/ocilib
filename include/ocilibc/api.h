@@ -4643,7 +4643,7 @@ OCI_SYM_PUBLIC OCI_BindDirection OCI_API OCI_BindGetDirection
  * @note
  * Possible values are :
  *
- * - OCI_CDT_NUMERIC     : OCI_Int16, OCI_Int32, long long, OCI_Float, OCI_Double
+ * - OCI_CDT_NUMERIC     : OCI_Int16, OCI_UInt16, OCI_Int32, OCI_UInt32, OCI_Int64, OCI_UInt64, OCI_Float, OCI_Double, OCI_Number*
  * - OCI_CDT_DATETIME    : OCI_Date *
  * - OCI_CDT_TEXT        : otext *
  * - OCI_CDT_LONG        : OCI_Long *
@@ -5592,7 +5592,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ColumnGetName
  * @note
  * Possible values are :
  *
- * - OCI_CDT_NUMERIC     : OCI_Int16, OCI_Int32, long long, OCI_Float, OCI_Double
+ * - OCI_CDT_NUMERIC     : OCI_Int16, OCI_UInt16, OCI_Int32, OCI_UInt32, OCI_Int64, OCI_UInt64, OCI_Float, OCI_Double, OCI_Number*
  * - OCI_CDT_DATETIME    : OCI_Date *
  * - OCI_CDT_TEXT        : otext *
  * - OCI_CDT_LONG        : OCI_Long *

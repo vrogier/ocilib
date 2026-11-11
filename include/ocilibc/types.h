@@ -59,6 +59,9 @@
  * Here is a summary of the supported data types:
  *
  * - Scalar types CHAR/NCHAR, VARCHAR2/NVARCHAR2, NUMBER, FLOAT, REAL, RAW, ...
+ * - NUMBER values can be fetched and bound as exact OCI_Number objects or
+ *   as any native C numeric type: OCI_Int16, OCI_UInt16, OCI_Int32, OCI_UInt32,
+ *   OCI_Int64, OCI_UInt64, OCI_Float, OCI_Double (see OCI_NUM_* subtypes)
  * - Binary types: RAW, LONG RAW, VARRAW, ..
  * - Larges Objects (Lobs and Files) : BLOB, CLOB, NCLOB, BFILE
  * - LONG types: LONG, VAR LONG
