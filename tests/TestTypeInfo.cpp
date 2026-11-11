@@ -251,16 +251,16 @@ namespace TestCApi
 
         const auto rec = OCI_TypeInfoGetColumn(nest, 1);   /* rec  : SQLT_REC */
         ASSERT_NE(nullptr, rec);
-        EXPECT_EQ(String(OTEXT("TESTTIPLSQL_PKG.T_REC")), String(OCI_ColumnGetSQLType(rec)));
+        EXPECT_EQ(String(OTEXT("TESTTIPLSQL_PKG.T_REC")), String(OCI_ColumnGetSqlType(rec)));
         memset(buf, 0, sizeof(buf));
-        ASSERT_GT(OCI_ColumnGetFullSQLType(rec, buf, 64), (OCI_UInt32)0);
+        ASSERT_GT(OCI_ColumnGetFullSqlType(rec, buf, 64), (OCI_UInt32)0);
         EXPECT_EQ(String(OTEXT("TESTTIPLSQL_PKG.T_REC")), String(buf));
 
         const auto tab = OCI_TypeInfoGetColumn(nest, 2);   /* tab  : SQLT_TAB */
         ASSERT_NE(nullptr, tab);
-        EXPECT_EQ(String(OTEXT("TESTTIPLSQL_PKG.T_TAB")), String(OCI_ColumnGetSQLType(tab)));
+        EXPECT_EQ(String(OTEXT("TESTTIPLSQL_PKG.T_TAB")), String(OCI_ColumnGetSqlType(tab)));
         memset(buf, 0, sizeof(buf));
-        ASSERT_GT(OCI_ColumnGetFullSQLType(tab, buf, 64), (OCI_UInt32)0);
+        ASSERT_GT(OCI_ColumnGetFullSqlType(tab, buf, 64), (OCI_UInt32)0);
         EXPECT_EQ(String(OTEXT("USR.TESTTIPLSQL_PKG.T_TAB")), String(buf));
 
         const auto scal = OCI_TypeInfoGet(con, OTEXT("usr.TestTiPlsql_Pkg.t_scalars"), OCI_TIF_TYPE);
@@ -268,16 +268,16 @@ namespace TestCApi
 
         /* bint : SQLT_UNDOCUMENTED_BIN_INTEGER */
         EXPECT_EQ(String(OTEXT("PL/SQL BINARY INTEGER")),
-                  String(OCI_ColumnGetSQLType(OCI_TypeInfoGetColumn(scal, 0))));
+                  String(OCI_ColumnGetSqlType(OCI_TypeInfoGetColumn(scal, 0))));
         memset(buf, 0, sizeof(buf));
-        ASSERT_GT(OCI_ColumnGetFullSQLType(OCI_TypeInfoGetColumn(scal, 0), buf, 64), (OCI_UInt32)0);
+        ASSERT_GT(OCI_ColumnGetFullSqlType(OCI_TypeInfoGetColumn(scal, 0), buf, 64), (OCI_UInt32)0);
         EXPECT_EQ(String(OTEXT("PL/SQL BINARY INTEGER")), String(buf));
 
         /* pls  : OCI_TYPECODE_PLS_INTEGER */
         EXPECT_EQ(String(OTEXT("PL/SQL INTEGER")),
-                  String(OCI_ColumnGetSQLType(OCI_TypeInfoGetColumn(scal, 1))));
+                  String(OCI_ColumnGetSqlType(OCI_TypeInfoGetColumn(scal, 1))));
         memset(buf, 0, sizeof(buf));
-        ASSERT_GT(OCI_ColumnGetFullSQLType(OCI_TypeInfoGetColumn(scal, 1), buf, 64), (OCI_UInt32)0);
+        ASSERT_GT(OCI_ColumnGetFullSqlType(OCI_TypeInfoGetColumn(scal, 1), buf, 64), (OCI_UInt32)0);
         EXPECT_EQ(String(OTEXT("PL/SQL INTEGER")), String(buf));
     }
 
@@ -290,17 +290,17 @@ namespace TestCApi
 
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select * from TestTiFloat")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select * from TestTiFloat")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        const auto col = OCI_GetColumn(rs, 0);
+        const auto col = OCI_ResultsetGetColumn(rs, 0);
         ASSERT_NE(nullptr, col);
 
         otext buf[64];
         memset(buf, 0, sizeof(buf));
-        EXPECT_EQ(String(OTEXT("FLOAT")), String(OCI_ColumnGetSQLType(col)));
-        ASSERT_GT(OCI_ColumnGetFullSQLType(col, buf, 64), (OCI_UInt32)0);
+        EXPECT_EQ(String(OTEXT("FLOAT")), String(OCI_ColumnGetSqlType(col)));
+        ASSERT_GT(OCI_ColumnGetFullSqlType(col, buf, 64), (OCI_UInt32)0);
         EXPECT_EQ(String(OTEXT("FLOAT(20)")), String(buf));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));

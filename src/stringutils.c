@@ -1010,8 +1010,8 @@ OCI_UInt32 OcilibStringGetFromType
 
             if (NULL != ptr)
             {
-                OCI_Ref* ref = (OCI_Ref*)data;
-                res = ref ? OcilibReferenceToString(ref, buffer_size, ptr) : FALSE;
+                OCI_Reference* ref = (OCI_Reference*)data;
+                res = ref ? OcilibReferenceToText(ref, buffer_size, ptr) : FALSE;
             }
             else
             {
@@ -1043,12 +1043,12 @@ OCI_UInt32 OcilibStringGetFromType
         }
         case OCI_CDT_COLLECTION:
         {
-            OCI_Coll* coll = (OCI_Coll*)data;
+            OCI_Collection* coll = (OCI_Collection*)data;
 
             OCI_UInt32 real_size = buffer_size;
 
             quote = FALSE;
-            res   = coll ? OcilibCollectionToString(coll, &real_size, ptr) : FALSE;
+            res   = coll ? OcilibCollectionToText(coll, &real_size, ptr) : FALSE;
             len   = real_size;
             break;
         }

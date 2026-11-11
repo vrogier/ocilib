@@ -22,7 +22,7 @@
 
 #include "callback.h"
 #include "connection.h"
-#include "hash.h"
+#include "hashtable.h"
 #include "macros.h"
 #include "number.h"
 #include "stringutils.h"
@@ -79,12 +79,12 @@ OCI_Int32 OcilibDefineGetIndex
     {
         /* create the map at the first call to save time and memory when it's not needed */
 
-        rs->map = OcilibHashCreate(rs->stmt->con->env, OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
+        rs->map = OcilibHashTableCreate(rs->stmt->con->env, OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
         CHECK_NULL(rs->map);
 
         for (ub4 i = 0; i < rs->nb_defs; i++)
         {
-            CHECK(OcilibHashAddInt(rs->map, rs->defs[i].col.name, (OCI_Int32)i));
+            CHECK(OcilibHashTableAddInt32(rs->map, rs->defs[i].col.name, (OCI_Int32)i));
         }
     }
 
@@ -92,7 +92,7 @@ OCI_Int32 OcilibDefineGetIndex
 
     OCI_Int32 index = -1;
 
-    OCI_HashEntry *he = OcilibHashLookup(rs->map, name, FALSE);
+    OCI_HashEntry *he = OcilibHashTableLookup(rs->map, name, FALSE);
 
     while (NULL != he)
     {

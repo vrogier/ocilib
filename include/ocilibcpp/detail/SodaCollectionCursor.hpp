@@ -25,26 +25,26 @@
 namespace ocilib
 {
 
-    inline SodaCollCursor::SodaCollCursor()
+    inline SodaCollectionCursor::SodaCollectionCursor()
     {
     }
 
-    inline SodaCollCursor::SodaCollCursor(OCI_SodaCollCursor* cursor, core::Handle* parent)
+    inline SodaCollectionCursor::SodaCollectionCursor(OCI_SodaCollectionCursor* cursor, core::Handle* parent)
     {
         AcquireAllocated(cursor, parent);
     }
 
-    inline SodaColl SodaCollCursor::GetNext()
+    inline SodaCollection SodaCollectionCursor::GetNext()
     {
-        OCI_SodaColl* coll = core::Check
-                             (
-                                 OCI_SodaCollCursorGetNext(*this)
-                             );
+        OCI_SodaCollection* coll = core::Check
+                                   (
+                                       OCI_SodaCollectionCursorGetNext(*this)
+                                   );
 
-        return SodaColl(coll, GetHandle());
+        return SodaCollection(coll, GetHandle());
     }
 
-    inline SodaCollCursor::iterator& SodaCollCursor::iterator::operator++()
+    inline SodaCollectionCursor::iterator& SodaCollectionCursor::iterator::operator++()
     {
         _coll = _cursor->GetNext();
         if (!_coll)
@@ -54,7 +54,7 @@ namespace ocilib
         return *this;
     }
 
-    inline SodaCollCursor::iterator SodaCollCursor::begin()
+    inline SodaCollectionCursor::iterator SodaCollectionCursor::begin()
     {
         return iterator(this);
     }

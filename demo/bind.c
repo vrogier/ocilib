@@ -14,10 +14,10 @@ void err_handler(OCI_Error *err)
 void get_product_name(OCI_Int32 requested_code)
 {
     code = requested_code;
-    OCI_Execute(st);
-    OCI_Resultset * rs = OCI_GetResultset(st);
-    OCI_FetchNext(rs);
-    printf("product name for product code %d is %s\n", code, OCI_GetString(rs, 0));
+    OCI_StatementExecutePrepared(st);
+    OCI_Resultset * rs = OCI_StatementGetResultset(st);
+    OCI_ResultsetFetchNext(rs);
+    printf("product name for product code %d is %s\n", code, OCI_ResultsetGetString(rs, 0));
 }
 
 int main(void)
@@ -36,8 +36,8 @@ int main(void)
     cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
 
-    OCI_Prepare(st, "select name from products where code  = :code");
-    OCI_BindInt(st, ":code", &code);
+    OCI_StatementPrepare(st, "select name from products where code  = :code");
+    OCI_StatementBindInt32(st, ":code", &code);
 
     get_product_name(1);
     get_product_name(2);

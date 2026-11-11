@@ -18,18 +18,18 @@ int main()
 
         Connection con(env, db, usr, pwd);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         /* create a collection backed by a new table (default metadata) */
 
-        SodaColl coll = sdb.CreateCollection("soda_employees");
+        SodaCollection coll = sdb.CreateCollection("soda_employees");
 
         std::cout << "collection '" << coll.GetName() << "' created" << std::endl;
         std::cout << "metadata: " << coll.GetMetadata() << std::endl;
 
         /* insert documents - keys are server-assigned (UUID) by default */
 
-        SodaDoc doc = sdb.CreateDocumentFromText("{\"name\":\"Fred\",\"age\":42}");
+        SodaDocument doc = sdb.CreateDocumentFromText("{\"name\":\"Fred\",\"age\":42}");
         coll.Insert(doc);
 
         std::cout << "inserted doc key='" << doc.GetKey() << "' version='" << doc.GetVersion()
@@ -40,7 +40,7 @@ int main()
 
         /* fetch all documents through a cursor */
 
-        SodaDocCursor cur = coll.Find();
+        SodaDocumentCursor cur = coll.Find();
 
         while ((doc = cur.GetNext()))
         {

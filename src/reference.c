@@ -30,17 +30,17 @@
  * OcilibReferenceInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OcilibReferenceInitialize
+OCI_Reference * OcilibReferenceInitialize
 (
     OCI_Connection *con,
     OCI_TypeInfo   *typinf,
-    OCI_Ref        *ref,
+    OCI_Reference  *ref,
     void           *handle
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Ref*, ref,
+        /* returns */ OCI_Reference*, ref,
         /* context */ OCI_IPC_CONNECTION, con
     );
 
@@ -94,7 +94,7 @@ OCI_Ref * OcilibReferenceInitialize
 
 OCI_Boolean OcilibReferencePin
 (
-    OCI_Ref *ref
+    OCI_Reference *ref
 )
 {
     ENTER_FUNC
@@ -136,7 +136,7 @@ OCI_Boolean OcilibReferencePin
 
 OCI_Boolean OcilibReferenceUnpin
 (
-    OCI_Ref *ref
+    OCI_Reference *ref
 )
 {
     ENTER_FUNC
@@ -176,14 +176,14 @@ OCI_Boolean OcilibReferenceUnpin
  * OcilibReferenceCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OcilibReferenceCreate
+OCI_Reference * OcilibReferenceCreate
 (
     OCI_TypeInfo *typinf
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Ref*, NULL,
+        /* returns */ OCI_Reference*, NULL,
         /* context */ OCI_IPC_TYPE_INFO, typinf
     );
 
@@ -200,7 +200,7 @@ OCI_Ref * OcilibReferenceCreate
 
 OCI_Boolean OcilibReferenceFree
 (
-    OCI_Ref *ref
+    OCI_Reference *ref
 )
 {
     ENTER_FUNC
@@ -232,10 +232,10 @@ OCI_Boolean OcilibReferenceFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibReferenceCreateArray
+ * OcilibReferenceArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref ** OcilibReferenceCreateArray
+OCI_Reference ** OcilibReferenceArrayCreate
 (
     OCI_TypeInfo *typinf,
     OCI_UInt32    nbelem
@@ -243,7 +243,7 @@ OCI_Ref ** OcilibReferenceCreateArray
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Ref**, NULL,
+        /* returns */ OCI_Reference**, NULL,
         /* context */ OCI_IPC_TYPE_INFO, typinf
     );
 
@@ -252,23 +252,23 @@ OCI_Ref ** OcilibReferenceCreateArray
     CHECK_PTR(OCI_IPC_TYPE_INFO,  typinf);
 
     arr = OcilibArrayCreate(typinf->con->env,typinf->con, nbelem, OCI_CDT_REF, 0,
-                            sizeof(OCIRef *), sizeof(OCI_Ref),
+                            sizeof(OCIRef *), sizeof(OCI_Reference),
                             0, typinf);
 
     CHECK_NULL(arr);
 
-    SET_RETVAL((OCI_Ref**)arr->tab_obj);
+    SET_RETVAL((OCI_Reference**)arr->tab_obj);
 
     EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibReferenceFreeArray
+ * OcilibReferenceArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibReferenceFreeArray
+OCI_Boolean OcilibReferenceArrayFree
 (
-    OCI_Ref **refs
+    OCI_Reference **refs
 )
 {
     ENTER_FUNC
@@ -279,7 +279,7 @@ OCI_Boolean OcilibReferenceFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, refs);
 
-    SET_RETVAL(OcilibArrayFreeFromHandles(((OCI_Ref *) refs[0])->con->env, (void **)refs));
+    SET_RETVAL(OcilibArrayFreeFromHandles(((OCI_Reference *) refs[0])->con->env, (void **)refs));
 
     EXIT_FUNC();
 }
@@ -290,7 +290,7 @@ OCI_Boolean OcilibReferenceFreeArray
 
 OCI_Object * OcilibReferenceGetObject
 (
-    OCI_Ref *ref
+    OCI_Reference *ref
 )
 {
     ENTER_FUNC
@@ -314,8 +314,8 @@ OCI_Object * OcilibReferenceGetObject
 
 OCI_Boolean OcilibReferenceAssign
 (
-    OCI_Ref *ref,
-    OCI_Ref *ref_src
+    OCI_Reference *ref,
+    OCI_Reference *ref_src
 )
 {
     ENTER_FUNC
@@ -356,7 +356,7 @@ OCI_Boolean OcilibReferenceAssign
 
 OCI_Boolean OcilibReferenceIsNull
 (
-    OCI_Ref *ref
+    OCI_Reference *ref
 )
 {
     ENTER_FUNC
@@ -382,7 +382,7 @@ OCI_Boolean OcilibReferenceIsNull
 
 OCI_Boolean OcilibReferenceSetNull
 (
-    OCI_Ref *ref
+    OCI_Reference *ref
 )
 {
     ENTER_FUNC
@@ -409,14 +409,14 @@ OCI_Boolean OcilibReferenceSetNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibReferenceToString
+ * OcilibReferenceToText
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibReferenceToString
+OCI_Boolean OcilibReferenceToText
 (
-    OCI_Ref   *ref,
-    OCI_UInt32 size,
-    otext     *str
+    OCI_Reference *ref,
+    OCI_UInt32     size,
+    otext         *str
 )
 {
     ENTER_FUNC
@@ -483,7 +483,7 @@ OCI_Boolean OcilibReferenceToString
 
 OCI_UInt32 OcilibReferenceGetHexSize
 (
-    OCI_Ref *ref
+    OCI_Reference *ref
 )
 {
     ENTER_FUNC
@@ -509,7 +509,7 @@ OCI_UInt32 OcilibReferenceGetHexSize
 
 OCI_TypeInfo * OcilibReferenceGetTypeInfo
 (
-    OCI_Ref *ref
+    OCI_Reference *ref
 )
 {
     GET_PROP

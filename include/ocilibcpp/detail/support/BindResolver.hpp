@@ -76,7 +76,7 @@ namespace ocilib
         template<> struct BindResolver<File> : BindResolverHandleType<File, OCI_File*> {};
         template<> struct BindResolver<Clong> : BindResolverHandleType<Clong, OCI_Long*> {};
         template<> struct BindResolver<Blong> : BindResolverHandleType<Blong, OCI_Long*> {};
-        template<> struct BindResolver<Reference> : BindResolverHandleType<Reference, OCI_Ref*> {};
+        template<> struct BindResolver<Reference> : BindResolverHandleType<Reference, OCI_Reference*> {};
         template<> struct BindResolver<Object> : BindResolverHandleType<Object, OCI_Object*> {};
         template<> struct BindResolver<Vector> : BindResolverHandleType<Vector, OCI_Vector*> {};
         template<> struct BindResolver<Json> : BindResolverHandleType<Json, OCI_Json*> {};

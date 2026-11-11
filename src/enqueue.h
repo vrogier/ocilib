@@ -37,7 +37,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibEnqueueFree
 OCI_SYM_LOCAL OCI_Boolean OcilibEnqueuePut
 (
     OCI_Enqueue *enqueue,
-    OCI_Msg     *msg
+    OCI_Message *msg
 );
 
 OCI_SYM_LOCAL OCI_QueueVisibility OcilibEnqueueGetVisibility

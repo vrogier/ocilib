@@ -61,7 +61,7 @@
     <ClCompile Include="..\src\handle.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\hash.c">
+    <ClCompile Include="..\src\hashtable.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\helpers.c">
@@ -172,7 +172,7 @@
     <ClCompile Include="TestTimestampCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\dirpath.c">
+    <ClCompile Include="..\src\directpath.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="TestCollection.cpp">
@@ -352,7 +352,7 @@
     <ClCompile Include="TestDequeue.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="TestDirpath.cpp">
+    <ClCompile Include="TestDirectPathC.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestElement.cpp">
@@ -388,7 +388,7 @@
     <ClCompile Include="TestHandleCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="TestHash.cpp">
+    <ClCompile Include="TestHashTable.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestHelpers.cpp">
@@ -451,19 +451,19 @@
     <ClCompile Include="TestReportedIssuesCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sodacoll.c">
+    <ClCompile Include="..\src\sodacollection.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sodacollcursor.c">
+    <ClCompile Include="..\src\sodacollectioncursor.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sodadb.c">
+    <ClCompile Include="..\src\sodadatabase.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sodadoc.c">
+    <ClCompile Include="..\src\sodadocument.c">
       <Filter>Sources</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\sodadoccursor.c">
+    <ClCompile Include="..\src\sodadocumentcursor.c">
       <Filter>Sources</Filter>
     </ClCompile>
     <ClCompile Include="..\src\sodaoptions.c">
@@ -728,7 +728,7 @@
     <ClInclude Include="..\src\dequeue.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\dirpath.h">
+    <ClInclude Include="..\src\directpath.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\element.h">
@@ -758,7 +758,7 @@
     <ClInclude Include="..\src\handle.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\hash.h">
+    <ClInclude Include="..\src\hashtable.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\helpers.h">
@@ -878,19 +878,19 @@
     <ClInclude Include="TestManager.h">
       <Filter>Tests suite</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaColl.hpp">
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaCollection.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaCollCursor.hpp">
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaCollectionCursor.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaDb.hpp">
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaDatabase.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaDoc.hpp">
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaDocument.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\ocilibcpp\detail\SodaDocCursor.hpp">
+    <ClInclude Include="..\include\ocilibcpp\detail\SodaDocumentCursor.hpp">
       <Filter>Include\ocilibcpp\detail</Filter>
     </ClInclude>
     <ClInclude Include="..\include\ocilibcpp\detail\SodaOptions.hpp">
@@ -899,19 +899,19 @@
     <ClInclude Include="..\src\oci\jsondom.h">
       <Filter>Sources\oci</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\sodacoll.h">
+    <ClInclude Include="..\src\sodacollection.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\sodacollcursor.h">
+    <ClInclude Include="..\src\sodacollectioncursor.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\sodadb.h">
+    <ClInclude Include="..\src\sodadatabase.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\sodadoc.h">
+    <ClInclude Include="..\src\sodadocument.h">
       <Filter>Sources</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\sodadoccursor.h">
+    <ClInclude Include="..\src\sodadocumentcursor.h">
       <Filter>Sources</Filter>
     </ClInclude>
     <ClInclude Include="..\src\sodaoptions.h">

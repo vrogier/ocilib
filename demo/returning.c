@@ -24,24 +24,24 @@ int main(void)
     OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     OCI_Statement  * st = OCI_StatementCreate(cn);
 
-    OCI_Prepare(st, "update products set name = name || ' updated' returning code into :code");
-    OCI_RegisterInt(st, ":code");
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, "update products set name = name || ' updated' returning code into :code");
+    OCI_StatementRegisterInt32(st, ":code");
+    OCI_StatementExecutePrepared(st);
 
-    OCI_Resultset  * rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    OCI_Resultset  * rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
-        printf("element with code %d has been updated\n", OCI_GetInt(rs, 0));
+        printf("element with code %d has been updated\n", OCI_ResultsetGetInt32(rs, 0));
     }
 
-    printf("Number of affected rows : %d\n", OCI_GetAffectedRows(st));
+    printf("Number of affected rows : %d\n", OCI_StatementGetAffectedRows(st));
 
-    OCI_ExecuteStmt(st, "select count(*) from products where name like '%updated'");
-    rs = OCI_GetResultset(st);
-    OCI_FetchNext(rs);
-    printf("%i elements updated in DB\n", OCI_GetInt(rs, 0));
+    OCI_StatementExecute(st, "select count(*) from products where name like '%updated'");
+    rs = OCI_StatementGetResultset(st);
+    OCI_ResultsetFetchNext(rs);
+    printf("%i elements updated in DB\n", OCI_ResultsetGetInt32(rs, 0));
 
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);

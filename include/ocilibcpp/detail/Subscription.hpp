@@ -42,7 +42,7 @@ namespace ocilib
         (
             core::Check
             (
-                OCI_SubscriptionRegister
+                OCI_SubscriptionCreate
                 (
                     connection, name.c_str(), changeTypes.GetValues(),
                     static_cast<POCI_NOTIFY> (handler != nullptr ? Environment::NotifyHandler : nullptr),

@@ -68,15 +68,15 @@ static uword OcilibGetNumericTypeSize
 {
     uword size = 0;
 
-    if (type & OCI_NUM_SHORT)
+    if (type & OCI_NUM_INT16)
     {
         size = sizeof(OCI_Int16);
     }
-    else if (type & OCI_NUM_INT)
+    else if (type & OCI_NUM_INT32)
     {
         size = sizeof(OCI_Int32);
     }
-    else if (type & OCI_NUM_BIGINT)
+    else if (type & OCI_NUM_INT64)
     {
         size = sizeof(OCI_Int64);
     }
@@ -310,12 +310,12 @@ OCI_Boolean OcilibNumberFromStringInternal
 
     if (type != OCI_NUM_NUMBER)
     {
-        if (type & OCI_NUM_SHORT)
+        if (type & OCI_NUM_INT16)
         {
             CHECK(osscanf(in_value, OCI_STRING_FORMAT_NUM_SHORT, (OCI_Int16 *)out_value) == 1);
             done = TRUE;
         }
-        else if (type & OCI_NUM_INT)
+        else if (type & OCI_NUM_INT32)
         {
             CHECK(osscanf(in_value, OCI_STRING_FORMAT_NUM_INT, (OCI_Int32 *)out_value) == 1);
             done = TRUE;
@@ -449,7 +449,7 @@ OCI_Boolean OcilibNumberToStringInternal
 
     if (type != OCI_NUM_NUMBER)
     {
-        if (type & OCI_NUM_SHORT)
+        if (type & OCI_NUM_INT16)
         {
             out_value_size = OcilibStringFormat(out_value, out_value_size,
                                                 OCI_STRING_FORMAT_NUM_SHORT,
@@ -457,7 +457,7 @@ OCI_Boolean OcilibNumberToStringInternal
 
             done = TRUE;
         }
-        else if (type & OCI_NUM_INT)
+        else if (type & OCI_NUM_INT32)
         {
             out_value_size = OcilibStringFormat(out_value, out_value_size,
                                                 OCI_STRING_FORMAT_NUM_INT,

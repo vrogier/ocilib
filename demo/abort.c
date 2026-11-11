@@ -12,7 +12,7 @@ int long_oracle_call(void *data)
     clock_t t_start = clock();
     OCI_Int32 err_code = 0;
 
-    if (!OCI_ExecuteStmt((OCI_Statement *)data, "begin dbms_lock.sleep(10); end;"))
+    if (!OCI_StatementExecute((OCI_Statement *)data, "begin dbms_lock.sleep(10); end;"))
     {
         OCI_Error *err = OCI_GetLastError();
         if (err)
@@ -48,7 +48,7 @@ int main(void)
     thrd_create(&th, long_oracle_call, st);
 
     sleep(1);
-    OCI_Break(cn);
+    OCI_ConnectionBreak(cn);
 
     thrd_join(th, NULL);
 

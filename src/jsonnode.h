@@ -322,37 +322,37 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetValue
     void           *value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetShort
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetInt16
 (
     OCI_JsonNode *node,
     OCI_Int16    *value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetUShort
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetUInt16
 (
     OCI_JsonNode *node,
     OCI_UInt16   *value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetInt
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetInt32
 (
     OCI_JsonNode *node,
     OCI_Int32    *value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetUInt
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetUInt32
 (
     OCI_JsonNode *node,
     OCI_UInt32   *value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetBigInt
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetInt64
 (
     OCI_JsonNode *node,
     OCI_Int64    *value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetBigUInt
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeGetUInt64
 (
     OCI_JsonNode *node,
     OCI_UInt64   *value
@@ -377,37 +377,37 @@ OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetValue
     void           *value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetShort
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetInt16
 (
     OCI_JsonNode *node,
     OCI_Int16     value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetUShort
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetUInt16
 (
     OCI_JsonNode *node,
     OCI_UInt16    value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetInt
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetInt32
 (
     OCI_JsonNode *node,
     OCI_Int32     value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetUInt
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetUInt32
 (
     OCI_JsonNode *node,
     OCI_UInt32    value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetBigInt
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetInt64
 (
     OCI_JsonNode *node,
     OCI_Int64     value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetBigUInt
+OCI_SYM_LOCAL OCI_Boolean OcilibJsonNodeSetUInt64
 (
     OCI_JsonNode *node,
     OCI_UInt64    value

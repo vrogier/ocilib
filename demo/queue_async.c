@@ -9,8 +9,8 @@ void err_handler(OCI_Error *err)
 
 void on_message(OCI_Dequeue *deq)
 {
-    OCI_Msg    *msg = OCI_DequeueGet(deq);
-    OCI_Object *obj = OCI_MsgGetObject(msg);
+    OCI_Message    *msg = OCI_DequeueGet(deq);
+    OCI_Object *obj = OCI_MessageGetObject(msg);
 
     printf("Consumer %s - MSG '%s' => %s\n", OCI_DequeueGetConsumer(deq), OCI_ObjectGetString(obj, "TITLE"), OCI_ObjectGetString(obj, "CONTENT"));
 }
@@ -51,28 +51,28 @@ int main(OCI_Int32 argc, char *argv[])
     OCI_DequeueSetConsumer(deq2, "C2");
     OCI_DequeueSetNavigation(deq2, OCI_ADN_FIRST_MSG);
 
-    OCI_SetSubscriptionPort(env, 9998);
+    OCI_EnvironmentSetSubscriptionPort(env, 9998);
 
     {
         OCI_Dequeue *deqs[2] = { deq1, deq2 };
         OCI_DequeueSubscribe(con, deqs, 2, 0, on_message);
     }
 
-    OCI_Msg        * msg = OCI_MsgCreate(inf);
+    OCI_Message        * msg = OCI_MessageCreate(inf);
     OCI_Object     * obj = OCI_ObjectCreate(inf);
 
     OCI_ObjectSetString(obj, "title", "NEXT MEETING");
     OCI_ObjectSetString(obj, "content", "12:00 PM IN STARBUCKS");
 
-    OCI_MsgSetObject(msg, obj);
-    OCI_MsgSetConsumers(msg, agents, 2);
+    OCI_MessageSetObject(msg, obj);
+    OCI_MessageSetConsumers(msg, agents, 2);
 
     OCI_EnqueuePut(enq, msg);
 
-    OCI_MsgFree(msg);
+    OCI_MessageFree(msg);
     OCI_ObjectFree(obj);
 
-    OCI_Commit(con);
+    OCI_ConnectionCommit(con);
 
     printf("Wait for messages to be delivered and a press a key....\n\n");
     getchar();

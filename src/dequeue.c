@@ -227,14 +227,14 @@ OCI_Agent * OcilibDequeueListen
  * OcilibDequeueGetMessage
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * OcilibDequeueGetMessage
+OCI_Message * OcilibDequeueGetMessage
 (
     OCI_Dequeue *dequeue
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Msg*, NULL,
+        /* returns */ OCI_Message*, NULL,
         /* context */ OCI_IPC_DEQUEUE, dequeue
     );
 
@@ -325,7 +325,7 @@ OCI_Msg * OcilibDequeueGetMessage
 
     /* reset message */
 
-    OCI_Msg* msg = NULL;
+    OCI_Message* msg = NULL;
 
     if (OCI_SUCCESSFUL(ret))
     {

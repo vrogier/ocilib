@@ -26,10 +26,10 @@ namespace TestCApi
 
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(tif);
+        const auto ref = OCI_ReferenceCreate(tif);
 
         ASSERT_TRUE(nullptr != ref);
-        ASSERT_TRUE(OCI_RefFree(ref));
+        ASSERT_TRUE(OCI_ReferenceFree(ref));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
@@ -46,14 +46,14 @@ namespace TestCApi
 
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto refs = OCI_RefArrayCreate(tif, ARRAY_SIZE);
+        const auto refs = OCI_ReferenceArrayCreate(tif, ARRAY_SIZE);
         ASSERT_TRUE(nullptr != refs);
 
         for (OCI_Int32 i = 0; i < ARRAY_SIZE; i++)
         {
             ASSERT_TRUE(nullptr != refs[i]);
         }
-        ASSERT_TRUE(OCI_RefArrayFree(refs));
+        ASSERT_TRUE(OCI_ReferenceArrayFree(refs));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
@@ -71,18 +71,18 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref2 = OCI_RefCreate(tif);
+        const auto ref2 = OCI_ReferenceCreate(tif);
 
-        OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
-        const auto rslt = OCI_GetResultset(stmt);
+        OCI_StatementExecute(stmt, OTEXT("select ref(v) from vendors v"));
+        const auto rslt = OCI_StatementGetResultset(stmt);
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
-            const auto ref1 = OCI_GetRef(rslt, 0);
-            ASSERT_TRUE(OCI_RefAssign(ref2, ref1));
+            const auto ref1 = OCI_ResultsetGetReference(rslt, 0);
+            ASSERT_TRUE(OCI_ReferenceAssign(ref2, ref1));
         }
 
-        ASSERT_TRUE(OCI_RefFree(ref2));
+        ASSERT_TRUE(OCI_ReferenceFree(ref2));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         CleanupTestRef();
@@ -98,10 +98,10 @@ namespace TestCApi
 
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(tif);
+        const auto ref = OCI_ReferenceCreate(tif);
 
-        ASSERT_EQ(OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE), OCI_RefGetTypeInfo((ref)));
-        ASSERT_TRUE(OCI_RefFree(ref));
+        ASSERT_EQ(OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE), OCI_ReferenceGetTypeInfo((ref)));
+        ASSERT_TRUE(OCI_ReferenceFree(ref));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         CleanupTestRef();
@@ -118,13 +118,13 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
-        const auto rslt = OCI_GetResultset(stmt);
+        OCI_StatementExecute(stmt, OTEXT("select ref(v) from vendors v"));
+        const auto rslt = OCI_StatementGetResultset(stmt);
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 0);
-            const auto obj = OCI_RefGetObject(ref);
+            const auto ref = OCI_ResultsetGetReference(rslt, 0);
+            const auto obj = OCI_ReferenceGetObject(ref);
             ASSERT_TRUE(nullptr != obj);
         }
 
@@ -143,11 +143,11 @@ namespace TestCApi
 
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(tif);
+        const auto ref = OCI_ReferenceCreate(tif);
 
         ASSERT_TRUE(nullptr != ref);
-        ASSERT_TRUE(nullptr == OCI_RefGetObject(ref));
-        ASSERT_TRUE(OCI_RefFree(ref));
+        ASSERT_TRUE(nullptr == OCI_ReferenceGetObject(ref));
+        ASSERT_TRUE(OCI_ReferenceFree(ref));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
@@ -164,11 +164,11 @@ namespace TestCApi
 
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(tif);
+        const auto ref = OCI_ReferenceCreate(tif);
 
         ASSERT_TRUE(nullptr != ref);
-        ASSERT_TRUE(OCI_RefIsNull(ref));
-        ASSERT_TRUE(OCI_RefFree(ref));
+        ASSERT_TRUE(OCI_ReferenceIsNull(ref));
+        ASSERT_TRUE(OCI_ReferenceFree(ref));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
@@ -186,13 +186,13 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
-        const auto rslt = OCI_GetResultset(stmt);
+        OCI_StatementExecute(stmt, OTEXT("select ref(v) from vendors v"));
+        const auto rslt = OCI_StatementGetResultset(stmt);
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 0);
-            ASSERT_FALSE(OCI_RefIsNull(ref));
+            const auto ref = OCI_ResultsetGetReference(rslt, 0);
+            ASSERT_FALSE(OCI_ReferenceIsNull(ref));
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -211,16 +211,16 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
-        const auto rslt = OCI_GetResultset(stmt);
+        OCI_StatementExecute(stmt, OTEXT("select ref(v) from vendors v"));
+        const auto rslt = OCI_StatementGetResultset(stmt);
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 0);
-            const auto length = OCI_RefGetHexSize(ref);
+            const auto ref = OCI_ResultsetGetReference(rslt, 0);
+            const auto length = OCI_ReferenceGetHexSize(ref);
             ASSERT_TRUE(length > 0);
             otext buffer[128] = {};
-            OCI_RefToText(ref, length, buffer);
+            OCI_ReferenceToText(ref, length, buffer);
             String value = buffer;
             ASSERT_EQ(length, value.size());
         }
@@ -240,15 +240,15 @@ namespace TestCApi
 
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(tif);
-        const auto length = OCI_RefGetHexSize(ref);
+        const auto ref = OCI_ReferenceCreate(tif);
+        const auto length = OCI_ReferenceGetHexSize(ref);
         ASSERT_TRUE(length == 0);
         otext buffer[128] = {};
-        OCI_RefToText(ref, length, buffer);
+        OCI_ReferenceToText(ref, length, buffer);
         String value = buffer;
         ASSERT_EQ(length, value.size());
 
-        ASSERT_TRUE(OCI_RefFree(ref));
+        ASSERT_TRUE(OCI_ReferenceFree(ref));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         CleanupTestRef();
@@ -265,15 +265,15 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
-        const auto rslt = OCI_GetResultset(stmt);
+        OCI_StatementExecute(stmt, OTEXT("select ref(v) from vendors v"));
+        const auto rslt = OCI_StatementGetResultset(stmt);
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 0);
-            ASSERT_FALSE(OCI_RefIsNull(ref));
-            ASSERT_TRUE(OCI_RefSetNull(ref));
-            ASSERT_TRUE(OCI_RefIsNull(ref));
+            const auto ref = OCI_ResultsetGetReference(rslt, 0);
+            ASSERT_FALSE(OCI_ReferenceIsNull(ref));
+            ASSERT_TRUE(OCI_ReferenceSetNull(ref));
+            ASSERT_TRUE(OCI_ReferenceIsNull(ref));
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -292,12 +292,12 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
-        const auto rslt = OCI_GetResultset(stmt);
+        OCI_StatementExecute(stmt, OTEXT("select ref(v) from vendors v"));
+        const auto rslt = OCI_StatementGetResultset(stmt);
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 0);
+            const auto ref = OCI_ResultsetGetReference(rslt, 0);
             ASSERT_TRUE(nullptr != ref);
         }
 
@@ -317,21 +317,21 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
-        const auto rslt = OCI_GetResultset(stmt);
+        OCI_StatementExecute(stmt, OTEXT("select ref(v) from vendors v"));
+        const auto rslt = OCI_StatementGetResultset(stmt);
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 0);
+            const auto ref = OCI_ResultsetGetReference(rslt, 0);
             ASSERT_TRUE(nullptr != ref);
 
             const auto stmt2 = OCI_StatementCreate(conn);
-            ASSERT_TRUE(OCI_Prepare(stmt2, OTEXT("select count(*) from vendors v where ref(v) = :ref")));
-            ASSERT_NE(nullptr, OCI_BindRef(stmt2, OTEXT(":ref"), ref));
-            ASSERT_TRUE(OCI_Execute(stmt2));
-            const auto rslt2 = OCI_GetResultset(stmt2);
-            ASSERT_TRUE(OCI_FetchNext(rslt2));
-            ASSERT_EQ(1, OCI_GetInt(rslt2, 0));
+            ASSERT_TRUE(OCI_StatementPrepare(stmt2, OTEXT("select count(*) from vendors v where ref(v) = :ref")));
+            ASSERT_NE(nullptr, OCI_StatementBindReference(stmt2, OTEXT(":ref"), ref));
+            ASSERT_TRUE(OCI_StatementExecutePrepared(stmt2));
+            const auto rslt2 = OCI_StatementGetResultset(stmt2);
+            ASSERT_TRUE(OCI_ResultsetFetchNext(rslt2));
+            ASSERT_EQ(1, OCI_ResultsetGetInt32(rslt2, 0));
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -350,25 +350,25 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("drop table test_ref_register"));
-        OCI_ExecuteStmt(stmt, OTEXT("create table test_ref_register of vendor_t"));
+        OCI_StatementExecute(stmt, OTEXT("drop table test_ref_register"));
+        OCI_StatementExecute(stmt, OTEXT("create table test_ref_register of vendor_t"));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into test_ref_register v values (vendor_t(1, 'Earth')) returning ref(v) into :1")));
-        ASSERT_TRUE(OCI_RegisterRef(stmt, OTEXT(":1"), OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE)));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("insert into test_ref_register v values (vendor_t(1, 'Earth')) returning ref(v) into :1")));
+        ASSERT_TRUE(OCI_StatementRegisterReference(stmt, OTEXT(":1"), OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE)));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        const auto rslt = OCI_GetResultset(stmt);
-        ASSERT_TRUE(OCI_FetchNext(rslt));
+        const auto rslt = OCI_StatementGetResultset(stmt);
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rslt));
 
-        const auto ref = OCI_GetRef(rslt, 0);
+        const auto ref = OCI_ResultsetGetReference(rslt, 0);
         ASSERT_TRUE(nullptr != ref);
-        const auto obj = OCI_RefGetObject(ref);
+        const auto obj = OCI_ReferenceGetObject(ref);
         ASSERT_TRUE(nullptr != obj);
 
-        ASSERT_EQ(1, OCI_ObjectGetInt(obj, OTEXT("code")));
+        ASSERT_EQ(1, OCI_ObjectGetInt32(obj, OTEXT("code")));
         ASSERT_EQ(String(OTEXT("Earth")), String(OCI_ObjectGetString(obj, OTEXT("name"))));
 
-        OCI_ExecuteStmt(stmt, OTEXT("drop table test_ref_register"));
+        OCI_StatementExecute(stmt, OTEXT("drop table test_ref_register"));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -387,17 +387,17 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("select ref(v) from vendors v"));
-        const auto rslt = OCI_GetResultset(stmt);
+        OCI_StatementExecute(stmt, OTEXT("select ref(v) from vendors v"));
+        const auto rslt = OCI_StatementGetResultset(stmt);
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
-            const auto ref = OCI_GetRef(rslt, 0);
-            const auto obj = OCI_RefGetObject(ref);
+            const auto ref = OCI_ResultsetGetReference(rslt, 0);
+            const auto obj = OCI_ReferenceGetObject(ref);
             ASSERT_TRUE(nullptr != obj);
-            ASSERT_FALSE(OCI_RefIsNull(ref));
-            ASSERT_TRUE(OCI_RefSetNull(ref));
-            ASSERT_TRUE(OCI_RefIsNull(ref));
+            ASSERT_FALSE(OCI_ReferenceIsNull(ref));
+            ASSERT_TRUE(OCI_ReferenceSetNull(ref));
+            ASSERT_TRUE(OCI_ReferenceIsNull(ref));
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -415,13 +415,13 @@ namespace TestCApi
 
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto tif = OCI_TypeInfoGet(conn, OTEXT("vendor_t"), OCI_TIF_TYPE);
-        const auto ref = OCI_RefCreate(tif);
+        const auto ref = OCI_ReferenceCreate(tif);
 
-        ASSERT_TRUE(OCI_RefIsNull(ref));
-        ASSERT_TRUE(OCI_RefSetNull(ref));
-        ASSERT_TRUE(OCI_RefIsNull(ref));
+        ASSERT_TRUE(OCI_ReferenceIsNull(ref));
+        ASSERT_TRUE(OCI_ReferenceSetNull(ref));
+        ASSERT_TRUE(OCI_ReferenceIsNull(ref));
 
-        ASSERT_TRUE(OCI_RefFree(ref));
+        ASSERT_TRUE(OCI_ReferenceFree(ref));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         CleanupTestRef();
@@ -437,17 +437,17 @@ namespace TestCApi
     INSTANTIATE_TEST_CASE_P(NullArgs, TestReferenceNullArgs,
         ::testing::ValuesIn(NullArgCases
         {
-            { "RefArrayCreate", [] { return nullptr == OCI_RefArrayCreate(nullptr, 1); } },
-            { "RefArrayFree", [] { return !OCI_RefArrayFree(nullptr); } },
-            { "RefAssign", [] { return !OCI_RefAssign(nullptr, nullptr); } },
-            { "RefCreate", [] { return nullptr == OCI_RefCreate(nullptr); } },
-            { "RefFree", [] { return !OCI_RefFree(nullptr); } },
-            { "RefGetHexSize", [] { return 0 == OCI_RefGetHexSize(nullptr); } },
-            { "RefGetObject", [] { return nullptr == OCI_RefGetObject(nullptr); } },
-            { "RefGetTypeInfo", [] { return nullptr == OCI_RefGetTypeInfo(nullptr); } },
-            { "RefIsNull", [] { return !OCI_RefIsNull(nullptr); } },
-            { "RefSetNull", [] { return !OCI_RefSetNull(nullptr); } },
-            { "RefToText", [] { return !OCI_RefToText(nullptr, 1, NullArgText()); } },
+            { "RefArrayCreate", [] { return nullptr == OCI_ReferenceArrayCreate(nullptr, 1); } },
+            { "RefArrayFree", [] { return !OCI_ReferenceArrayFree(nullptr); } },
+            { "RefAssign", [] { return !OCI_ReferenceAssign(nullptr, nullptr); } },
+            { "RefCreate", [] { return nullptr == OCI_ReferenceCreate(nullptr); } },
+            { "RefFree", [] { return !OCI_ReferenceFree(nullptr); } },
+            { "RefGetHexSize", [] { return 0 == OCI_ReferenceGetHexSize(nullptr); } },
+            { "RefGetObject", [] { return nullptr == OCI_ReferenceGetObject(nullptr); } },
+            { "RefGetTypeInfo", [] { return nullptr == OCI_ReferenceGetTypeInfo(nullptr); } },
+            { "RefIsNull", [] { return !OCI_ReferenceIsNull(nullptr); } },
+            { "RefSetNull", [] { return !OCI_ReferenceSetNull(nullptr); } },
+            { "RefToText", [] { return !OCI_ReferenceToText(nullptr, 1, NullArgText()); } },
         }),
         &NullArgCaseName);
 

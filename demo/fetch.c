@@ -24,15 +24,15 @@ int main(void)
     OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     OCI_Statement  * st = OCI_StatementCreate(cn);
 
-    OCI_ExecuteStmt(st, "select * from products");
-    OCI_Resultset  * rs = OCI_GetResultset(st);
+    OCI_StatementExecute(st, "select * from products");
+    OCI_Resultset  * rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        printf("code: %i, name %s\n", OCI_GetInt(rs, 0), OCI_GetString(rs, 1));
+        printf("code: %i, name %s\n", OCI_ResultsetGetInt32(rs, 0), OCI_ResultsetGetString(rs, 1));
     }
 
-    printf("\n%d row(s) fetched\n", OCI_GetRowCount(rs));
+    printf("\n%d row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);

@@ -12,7 +12,7 @@ extern "C" OCI_SYM_LOCAL OCI_Environment* OcilibEnvironmentCreate(POCI_ERROR, co
 OCI_Environment* GetEnvironment(POCI_ERROR err_handler)
 {
     auto env = environmentManager.GetEnvironmentCApi();
-    OCI_SetErrorHandler(env, err_handler);
+    OCI_EnvironmentSetErrorHandler(env, err_handler);
     return env;
 }
 
@@ -30,8 +30,8 @@ void ExecDML(String dml)
 {
     const auto env = environmentManager.GetEnvironmentCApi();
     const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-    OCI_Immediate(con, dml.data());
-    OCI_Commit(con);
+    OCI_ConnectionImmediate(con, dml.data());
+    OCI_ConnectionCommit(con);
     OCI_ConnectionFree(con);
 }
 

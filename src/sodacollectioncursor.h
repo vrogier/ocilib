@@ -23,21 +23,21 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL OCI_SodaCollCursor * OcilibSodaCollCursorInitialize
+OCI_SYM_LOCAL OCI_SodaCollectionCursor * OcilibSodaCollectionCursorInitialize
 (
-    OCI_SodaCollCursor *cursor,
-    OCI_SodaDb         *sdb,
-    OCISodaCollCursor  *handle
+    OCI_SodaCollectionCursor *cursor,
+    OCI_SodaDatabase         *sdb,
+    OCISodaCollCursor        *handle
 );
 
-OCI_SYM_LOCAL OCI_SodaColl * OcilibSodaCollCursorGetNext
+OCI_SYM_LOCAL OCI_SodaCollection * OcilibSodaCollectionCursorGetNext
 (
-    OCI_SodaCollCursor *cursor
+    OCI_SodaCollectionCursor *cursor
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollCursorFree
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaCollectionCursorFree
 (
-    OCI_SodaCollCursor *cursor
+    OCI_SodaCollectionCursor *cursor
 );
 
 #endif /* OCILIB_SODACOLLCURSOR_H_INCLUDED */

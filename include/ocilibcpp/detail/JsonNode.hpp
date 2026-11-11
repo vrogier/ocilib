@@ -276,12 +276,12 @@ namespace ocilib
             T           value{};
             OCI_Boolean res = FALSE;
 
-            if constexpr      (std::is_same_v<U, Int16>)   res = OCI_JsonNodeGetShort(*this, reinterpret_cast<OCI_Int16*>(&value));
-            else if constexpr (std::is_same_v<U, UInt16>)  res = OCI_JsonNodeGetUShort(*this, reinterpret_cast<OCI_UInt16*>(&value));
-            else if constexpr (std::is_same_v<U, Int32>)   res = OCI_JsonNodeGetInt(*this, reinterpret_cast<OCI_Int32*>(&value));
-            else if constexpr (std::is_same_v<U, UInt32>)  res = OCI_JsonNodeGetUInt(*this, reinterpret_cast<OCI_UInt32*>(&value));
-            else if constexpr (std::is_same_v<U, Int64>)   res = OCI_JsonNodeGetBigInt(*this, reinterpret_cast<OCI_Int64*>(&value));
-            else if constexpr (std::is_same_v<U, UInt64>)  res = OCI_JsonNodeGetBigUInt(*this, reinterpret_cast<OCI_UInt64*>(&value));
+            if constexpr      (std::is_same_v<U, Int16>)   res = OCI_JsonNodeGetInt16(*this, reinterpret_cast<OCI_Int16*>(&value));
+            else if constexpr (std::is_same_v<U, UInt16>)  res = OCI_JsonNodeGetUInt16(*this, reinterpret_cast<OCI_UInt16*>(&value));
+            else if constexpr (std::is_same_v<U, Int32>)   res = OCI_JsonNodeGetInt32(*this, reinterpret_cast<OCI_Int32*>(&value));
+            else if constexpr (std::is_same_v<U, UInt32>)  res = OCI_JsonNodeGetUInt32(*this, reinterpret_cast<OCI_UInt32*>(&value));
+            else if constexpr (std::is_same_v<U, Int64>)   res = OCI_JsonNodeGetInt64(*this, reinterpret_cast<OCI_Int64*>(&value));
+            else if constexpr (std::is_same_v<U, UInt64>)  res = OCI_JsonNodeGetUInt64(*this, reinterpret_cast<OCI_UInt64*>(&value));
             else if constexpr (std::is_same_v<U, Float>)   res = OCI_JsonNodeGetFloat(*this, reinterpret_cast<OCI_Float*>(&value));
             else if constexpr (std::is_same_v<U, Double>)  res = OCI_JsonNodeGetDouble(*this, reinterpret_cast<OCI_Double*>(&value));
 
@@ -297,12 +297,12 @@ namespace ocilib
         using U = std::decay_t<T>;
 
         if constexpr      (std::is_same_v<U, Number>)   core::Check(OCI_JsonNodeSetNumber(*this, value));
-        else if constexpr (std::is_same_v<U, Int16>)    core::Check(OCI_JsonNodeSetShort(*this, static_cast<OCI_Int16>(value)));
-        else if constexpr (std::is_same_v<U, UInt16>)   core::Check(OCI_JsonNodeSetUShort(*this, static_cast<OCI_UInt16>(value)));
-        else if constexpr (std::is_same_v<U, Int32>)    core::Check(OCI_JsonNodeSetInt(*this, static_cast<OCI_Int32>(value)));
-        else if constexpr (std::is_same_v<U, UInt32>)   core::Check(OCI_JsonNodeSetUInt(*this, static_cast<OCI_UInt32>(value)));
-        else if constexpr (std::is_same_v<U, Int64>)    core::Check(OCI_JsonNodeSetBigInt(*this, static_cast<OCI_Int64>(value)));
-        else if constexpr (std::is_same_v<U, UInt64>)   core::Check(OCI_JsonNodeSetBigUInt(*this, static_cast<OCI_UInt64>(value)));
+        else if constexpr (std::is_same_v<U, Int16>)    core::Check(OCI_JsonNodeSetInt16(*this, static_cast<OCI_Int16>(value)));
+        else if constexpr (std::is_same_v<U, UInt16>)   core::Check(OCI_JsonNodeSetUInt16(*this, static_cast<OCI_UInt16>(value)));
+        else if constexpr (std::is_same_v<U, Int32>)    core::Check(OCI_JsonNodeSetInt32(*this, static_cast<OCI_Int32>(value)));
+        else if constexpr (std::is_same_v<U, UInt32>)   core::Check(OCI_JsonNodeSetUInt32(*this, static_cast<OCI_UInt32>(value)));
+        else if constexpr (std::is_same_v<U, Int64>)    core::Check(OCI_JsonNodeSetInt64(*this, static_cast<OCI_Int64>(value)));
+        else if constexpr (std::is_same_v<U, UInt64>)   core::Check(OCI_JsonNodeSetUInt64(*this, static_cast<OCI_UInt64>(value)));
         else if constexpr (std::is_same_v<U, Float>)    core::Check(OCI_JsonNodeSetFloat(*this, static_cast<OCI_Float>(value)));
         else if constexpr (std::is_same_v<U, Double>)   core::Check(OCI_JsonNodeSetDouble(*this, static_cast<OCI_Double>(value)));
     }

@@ -9,35 +9,35 @@ void err_handler(OCI_Error *err)
 
 void print_elem(OCI_Object *product)
 {
-    printf("...product: code %d, %s\n", OCI_ObjectGetInt(product, "code"), OCI_ObjectGetString(product, "name"));
+    printf("...product: code %d, %s\n", OCI_ObjectGetInt32(product, "code"), OCI_ObjectGetString(product, "name"));
 }
 
-void print_coll(OCI_Coll *coll)
+void print_coll(OCI_Collection *coll)
 {
-    OCI_Iter *iter = OCI_IterCreate(coll);
-    OCI_Elem *elem = OCI_IterGetNext(iter);
+    OCI_Iterator *iter = OCI_IteratorCreate(coll);
+    OCI_Element *elem = OCI_IteratorGetNext(iter);
 
     while (elem)
     {
-        print_elem(OCI_ElemGetObject(elem));
-        elem = OCI_IterGetNext(iter);
+        print_elem(OCI_ElementGetObject(elem));
+        elem = OCI_IteratorGetNext(iter);
     }
 
-    OCI_IterFree(iter);
+    OCI_IteratorFree(iter);
 }
 
 void bind_coll(OCI_Connection *cn)
 {
-    OCI_Coll *coll = OCI_CollCreate(OCI_TypeInfoGet(cn, "product_varray_t", OCI_TIF_TYPE));
+    OCI_Collection *coll = OCI_CollectionCreate(OCI_TypeInfoGet(cn, "product_varray_t", OCI_TIF_TYPE));
     OCI_Statement *st = OCI_StatementCreate(cn);
 
-    OCI_Prepare(st, "begin :array := product_varray_t(product_t(123, 'name 123'), product_t(456, 'name 456'), product_t(789, 'name 789')); end;");
-    OCI_BindColl(st, ":array", coll);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, "begin :array := product_varray_t(product_t(123, 'name 123'), product_t(456, 'name 456'), product_t(789, 'name 789')); end;");
+    OCI_StatementBindCollection(st, ":array", coll);
+    OCI_StatementExecutePrepared(st);
 
     print_coll(coll);
 
-    OCI_CollFree(coll);
+    OCI_CollectionFree(coll);
     OCI_StatementFree(st);
 }
 
@@ -48,15 +48,15 @@ void fetch_coll(OCI_Connection *cn, otext * table_name)
 
     otext sql[64];
     snprintf(sql, sizeof(sql), "SELECT * from %s", table_name);
-    OCI_ExecuteStmt(st, sql);
+    OCI_StatementExecute(st, sql);
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        printf("#%s\n", OCI_GetString(rs, 0));
+        printf("#%s\n", OCI_ResultsetGetString(rs, 0));
 
-        print_coll(OCI_GetColl(rs, 1));
+        print_coll(OCI_ResultsetGetColl(rs, 1));
     }
 
     OCI_StatementFree(st);

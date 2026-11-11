@@ -40,7 +40,7 @@ OCI_SYM_LOCAL OCI_Agent * OcilibDequeueListen
     OCI_Int32    timeout
 );
 
-OCI_SYM_LOCAL OCI_Msg * OcilibDequeueGetMessage
+OCI_SYM_LOCAL OCI_Message * OcilibDequeueGetMessage
 (
     OCI_Dequeue *dequeue
 );

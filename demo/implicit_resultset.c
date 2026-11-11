@@ -23,7 +23,7 @@ int main(void)
     OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     OCI_Statement  * st = OCI_StatementCreate(cn);
 
-    OCI_ExecuteStmt(st,
+    OCI_StatementExecute(st,
         "declare"
         "  c1 sys_refcursor;"
         "  c2 sys_refcursor;"
@@ -34,16 +34,16 @@ int main(void)
         "  dbms_sql.return_result (c2); "
         "end;");
 
-    OCI_Resultset  * rs = OCI_GetResultset(st);
+    OCI_Resultset  * rs = OCI_StatementGetResultset(st);
     while (rs)
     {
         printf("Iterating on resultset #%d\n", ++nb_rs);
-        while (OCI_FetchNext(rs))
+        while (OCI_ResultsetFetchNext(rs))
         {
-            printf("...%s\n", OCI_GetString(rs, 0));
+            printf("...%s\n", OCI_ResultsetGetString(rs, 0));
         }
 
-        rs = OCI_GetNextResultset(st);
+        rs = OCI_StatementGetNextResultset(st);
     }
 
     printf("\nFound %d resultsets\n", nb_rs);

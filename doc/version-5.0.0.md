@@ -19,17 +19,18 @@ The release touches the C API, the C++ API, the internal handle/symbol architect
 ## 2. Major highlights
 
 - **`OCI_Environment` becomes a public, first-class handle.** `OCI_Initialize()` / `OCI_Cleanup()` are replaced by `OCI_EnvironmentCreate()` / `OCI_EnvironmentFree()`. Most top-level constructors now take an explicit `OCI_Environment*` parameter.
+- **Public API naming overhaul.** The entire C API is normalized on the `OCI_<Type><Action>` handle model — `OCI_<Type>Create`/`OCI_<Type>Free` factories, `Get`/`Set` accessors, expanded type names. ~460 functions, 11 handle typedefs and 12 integer-type constants were renamed (`OCI_Execute` → `OCI_StatementExecutePrepared`, `OCI_Coll` → `OCI_Collection`, `OCI_NUM_INT` → `OCI_NUM_INT32`, …). `include/ocilibc/compat.h` maps every old name to the new one so v4 code still compiles; `OCI_NO_COMPAT` disables the aliases. No binary compatibility — recompilation required.
 - **C11 for the C layer and C++17 for the C++ layer.** The C implementation now uses ISO C11 `<threads.h>` for internal synchronization. The C++ header-only API now requires C++17 and uses `std::shared_ptr`, `std::mutex`, `std::unordered_map`, and `std::function` internally.
 - **Per-environment OCI symbol table.** All OCI function pointers are loaded into an `OCI_Symbols` table attached to each `OCI_Environment`, so every OCI call is dispatched through `env->api-><func>`.
 - **Unified handle polymorphism.** All internal handle structures now share a common base layout (`OCI_HANDLE` / `OCI_DATATYPE` macros in `src/types.h`). A new public helper, `OCI_HandleGetEnvironment()`, can retrieve the owning environment from any handle.
 - **Optional runtime logging.** A new logging subsystem in `src/log.c` is controlled by environment variables (`OCILIB_LOG`, `OCILIB_LOG_CATEGORIES`, `OCILIB_LOG_OUTPUT`) and instruments public API entry/exit, OCI calls, and error reporting.
 - **Removal of legacy public APIs.** XA/distributed transactions, the public `OCI_Mutex` / `OCI_Thread` / `OCI_ThreadKey` C APIs, and the matching C++ wrappers are gone. Internal synchronization has been replaced with native C11 primitives.
 - **Bug fixes in notification and AQ dequeue registration.** Row-level change notifications now work correctly, and AQ dequeue registration now registers all dequeues in a single call.
-- **Uniform 0-based indexing across the C and C++ APIs.** Every index parameter and index-returning function switches from 1-based to 0-based (`OCI_GetColumn`, `OCI_Get*`, `OCI_GetBind`, `OCI_CollGetElem`, `OCI_JsonNode*` item/field accessors, `OCI_TypeInfoGetColumn`, `OCI_DirPath*` row/column indexes, bind array positions, `OCI_FetchSeek` absolute offsets). Lookups and positions that can miss now return `OCI_Int32`/C++ `Int32` with **`-1`** as the "not found / no position" sentinel: `OCI_GetColumnIndex`, `OCI_GetBindIndex`, `OCI_GetCurrentRow`, `OCI_ErrorGetRow`. In C++, `coll[i]`/`node[i]` and all iterators are likewise 0-based, `Exception::GetRow()` returns `-1` when unrelated, and new `Resultset::Rows()`/`Resultset::Columns()`/`TypeInfo::Columns()` views + `Row` proxy give idiomatic 0-based row/column access.
+- **Uniform 0-based indexing across the C and C++ APIs.** Every index parameter and index-returning function switches from 1-based to 0-based (`OCI_ResultsetGetColumn`, `OCI_Get*`, `OCI_StatementGetBind`, `OCI_CollectionGetElement`, `OCI_JsonNode*` item/field accessors, `OCI_TypeInfoGetColumn`, `OCI_DirectPath*` row/column indexes, bind array positions, `OCI_ResultsetFetchSeek` absolute offsets). Lookups and positions that can miss now return `OCI_Int32`/C++ `Int32` with **`-1`** as the "not found / no position" sentinel: `OCI_ResultsetGetColumnIndex`, `OCI_StatementGetBindIndex`, `OCI_ResultsetGetCurrentRow`, `OCI_ErrorGetRow`. In C++, `coll[i]`/`node[i]` and all iterators are likewise 0-based, `Exception::GetRow()` returns `-1` when unrelated, and new `Resultset::Rows()`/`Resultset::Columns()`/`TypeInfo::Columns()` views + `Row` proxy give idiomatic 0-based row/column access.
 - **C++ row/column views and iterators.** New `Resultset::Rows()` returns a `ResultsetRows` view whose `RowIterator` yields a `Row` proxy for each fetched row (`for (auto&& row : rs.Rows())`); `Row` exposes the same typed getters as `Resultset` — `Get<T>(index|name)` and `GetOptional<T>` (`std::optional`, `std::nullopt` on SQL NULL). On scrollable resultsets the iterator additionally supports `--`, `+=`, `-=` and `rows[i]` absolute seek. New `Resultset::Columns()`/`TypeInfo::Columns()` return `ColumnView` objects over `Column` descriptors: `Size()`, `cols[i]`/`cols["name"]`, `At()`, `Contains()`, `IndexOf()` (`-1` miss) and a random-access `ColumnIterator`.
 - **Error model split into type, category and code.** `OCI_ErrorGetType()` now reports the error type only (`OCI_ERR_TYPE_ERROR`/`OCI_ERR_TYPE_WARNING`); the new `OCI_ErrorGetCategory()` reports the originating subsystem (`OCI_ERR_CAT_LIB`/`OCI_ERR_CAT_OCI`/`OCI_ERR_CAT_JZN`); and `OCI_ErrorGetOCICode()`/`OCI_ErrorGetInternalCode()` are unified into a single `OCI_ErrorGetCode()`. The C++ `ocilib::Exception` mirrors this with `GetType()` (error type), `GetCategory()`, and `GetCode()`. JSON DOM (`jzn*`) failures are reported through `OCI_Error` with the `OCI_ERR_CAT_JZN` category and reach the user error handler and the logging subsystem like every other error.
 - **JSON DOM API.** Full document-object-model support over Oracle's native JSON DOM (`jzn*`): `OCI_Json` documents (create from text/binary, mutable/immutable, root access) and `OCI_JsonNode` handles — scalar/object/array typed getters and setters, number accessors for every C numeric type plus `OCI_Number`, date/timestamp/interval/binary/string/boolean/null nodes, object field ops (`SetField`/`GetField`/`HasField`/`RemoveField`/`GetFieldCount`/`GetFieldByIndex`/`GetFieldName`), array ops (`GetItem`/`SetItem`/`AppendItem`/`InsertItem`/`RemoveItem`/`GetItemCount`), `GetParent`, `GetByPath`, `Clear`, `RemoveItems` (range delete), `RenameField`, `Equals` (deep compare), `Assign` (deep copy into a node), `GetJson` (owning document). C++ `Json`/`JsonNode` mirrors it, including `node["key"]`/`node[i]` indexing and the generic `GetNumeric<T>`/`SetNumeric` templates covering all supported numeric types (`Number` included).
-- **SODA API.** Complete Simple Oracle Document Access surface: `OCI_SodaDb` (create/open/drop collections, collection-name list, document factories), `OCI_SodaColl` (insert/replace/save single docs, bulk `InsertMany`, `Find`/`FindOne`/`FindOneWithKey`, `Count`, `Truncate`, data guide, index management `CreateIndex`/`DropIndex`/`ListIndexes`. `ReplaceOne`/`ReplaceOneByKey`/`InsertMany`/`Save` take a trailing `refresh` flag that updates the caller's document in place with server-assigned attributes (former `*AndGet` variants); `Find` uses the native `OCISodaOperKeysSet` multi-key path when the client supports it. 23ai additions: `OCI_JsonValidate`/`Json::Validate` for JSON schema validation and `OCI_ColumnHasJsonSchema`/`Column::HasJsonSchema` for JSON schema column constraints), `OCI_SodaDoc` (content/key/media-type/created-on/last-modified/version attributes), `OCI_SodaOptions` (fetch-array-size, limit, skip, lock, hint, filter), and document/collection cursors. C++ mirrors: `SodaDb`, `SodaColl`, `SodaDoc`, `SodaOptions`, `SodaDocCursor`, `SodaCollCursor` (input-iterator `begin()`/`end()` for range-for).
+- **SODA API.** Complete Simple Oracle Document Access surface: `OCI_SodaDatabase` (create/open/drop collections, collection-name list, document factories), `OCI_SodaCollection` (insert/replace/save single docs, bulk `InsertMany`, `Find`/`FindOne`/`FindOneWithKey`, `Count`, `Truncate`, data guide, index management `CreateIndex`/`DropIndex`/`ListIndexes`. `ReplaceOne`/`ReplaceOneByKey`/`InsertMany`/`Save` take a trailing `refresh` flag that updates the caller's document in place with server-assigned attributes (former `*AndGet` variants); `Find` uses the native `OCISodaOperKeysSet` multi-key path when the client supports it. 23ai additions: `OCI_JsonValidate`/`Json::Validate` for JSON schema validation and `OCI_ColumnHasJsonSchema`/`Column::HasJsonSchema` for JSON schema column constraints), `OCI_SodaDocument` (content/key/media-type/created-on/last-modified/version attributes), `OCI_SodaOptions` (fetch-array-size, limit, skip, lock, hint, filter), and document/collection cursors. C++ mirrors: `SodaDatabase`, `SodaCollection`, `SodaDocument`, `SodaOptions`, `SodaDocumentCursor`, `SodaCollectionCursor` (input-iterator `begin()`/`end()` for range-for).
 - **Iterator-capable C++ API.** `Resultset`, `JsonNode` and the SODA cursors expose `begin()`/`end()` input iterators — `for (auto&& row : rs)` replaces `while (rs.Next())`, `for (auto&& node : jsonNode)` iterates array items and object fields, and the cursors iterate documents. The iterators satisfy the `std::input_iterator` concept, making them directly usable with `std::ranges` and other iterator-based standard algorithms; scrollable `Resultset` iterators additionally support `--`, `+=`, `-=` and `[]` (seek) navigation.
 - **C++17 modernization.** The C++ API adopts standard C++17 idioms: `std::optional` support via `GetOptional<T>` on `Resultset`, `Object` and `Row` (`std::nullopt` on SQL NULL); `[[nodiscard]]` on all value-returning getters and factories; move semantics on `HandleHolder` (refcount-free returns and container moves); a `core::IsCollection` trait with `static_assert` diagnostics making `Resultset::Get<T>`/`Object::Get<T>`/`Collection::Get<T>` fail clearly on unsupported types instead of silently treating them as collections; and RAW getters fill the returned `Raw` buffer directly (one allocation instead of temp-vector+copy). The `ocilib::ostring` typedef is renamed `ocilib::String` (an `ostring` alias is kept for compatibility) and a `ocilib::StringView` (`std::basic_string_view<otext>`) typedef is available.
 - **Oracle Sharding support.** New `OCI_ShardingKey` handle (`OCI_ShardingKeyCreate`/`Free`/`Reset`, typed `OCI_ShardingKeyAdd*` column appenders for string/number/date/timestamp/raw, base64 `OCI_ShardingKeyToText` diagnostics), sharded connection creation (`OCI_ConnectionCreateSharded`), sharded pool checkout (`OCI_PoolGetConnectionSharded`). C++ mirrors: `ShardingKey` with templated `AddColumn<T>`, a sharded `Connection` constructor and a sharded `Pool::GetConnection` overload. Requires Oracle 12cR2 or above.
@@ -49,7 +50,6 @@ The biggest user-visible change is the end of the global, static environment.
 - `OCI_Initialize()` / `OCI_Cleanup()` have been removed.
 - All top-level constructors that previously relied on an implicit global environment now take an explicit `OCI_Environment*`: `OCI_ConnectionCreate`, `OCI_PoolCreate`, `OCI_NumberCreate`, `OCI_DateCreate`, `OCI_TimestampCreate`, etc.
 - `OCI_GetLastError()` no longer takes a parameter and returns the per-thread `OCI_Error` stored in C11 `tss_t`, in all modes. The `OCI_ENV_CONTEXT` flag has been removed: thread-local error storage is always enabled.
-- New `OCI_HasError()` returns TRUE when an error (or enabled warning) was recorded on the calling thread.
 - A new public function `OCI_HandleGetEnvironment()` can recover the owning `OCI_Environment*` from any OCILIB handle.
 
 ---
@@ -143,7 +143,7 @@ Typical lines:
 - The `mem_bytes_oci` counter and the `AllocatedBytesFlags` enumeration have been removed.
 - `OCI_GetAllocatedBytes()` and `Environment::GetAllocatedBytes()` have been removed.
 - Use the new generic diagnostic API:
-  - C: `OCI_UInt64 OCI_GetStats(OCI_Environment* env, OCI_Stat stat);`
+  - C: `OCI_UInt64 OCI_EnvironmentGetStats(OCI_Environment* env, OCI_Stat stat);`
   - C++: `OCI_UInt64 Environment::GetStats(OCI_Stat stat) const;`
 - Supported `OCI_Stat` / `stat` values:
   - `OCI_UST_BYTES` — bytes allocated internally by OCILIB.
@@ -173,7 +173,7 @@ In `src/callback.c`, the `OcilibCallbackNotifyChanges` callback now treats `OCI_
 `OCI_DequeueSubscribe()` has been restructured:
 - Old signature took a single `OCI_Dequeue*` and a `port` argument.
 - New signature takes a connection, an array of `OCI_Dequeue*`, a count, a timeout, and a callback: `OCI_DequeueSubscribe(OCI_Connection*, OCI_Dequeue**, unsigned int, unsigned int, POCI_NOTIFY_AQ)`.
-- The notification port is now configured once per environment with `OCI_SetSubscriptionPort()`.
+- The notification port is now configured once per environment with `OCI_EnvironmentSetSubscriptionPort()`.
 - All dequeues are registered with a single `OCISubscriptionRegister()` call, eliminating the `ORA-24915` caused by repeated listener starts.
 
 ### Other fixes
@@ -187,51 +187,56 @@ In `src/callback.c`, the `OcilibCallbackNotifyChanges` callback now treats `OCI_
 
 The following items require code changes when upgrading from v4.x to v5.0.0:
 
-1. **Initialization / cleanup**
+1. **API naming overhaul**
+   - The whole C API moved to the `OCI_<Type><Action>` model: ~460 functions, 11 handle typedefs, 12 integer constants renamed.
+   - `include/ocilibc/compat.h` maps old names to new ones — most code recompiles unchanged; define `OCI_NO_COMPAT` to let the compiler flag every old name. Binary compatibility is not preserved.
+   - Full v4 → v5 table: `doc/migration-guide-c-api.md`, Appendix A.
+
+2. **Initialization / cleanup**
    - Replace `OCI_Initialize(...)` / `OCI_Cleanup()` with `OCI_EnvironmentCreate(...)` / `OCI_EnvironmentFree(env)`.
 
-2. **Environment parameter**
+3. **Environment parameter**
    - Pass `OCI_Environment*` to constructors such as `OCI_ConnectionCreate`, `OCI_PoolCreate`, `OCI_DateCreate`, `OCI_NumberCreate`, `OCI_TimestampCreate`, etc.
 
-3. **Threading / mutex / TLS**
+4. **Threading / mutex / TLS**
    - Replace `OCI_Mutex*`, `OCI_Thread*`, and `OCI_ThreadKey*` usage with C11 `<threads.h>`, C++ `<thread>`/`<mutex>`, or platform APIs.
 
-4. **XA**
+5. **XA**
    - Remove any `OCI_SESSION_XA` usage; XA connectivity is no longer supported.
 
-5. **Notifications / AQ**
-   - Call `OCI_SetSubscriptionPort(env, port)` before registering subscriptions or dequeue listeners.
+6. **Notifications / AQ**
+   - Call `OCI_EnvironmentSetSubscriptionPort(env, port)` before registering subscriptions or dequeue listeners.
    - Update `OCI_DequeueSubscribe()` calls to the new connection + array signature.
 
-6. **Memory / resource statistics**
-   - Replace `OCI_GetAllocatedBytes()` calls with `OCI_GetStats(env, OCI_UST_BYTES)`.
+7. **Memory / resource statistics**
+   - Replace `OCI_GetAllocatedBytes()` calls with `OCI_EnvironmentGetStats(env, OCI_UST_BYTES)`.
    - The separate OCI-client byte counter is no longer available.
    - Other counters are available through `OCI_UST_HANDLES`, `OCI_UST_DESCRIPTORS`, and `OCI_UST_OBJECTS`.
 
-7. **C++ API**
+8. **C++ API**
    - A C++17 compiler is now required.
    - `ocilib::Mutex`, `ocilib::Thread`, and `ocilib::ThreadKey` are removed.
    - `ocilib::Environment` is constructed explicitly and is not a singleton.
    - Replace `Environment::GetAllocatedBytes()` with `Environment::GetStats(OCI_UST_BYTES)`.
 
-8. **Error model**
+9. **Error model**
    - `OCI_GetLastError()` takes no argument and always returns the calling thread's `OCI_Error` (thread-local storage is no longer opt-in).
    - `OCI_ErrorGetType()` now returns the error type only (`OCI_ERR_TYPE_ERROR`/`OCI_ERR_TYPE_WARNING`); `OCI_ERR_ORACLE`/`OCI_ERR_OCILIB`/`OCI_ERR_WARNING` are removed — use `OCI_ErrorGetCategory()` (`OCI_ERR_CAT_LIB`/`OCI_ERR_CAT_OCI`/`OCI_ERR_CAT_JZN`) to identify the originating subsystem.
    - `OCI_ErrorGetOCICode()`/`OCI_ErrorGetInternalCode()` are removed — use `OCI_ErrorGetCode()`.
    - C++: `Exception::GetType()` returns the error type (`Exception::Error`/`Warning`), new `Exception::GetCategory()` returns the origin, and `GetOracleErrorCode()`/`GetInternalErrorCode()` are replaced by `Exception::GetCode()`.
 
-9. **Boolean type**
+10. **Boolean type**
    - The public boolean type is now `OCI_Boolean` (`typedef int OCI_Boolean`), replacing the `#define boolean int` macro that polluted every consumer translation unit.
    - `boolean` remains available as a compatibility typedef (`typedef OCI_Boolean boolean`) so existing code still compiles; new code should use `OCI_Boolean`.
 
-10. **Index convention — 1-based → 0-based**
+11. **Index convention — 1-based → 0-based**
    - All index parameters in the C and C++ APIs are now 0-based (resultset columns, binds, collection elements, JSON items/fields, type-info columns, direct-path rows/columns, bind array positions, absolute fetch seeks).
-   - `OCI_GetColumnIndex`, `OCI_GetBindIndex`, `OCI_GetCurrentRow`, `OCI_ErrorGetRow` (and their C++ mirrors `GetColumnIndex`/`GetBindIndex`/`GetCurrentRow`/`Exception::GetRow`) now return `OCI_Int32`/`Int32` and use **`-1`** as the "not found / no position" sentinel where v4 used `0`.
-   - `OCI_GetBindIndex` (and C++ `Statement::GetBindIndex`) no longer reports registered binds: names created by `OCI_RegisterXxx()`/`RegisterXxx()` leaked an internal position in v4 that could not be used with `OCI_GetBind()`/`GetBind()` — in v5 they return **`-1`** (registers are out-params, not binds).
+   - `OCI_ResultsetGetColumnIndex`, `OCI_StatementGetBindIndex`, `OCI_ResultsetGetCurrentRow`, `OCI_ErrorGetRow` (and their C++ mirrors `GetColumnIndex`/`GetBindIndex`/`GetCurrentRow`/`Exception::GetRow`) now return `OCI_Int32`/`Int32` and use **`-1`** as the "not found / no position" sentinel where v4 used `0`.
+   - `OCI_StatementGetBindIndex` (and C++ `Statement::GetBindIndex`) no longer reports registered binds: names created by `OCI_StatementRegisterXxx()`/`RegisterXxx()` leaked an internal position in v4 that could not be used with `OCI_StatementGetBind()`/`GetBind()` — in v5 they return **`-1`** (registers are out-params, not binds).
    - C++ `coll[i]`/`node[i]` and `Collection`/`JsonNode` iterators iterate positions `0..count-1` (`end()` is now `count`, not `count+1`).
    - Audit every numeric literal and index loop (`for (i = 1; i <= n; ++i)` → `for (i = 0; i < n; ++i)`), including JSONPath-like array access (`$.arr[0]` is now the first item).
 
-11. **Fixed-width integer types**
+12. **Fixed-width integer types**
    - New public typedefs: `OCI_Int16`, `OCI_UInt16`, `OCI_Int32`, `OCI_UInt32`, `OCI_Int64`, `OCI_UInt64`, `OCI_Float`, `OCI_Double`, plus `OCI_Size` for byte sizes and buffer lengths.
    - The C++ API additionally exposes short aliases in `namespace ocilib`: `Int16`, `UInt16`, `Int32`, `UInt32`, `Int64`, `UInt64`, `Float`, `Double`, `Size` (same types as the `OCI_` names).
    - The C API (headers, `src/`, demos, tests) uses these types in place of bare `int`, `unsigned int`, `short`, `unsigned short` and `size_t`.
@@ -250,7 +255,7 @@ The gtest-based suite was heavily expanded and updated for the v5.0 APIs.
 - `TestConnection`, `TestPool`, `TestQueue`, `TestSubscription`, `TestNotifications`, and other existing modules were updated to use `OCI_EnvironmentCreate`, `std::thread`, the new subscription port API, and the new dequeue registration signature.
 - The Visual Studio test project (`tests/ocilib_tests.vcxproj`) and filters were updated to reflect the new file set.
 - **Version-emulated environments for coverage.** `GetSpecificEnvironment(handler, version)` builds a dedicated env whose effective OCI runtime version is passed to `OcilibEnvironmentCreate` at init time, so version-gated code paths are exercised on a modern client with no old Oracle install required: legacy `OCILob*` (ub4) calls, `OCIDescriptor*` array loops (pre-11.1), `CHECK_*_ENABLED` feature gates (SODA/JSON/VECTOR), the pre-8i `OCIInitialize`/`OCIEnvInit` init path, and the `<8i` threaded-mode rejection.
-- **Package-type regression tests.** `TestTypeInfoPlsql` covers `OCI_TypeInfoGet` on PL/SQL package types: flat and nested records, index-by tables, package-vs-schema type discrimination, PL/SQL-only scalars (`BINARY_INTEGER`, `PLS_INTEGER`, `BINARY_FLOAT`/`DOUBLE`), the `schema.package.type` qualification requirement, and the PL/SQL-only `SQLT_REC`/`SQLT_TAB`/`SQLT_*` sqltype-name arms of `OCI_ColumnGetSQLType`/`OCI_ColumnGetFullSQLType`.
+- **Package-type regression tests.** `TestTypeInfoPlsql` covers `OCI_TypeInfoGet` on PL/SQL package types: flat and nested records, index-by tables, package-vs-schema type discrimination, PL/SQL-only scalars (`BINARY_INTEGER`, `PLS_INTEGER`, `BINARY_FLOAT`/`DOUBLE`), the `schema.package.type` qualification requirement, and the PL/SQL-only `SQLT_REC`/`SQLT_TAB`/`SQLT_*` sqltype-name arms of `OCI_ColumnGetSqlType`/`OCI_ColumnGetFullSqlType`.
 - **Logging coverage.** `OcilibLogWrite`/`OcilibLogCleanup` are exercised in-suite by driving the internal `OCI_SYM_LOCAL` logger entry points directly (draining the shared-environment refcount, re-initializing with `OCILIB_LOG*` vars, writing, and closing) — ~98% of `src\log.c` covered without enabling logging for the whole test session.
 - **Attribute-format coverage.** `OCI_ObjectToText` is exercised on a fully populated object type so every per-datatype arm runs — RAW, DATE, TIMESTAMP, INTERVAL, LOB, BFILE, REF, nested OBJECT and COLLECTION.
 - **Error-source coverage.** `OCI_ErrorGetConnection` source-object arms (ELEMENT, LONG, SODA doc cursor) are covered via targeted error triggers; the ITERATOR and EVENT arms have no clean public trigger and remain uncovered by design.

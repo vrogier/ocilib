@@ -28,7 +28,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibSubscriptionDispose
     OCI_Subscription *sub
 );
 
-OCI_SYM_LOCAL OCI_Subscription * OcilibSubscriptionRegister
+OCI_SYM_LOCAL OCI_Subscription * OcilibSubscriptionCreate
 (
     OCI_Connection      *con,
     const otext         *name,

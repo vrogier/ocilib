@@ -20,48 +20,48 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, sql.data()));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, sql.data()));
 
-        const auto rset = OCI_GetResultset(stmt);
+        const auto rset = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rset);
 
         OCI_Int32 nbRows = 0;
         OCI_Int32 itemIndex = 0;
 
-        while (OCI_FetchNext(rset))
+        while (OCI_ResultsetFetchNext(rset))
         {
             nbRows++;
 
             String category = OTEXT("category ") + TO_STRING(nbRows);
-            ASSERT_EQ(category, String(OCI_GetString(rset, 0)));
+            ASSERT_EQ(category, String(OCI_ResultsetGetString(rset, 0)));
 
-            const auto coll = OCI_GetColl(rset, 1);
+            const auto coll = OCI_ResultsetGetColl(rset, 1);
             ASSERT_NE(nullptr, coll);
 
-            ASSERT_EQ(expectedItems, OCI_CollGetCount(coll));
-            ASSERT_EQ(expectedItems, OCI_CollGetSize(coll));
+            ASSERT_EQ(expectedItems, OCI_CollectionGetCount(coll));
+            ASSERT_EQ(expectedItems, OCI_CollectionGetSize(coll));
 
-            const auto iter = OCI_IterCreate(coll);
+            const auto iter = OCI_IteratorCreate(coll);
             ASSERT_NE(nullptr, iter);
 
-            auto elem = OCI_IterGetNext(iter);
+            auto elem = OCI_IteratorGetNext(iter);
             ASSERT_NE(nullptr, elem);
 
             while (elem)
             {
                 itemIndex++;
 
-                const auto obj = OCI_ElemGetObject(elem);
+                const auto obj = OCI_ElementGetObject(elem);
                 ASSERT_NE(nullptr, obj);
 
                 String itemName = OTEXT("name ") + TO_STRING(itemIndex);
 
-                ASSERT_EQ(itemIndex, OCI_ObjectGetInt(obj, OTEXT("code")));
+                ASSERT_EQ(itemIndex, OCI_ObjectGetInt32(obj, OTEXT("code")));
                 ASSERT_EQ(itemName, OCI_ObjectGetString(obj, OTEXT("name")));
-                elem = OCI_IterGetNext(iter);
+                elem = OCI_IteratorGetNext(iter);
             }
             
-            ASSERT_TRUE(OCI_IterFree(iter));
+            ASSERT_TRUE(OCI_IteratorFree(iter));
         }
 
         ASSERT_EQ(expectedRows, nbRows);
@@ -83,44 +83,44 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        const auto coll = OCI_CollCreate(OCI_TypeInfoGet(conn, type.data(), OCI_TIF_TYPE));
+        const auto coll = OCI_CollectionCreate(OCI_TypeInfoGet(conn, type.data(), OCI_TIF_TYPE));
         ASSERT_NE(nullptr, coll);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, sql.data()));
-        ASSERT_NE(nullptr, OCI_BindColl(stmt, OTEXT(":coll"), coll));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, sql.data()));
+        ASSERT_NE(nullptr, OCI_StatementBindCollection(stmt, OTEXT(":coll"), coll));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
         const OCI_Int32 expectedItems = 3;
 
         OCI_Int32 itemIndex = 0;
 
-        ASSERT_EQ(expectedItems, OCI_CollGetCount(coll));
-        ASSERT_EQ(expectedItems, OCI_CollGetSize(coll));
+        ASSERT_EQ(expectedItems, OCI_CollectionGetCount(coll));
+        ASSERT_EQ(expectedItems, OCI_CollectionGetSize(coll));
 
-        const auto iter = OCI_IterCreate(coll);
+        const auto iter = OCI_IteratorCreate(coll);
         ASSERT_NE(nullptr, iter);
 
-        auto elem = OCI_IterGetNext(iter);
+        auto elem = OCI_IteratorGetNext(iter);
         ASSERT_NE(nullptr, elem);
 
         while (elem)
         {
             itemIndex++;
 
-            const auto obj = OCI_ElemGetObject(elem);
+            const auto obj = OCI_ElementGetObject(elem);
             ASSERT_NE(nullptr, obj);
 
             String itemName = OTEXT("name ") + TO_STRING(itemIndex);
 
-            ASSERT_EQ(itemIndex, OCI_ObjectGetInt(obj, OTEXT("code")));
+            ASSERT_EQ(itemIndex, OCI_ObjectGetInt32(obj, OTEXT("code")));
             ASSERT_EQ(itemName, OCI_ObjectGetString(obj, OTEXT("name")));
-            elem = OCI_IterGetNext(iter);
+            elem = OCI_IteratorGetNext(iter);
         }
 
         ASSERT_EQ(expectedItems, itemIndex);
 
-        ASSERT_TRUE(OCI_IterFree(iter));
-        ASSERT_TRUE(OCI_CollFree(coll));
+        ASSERT_TRUE(OCI_IteratorFree(iter));
+        ASSERT_TRUE(OCI_CollectionFree(coll));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
@@ -215,37 +215,37 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT TestCApiCovVarray(1, 2, 3) FROM DUAL")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT TestCApiCovVarray(1, 2, 3) FROM DUAL")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 0);
+        const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
-        ASSERT_EQ(3u, OCI_CollGetSize(coll));
+        ASSERT_EQ(3u, OCI_CollectionGetSize(coll));
 
-        auto iter = OCI_IterCreate(coll);
+        auto iter = OCI_IteratorCreate(coll);
         ASSERT_NE(nullptr, iter);
 
         OCI_Int32 expected = 1;
-        for (auto elem = OCI_IterGetNext(iter); elem != nullptr; elem = OCI_IterGetNext(iter), ++expected)
+        for (auto elem = OCI_IteratorGetNext(iter); elem != nullptr; elem = OCI_IteratorGetNext(iter), ++expected)
         {
-            ASSERT_EQ(expected, OCI_ElemGetInt(elem));
+            ASSERT_EQ(expected, OCI_ElementGetInt32(elem));
         }
         ASSERT_EQ(4, expected);
 
-        ASSERT_TRUE(OCI_IterFree(iter));
+        ASSERT_TRUE(OCI_IteratorFree(iter));
 
-        auto direct = OCI_CollGetElem(coll, 1);
+        auto direct = OCI_CollectionGetElement(coll, 1);
         ASSERT_NE(nullptr, direct);
-        ASSERT_EQ(2, OCI_ElemGetInt(direct));
-        ASSERT_FALSE(OCI_ElemIsNull(direct));
+        ASSERT_EQ(2, OCI_ElementGetInt32(direct));
+        ASSERT_FALSE(OCI_ElementIsNull(direct));
 
         otext collText[512];
         OCI_UInt32 collTextSize = 512;
-        ASSERT_TRUE(OCI_CollToText(coll, &collTextSize, collText));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &collTextSize, collText));
         ASSERT_GT(collTextSize, 0u);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -267,35 +267,35 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT TestCApiCovStrVarray('first', 'second') FROM DUAL")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT TestCApiCovStrVarray('first', 'second') FROM DUAL")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 0);
+        const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext collText[512];
         OCI_UInt32 collTextSize = 512;
-        ASSERT_TRUE(OCI_CollToText(coll, &collTextSize, collText));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &collTextSize, collText));
         ASSERT_GT(collTextSize, 0u);
 
-        auto elem = OCI_CollGetElem(coll, 0);
+        auto elem = OCI_CollectionGetElement(coll, 0);
         ASSERT_NE(nullptr, elem);
-        const otext* str = OCI_ElemGetString(elem);
+        const otext* str = OCI_ElementGetString(elem);
         ASSERT_NE(nullptr, str);
         ASSERT_EQ(String(OTEXT("first")), String(str));
 
         auto typinf = OCI_TypeInfoGet(con, OTEXT("TestCApiCovStrVarray"), OCI_TIF_TYPE);
         ASSERT_NE(nullptr, typinf);
-        auto local = OCI_ElemCreate(typinf);
+        auto local = OCI_ElementCreate(typinf);
         ASSERT_NE(nullptr, local);
-        ASSERT_TRUE(OCI_ElemSetString(local, OTEXT("local value")));
-        ASSERT_EQ(String(OTEXT("local value")), String(OCI_ElemGetString(local)));
-        ASSERT_TRUE(OCI_ElemSetNull(local));
-        ASSERT_TRUE(OCI_ElemIsNull(local));
-        ASSERT_TRUE(OCI_ElemFree(local));
+        ASSERT_TRUE(OCI_ElementSetString(local, OTEXT("local value")));
+        ASSERT_EQ(String(OTEXT("local value")), String(OCI_ElementGetString(local)));
+        ASSERT_TRUE(OCI_ElementSetNull(local));
+        ASSERT_TRUE(OCI_ElementIsNull(local));
+        ASSERT_TRUE(OCI_ElementFree(local));
 
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -313,8 +313,8 @@ namespace TestCApi
     protected:
         OCI_Connection* con = nullptr;
         OCI_TypeInfo* typinf = nullptr;
-        OCI_Coll* coll = nullptr;
-        OCI_Elem* elem = nullptr;
+        OCI_Collection* coll = nullptr;
+        OCI_Element* elem = nullptr;
 
         void SetUp() override
         {
@@ -324,16 +324,16 @@ namespace TestCApi
             ASSERT_NE(nullptr, con);
             typinf = OCI_TypeInfoGet(con, OTEXT("TestCollCrud"), OCI_TIF_TYPE);
             ASSERT_NE(nullptr, typinf);
-            coll = OCI_CollCreate(typinf);
+            coll = OCI_CollectionCreate(typinf);
             ASSERT_NE(nullptr, coll);
-            elem = OCI_ElemCreate(typinf);
+            elem = OCI_ElementCreate(typinf);
             ASSERT_NE(nullptr, elem);
         }
 
         void TearDown() override
         {
-            if (elem) OCI_ElemFree(elem);
-            if (coll) OCI_CollFree(coll);
+            if (elem) OCI_ElementFree(elem);
+            if (coll) OCI_CollectionFree(coll);
             if (typinf) OCI_TypeInfoFree(typinf);
             if (con) OCI_ConnectionFree(con);
 
@@ -342,31 +342,31 @@ namespace TestCApi
 
         void AppendInt(OCI_Int32 v)
         {
-            ASSERT_TRUE(OCI_ElemSetInt(elem, v));
-            ASSERT_TRUE(OCI_CollAppend(coll, elem));
+            ASSERT_TRUE(OCI_ElementSetInt32(elem, v));
+            ASSERT_TRUE(OCI_CollectionAppend(coll, elem));
         }
     };
 
     TEST_F(TestCollVarray, CreateVarray_ReportsTypeMetaAndEmpty)
     {
-        EXPECT_EQ((OCI_UInt32) OCI_COLL_VARRAY, OCI_CollGetType(coll));
-        EXPECT_EQ(10u, OCI_CollGetMax(coll));
-        EXPECT_EQ(0u, OCI_CollGetSize(coll));
-        EXPECT_EQ(0u, OCI_CollGetCount(coll));
-        EXPECT_EQ(typinf, OCI_CollGetTypeInfo(coll));
+        EXPECT_EQ((OCI_UInt32) OCI_COLL_VARRAY, OCI_CollectionGetType(coll));
+        EXPECT_EQ(10u, OCI_CollectionGetMax(coll));
+        EXPECT_EQ(0u, OCI_CollectionGetSize(coll));
+        EXPECT_EQ(0u, OCI_CollectionGetCount(coll));
+        EXPECT_EQ(typinf, OCI_CollectionGetTypeInfo(coll));
     }
 
     TEST_F(TestCollVarray, AppendElem_IncreasesSizeAndCount)
     {
         AppendInt(10);
 
-        EXPECT_EQ(1u, OCI_CollGetSize(coll));
-        EXPECT_EQ(1u, OCI_CollGetCount(coll));
+        EXPECT_EQ(1u, OCI_CollectionGetSize(coll));
+        EXPECT_EQ(1u, OCI_CollectionGetCount(coll));
 
         AppendInt(20);
 
-        EXPECT_EQ(2u, OCI_CollGetSize(coll));
-        EXPECT_EQ(2u, OCI_CollGetCount(coll));
+        EXPECT_EQ(2u, OCI_CollectionGetSize(coll));
+        EXPECT_EQ(2u, OCI_CollectionGetCount(coll));
     }
 
     TEST_F(TestCollVarray, GetElemAtIndex_ReturnsAppendedValues)
@@ -374,12 +374,12 @@ namespace TestCApi
         AppendInt(10);
         AppendInt(20);
 
-        auto e1 = OCI_CollGetElem(coll, 0);
+        auto e1 = OCI_CollectionGetElement(coll, 0);
         ASSERT_NE(nullptr, e1);
-        EXPECT_EQ(10, OCI_ElemGetInt(e1));
-        auto e2 = OCI_CollGetElem(coll, 1);
+        EXPECT_EQ(10, OCI_ElementGetInt32(e1));
+        auto e2 = OCI_CollectionGetElement(coll, 1);
         ASSERT_NE(nullptr, e2);
-        EXPECT_EQ(20, OCI_ElemGetInt(e2));
+        EXPECT_EQ(20, OCI_ElementGetInt32(e2));
     }
 
     TEST_F(TestCollVarray, SetElemAtIndex_ReplacesValue)
@@ -387,26 +387,26 @@ namespace TestCApi
         AppendInt(10);
         AppendInt(20);
 
-        ASSERT_TRUE(OCI_ElemSetInt(elem, 30));
-        ASSERT_TRUE(OCI_CollSetElem(coll, 0, elem));
+        ASSERT_TRUE(OCI_ElementSetInt32(elem, 30));
+        ASSERT_TRUE(OCI_CollectionSetElement(coll, 0, elem));
 
-        EXPECT_EQ(30, OCI_ElemGetInt(OCI_CollGetElem(coll, 0)));
-        EXPECT_EQ(20, OCI_ElemGetInt(OCI_CollGetElem(coll, 1)));
+        EXPECT_EQ(30, OCI_ElementGetInt32(OCI_CollectionGetElement(coll, 0)));
+        EXPECT_EQ(20, OCI_ElementGetInt32(OCI_CollectionGetElement(coll, 1)));
     }
 
     TEST_F(TestCollVarray, CollAssign_CopiesAllElements)
     {
         AppendInt(10);
         AppendInt(20);
-        const auto coll2 = OCI_CollCreate(typinf);
+        const auto coll2 = OCI_CollectionCreate(typinf);
         ASSERT_NE(nullptr, coll2);
 
-        ASSERT_TRUE(OCI_CollAssign(coll2, coll));
+        ASSERT_TRUE(OCI_CollectionAssign(coll2, coll));
 
-        EXPECT_EQ(2u, OCI_CollGetCount(coll2));
-        EXPECT_EQ(20, OCI_ElemGetInt(OCI_CollGetElem(coll2, 1)));
+        EXPECT_EQ(2u, OCI_CollectionGetCount(coll2));
+        EXPECT_EQ(20, OCI_ElementGetInt32(OCI_CollectionGetElement(coll2, 1)));
 
-        ASSERT_TRUE(OCI_CollFree(coll2));
+        ASSERT_TRUE(OCI_CollectionFree(coll2));
     }
 
     TEST_F(TestCollVarray, CollToText_RendersNonEmptyText)
@@ -416,7 +416,7 @@ namespace TestCApi
         otext text[512];
         OCI_UInt32 size = 512;
 
-        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &size, text));
 
         EXPECT_GT(size, 0u);
     }
@@ -426,9 +426,9 @@ namespace TestCApi
         AppendInt(10);
         AppendInt(20);
 
-        ASSERT_TRUE(OCI_CollDeleteElem(coll, 0));
+        ASSERT_TRUE(OCI_CollectionDeleteElement(coll, 0));
 
-        EXPECT_EQ(2u, OCI_CollGetCount(coll));
+        EXPECT_EQ(2u, OCI_CollectionGetCount(coll));
     }
 
     TEST_F(TestCollVarray, Trim_ReducesCountFromEnd)
@@ -436,9 +436,9 @@ namespace TestCApi
         AppendInt(10);
         AppendInt(20);
 
-        ASSERT_TRUE(OCI_CollTrim(coll, 1));
+        ASSERT_TRUE(OCI_CollectionTrim(coll, 1));
 
-        EXPECT_EQ(1u, OCI_CollGetCount(coll));
+        EXPECT_EQ(1u, OCI_CollectionGetCount(coll));
     }
 
     TEST_F(TestCollVarray, Clear_EmptiesCollection)
@@ -446,20 +446,20 @@ namespace TestCApi
         AppendInt(10);
         AppendInt(20);
 
-        ASSERT_TRUE(OCI_CollClear(coll));
+        ASSERT_TRUE(OCI_CollectionClear(coll));
 
-        EXPECT_EQ(0u, OCI_CollGetCount(coll));
+        EXPECT_EQ(0u, OCI_CollectionGetCount(coll));
     }
 
     TEST_F(TestCollVarray, CollArrayCreate_AllocatesCollectionHandles)
     {
-        const auto colls = OCI_CollArrayCreate(typinf, 2);
+        const auto colls = OCI_CollectionArrayCreate(typinf, 2);
 
         ASSERT_NE(nullptr, colls);
         EXPECT_NE(nullptr, colls[0]);
         EXPECT_NE(nullptr, colls[1]);
 
-        ASSERT_TRUE(OCI_CollArrayFree(colls));
+        ASSERT_TRUE(OCI_CollectionArrayFree(colls));
     }
 
     /* -------------------------------------------------------------------------
@@ -471,8 +471,8 @@ namespace TestCApi
     protected:
         OCI_Connection* con = nullptr;
         OCI_TypeInfo* typinf = nullptr;
-        OCI_Coll* coll = nullptr;
-        OCI_Elem* elem = nullptr;
+        OCI_Collection* coll = nullptr;
+        OCI_Element* elem = nullptr;
 
         void SetUp() override
         {
@@ -482,16 +482,16 @@ namespace TestCApi
             ASSERT_NE(nullptr, con);
             typinf = OCI_TypeInfoGet(con, OTEXT("TestCollNested"), OCI_TIF_TYPE);
             ASSERT_NE(nullptr, typinf);
-            coll = OCI_CollCreate(typinf);
+            coll = OCI_CollectionCreate(typinf);
             ASSERT_NE(nullptr, coll);
-            elem = OCI_ElemCreate(typinf);
+            elem = OCI_ElementCreate(typinf);
             ASSERT_NE(nullptr, elem);
         }
 
         void TearDown() override
         {
-            if (elem) OCI_ElemFree(elem);
-            if (coll) OCI_CollFree(coll);
+            if (elem) OCI_ElementFree(elem);
+            if (coll) OCI_CollectionFree(coll);
             if (typinf) OCI_TypeInfoFree(typinf);
             if (con) OCI_ConnectionFree(con);
 
@@ -500,14 +500,14 @@ namespace TestCApi
 
         void AppendInt(OCI_Int32 v)
         {
-            ASSERT_TRUE(OCI_ElemSetInt(elem, v));
-            ASSERT_TRUE(OCI_CollAppend(coll, elem));
+            ASSERT_TRUE(OCI_ElementSetInt32(elem, v));
+            ASSERT_TRUE(OCI_CollectionAppend(coll, elem));
         }
     };
 
     TEST_F(TestCollNested, CreateNestedTable_ReportsNestedTableType)
     {
-        EXPECT_EQ((OCI_UInt32) OCI_COLL_NESTED_TABLE, OCI_CollGetType(coll));
+        EXPECT_EQ((OCI_UInt32) OCI_COLL_NESTED_TABLE, OCI_CollectionGetType(coll));
     }
 
     TEST_F(TestCollNested, AppendElems_IncreasesCount)
@@ -516,7 +516,7 @@ namespace TestCApi
         AppendInt(2);
         AppendInt(3);
 
-        EXPECT_EQ(3u, OCI_CollGetCount(coll));
+        EXPECT_EQ(3u, OCI_CollectionGetCount(coll));
     }
 
     TEST_F(TestCollNested, DeleteElem_DecreasesCount)
@@ -525,9 +525,9 @@ namespace TestCApi
         AppendInt(2);
         AppendInt(3);
 
-        ASSERT_TRUE(OCI_CollDeleteElem(coll, 2));
+        ASSERT_TRUE(OCI_CollectionDeleteElement(coll, 2));
 
-        EXPECT_LT(OCI_CollGetCount(coll), 3u);
+        EXPECT_LT(OCI_CollectionGetCount(coll), 3u);
     }
 
     TEST_F(TestCollNested, Trim_ReducesCount)
@@ -536,9 +536,9 @@ namespace TestCApi
         AppendInt(2);
         AppendInt(3);
 
-        ASSERT_TRUE(OCI_CollTrim(coll, 1));
+        ASSERT_TRUE(OCI_CollectionTrim(coll, 1));
 
-        EXPECT_GT(OCI_CollGetCount(coll), 0u);
+        EXPECT_GT(OCI_CollectionGetCount(coll), 0u);
     }
 
     TEST_F(TestCollNested, Clear_EmptiesCollection)
@@ -547,9 +547,9 @@ namespace TestCApi
         AppendInt(2);
         AppendInt(3);
 
-        ASSERT_TRUE(OCI_CollClear(coll));
+        ASSERT_TRUE(OCI_CollectionClear(coll));
 
-        EXPECT_EQ(0u, OCI_CollGetCount(coll));
+        EXPECT_EQ(0u, OCI_CollectionGetCount(coll));
     }
 
     TEST(TestCollection, NullElementToText)
@@ -565,18 +565,18 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT TestCollNull(NULL, 42) FROM DUAL")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT TestCollNull(NULL, 42) FROM DUAL")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 0);
+        const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
         OCI_UInt32 size = 512;
-        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &size, text));
         ASSERT_GT(size, 0u);
         ASSERT_NE(String::npos, String(text).find(OTEXT("NULL")));
 
@@ -599,18 +599,18 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT TestCollNullStr('first', NULL) FROM DUAL")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT TestCollNullStr('first', NULL) FROM DUAL")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 0);
+        const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
         OCI_UInt32 size = 512;
-        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &size, text));
         ASSERT_GT(size, 0u);
         ASSERT_NE(String::npos, String(text).find(OTEXT("NULL")));
 
@@ -633,18 +633,18 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT TestCollRaw(HEXTORAW('AABBCC'), HEXTORAW('DDEEFF')) FROM DUAL")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT TestCollRaw(HEXTORAW('AABBCC'), HEXTORAW('DDEEFF')) FROM DUAL")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 0);
+        const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
         OCI_UInt32 size = 512;
-        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &size, text));
         ASSERT_GT(size, 0u);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -666,18 +666,18 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT TestCollDate(TO_DATE('2023-01-01','YYYY-MM-DD'), TO_DATE('2023-12-31','YYYY-MM-DD')) FROM DUAL")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT TestCollDate(TO_DATE('2023-01-01','YYYY-MM-DD'), TO_DATE('2023-12-31','YYYY-MM-DD')) FROM DUAL")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 0);
+        const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
         OCI_UInt32 size = 512;
-        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &size, text));
         ASSERT_GT(size, 0u);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -699,18 +699,18 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT TestCollTs(TO_TIMESTAMP('2023-01-01 12:34:56','YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2023-12-31 23:59:59','YYYY-MM-DD HH24:MI:SS')) FROM DUAL")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT TestCollTs(TO_TIMESTAMP('2023-01-01 12:34:56','YYYY-MM-DD HH24:MI:SS'), TO_TIMESTAMP('2023-12-31 23:59:59','YYYY-MM-DD HH24:MI:SS')) FROM DUAL")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 0);
+        const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
         OCI_UInt32 size = 512;
-        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &size, text));
         ASSERT_GT(size, 0u);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -732,18 +732,18 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT TestCollItv(INTERVAL '1 12:30:00' DAY TO SECOND, INTERVAL '2 00:00:00' DAY TO SECOND) FROM DUAL")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT TestCollItv(INTERVAL '1 12:30:00' DAY TO SECOND, INTERVAL '2 00:00:00' DAY TO SECOND) FROM DUAL")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 0);
+        const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
         otext text[512];
         OCI_UInt32 size = 512;
-        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &size, text));
         ASSERT_GT(size, 0u);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -801,18 +801,18 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        if (OCI_ExecuteStmt(stmt, GetParam().sql))
+        if (OCI_StatementExecute(stmt, GetParam().sql))
         {
-            const auto rs = OCI_GetResultset(stmt);
+            const auto rs = OCI_StatementGetResultset(stmt);
             ASSERT_NE(nullptr, rs);
-            ASSERT_TRUE(OCI_FetchNext(rs));
+            ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-            const auto coll = OCI_GetColl(rs, 0);
+            const auto coll = OCI_ResultsetGetColl(rs, 0);
             ASSERT_NE(nullptr, coll);
 
             otext text[1024];
             OCI_UInt32 size = sizeof(text) / sizeof(otext);
-            ASSERT_TRUE(OCI_CollToText(coll, &size, text));
+            ASSERT_TRUE(OCI_CollectionToText(coll, &size, text));
             ASSERT_GT(size, 0u);
         }
 
@@ -843,22 +843,22 @@ namespace TestCApi
         const auto typinf = OCI_TypeInfoGet(con, OTEXT("TestCollInner"), OCI_TIF_TYPE);
         ASSERT_NE(nullptr, typinf);
 
-        const auto coll = OCI_CollCreate(typinf);
+        const auto coll = OCI_CollectionCreate(typinf);
         ASSERT_NE(nullptr, coll);
 
-        const auto elem = OCI_ElemCreate(typinf);
+        const auto elem = OCI_ElementCreate(typinf);
         ASSERT_NE(nullptr, elem);
 
-        ASSERT_TRUE(OCI_ElemSetNull(elem));
-        ASSERT_TRUE(OCI_CollAppend(coll, elem));
+        ASSERT_TRUE(OCI_ElementSetNull(elem));
+        ASSERT_TRUE(OCI_CollectionAppend(coll, elem));
 
         otext text[512];
         OCI_UInt32 size = sizeof(text) / sizeof(otext);
-        ASSERT_TRUE(OCI_CollToText(coll, &size, text));
+        ASSERT_TRUE(OCI_CollectionToText(coll, &size, text));
         ASSERT_NE(String(text).find(OTEXT("NULL")), String::npos);
 
-        ASSERT_TRUE(OCI_ElemFree(elem));
-        ASSERT_TRUE(OCI_CollFree(coll));
+        ASSERT_TRUE(OCI_ElementFree(elem));
+        ASSERT_TRUE(OCI_CollectionFree(coll));
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
@@ -877,12 +877,12 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto ti = OCI_TypeInfoGet(conn, OTEXT("TestCollErr_VC"), OCI_TIF_TYPE);
         ASSERT_NE(nullptr, ti);
-        const auto coll = OCI_CollCreate(ti);
+        const auto coll = OCI_CollectionCreate(ti);
         ASSERT_NE(nullptr, coll);
 
-        ASSERT_EQ(nullptr, OCI_CollGetElem(coll, 0));
+        ASSERT_EQ(nullptr, OCI_CollectionGetElement(coll, 0));
 
-        ASSERT_TRUE(OCI_CollFree(coll));
+        ASSERT_TRUE(OCI_CollectionFree(coll));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ExecDML(OTEXT("drop type TestCollErr_VC"));
     }
@@ -897,23 +897,23 @@ namespace TestCApi
     INSTANTIATE_TEST_CASE_P(NullArgs, TestCollectionNullArgs,
         ::testing::ValuesIn(NullArgCases
         {
-            { "CollAppend", [] { return !OCI_CollAppend(nullptr, nullptr); } },
-            { "CollArrayCreate", [] { return nullptr == OCI_CollArrayCreate(nullptr, 1); } },
-            { "CollArrayFree", [] { return !OCI_CollArrayFree(nullptr); } },
-            { "CollAssign", [] { return !OCI_CollAssign(nullptr, nullptr); } },
-            { "CollClear", [] { return !OCI_CollClear(nullptr); } },
-            { "CollCreate", [] { return nullptr == OCI_CollCreate(nullptr); } },
-            { "CollDeleteElem", [] { return !OCI_CollDeleteElem(nullptr, 1); } },
-            { "CollFree", [] { return !OCI_CollFree(nullptr); } },
-            { "CollGetCount", [] { return 0 == OCI_CollGetCount(nullptr); } },
-            { "CollGetElem", [] { return nullptr == OCI_CollGetElem(nullptr, 1); } },
-            { "CollGetMax", [] { return 0 == OCI_CollGetMax(nullptr); } },
-            { "CollGetSize", [] { return 0 == OCI_CollGetSize(nullptr); } },
-            { "CollGetType", [] { return OCI_UNKNOWN == OCI_CollGetType(nullptr); } },
-            { "CollGetTypeInfo", [] { return nullptr == OCI_CollGetTypeInfo(nullptr); } },
-            { "CollSetElem", [] { return !OCI_CollSetElem(nullptr, 1, nullptr); } },
-            { "CollToText", [] { return !OCI_CollToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
-            { "CollTrim", [] { return !OCI_CollTrim(nullptr, 1); } },
+            { "CollAppend", [] { return !OCI_CollectionAppend(nullptr, nullptr); } },
+            { "CollArrayCreate", [] { return nullptr == OCI_CollectionArrayCreate(nullptr, 1); } },
+            { "CollArrayFree", [] { return !OCI_CollectionArrayFree(nullptr); } },
+            { "CollAssign", [] { return !OCI_CollectionAssign(nullptr, nullptr); } },
+            { "CollClear", [] { return !OCI_CollectionClear(nullptr); } },
+            { "CollCreate", [] { return nullptr == OCI_CollectionCreate(nullptr); } },
+            { "CollDeleteElem", [] { return !OCI_CollectionDeleteElement(nullptr, 1); } },
+            { "CollFree", [] { return !OCI_CollectionFree(nullptr); } },
+            { "CollGetCount", [] { return 0 == OCI_CollectionGetCount(nullptr); } },
+            { "CollGetElem", [] { return nullptr == OCI_CollectionGetElement(nullptr, 1); } },
+            { "CollGetMax", [] { return 0 == OCI_CollectionGetMax(nullptr); } },
+            { "CollGetSize", [] { return 0 == OCI_CollectionGetSize(nullptr); } },
+            { "CollGetType", [] { return OCI_UNKNOWN == OCI_CollectionGetType(nullptr); } },
+            { "CollGetTypeInfo", [] { return nullptr == OCI_CollectionGetTypeInfo(nullptr); } },
+            { "CollSetElem", [] { return !OCI_CollectionSetElement(nullptr, 1, nullptr); } },
+            { "CollToText", [] { return !OCI_CollectionToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
+            { "CollTrim", [] { return !OCI_CollectionTrim(nullptr, 1); } },
         }),
         &NullArgCaseName);
 

@@ -32,23 +32,23 @@ int main(OCI_Int32 argc, char *argv[])
     OCI_Enqueue    * enq = OCI_EnqueueCreate(inf, "message_queue");
     OCI_Dequeue    * deq = OCI_DequeueCreate(inf, "message_queue");
 
-    OCI_Msg        * msg = OCI_MsgCreate(inf);
+    OCI_Message        * msg = OCI_MessageCreate(inf);
     OCI_Object     * obj = OCI_ObjectCreate(inf);
 
     OCI_ObjectSetString(obj, "title", "NEXT MEETING");
     OCI_ObjectSetString(obj, "content", "12:00 PM IN STARBUCKS");
 
-    OCI_MsgSetObject(msg, obj);
+    OCI_MessageSetObject(msg, obj);
 
     OCI_EnqueuePut(enq, msg);
 
-    OCI_MsgFree(msg);
+    OCI_MessageFree(msg);
     OCI_ObjectFree(obj);
 
-    OCI_Commit(con);
+    OCI_ConnectionCommit(con);
 
     msg = OCI_DequeueGet(deq);
-    obj = OCI_MsgGetObject(msg);
+    obj = OCI_MessageGetObject(msg);
 
     printf("MSG '%s' => %s\n", OCI_ObjectGetString(obj, "title"),  OCI_ObjectGetString(obj, "content"));
 

@@ -24,9 +24,9 @@ namespace TestCApi
         const auto racingCar = OCI_ObjectCreate(OCI_TypeInfoGet(conn, OTEXT("TestObjectInheritanceRacingCar"), OCI_TIF_TYPE));
         ASSERT_NE(nullptr, racingCar);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :obj := TestObjectInheritanceRacingCar(1,'Formula1', 123456789, 300); end;")));
-        ASSERT_NE(nullptr, OCI_BindObject(stmt, OTEXT("obj"), racingCar));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("begin :obj := TestObjectInheritanceRacingCar(1,'Formula1', 123456789, 300); end;")));
+        ASSERT_NE(nullptr, OCI_StatementBindObject(stmt, OTEXT("obj"), racingCar));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
         ASSERT_TRUE(OCI_ObjectToText(racingCar, &size, buffer));
 
         ASSERT_EQ(String(OTEXT("TESTOBJECTINHERITANCERACINGCAR(1, 'Formula1', 123456789, 300)")), String(buffer));

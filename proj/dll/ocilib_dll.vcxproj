@@ -329,7 +329,7 @@
     <ClCompile Include="..\..\src\date.c" />
     <ClCompile Include="..\..\src\define.c" />
     <ClCompile Include="..\..\src\dequeue.c" />
-    <ClCompile Include="..\..\src\dirpath.c" />
+    <ClCompile Include="..\..\src\directpath.c" />
     <ClCompile Include="..\..\src\element.c" />
     <ClCompile Include="..\..\src\enqueue.c" />
     <ClCompile Include="..\..\src\environment.c" />
@@ -339,7 +339,7 @@
     <ClCompile Include="..\..\src\file.c" />
     <ClCompile Include="..\..\src\format.c" />
     <ClCompile Include="..\..\src\handle.c" />
-    <ClCompile Include="..\..\src\hash.c" />
+    <ClCompile Include="..\..\src\hashtable.c" />
     <ClCompile Include="..\..\src\helpers.c" />
     <ClCompile Include="..\..\src\interval.c" />
     <ClCompile Include="..\..\src\iterator.c" />
@@ -358,11 +358,11 @@
     <ClCompile Include="..\..\src\queue.c" />
     <ClCompile Include="..\..\src\reference.c" />
     <ClCompile Include="..\..\src\resultset.c" />
-    <ClCompile Include="..\..\src\sodacoll.c" />
-    <ClCompile Include="..\..\src\sodacollcursor.c" />
-    <ClCompile Include="..\..\src\sodadb.c" />
-    <ClCompile Include="..\..\src\sodadoc.c" />
-    <ClCompile Include="..\..\src\sodadoccursor.c" />
+    <ClCompile Include="..\..\src\sodacollection.c" />
+    <ClCompile Include="..\..\src\sodacollectioncursor.c" />
+    <ClCompile Include="..\..\src\sodadatabase.c" />
+    <ClCompile Include="..\..\src\sodadocument.c" />
+    <ClCompile Include="..\..\src\sodadocumentcursor.c" />
     <ClCompile Include="..\..\src\sodaoptions.c" />
     <ClCompile Include="..\..\src\shardingkey.c" />
     <ClCompile Include="..\..\src\statement.c" />
@@ -378,6 +378,7 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\ocilib.h" />
     <ClInclude Include="..\..\include\ocilibc\api.h" />
+    <ClInclude Include="..\..\include\ocilibc\compat.h" />
     <ClInclude Include="..\..\include\ocilibc\defines.h" />
     <ClInclude Include="..\..\include\ocilibc\platform.h" />
     <ClInclude Include="..\..\include\ocilibc\types.h" />
@@ -393,7 +394,7 @@
     <ClInclude Include="..\..\src\define.h" />
     <ClInclude Include="..\..\src\defs.h" />
     <ClInclude Include="..\..\src\dequeue.h" />
-    <ClInclude Include="..\..\src\dirpath.h" />
+    <ClInclude Include="..\..\src\directpath.h" />
     <ClInclude Include="..\..\src\element.h" />
     <ClInclude Include="..\..\src\enqueue.h" />
     <ClInclude Include="..\..\src\environment.h" />
@@ -403,7 +404,7 @@
     <ClInclude Include="..\..\src\file.h" />
     <ClInclude Include="..\..\src\format.h" />
     <ClInclude Include="..\..\src\handle.h" />
-    <ClInclude Include="..\..\src\hash.h" />
+    <ClInclude Include="..\..\src\hashtable.h" />
     <ClInclude Include="..\..\src\helpers.h" />
     <ClInclude Include="..\..\src\import.h" />
     <ClInclude Include="..\..\src\interval.h" />
@@ -427,11 +428,11 @@
     <ClInclude Include="..\..\src\queue.h" />
     <ClInclude Include="..\..\src\reference.h" />
     <ClInclude Include="..\..\src\resultset.h" />
-    <ClInclude Include="..\..\src\sodacoll.h" />
-    <ClInclude Include="..\..\src\sodacollcursor.h" />
-    <ClInclude Include="..\..\src\sodadb.h" />
-    <ClInclude Include="..\..\src\sodadoc.h" />
-    <ClInclude Include="..\..\src\sodadoccursor.h" />
+    <ClInclude Include="..\..\src\sodacollection.h" />
+    <ClInclude Include="..\..\src\sodacollectioncursor.h" />
+    <ClInclude Include="..\..\src\sodadatabase.h" />
+    <ClInclude Include="..\..\src\sodadocument.h" />
+    <ClInclude Include="..\..\src\sodadocumentcursor.h" />
     <ClInclude Include="..\..\src\shardingkey.h" />
     <ClInclude Include="..\..\src\sodaoptions.h" />
     <ClInclude Include="..\..\src\statement.h" />

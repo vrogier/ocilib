@@ -41,7 +41,7 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("TestEventSub"), OCI_CNT_ROWS, TestEventHandler, OCI_SRM_DEFAULT, 0);
+        const auto sub = OCI_SubscriptionCreate(conn, OTEXT("TestEventSub"), OCI_CNT_ROWS, TestEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         TestEventSub = sub;
@@ -49,11 +49,11 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestEventTable")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select * from TestEventTable")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("insert into TestEventTable(code) values (42)")));
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("insert into TestEventTable(code) values (42)")));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         Sleep(1000);
 

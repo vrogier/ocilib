@@ -25,7 +25,7 @@
 #include "collection.h"
 #include "date.h"
 #include "file.h"
-#include "hash.h"
+#include "hashtable.h"
 #include "helpers.h"
 #include "interval.h"
 #include "json.h"
@@ -149,13 +149,13 @@ static OCI_Boolean OcilibBindAllocateInternalData
             }
             case OCI_CDT_COLLECTION:
             {
-                struct_size = sizeof(OCI_Coll);
+                struct_size = sizeof(OCI_Collection);
                 elem_size   = sizeof(OCIColl*);
                 break;
             }
             case OCI_CDT_REF:
             {
-                struct_size = sizeof(OCI_Ref);
+                struct_size = sizeof(OCI_Reference);
                 elem_size   = sizeof(OCIRef*);
                 break;
             }
@@ -362,7 +362,7 @@ static OCI_Boolean OcilibBindAllocateInternalData
             }
             case OCI_CDT_COLLECTION:
             {
-                OCI_Coll* coll = OcilibCollectionCreate(bnd->typinf);
+                OCI_Collection* coll = OcilibCollectionCreate(bnd->typinf);
 
                 CHECK_NULL(coll);
 
@@ -373,7 +373,7 @@ static OCI_Boolean OcilibBindAllocateInternalData
             }
             case OCI_CDT_REF:
             {
-                OCI_Ref* ref = OcilibReferenceCreate(bnd->typinf);
+                OCI_Reference* ref = OcilibReferenceCreate(bnd->typinf);
 
                 CHECK_NULL(ref);
 
@@ -737,7 +737,7 @@ static OCI_Boolean OcilibBindAddToStatement
 
             /* for user binds, add a positive index */
 
-            CHECK(OcilibHashAddInt(bnd->stmt->map, bnd->name, bnd->stmt->nb_ubinds));
+            CHECK(OcilibHashTableAddInt32(bnd->stmt->map, bnd->name, bnd->stmt->nb_ubinds));
         }
     }
     else
@@ -748,7 +748,7 @@ static OCI_Boolean OcilibBindAddToStatement
 
         const OCI_Int32 index = (OCI_Int32)bnd->stmt->nb_rbinds;
 
-        CHECK(OcilibHashAddInt(bnd->stmt->map, bnd->name, -index));
+        CHECK(OcilibHashTableAddInt32(bnd->stmt->map, bnd->name, -index));
     }
 
     SET_SUCCESS();
@@ -867,7 +867,7 @@ OCI_Bind* OcilibBindCreate
 
     if (NULL == stmt->map)
     {
-        stmt->map = OcilibHashCreate(stmt->con->env, OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
+        stmt->map = OcilibHashTableCreate(stmt->con->env, OCI_HASH_DEFAULT_SIZE, OCI_HASH_INTEGER);
         CHECK_NULL(stmt->map);
     }
 
@@ -1061,7 +1061,7 @@ OCI_Int32 OcilibBindGetIndex
 
     CHECK_NULL(stmt->map);
 
-    OCI_HashEntry* he = OcilibHashLookup(stmt->map, name, FALSE);
+    OCI_HashEntry* he = OcilibHashTableLookup(stmt->map, name, FALSE);
 
     OCI_Int32 index = -1;
 

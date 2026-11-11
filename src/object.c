@@ -485,12 +485,12 @@ static OCI_Boolean OcilibObjectGetAttributeInfo
         {
             const ub4 subtype = typinf->cols[index].subtype;
 
-            if (subtype & OCI_NUM_SHORT)
+            if (subtype & OCI_NUM_INT16)
             {
                 *p_size  = sizeof(OCI_Int16);
                 *p_align = *p_size;
             }
-            else if (subtype & OCI_NUM_INT)
+            else if (subtype & OCI_NUM_INT32)
             {
                 *p_size  = sizeof(OCI_Int32);
                 *p_align = *p_size;
@@ -1049,7 +1049,7 @@ OCI_Boolean OcilibObjectAssign
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectGetShort
+ * OcilibObjectGetInt16
  * --------------------------------------------------------------------------------------------- */
 
 OCI_Boolean OcilibObjectGetBoolean
@@ -1115,81 +1115,81 @@ OCI_Number * OcilibObjectGetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectGetShort
+ * OcilibObjectGetInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int16 OcilibObjectGetShort
+OCI_Int16 OcilibObjectGetInt16
 (
     OCI_Object  *obj,
     const otext *attr
 )
 {
-    OBJECT_GET_NUMBER(OCI_NUM_SHORT, OCI_Int16, 0);
+    OBJECT_GET_NUMBER(OCI_NUM_INT16, OCI_Int16, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectGetUnsignedShort
+ * OcilibObjectGetUInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt16 OcilibObjectGetUnsignedShort
+OCI_UInt16 OcilibObjectGetUInt16
 (
     OCI_Object  *obj,
     const otext *attr
 )
 {
-    OBJECT_GET_NUMBER(OCI_NUM_USHORT, OCI_UInt16, 0);
+    OBJECT_GET_NUMBER(OCI_NUM_UINT16, OCI_UInt16, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectGetInt
+ * OcilibObjectGetInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int32 OcilibObjectGetInt
+OCI_Int32 OcilibObjectGetInt32
 (
     OCI_Object  *obj,
     const otext *attr
 )
 {
-    OBJECT_GET_NUMBER(OCI_NUM_INT, OCI_Int32, 0);
+    OBJECT_GET_NUMBER(OCI_NUM_INT32, OCI_Int32, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectGetUnsignedInt
+ * OcilibObjectGetUInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibObjectGetUnsignedInt
+OCI_UInt32 OcilibObjectGetUInt32
 (
     OCI_Object  *obj,
     const otext *attr
 )
 {
-    OBJECT_GET_NUMBER(OCI_NUM_UINT, OCI_UInt32, 0);
+    OBJECT_GET_NUMBER(OCI_NUM_UINT32, OCI_UInt32, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectGetBigInt
+ * OcilibObjectGetInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int64 OcilibObjectGetBigInt
+OCI_Int64 OcilibObjectGetInt64
 (
     OCI_Object  *obj,
     const otext *attr
 )
 {
-    OBJECT_GET_NUMBER(OCI_NUM_BIGINT, OCI_Int64, 0);
+    OBJECT_GET_NUMBER(OCI_NUM_INT64, OCI_Int64, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectGetUnsignedBigInt
+ * OcilibObjectGetUInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt64 OcilibObjectGetUnsignedBigInt
+OCI_UInt64 OcilibObjectGetUInt64
 (
     OCI_Object  *obj,
     const otext *attr
 )
 {
-    OBJECT_GET_NUMBER(OCI_NUM_BIGUINT, OCI_UInt64, 0);
+    OBJECT_GET_NUMBER(OCI_NUM_UINT64, OCI_UInt64, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1543,7 +1543,7 @@ OCI_Interval * OcilibObjectGetInterval
  * OcilibObjectGetColl
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OcilibObjectGetColl
+OCI_Collection * OcilibObjectGetColl
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1552,11 +1552,11 @@ OCI_Coll * OcilibObjectGetColl
     OBJECT_GET_VALUE
     (
         OCI_CDT_COLLECTION,
-        OCI_Coll*,
+        OCI_Collection*,
         OCIColl*,
         OcilibCollectionInitialize,
         obj->con,
-        (OCI_Coll *) obj->objs[index],
+        (OCI_Collection *) obj->objs[index],
         (OCIColl *) *value,
         obj->typinf->cols[index].typinf
     );
@@ -1636,7 +1636,7 @@ OCI_File * OcilibObjectGetFile
  * OcilibObjectGetReference
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OcilibObjectGetReference
+OCI_Reference * OcilibObjectGetReference
 (
     OCI_Object  *obj,
     const otext *attr
@@ -1645,12 +1645,12 @@ OCI_Ref * OcilibObjectGetReference
     OBJECT_GET_VALUE
     (
         OCI_CDT_REF,
-        OCI_Ref*,
+        OCI_Reference*,
         OCIRef*,
         OcilibReferenceInitialize,
         obj->con,
         NULL,
-        (OCI_Ref *) obj->objs[index],
+        (OCI_Reference *) obj->objs[index],
         *value
     );
 }
@@ -1719,87 +1719,87 @@ OCI_Boolean OcilibObjectSetNumber
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectSetShort
+ * OcilibObjectSetInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibObjectSetShort
+OCI_Boolean OcilibObjectSetInt16
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Int16    value
 )
 {
-    OBJECT_SET_NUMBER(OCI_NUM_SHORT, value);
+    OBJECT_SET_NUMBER(OCI_NUM_INT16, value);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectSetUnsignedShort
+ * OcilibObjectSetUInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibObjectSetUnsignedShort
+OCI_Boolean OcilibObjectSetUInt16
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_UInt16   value
 )
 {
-    OBJECT_SET_NUMBER(OCI_NUM_USHORT, value);
+    OBJECT_SET_NUMBER(OCI_NUM_UINT16, value);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectSetInt
+ * OcilibObjectSetInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibObjectSetInt
+OCI_Boolean OcilibObjectSetInt32
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Int32    value
 )
 {
-    OBJECT_SET_NUMBER(OCI_NUM_INT, value);
+    OBJECT_SET_NUMBER(OCI_NUM_INT32, value);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectSetUnsignedInt
+ * OcilibObjectSetUInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibObjectSetUnsignedInt
+OCI_Boolean OcilibObjectSetUInt32
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_UInt32   value
 )
 {
-    OBJECT_SET_NUMBER(OCI_NUM_UINT, value);
+    OBJECT_SET_NUMBER(OCI_NUM_UINT32, value);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectSetBigInt
+ * OcilibObjectSetInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibObjectSetBigInt
+OCI_Boolean OcilibObjectSetInt64
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Int64    value
 )
 {
-    OBJECT_SET_NUMBER(OCI_NUM_BIGINT, value);
+    OBJECT_SET_NUMBER(OCI_NUM_INT64, value);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectSetUnsignedBigInt
+ * OcilibObjectSetUInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibObjectSetUnsignedBigInt
+OCI_Boolean OcilibObjectSetUInt64
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_UInt64   value
 )
 {
-    OBJECT_SET_NUMBER(OCI_NUM_BIGUINT, value);
+    OBJECT_SET_NUMBER(OCI_NUM_UINT64, value);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2005,9 +2005,9 @@ OCI_Boolean OcilibObjectSetInterval
 
 OCI_Boolean OcilibObjectSetColl
 (
-    OCI_Object  *obj,
-    const otext *attr,
-    OCI_Coll    *value
+    OCI_Object     *obj,
+    const otext    *attr,
+    OCI_Collection *value
 )
 {
     OBJECT_SET_VALUE
@@ -2103,9 +2103,9 @@ OCI_Boolean OcilibObjectSetFile
 
 OCI_Boolean OcilibObjectSetReference
 (
-    OCI_Object  *obj,
-    const otext *attr,
-    OCI_Ref     *value
+    OCI_Object    *obj,
+    const otext   *attr,
+    OCI_Reference *value
 )
 {
     OBJECT_SET_VALUE
@@ -2224,13 +2224,13 @@ OCI_ObjectType OcilibObjectGetType
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibObjectGetSelfRef
+ * OcilibObjectGetSelfReference
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibObjectGetSelfRef
+OCI_Boolean OcilibObjectGetSelfReference
 (
-    OCI_Object *obj,
-    OCI_Ref    *ref
+    OCI_Object    *obj,
+    OCI_Reference *ref
 )
 {
     ENTER_FUNC

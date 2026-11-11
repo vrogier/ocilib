@@ -171,7 +171,7 @@ namespace ocilib
                     memcpy(_data + (_elemSize * index), &value[0], value.size());
                 }
 
-                OCI_BindSetDataSizeAtPos(OCI_GetBindByName(_statement, GetName().c_str()), index, static_cast<UInt32>(value.size()));
+                OCI_BindSetDataSizeAtPos(OCI_StatementGetBindByName(_statement, GetName().c_str()), index, static_cast<UInt32>(value.size()));
             }
         }
 
@@ -194,7 +194,7 @@ namespace ocilib
         {
             std::vector<String>::iterator it, it_end;
 
-            OCI_Bind* pBind = core::Check(OCI_GetBindByName(_statement, GetName().c_str()));
+            OCI_Bind* pBind = core::Check(OCI_StatementGetBindByName(_statement, GetName().c_str()));
 
             UInt32       index = 0;
             const UInt32 currElemCount = GetSize();
@@ -212,7 +212,7 @@ namespace ocilib
         {
             std::vector<Raw>::iterator it, it_end;
 
-            OCI_Bind* pBind = core::Check(OCI_GetBindByName(_statement, GetName().c_str()));
+            OCI_Bind* pBind = core::Check(OCI_StatementGetBindByName(_statement, GetName().c_str()));
 
             UInt32       index = 0;
             const UInt32 currElemCount = GetSize();

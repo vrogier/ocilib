@@ -25,7 +25,7 @@
 
 OCI_SYM_LOCAL OCI_SodaOptions * OcilibSodaOptionsCreate
 (
-    OCI_SodaDb *sdb
+    OCI_SodaDatabase *sdb
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibSodaOptionsFree

@@ -309,33 +309,33 @@ typedef struct OCI_Interval OCI_Interval;
 typedef struct OCI_Object OCI_Object;
 
 /**
- * @typedef OCI_Coll
+ * @typedef OCI_Collection
  *
  * @brief
  * Oracle Collections (VARRAYs and Nested Tables) representation.
  *
  */
 
-typedef struct OCI_Coll OCI_Coll;
+typedef struct OCI_Collection OCI_Collection;
 
 /**
- * @typedef OCI_Elem
+ * @typedef OCI_Element
  *
  * @brief
  * Oracle Collection item representation.
  *
  */
 
-typedef struct OCI_Elem OCI_Elem;
+typedef struct OCI_Element OCI_Element;
 
 /**
- * @typedef OCI_Iter
+ * @typedef OCI_Iterator
  *
  * @brief
  * Oracle Collection iterator representation.
  *
  */
-typedef struct OCI_Iter OCI_Iter;
+typedef struct OCI_Iterator OCI_Iterator;
 
 /**
  * @typedef OCI_TypeInfo
@@ -346,14 +346,14 @@ typedef struct OCI_Iter OCI_Iter;
  */
 
 /**
- * @typedef OCI_Ref
+ * @typedef OCI_Reference
  *
  * @brief
  * Oracle REF type representation.
  *
  */
 
-typedef struct OCI_Ref OCI_Ref;
+typedef struct OCI_Reference OCI_Reference;
 
 /**
  * @typedef OCI_XmlType
@@ -396,34 +396,34 @@ typedef struct OCI_Json OCI_Json;
 typedef struct OCI_JsonNode OCI_JsonNode;
 
 /**
- * @typedef OCI_SodaDb
+ * @typedef OCI_SodaDatabase
  *
  * @brief
  * SODA database handle.
  *
  */
 
-typedef struct OCI_SodaDb OCI_SodaDb;
+typedef struct OCI_SodaDatabase OCI_SodaDatabase;
 
 /**
- * @typedef OCI_SodaColl
+ * @typedef OCI_SodaCollection
  *
  * @brief
  * SODA collection handle.
  *
  */
 
-typedef struct OCI_SodaColl OCI_SodaColl;
+typedef struct OCI_SodaCollection OCI_SodaCollection;
 
 /**
- * @typedef OCI_SodaDoc
+ * @typedef OCI_SodaDocument
  *
  * @brief
  * SODA document handle.
  *
  */
 
-typedef struct OCI_SodaDoc OCI_SodaDoc;
+typedef struct OCI_SodaDocument OCI_SodaDocument;
 
 /**
  * @typedef OCI_SodaOptions
@@ -436,24 +436,24 @@ typedef struct OCI_SodaDoc OCI_SodaDoc;
 typedef struct OCI_SodaOptions OCI_SodaOptions;
 
 /**
- * @typedef OCI_SodaCollCursor
+ * @typedef OCI_SodaCollectionCursor
  *
  * @brief
  * SODA collection cursor handle.
  *
  */
 
-typedef struct OCI_SodaCollCursor OCI_SodaCollCursor;
+typedef struct OCI_SodaCollectionCursor OCI_SodaCollectionCursor;
 
 /**
- * @typedef OCI_SodaDocCursor
+ * @typedef OCI_SodaDocumentCursor
  *
  * @brief
  * SODA document cursor handle.
  *
  */
 
-typedef struct OCI_SodaDocCursor OCI_SodaDocCursor;
+typedef struct OCI_SodaDocumentCursor OCI_SodaDocumentCursor;
 
 /**
  * @typedef OCI_ShardingKey
@@ -500,14 +500,14 @@ typedef struct OCI_HashTable OCI_HashTable;
 typedef struct OCI_Error OCI_Error;
 
 /**
- * @typedef OCI_DirPath
+ * @typedef OCI_DirectPath
  *
  * @brief
  * OCILIB encapsulation of OCI Direct Path handle.
  *
  */
 
-typedef struct OCI_DirPath OCI_DirPath;
+typedef struct OCI_DirectPath OCI_DirectPath;
 
 /**
  * @typedef OCI_Subscription
@@ -530,14 +530,14 @@ typedef struct OCI_Subscription OCI_Subscription;
 typedef struct OCI_Event OCI_Event;
 
 /**
- * @typedef OCI_Msg
+ * @typedef OCI_Message
  *
  * @brief
  * OCILIB encapsulation of A/Q message
  *
  */
 
-typedef struct OCI_Msg OCI_Msg;
+typedef struct OCI_Message OCI_Message;
 
 /**
  * @typedef OCI_Agent
@@ -841,18 +841,18 @@ typedef union OCI_Variant
     otext     * p_text;
 
     /* ocilib object types */
-    OCI_Date     * p_date;
-    OCI_Interval * p_interval;
-    OCI_Timestamp *p_timestamp;
-    OCI_Long     * p_long;
-    OCI_Lob      * p_lob;
-    OCI_File     * p_file;
-    OCI_Statement *p_stmt;
-    OCI_Column   * p_col;
-    OCI_Object   * p_obj;
-    OCI_Coll     * p_coll;
-    OCI_Iter     * p_iter;
-    OCI_Elem     * p_elem;
+    OCI_Date       * p_date;
+    OCI_Interval   * p_interval;
+    OCI_Timestamp   *p_timestamp;
+    OCI_Long       * p_long;
+    OCI_Lob        * p_lob;
+    OCI_File       * p_file;
+    OCI_Statement   *p_stmt;
+    OCI_Column     * p_col;
+    OCI_Object     * p_obj;
+    OCI_Collection * p_coll;
+    OCI_Iterator   * p_iter;
+    OCI_Element    * p_elem;
 } OCI_Variant;
 
 /**

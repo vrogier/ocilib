@@ -27,7 +27,7 @@
 #include "error.h"
 #include "exception.h"
 #include "file.h"
-#include "hash.h"
+#include "hashtable.h"
 #include "helpers.h"
 #include "interval.h"
 #include "json.h"
@@ -773,7 +773,7 @@ OCI_Boolean OcilibResultsetFree
 
     if (NULL != rs->map)
     {
-        OcilibHashFree(rs->map);
+        OcilibHashTableFree(rs->map);
     }
 
     /* free defines (column array) */
@@ -1364,7 +1364,7 @@ OCI_Boolean OcilibResultsetGetStruct
                     }
                     case OCI_CDT_CURSOR:
                     {
-                        *((OCI_Statement **) ptr) = OcilibResultsetGetStatement(rs, i);
+                        *((OCI_Statement **) ptr) = OcilibResultsetGetCursor(rs, i);
                         break;
                     }
                     case OCI_CDT_LOB:
@@ -1395,12 +1395,12 @@ OCI_Boolean OcilibResultsetGetStruct
                     }
                     case OCI_CDT_COLLECTION:
                     {
-                        *((OCI_Coll **) ptr) = OcilibResultsetGetColl(rs, i);
+                        *((OCI_Collection **) ptr) = OcilibResultsetGetColl(rs, i);
                         break;
                     }
                     case OCI_CDT_REF:
                     {
-                        *((OCI_Ref **) ptr) = OcilibResultsetGetReference(rs, i);
+                        *((OCI_Reference **) ptr) = OcilibResultsetGetReference(rs, i);
                         break;
                     }
                     case OCI_CDT_XMLTYPE:
@@ -1469,159 +1469,159 @@ OCI_Number * OcilibResultsetGetNumberByName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetShort
+ * OcilibResultsetGetInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int16 OcilibResultsetGetShort
+OCI_Int16 OcilibResultsetGetInt16
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
 )
 {
-    GET_NUMBER(rs, index, OCI_NUM_SHORT, OCI_Int16, 0);
+    GET_NUMBER(rs, index, OCI_NUM_INT16, OCI_Int16, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetShortByName
+ * OcilibResultsetGetInt16ByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int16 OcilibResultsetGetShortByName
+OCI_Int16 OcilibResultsetGetInt16ByName
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    GET_BY_NAME(rs, name, OcilibResultsetGetShort, OCI_Int16, 0);
+    GET_BY_NAME(rs, name, OcilibResultsetGetInt16, OCI_Int16, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetUnsignedShort
+ * OcilibResultsetGetUInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt16 OcilibResultsetGetUnsignedShort
+OCI_UInt16 OcilibResultsetGetUInt16
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
 )
 {
-    GET_NUMBER(rs, index, OCI_NUM_USHORT, OCI_UInt16, 0);
+    GET_NUMBER(rs, index, OCI_NUM_UINT16, OCI_UInt16, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetUnsignedShortByName
+ * OcilibResultsetGetUInt16ByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt16 OcilibResultsetGetUnsignedShortByName
+OCI_UInt16 OcilibResultsetGetUInt16ByName
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    GET_BY_NAME(rs, name, OcilibResultsetGetUnsignedShort, OCI_UInt16, 0);
+    GET_BY_NAME(rs, name, OcilibResultsetGetUInt16, OCI_UInt16, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetInt
+ * OcilibResultsetGetInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int32 OcilibResultsetGetInt
+OCI_Int32 OcilibResultsetGetInt32
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
 )
 {
-    GET_NUMBER(rs, index, OCI_NUM_INT, OCI_Int32, 0);
+    GET_NUMBER(rs, index, OCI_NUM_INT32, OCI_Int32, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetIntByName
+ * OcilibResultsetGetInt32ByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int32 OcilibResultsetGetIntByName
+OCI_Int32 OcilibResultsetGetInt32ByName
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    GET_BY_NAME(rs, name, OcilibResultsetGetInt, OCI_Int32, 0);
+    GET_BY_NAME(rs, name, OcilibResultsetGetInt32, OCI_Int32, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetUnsignedInt
+ * OcilibResultsetGetUInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibResultsetGetUnsignedInt
+OCI_UInt32 OcilibResultsetGetUInt32
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
 )
 {
-    GET_NUMBER(rs, index, OCI_NUM_UINT, OCI_UInt32, 0);
+    GET_NUMBER(rs, index, OCI_NUM_UINT32, OCI_UInt32, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetUnsignedIntByName
+ * OcilibResultsetGetUInt32ByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibResultsetGetUnsignedIntByName
+OCI_UInt32 OcilibResultsetGetUInt32ByName
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    GET_BY_NAME(rs, name, OcilibResultsetGetUnsignedInt, OCI_UInt32, 0);
+    GET_BY_NAME(rs, name, OcilibResultsetGetUInt32, OCI_UInt32, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetBigInt
+ * OcilibResultsetGetInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int64 OcilibResultsetGetBigInt
+OCI_Int64 OcilibResultsetGetInt64
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
 )
 {
-    GET_NUMBER(rs, index, OCI_NUM_BIGINT, OCI_Int64, 0);
+    GET_NUMBER(rs, index, OCI_NUM_INT64, OCI_Int64, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetBigIntByName
+ * OcilibResultsetGetInt64ByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int64 OcilibResultsetGetBigIntByName
+OCI_Int64 OcilibResultsetGetInt64ByName
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    GET_BY_NAME(rs, name, OcilibResultsetGetBigInt, OCI_Int64, 0);
+    GET_BY_NAME(rs, name, OcilibResultsetGetInt64, OCI_Int64, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetUnsignedBigInt
+ * OcilibResultsetGetUInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt64 OcilibResultsetGetUnsignedBigInt
+OCI_UInt64 OcilibResultsetGetUInt64
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
 )
 {
-    GET_NUMBER(rs, index, OCI_NUM_BIGUINT, OCI_UInt64, 0);
+    GET_NUMBER(rs, index, OCI_NUM_UINT64, OCI_UInt64, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetUnsignedIntByName
+ * OcilibResultsetGetUInt32ByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt64 OcilibResultsetGetUnsignedBigIntByName
+OCI_UInt64 OcilibResultsetGetUInt64ByName
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    GET_BY_NAME(rs, name, OcilibResultsetGetUnsignedBigInt, OCI_UInt64, 0);
+    GET_BY_NAME(rs, name, OcilibResultsetGetUInt64, OCI_UInt64, 0);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1853,11 +1853,11 @@ const otext * OcilibResultsetGetString
                 }
                 case OCI_CDT_COLLECTION:
                 {
-                    OCI_Coll *coll = OcilibResultsetGetColl(rs, index);
+                    OCI_Collection *coll = OcilibResultsetGetColl(rs, index);
 
                     if (coll)
                     {
-                        CHECK(OcilibCollectionToString(coll, &buffer_size, NULL));
+                        CHECK(OcilibCollectionToText(coll, &buffer_size, NULL));
                     }
 
                     data = coll;
@@ -1865,7 +1865,7 @@ const otext * OcilibResultsetGetString
                 }
                 case OCI_CDT_CURSOR:
                 {
-                    OCI_Statement *stmt = OcilibResultsetGetStatement(rs, index);
+                    OCI_Statement *stmt = OcilibResultsetGetCursor(rs, index);
 
                     if (stmt && stmt->sql)
                     {
@@ -2236,7 +2236,7 @@ OCI_Object * OcilibResultsetGetObjectByName
  * OcilibResultsetGetColl
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OcilibResultsetGetColl
+OCI_Collection * OcilibResultsetGetColl
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
@@ -2244,9 +2244,9 @@ OCI_Coll * OcilibResultsetGetColl
 {
     GET_HANDLE
     (
-        rs, index, OCI_Coll *, NULL, OCI_CDT_COLLECTION,
+        rs, index, OCI_Collection *, NULL, OCI_CDT_COLLECTION,
 
-        OcilibCollectionInitialize(rs->stmt->con, (OCI_Coll *) def->obj,
+        OcilibCollectionInitialize(rs->stmt->con, (OCI_Collection *) def->obj,
                                    OcilibDefineGetData(def), def->col.typinf)
     );
 }
@@ -2255,20 +2255,20 @@ OCI_Coll * OcilibResultsetGetColl
  * OcilibResultsetGetCollByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OcilibResultsetGetCollByName
+OCI_Collection * OcilibResultsetGetCollByName
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    GET_BY_NAME(rs, name, OcilibResultsetGetColl, OCI_Coll*, NULL);
+    GET_BY_NAME(rs, name, OcilibResultsetGetColl, OCI_Collection*, NULL);
 }
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibResultsetGetReference
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OcilibResultsetGetReference
+OCI_Reference * OcilibResultsetGetReference
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
@@ -2276,9 +2276,9 @@ OCI_Ref * OcilibResultsetGetReference
 {
     GET_HANDLE
     (
-        rs, index, OCI_Ref *, NULL, OCI_CDT_REF,
+        rs, index, OCI_Reference *, NULL, OCI_CDT_REF,
 
-        OcilibReferenceInitialize(rs->stmt->con, def->col.typinf, (OCI_Ref *) def->obj,
+        OcilibReferenceInitialize(rs->stmt->con, def->col.typinf, (OCI_Reference *) def->obj,
                                   OcilibDefineGetData(def))
     );
 }
@@ -2287,13 +2287,13 @@ OCI_Ref * OcilibResultsetGetReference
  * OcilibResultsetGetReferenceByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Ref * OcilibResultsetGetReferenceByName
+OCI_Reference * OcilibResultsetGetReferenceByName
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    GET_BY_NAME(rs, name, OcilibResultsetGetReference, OCI_Ref*, NULL);
+    GET_BY_NAME(rs, name, OcilibResultsetGetReference, OCI_Reference*, NULL);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2360,10 +2360,10 @@ OCI_Vector * OcilibResultsetGetVectorByName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetStatement
+ * OcilibResultsetGetCursor
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * OcilibResultsetGetStatement
+OCI_Statement * OcilibResultsetGetCursor
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
@@ -2385,16 +2385,16 @@ OCI_Statement * OcilibResultsetGetStatement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetGetStatementByName
+ * OcilibResultsetGetCursorByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Statement * OcilibResultsetGetStatementByName
+OCI_Statement * OcilibResultsetGetCursorByName
 (
     OCI_Resultset *rs,
     const otext   *name
 )
 {
-    GET_BY_NAME(rs, name, OcilibResultsetGetStatement, OCI_Statement*, NULL);
+    GET_BY_NAME(rs, name, OcilibResultsetGetCursor, OCI_Statement*, NULL);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2576,10 +2576,10 @@ OCI_UInt32 OcilibResultsetGetDataSizeByName
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetIsNull
+ * OcilibResultsetIsColumnNull
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibResultsetIsNull
+OCI_Boolean OcilibResultsetIsColumnNull
 (
     OCI_Resultset *rs,
     OCI_UInt32     index
@@ -2603,10 +2603,10 @@ OCI_Boolean OcilibResultsetIsNull
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetIsNullByName
+ * OcilibResultsetIsColumnNullByName
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibResultsetIsNullByName
+OCI_Boolean OcilibResultsetIsColumnNullByName
 (
     OCI_Resultset *rs,
     const otext   *name
@@ -2624,7 +2624,7 @@ OCI_Boolean OcilibResultsetIsNullByName
     const OCI_Int32 index = OcilibDefineGetIndex(rs, name);
     CHECK(index >= 0);
 
-    SET_RETVAL(OcilibResultsetIsNull(rs, (OCI_UInt32)index));
+    SET_RETVAL(OcilibResultsetIsColumnNull(rs, (OCI_UInt32)index));
 
     EXIT_FUNC();
 }

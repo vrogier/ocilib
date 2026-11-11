@@ -36,13 +36,13 @@ namespace ocilib
         Connection connection = typeInfo.GetConnection();
         AcquireAllocated
         (
-            core::Check(OCI_CollCreate(typeInfo)),
+            core::Check(OCI_CollectionCreate(typeInfo)),
             connection.GetHandle()
         );
     }
 
     template<class T>
-    Collection<T>::Collection(OCI_Coll *pColl, [[maybe_unused]] core::Handle *parent)
+    Collection<T>::Collection(OCI_Collection *pColl, [[maybe_unused]] core::Handle *parent)
     {
         AcquireTransient(pColl, parent);
     }
@@ -55,11 +55,11 @@ namespace ocilib
         Connection    connection = typeInfo.GetConnection();
         result.AcquireAllocated
         (
-            core::Check(OCI_CollCreate(typeInfo)),
+            core::Check(OCI_CollectionCreate(typeInfo)),
             connection.GetHandle()
         );
 
-        core::Check(OCI_CollAssign(result, *this));
+        core::Check(OCI_CollectionAssign(result, *this));
 
         return result;
     }
@@ -67,63 +67,63 @@ namespace ocilib
     template<class T>
     TypeInfo Collection<T>::GetTypeInfo() const
     {
-        return TypeInfo(core::Check(OCI_CollGetTypeInfo(*this)));
+        return TypeInfo(core::Check(OCI_CollectionGetTypeInfo(*this)));
     }
 
     template<class T>
     typename Collection<T>::CollectionType Collection<T>::GetType() const
     {
-        return CollectionType(core::Check(OCI_CollGetType(*this)));
+        return CollectionType(core::Check(OCI_CollectionGetType(*this)));
     }
 
     template<class T>
     UInt32 Collection<T>::GetMax() const
     {
-        return core::Check(OCI_CollGetMax(*this));
+        return core::Check(OCI_CollectionGetMax(*this));
     }
 
     template<class T>
     UInt32 Collection<T>::GetSize() const
 
     {
-        return core::Check(OCI_CollGetSize(*this));
+        return core::Check(OCI_CollectionGetSize(*this));
     }
 
     template<class T>
     UInt32 Collection<T>::GetCount() const
 
     {
-        return core::Check(OCI_CollGetCount(*this));
+        return core::Check(OCI_CollectionGetCount(*this));
     }
 
     template<class T>
     void Collection<T>::Truncate(UInt32 size)
     {
-        core::Check(OCI_CollTrim(*this, size));
+        core::Check(OCI_CollectionTrim(*this, size));
     }
 
     template<class T>
     void Collection<T>::Clear()
     {
-        core::Check(OCI_CollClear(*this));
+        core::Check(OCI_CollectionClear(*this));
     }
 
     template<class T>
     bool Collection<T>::IsElementNull(UInt32 index) const
     {
-        return (core::Check(OCI_ElemIsNull(core::Check(OCI_CollGetElem(*this, index)))) == TRUE);
+        return (core::Check(OCI_ElementIsNull(core::Check(OCI_CollectionGetElement(*this, index)))) == TRUE);
     }
 
     template<class T>
     void Collection<T>::SetElementNull(UInt32 index)
     {
-        core::Check(OCI_ElemSetNull(core::Check(OCI_CollGetElem(*this, index))));
+        core::Check(OCI_ElementSetNull(core::Check(OCI_CollectionGetElement(*this, index))));
     }
 
     template<class T>
     bool Collection<T>::Delete(UInt32 index) const
     {
-        return (core::Check(OCI_CollDeleteElem(*this, index)) == TRUE);
+        return (core::Check(OCI_CollectionDeleteElement(*this, index)) == TRUE);
     }
 
     template<class T>
@@ -153,141 +153,141 @@ namespace ocilib
     template<class T>
     T Collection<T>::Get(UInt32 index) const
     {
-        return GetElem(core::Check(OCI_CollGetElem(*this, index)), GetHandle());
+        return GetElem(core::Check(OCI_CollectionGetElement(*this, index)), GetHandle());
     }
 
     template<class T>
     void Collection<T>::Set(UInt32 index, const T & value)
     {
-        OCI_Elem * elem = core::Check(OCI_CollGetElem(*this, index));
+        OCI_Element * elem = core::Check(OCI_CollectionGetElement(*this, index));
 
         SetElem(elem, value, GetHandle());
 
-        core::Check(OCI_CollSetElem(*this, index, elem));
+        core::Check(OCI_CollectionSetElement(*this, index, elem));
     }
 
     template<class T>
     void Collection<T>::Append(const T &value)
     {
-        OCI_Elem * elem = core::Check(OCI_ElemCreate(OCI_CollGetTypeInfo(*this)));
+        OCI_Element * elem = core::Check(OCI_ElementCreate(OCI_CollectionGetTypeInfo(*this)));
 
         SetElem(elem, value, GetHandle());
 
-        core::Check(OCI_CollAppend(*this, elem));
-        core::Check(OCI_ElemFree(elem));
+        core::Check(OCI_CollectionAppend(*this, elem));
+        core::Check(OCI_ElementFree(elem));
     }
 
     template<class T>
-    inline T Collection<T>::GetElem(OCI_Elem *elem, [[maybe_unused]] core::Handle *parent)
+    inline T Collection<T>::GetElem(OCI_Element *elem, [[maybe_unused]] core::Handle *parent)
     {
         if constexpr (std::is_same_v<T, bool>)
         {
 
-            return (core::Check(OCI_ElemGetBoolean(elem)) == TRUE);
+            return (core::Check(OCI_ElementGetBoolean(elem)) == TRUE);
         }
         else if constexpr (std::is_same_v<T, Int16>)
         {
 
-            return core::Check(OCI_ElemGetShort(elem));
+            return core::Check(OCI_ElementGetInt16(elem));
         }
         else if constexpr (std::is_same_v<T, UInt16>)
         {
 
-            return core::Check(OCI_ElemGetUnsignedShort(elem));
+            return core::Check(OCI_ElementGetUInt16(elem));
         }
         else if constexpr (std::is_same_v<T, Int32>)
         {
 
-            return core::Check(OCI_ElemGetInt(elem));
+            return core::Check(OCI_ElementGetInt32(elem));
         }
         else if constexpr (std::is_same_v<T, UInt32>)
         {
 
-            return core::Check(OCI_ElemGetUnsignedInt(elem));
+            return core::Check(OCI_ElementGetUInt32(elem));
         }
         else if constexpr (std::is_same_v<T, Int64>)
         {
 
-            return core::Check(OCI_ElemGetBigInt(elem));
+            return core::Check(OCI_ElementGetInt64(elem));
         }
         else if constexpr (std::is_same_v<T, UInt64>)
         {
 
-            return core::Check(OCI_ElemGetUnsignedBigInt(elem));
+            return core::Check(OCI_ElementGetUInt64(elem));
         }
         else if constexpr (std::is_same_v<T, Float>)
         {
 
-            return core::Check(OCI_ElemGetFloat(elem));
+            return core::Check(OCI_ElementGetFloat(elem));
         }
         else if constexpr (std::is_same_v<T, Double>)
         {
 
-            return core::Check(OCI_ElemGetDouble(elem));
+            return core::Check(OCI_ElementGetDouble(elem));
         }
         else if constexpr (std::is_same_v<T, Number>)
         {
 
-            return Number(core::Check(OCI_ElemGetNumber(elem)), parent);
+            return Number(core::Check(OCI_ElementGetNumber(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, String>)
         {
 
-            return core::MakeString(core::Check(OCI_ElemGetString(elem)));
+            return core::MakeString(core::Check(OCI_ElementGetString(elem)));
         }
         else if constexpr (std::is_same_v<T, Date>)
         {
 
-            return Date(core::Check(OCI_ElemGetDate(elem)), parent);
+            return Date(core::Check(OCI_ElementGetDate(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, Timestamp>)
         {
 
-            return Timestamp(core::Check(OCI_ElemGetTimestamp(elem)), parent);
+            return Timestamp(core::Check(OCI_ElementGetTimestamp(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, Interval>)
         {
 
-            return Interval(core::Check(OCI_ElemGetInterval(elem)), parent);
+            return Interval(core::Check(OCI_ElementGetInterval(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, Object>)
         {
 
-            return Object(core::Check(OCI_ElemGetObject(elem)), parent);
+            return Object(core::Check(OCI_ElementGetObject(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, Reference>)
         {
 
-            return Reference(core::Check(OCI_ElemGetRef(elem)), parent);
+            return Reference(core::Check(OCI_ElementGetReference(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, Clob>)
         {
 
-            return Clob(core::Check(OCI_ElemGetLob(elem)), parent);
+            return Clob(core::Check(OCI_ElementGetLob(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, NClob>)
         {
 
-            return NClob(core::Check(OCI_ElemGetLob(elem)), parent);
+            return NClob(core::Check(OCI_ElementGetLob(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, Blob>)
         {
 
-            return Blob(core::Check(OCI_ElemGetLob(elem)), parent);
+            return Blob(core::Check(OCI_ElementGetLob(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, File>)
         {
 
-            return File(core::Check(OCI_ElemGetFile(elem)), parent);
+            return File(core::Check(OCI_ElementGetFile(elem)), parent);
         }
         else if constexpr (std::is_same_v<T, Raw>)
         {
 
-            UInt32 size = core::Check(OCI_ElemGetRawSize(elem));
+            UInt32 size = core::Check(OCI_ElementGetRawSize(elem));
 
             Raw value(static_cast<Size>(size + 1));
 
-            size = core::Check(OCI_ElemGetRaw(elem, static_cast<AnyPointer>(value.data()), size));
+            size = core::Check(OCI_ElementGetRaw(elem, static_cast<AnyPointer>(value.data()), size));
             value.resize(size);
 
             return value;
@@ -296,124 +296,124 @@ namespace ocilib
         {
             static_assert(core::IsCollectionV<T>, "Collection::Get<T> only supports scalar types, Oracle object types and Collection<U>");
 
-            return T(core::Check(OCI_ElemGetColl(elem)), parent);
+            return T(core::Check(OCI_ElementGetCollection(elem)), parent);
         }
     }
 
     template<class T>
-    inline void Collection<T>::SetElem(OCI_Elem *elem, const T &value, [[maybe_unused]] core::Handle *parent)
+    inline void Collection<T>::SetElem(OCI_Element *elem, const T &value, [[maybe_unused]] core::Handle *parent)
     {
         if constexpr (std::is_same_v<T, bool>)
         {
 
-            core::Check(OCI_ElemSetBoolean(elem, static_cast<OCI_Boolean>(value)));
+            core::Check(OCI_ElementSetBoolean(elem, static_cast<OCI_Boolean>(value)));
         }
         else if constexpr (std::is_same_v<T, Int16>)
         {
 
-            core::Check(OCI_ElemSetShort(elem, value));
+            core::Check(OCI_ElementSetInt16(elem, value));
         }
         else if constexpr (std::is_same_v<T, UInt16>)
         {
 
-            core::Check(OCI_ElemSetUnsignedShort(elem, value));
+            core::Check(OCI_ElementSetUInt16(elem, value));
         }
         else if constexpr (std::is_same_v<T, Int32>)
         {
 
-            core::Check(OCI_ElemSetInt(elem, value));
+            core::Check(OCI_ElementSetInt32(elem, value));
         }
         else if constexpr (std::is_same_v<T, UInt32>)
         {
 
-            core::Check(OCI_ElemSetUnsignedInt(elem, value));
+            core::Check(OCI_ElementSetUInt32(elem, value));
         }
         else if constexpr (std::is_same_v<T, Int64>)
         {
 
-            core::Check(OCI_ElemSetBigInt(elem, value));
+            core::Check(OCI_ElementSetInt64(elem, value));
         }
         else if constexpr (std::is_same_v<T, UInt64>)
         {
 
-            core::Check(OCI_ElemSetUnsignedBigInt(elem, value));
+            core::Check(OCI_ElementSetUInt64(elem, value));
         }
         else if constexpr (std::is_same_v<T, Float>)
         {
 
-            core::Check(OCI_ElemSetFloat(elem, value));
+            core::Check(OCI_ElementSetFloat(elem, value));
         }
         else if constexpr (std::is_same_v<T, Double>)
         {
 
-            core::Check(OCI_ElemSetDouble(elem, value));
+            core::Check(OCI_ElementSetDouble(elem, value));
         }
         else if constexpr (std::is_same_v<T, Number>)
         {
 
-            core::Check(OCI_ElemSetNumber(elem, value));
+            core::Check(OCI_ElementSetNumber(elem, value));
         }
         else if constexpr (std::is_same_v<T, String>)
         {
 
-            core::Check(OCI_ElemSetString(elem, value.c_str()));
+            core::Check(OCI_ElementSetString(elem, value.c_str()));
         }
         else if constexpr (std::is_same_v<T, Date>)
         {
 
-            core::Check(OCI_ElemSetDate(elem, value));
+            core::Check(OCI_ElementSetDate(elem, value));
         }
         else if constexpr (std::is_same_v<T, Timestamp>)
         {
 
-            core::Check(OCI_ElemSetTimestamp(elem, value));
+            core::Check(OCI_ElementSetTimestamp(elem, value));
         }
         else if constexpr (std::is_same_v<T, Interval>)
         {
 
-            core::Check(OCI_ElemSetInterval(elem, value));
+            core::Check(OCI_ElementSetInterval(elem, value));
         }
         else if constexpr (std::is_same_v<T, Object>)
         {
 
-            core::Check(OCI_ElemSetObject(elem, value));
+            core::Check(OCI_ElementSetObject(elem, value));
         }
         else if constexpr (std::is_same_v<T, Reference>)
         {
 
-            core::Check(OCI_ElemSetRef(elem, value));
+            core::Check(OCI_ElementSetReference(elem, value));
         }
         else if constexpr (std::is_same_v<T, Clob>)
         {
 
-            core::Check(OCI_ElemSetLob(elem, value));
+            core::Check(OCI_ElementSetLob(elem, value));
         }
         else if constexpr (std::is_same_v<T, NClob>)
         {
 
-            core::Check(OCI_ElemSetLob(elem, value));
+            core::Check(OCI_ElementSetLob(elem, value));
         }
         else if constexpr (std::is_same_v<T, Blob>)
         {
 
-            core::Check(OCI_ElemSetLob(elem, value));
+            core::Check(OCI_ElementSetLob(elem, value));
         }
         else if constexpr (std::is_same_v<T, File>)
         {
 
-            core::Check(OCI_ElemSetFile(elem, value));
+            core::Check(OCI_ElementSetFile(elem, value));
         }
         else if constexpr (std::is_same_v<T, Raw>)
         {
 
             const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0]));
 
-            core::Check(OCI_ElemSetRaw(elem, data, static_cast<UInt32>(value.size())));
+            core::Check(OCI_ElementSetRaw(elem, data, static_cast<UInt32>(value.size())));
         }
         else
         {
 
-            core::Check(OCI_ElemSetColl(elem, value));
+            core::Check(OCI_ElementSetCollection(elem, value));
         }
     }
 
@@ -424,13 +424,13 @@ namespace ocilib
         {
             UInt32 size{};
 
-            core::Check(OCI_CollToText(*this, &size, nullptr));
+            core::Check(OCI_CollectionToText(*this, &size, nullptr));
 
             String result;
 
             result.resize(static_cast<Size>(size));
 
-            core::Check(OCI_CollToText(*this, &size, const_cast<otext*>(result.data())));
+            core::Check(OCI_CollectionToText(*this, &size, const_cast<otext*>(result.data())));
 
             result.resize(static_cast<Size>(size));
 

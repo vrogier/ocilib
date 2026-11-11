@@ -31,7 +31,7 @@ int main(void)
 
     OCI_Connection   * con = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
 
-    OCI_SetAutoCommit(con, TRUE);
+    OCI_ConnectionSetAutoCommit(con, TRUE);
 
     printf("=> Creating statement...\n\n");
 
@@ -39,43 +39,43 @@ int main(void)
 
     printf("=> Creating tables...\n\n");
 
-    OCI_ExecuteStmt(st, "create table table1(code number)");
-    OCI_ExecuteStmt(st, "create table table2(str varchar2(10))");
+    OCI_StatementExecute(st, "create table table1(code number)");
+    OCI_StatementExecute(st, "create table table2(str varchar2(10))");
 
     printf("=> Registering subscription...\n\n");
 
-    OCI_SetSubscriptionPort(env, 5468);
+    OCI_EnvironmentSetSubscriptionPort(env, 5468);
 
-    OCI_Subscription * sub = OCI_SubscriptionRegister(con, "sub-00", OCI_CNT_ALL, event_handler, OCI_SRM_DEFAULT, 0);
+    OCI_Subscription * sub = OCI_SubscriptionCreate(con, "sub-00", OCI_CNT_ALL, event_handler, OCI_SRM_DEFAULT, 0);
 
     printf("=> Adding queries to be notified...\n\n");
 
-    OCI_Prepare(st, "select * from table1");
+    OCI_StatementPrepare(st, "select * from table1");
     OCI_SubscriptionAddStatement(sub, st);
 
-    OCI_Prepare(st, "select * from table2");
+    OCI_StatementPrepare(st, "select * from table2");
     OCI_SubscriptionAddStatement(sub, st);
 
     printf("=> Executing some DDL operation...\n\n");
 
-    OCI_ExecuteStmt(st, "alter table table1 add price number");
+    OCI_StatementExecute(st, "alter table table1 add price number");
 
     wait_for_events();
 
     printf("=> Executing some DML operation...\n\n");
 
-    OCI_ExecuteStmt(st, "insert into table1 values(1, 10.5)");
-    OCI_ExecuteStmt(st, "insert into table2 values('shoes')");
+    OCI_StatementExecute(st, "insert into table1 values(1, 10.5)");
+    OCI_StatementExecute(st, "insert into table2 values('shoes')");
 
-    OCI_ExecuteStmt(st, "update table1 set price = 13.5 where code = 1");
-    OCI_ExecuteStmt(st, "delete from table2 ");
+    OCI_StatementExecute(st, "update table1 set price = 13.5 where code = 1");
+    OCI_StatementExecute(st, "delete from table2 ");
 
     wait_for_events();
 
     printf("=> Droping tables...\n\n");
 
-    OCI_ExecuteStmt(st, "drop table table1");
-    OCI_ExecuteStmt(st, "drop table table2");
+    OCI_StatementExecute(st, "drop table table1");
+    OCI_StatementExecute(st, "drop table table2");
 
     wait_for_events();
 

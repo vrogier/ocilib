@@ -21,40 +21,40 @@ int main(void)
     const char *pwd = getenv("OCILIB_DEMO_PWD");
 
     OCI_Connection *cn  = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
-    OCI_SodaDb     *sdb = OCI_SodaDbCreate(cn);
+    OCI_SodaDatabase     *sdb = OCI_SodaDatabaseCreate(cn);
 
     /* create a collection backed by a new table (default metadata) */
 
-    OCI_SodaColl *coll = OCI_SodaDbCreateColl(sdb, "soda_employees", NULL);
+    OCI_SodaCollection *coll = OCI_SodaDatabaseCreateCollection(sdb, "soda_employees", NULL);
 
-    printf("collection '%s' created\n", OCI_SodaCollGetName(coll));
-    printf("metadata: %s\n", OCI_SodaCollGetMetadata(coll));
+    printf("collection '%s' created\n", OCI_SodaCollectionGetName(coll));
+    printf("metadata: %s\n", OCI_SodaCollectionGetMetadata(coll));
 
     /* insert documents - keys are server-assigned (UUID) by default */
 
-    OCI_SodaDoc *doc = OCI_SodaDocCreateFromText(sdb, "{\"name\":\"Fred\",\"age\":42}", 0, NULL);
-    OCI_SodaCollInsertDoc(coll, doc);
+    OCI_SodaDocument *doc = OCI_SodaDocumentCreateFromText(sdb, "{\"name\":\"Fred\",\"age\":42}", 0, NULL);
+    OCI_SodaCollectionInsertDocument(coll, doc);
 
     printf("inserted doc key='%s' version='%s' created='%s'\n",
-           OCI_SodaDocGetKey(doc), OCI_SodaDocGetVersion(doc), OCI_SodaDocGetCreatedOn(doc));
+           OCI_SodaDocumentGetKey(doc), OCI_SodaDocumentGetVersion(doc), OCI_SodaDocumentGetCreatedOn(doc));
 
-    OCI_SodaDocFree(doc);
+    OCI_SodaDocumentFree(doc);
 
-    doc = OCI_SodaDocCreateFromText(sdb, "{\"name\":\"Jane\",\"age\":35}", 0, NULL);
-    OCI_SodaCollInsertDoc(coll, doc);
-    OCI_SodaDocFree(doc);
+    doc = OCI_SodaDocumentCreateFromText(sdb, "{\"name\":\"Jane\",\"age\":35}", 0, NULL);
+    OCI_SodaCollectionInsertDocument(coll, doc);
+    OCI_SodaDocumentFree(doc);
 
     /* fetch all documents through a cursor */
 
-    OCI_SodaDocCursor *cur = OCI_SodaCollFind(coll, NULL);
+    OCI_SodaDocumentCursor *cur = OCI_SodaCollectionFind(coll, NULL);
 
-    while ((doc = OCI_SodaDocCursorGetNext(cur)) != NULL)
+    while ((doc = OCI_SodaDocumentCursorGetNext(cur)) != NULL)
     {
-        printf("doc key='%s' content=%s\n", OCI_SodaDocGetKey(doc), OCI_SodaDocGetText(doc));
-        OCI_SodaDocFree(doc);
+        printf("doc key='%s' content=%s\n", OCI_SodaDocumentGetKey(doc), OCI_SodaDocumentGetText(doc));
+        OCI_SodaDocumentFree(doc);
     }
 
-    OCI_SodaDocCursorFree(cur);
+    OCI_SodaDocumentCursorFree(cur);
 
     /* query by example : count documents matching a JSON filter spec */
 
@@ -62,17 +62,17 @@ int main(void)
     OCI_SodaOptionsSetFilter(opt, "{\"name\":\"Jane\"}");
 
     printf("%llu doc(s) match QBE '{\"name\":\"Jane\"}'\n",
-           (unsigned long long) OCI_SodaCollDocCount(coll, opt));
+           (unsigned long long) OCI_SodaCollectionDocumentCount(coll, opt));
 
     OCI_SodaOptionsFree(opt);
 
     /* drop the collection and its backing table */
 
-    OCI_Commit(cn);
-    OCI_SodaCollDrop(coll);
-    OCI_SodaCollFree(coll);
+    OCI_ConnectionCommit(cn);
+    OCI_SodaCollectionDrop(coll);
+    OCI_SodaCollectionFree(coll);
 
-    OCI_SodaDbFree(sdb);
+    OCI_SodaDatabaseFree(sdb);
     OCI_ConnectionFree(cn);
     OCI_EnvironmentFree(env);
 

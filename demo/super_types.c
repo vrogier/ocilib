@@ -29,9 +29,9 @@ int main(void)
 
     OCI_Object * racing_car = OCI_ObjectCreate(OCI_TypeInfoGet(cn, "racing_car_type", OCI_TIF_TYPE));
 
-    OCI_Prepare(st, "begin :obj := racing_car_type(1,'Formula1', 123456789, 300); end;");
-    OCI_BindObject(st, "obj", racing_car);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, "begin :obj := racing_car_type(1,'Formula1', 123456789, 300); end;");
+    OCI_StatementBindObject(st, "obj", racing_car);
+    OCI_StatementExecutePrepared(st);
     OCI_ObjectToText(racing_car, &size, buffer);
     printf("Object => %s\n", buffer);
 

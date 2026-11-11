@@ -45,18 +45,18 @@ int main(void)
 
     /* prepare call and bind local arrays */
 
-    OCI_Prepare(st, "BEGIN test_plsqltables.combine_values(:tab_names, :tab_values, :tab_results); END;");
-    OCI_BindArrayOfStrings(st, ":tab_names", (char*)tab_names, SIZE_NAME, SIZE_ARRAY);
-    OCI_BindArrayOfStrings(st, ":tab_values", (char*)tab_values, SIZE_VALUE, SIZE_ARRAY);
-    OCI_BindArrayOfStrings(st, ":tab_results", (char*)tab_results, SIZE_VALUE, SIZE_ARRAY);
+    OCI_StatementPrepare(st, "BEGIN test_plsqltables.combine_values(:tab_names, :tab_values, :tab_results); END;");
+    OCI_StatementBindStringArray(st, ":tab_names", (char*)tab_names, SIZE_NAME, SIZE_ARRAY);
+    OCI_StatementBindStringArray(st, ":tab_values", (char*)tab_values, SIZE_VALUE, SIZE_ARRAY);
+    OCI_StatementBindStringArray(st, ":tab_results", (char*)tab_results, SIZE_VALUE, SIZE_ARRAY);
 
-    OCI_BindSetDirection(OCI_GetBind(st, 0), OCI_BDM_IN);
-    OCI_BindSetDirection(OCI_GetBind(st, 1), OCI_BDM_IN);
-    OCI_BindSetDirection(OCI_GetBind(st, 2), OCI_BDM_OUT);
+    OCI_BindSetDirection(OCI_StatementGetBind(st, 0), OCI_BDM_IN);
+    OCI_BindSetDirection(OCI_StatementGetBind(st, 1), OCI_BDM_IN);
+    OCI_BindSetDirection(OCI_StatementGetBind(st, 2), OCI_BDM_OUT);
 
     /* execute */
 
-    OCI_Execute(st);
+    OCI_StatementExecutePrepared(st);
 
     for (i = 0; i < SIZE_ARRAY; i++)
     {

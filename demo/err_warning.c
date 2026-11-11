@@ -18,7 +18,7 @@ int main(void)
         return EXIT_FAILURE;
     }
 
-    OCI_EnableWarnings(env, TRUE);
+    OCI_EnvironmentEnableWarnings(env, TRUE);
 
     OCI_Connection * cn = OCI_ConnectionCreate(env, "db", "usr", "expired_pwd_in_grace_period", OCI_SESSION_DEFAULT);
 

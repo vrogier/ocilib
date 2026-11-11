@@ -18,28 +18,28 @@
  * limitations under the License.
  */
 
-#include "sodadoccursor.h"
+#include "sodadocumentcursor.h"
 
 #include "macros.h"
 #include "memory.h"
-#include "sodadoc.h"
-#include "sodadb.h"
+#include "sodadocument.h"
+#include "sodadatabase.h"
 #include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocCursorInitialize
+ * OcilibSodaDocumentCursorInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaDocCursor * OcilibSodaDocCursorInitialize
+OCI_SodaDocumentCursor * OcilibSodaDocumentCursorInitialize
 (
-    OCI_SodaDocCursor *cursor,
-    OCI_SodaColl      *coll,
-    OCISodaDocCursor  *handle
+    OCI_SodaDocumentCursor *cursor,
+    OCI_SodaCollection     *coll,
+    OCISodaDocCursor       *handle
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaDocCursor*, NULL,
+        /* returns */ OCI_SodaDocumentCursor*, NULL,
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
@@ -71,22 +71,22 @@ OCI_SodaDocCursor * OcilibSodaDocCursorInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocCursorGetNext
+ * OcilibSodaDocumentCursorGetNext
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaDoc * OcilibSodaDocCursorGetNext
+OCI_SodaDocument * OcilibSodaDocumentCursorGetNext
 (
-    OCI_SodaDocCursor *cursor
+    OCI_SodaDocumentCursor *cursor
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaDoc*, NULL,
+        /* returns */ OCI_SodaDocument*, NULL,
         /* context */ OCI_IPC_SODA_DOC_CURSOR, cursor
     );
 
-    OCI_SodaDoc *doc     = NULL;
-    sword        oci_ret = 0;
+    OCI_SodaDocument *doc     = NULL;
+    sword             oci_ret = 0;
 
     CHECK_PTR(OCI_IPC_SODA_DOC_CURSOR, cursor);
     CHECK_PTR(OCI_IPC_SODA_COLL, cursor->coll);
@@ -134,7 +134,7 @@ OCI_SodaDoc * OcilibSodaDocCursorGetNext
         CHECK(OCI_SUCCESS == oci_ret || OCI_SUCCESS_WITH_INFO == oci_ret);
     }
 
-    CHECK(NULL != OcilibSodaDocInitialize(doc->sdb, doc, doc->handle, NULL, 0, NULL, 0));
+    CHECK(NULL != OcilibSodaDocumentInitialize(doc->sdb, doc, doc->handle, NULL, 0, NULL, 0));
 
     SET_RETVAL(doc);
 
@@ -142,18 +142,18 @@ OCI_SodaDoc * OcilibSodaDocCursorGetNext
     (
         if (FAILURE && NULL != doc)
         {
-            OcilibSodaDocFree(doc);
+            OcilibSodaDocumentFree(doc);
         }
     );
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocCursorFree
+ * OcilibSodaDocumentCursorFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaDocCursorFree
+OCI_Boolean OcilibSodaDocumentCursorFree
 (
-    OCI_SodaDocCursor *cursor
+    OCI_SodaDocumentCursor *cursor
 )
 {
     ENTER_FUNC

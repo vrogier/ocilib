@@ -117,15 +117,15 @@ namespace TestCApi
     {
         const auto enq = OCI_EnqueueCreate(inf, OTEXT("TestDeqOpsQueue"));
         ASSERT_NE(nullptr, enq);
-        const auto msg_in = OCI_MsgCreate(inf);
+        const auto msg_in = OCI_MessageCreate(inf);
         ASSERT_NE(nullptr, msg_in);
         const auto obj_in = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj_in);
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("title"), OTEXT("Dequeue test")));
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("content"), OTEXT("world")));
-        ASSERT_TRUE(OCI_MsgSetObject(msg_in, obj_in));
+        ASSERT_TRUE(OCI_MessageSetObject(msg_in, obj_in));
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         ASSERT_TRUE(OCI_DequeueSetMode(deq, OCI_ADM_REMOVE));
         ASSERT_TRUE(OCI_DequeueSetVisibility(deq, OCI_AMV_ON_COMMIT));
@@ -137,14 +137,14 @@ namespace TestCApi
         ASSERT_NE(nullptr, msg_out);
         unsigned char gotMsgId[32] = {};
         OCI_UInt32 msgIdLen = sizeof(gotMsgId);
-        ASSERT_TRUE(OCI_MsgGetID(msg_out, gotMsgId, &msgIdLen));
+        ASSERT_TRUE(OCI_MessageGetID(msg_out, gotMsgId, &msgIdLen));
         EXPECT_EQ(16u, msgIdLen);
-        const auto obj_out = OCI_MsgGetObject(msg_out);
+        const auto obj_out = OCI_MessageGetObject(msg_out);
         ASSERT_NE(nullptr, obj_out);
         EXPECT_EQ(String(OTEXT("Dequeue test")), String(OCI_ObjectGetString(obj_out, OTEXT("title"))));
         EXPECT_EQ(String(OTEXT("world")), String(OCI_ObjectGetString(obj_out, OTEXT("content"))));
 
-        ASSERT_TRUE(OCI_MsgFree(msg_in));
+        ASSERT_TRUE(OCI_MessageFree(msg_in));
         ASSERT_TRUE(OCI_ObjectFree(obj_in));
         ASSERT_TRUE(OCI_EnqueueFree(enq));
     }
@@ -257,16 +257,16 @@ namespace TestCApi
         ASSERT_NE(nullptr, enq);
         const auto recipient = OCI_AgentCreate(conn, OTEXT("sub_consumer"), OTEXT("TestDeqSubQueue"));
         ASSERT_NE(nullptr, recipient);
-        const auto msg = OCI_MsgCreate(inf);
+        const auto msg = OCI_MessageCreate(inf);
         ASSERT_NE(nullptr, msg);
         const auto obj = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj);
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("title"), OTEXT("listen me")));
-        ASSERT_TRUE(OCI_MsgSetObject(msg, obj));
+        ASSERT_TRUE(OCI_MessageSetObject(msg, obj));
         OCI_Agent* recipients[] = { recipient };
-        ASSERT_TRUE(OCI_MsgSetConsumers(msg, recipients, 1));
+        ASSERT_TRUE(OCI_MessageSetConsumers(msg, recipients, 1));
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg));
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         OCI_Agent* watchers[] = { recipient };
         ASSERT_TRUE(OCI_DequeueSetAgentList(deq, watchers, 1));
@@ -278,7 +278,7 @@ namespace TestCApi
         }
 
         ASSERT_TRUE(OCI_ObjectFree(obj));
-        ASSERT_TRUE(OCI_MsgFree(msg));
+        ASSERT_TRUE(OCI_MessageFree(msg));
         ASSERT_TRUE(OCI_AgentFree(recipient));
         ASSERT_TRUE(OCI_EnqueueFree(enq));
     }

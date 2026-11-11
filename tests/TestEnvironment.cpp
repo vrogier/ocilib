@@ -37,7 +37,7 @@ namespace TestCApi
 
         ASSERT_NE(nullptr, env);
 
-        const otext*  str = OCI_GetLocaleString(env, OCI_LSI_DAYNAME1);
+        const otext*  str = OCI_EnvironmentGetLocaleString(env, OCI_LSI_DAYNAME1);
         ASSERT_NE(nullptr, str);
 
     }
@@ -48,7 +48,7 @@ namespace TestCApi
 
         ASSERT_NE(nullptr, env);
 
-        const otext*  str = OCI_GetLocaleString(env, 998);
+        const otext*  str = OCI_EnvironmentGetLocaleString(env, 998);
         ASSERT_EQ(nullptr, str);
 
     }
@@ -67,21 +67,21 @@ namespace TestCApi
             { "ConnectionCreateSharded", [] { return nullptr == OCI_ConnectionCreateSharded(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), 1, nullptr, nullptr); } },
             { "DatabaseShutdown", [] { return !OCI_DatabaseShutdown(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), 1, 1, 1); } },
             { "DatabaseStartup", [] { return !OCI_DatabaseStartup(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), 1, 1, 1, OTEXT("x")); } },
-            { "EnableWarnings", [] { return !OCI_EnableWarnings(nullptr, FALSE); } },
+            { "EnableWarnings", [] { return !OCI_EnvironmentEnableWarnings(nullptr, FALSE); } },
             { "EnvironmentFree", [] { return !OCI_EnvironmentFree(nullptr); } },
-            { "GetCharset", [] { return OCI_UNKNOWN == OCI_GetCharset(nullptr); } },
-            { "GetFormat", [] { return nullptr == OCI_GetFormat(nullptr, 1); } },
-            { "GetImportMode", [] { return OCI_UNKNOWN == OCI_GetImportMode(nullptr); } },
-            { "GetLocaleString", [] { return nullptr == OCI_GetLocaleString(nullptr, 1); } },
-            { "GetOCICompileVersion", [] { return OCI_UNKNOWN == OCI_GetOCICompileVersion(nullptr); } },
-            { "GetOCIRuntimeVersion", [] { return OCI_UNKNOWN == OCI_GetOCIRuntimeVersion(nullptr); } },
-            { "GetStats", [] { return 0 == OCI_GetStats(nullptr, 1); }, NoNullPointerError }, // manual
-            { "GetSubscriptionPort", [] { return 0 == OCI_GetSubscriptionPort(nullptr); } },
-            { "SetErrorHandler", [] { return !OCI_SetErrorHandler(nullptr, nullptr); } },
-            { "SetFormat", [] { return !OCI_SetFormat(nullptr, 1, OTEXT("x")); } },
-            { "SetHAHandler", [] { return !OCI_SetHAHandler(nullptr, nullptr); } },
-            { "SetSubscriptionPort", [] { return !OCI_SetSubscriptionPort(nullptr, 1); } },
-            { "SetUserPassword", [] { return !OCI_SetUserPassword(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), OTEXT("x")); } },
+            { "GetCharset", [] { return OCI_UNKNOWN == OCI_EnvironmentGetCharset(nullptr); } },
+            { "GetFormat", [] { return nullptr == OCI_EnvironmentGetFormat(nullptr, 1); } },
+            { "GetImportMode", [] { return OCI_UNKNOWN == OCI_EnvironmentGetImportMode(nullptr); } },
+            { "GetLocaleString", [] { return nullptr == OCI_EnvironmentGetLocaleString(nullptr, 1); } },
+            { "GetOCICompileVersion", [] { return OCI_UNKNOWN == OCI_EnvironmentGetOCICompileVersion(nullptr); } },
+            { "GetOCIRuntimeVersion", [] { return OCI_UNKNOWN == OCI_EnvironmentGetOCIRuntimeVersion(nullptr); } },
+            { "GetStats", [] { return 0 == OCI_EnvironmentGetStats(nullptr, 1); }, NoNullPointerError }, // manual
+            { "GetSubscriptionPort", [] { return 0 == OCI_EnvironmentGetSubscriptionPort(nullptr); } },
+            { "SetErrorHandler", [] { return !OCI_EnvironmentSetErrorHandler(nullptr, nullptr); } },
+            { "SetFormat", [] { return !OCI_EnvironmentSetFormat(nullptr, 1, OTEXT("x")); } },
+            { "SetHAHandler", [] { return !OCI_EnvironmentSetHAHandler(nullptr, nullptr); } },
+            { "SetSubscriptionPort", [] { return !OCI_EnvironmentSetSubscriptionPort(nullptr, 1); } },
+            { "SetUserPassword", [] { return !OCI_EnvironmentSetUserPassword(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), OTEXT("x")); } },
         }),
         &NullArgCaseName);
 
@@ -185,7 +185,7 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_NE(0u, OCI_GetOCICompileVersion(env));
+        ASSERT_NE(0u, OCI_EnvironmentGetOCICompileVersion(env));
     }
 
     TEST(TestEnvironment, GetOCIRuntimeVersion)
@@ -193,7 +193,7 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_NE(0u, OCI_GetOCIRuntimeVersion(env));
+        ASSERT_NE(0u, OCI_EnvironmentGetOCIRuntimeVersion(env));
     }
 
     TEST(TestEnvironment, GetCharset)
@@ -201,7 +201,7 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_TRUE(OCI_GetCharset(env) == OCI_CHAR_WIDE || OCI_GetCharset(env) == OCI_CHAR_ANSI);
+        ASSERT_TRUE(OCI_EnvironmentGetCharset(env) == OCI_CHAR_WIDE || OCI_EnvironmentGetCharset(env) == OCI_CHAR_ANSI);
     }
 
     TEST(TestEnvironment, GetImportMode)
@@ -209,7 +209,7 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        OCI_GetImportMode(env);
+        OCI_EnvironmentGetImportMode(env);
     }
 
     class TestEnvironmentStats : public ::testing::TestWithParam<OCI_Stat> {};
@@ -219,7 +219,7 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        OCI_GetStats(env, GetParam());
+        OCI_EnvironmentGetStats(env, GetParam());
     }
 
     INSTANTIATE_TEST_CASE_P(StatTypes, TestEnvironmentStats,
@@ -230,12 +230,12 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_EQ((OCI_UInt64) 0, OCI_GetStats(env, static_cast<OCI_Stat>(99)));
+        ASSERT_EQ((OCI_UInt64) 0, OCI_EnvironmentGetStats(env, static_cast<OCI_Stat>(99)));
     }
 
     TEST(TestEnvironment, GetStatsNullEnv)
     {
-        ASSERT_EQ((OCI_UInt64) 0, OCI_GetStats(nullptr, OCI_UST_HANDLES));
+        ASSERT_EQ((OCI_UInt64) 0, OCI_EnvironmentGetStats(nullptr, OCI_UST_HANDLES));
     }
 
     TEST(TestEnvironment, SubscriptionPortZeroKeepsAttributeUnset)
@@ -247,8 +247,8 @@ namespace TestCppApi
         const auto env = OCI_EnvironmentCreate(nullptr, nullptr, OCI_ENV_DEFAULT);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_TRUE(OCI_SetSubscriptionPort(env, 0));
-        OCI_GetSubscriptionPort(env);
+        ASSERT_TRUE(OCI_EnvironmentSetSubscriptionPort(env, 0));
+        OCI_EnvironmentGetSubscriptionPort(env);
 
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
@@ -261,8 +261,8 @@ namespace TestCppApi
         const auto env = OCI_EnvironmentCreate(nullptr, nullptr, OCI_ENV_DEFAULT);
         ASSERT_NE(nullptr, env);
 
-        OCI_SetSubscriptionPort(env, 12345);
-        OCI_GetSubscriptionPort(env);
+        OCI_EnvironmentSetSubscriptionPort(env, 12345);
+        OCI_EnvironmentGetSubscriptionPort(env);
 
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
@@ -272,8 +272,8 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, OTEXT("YYYY/MM/DD")));
-        ASSERT_EQ(String(OTEXT("YYYY/MM/DD")), String(OCI_GetFormat(env, OCI_FMT_DATE)));
+        ASSERT_TRUE(OCI_EnvironmentSetFormat(env, OCI_FMT_DATE, OTEXT("YYYY/MM/DD")));
+        ASSERT_EQ(String(OTEXT("YYYY/MM/DD")), String(OCI_EnvironmentGetFormat(env, OCI_FMT_DATE)));
     }
 
     TEST(TestEnvironment, SetFormatNullRestoresDefault)
@@ -281,8 +281,8 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, nullptr));
-        ASSERT_NE(nullptr, OCI_GetFormat(env, OCI_FMT_DATE));
+        ASSERT_TRUE(OCI_EnvironmentSetFormat(env, OCI_FMT_DATE, nullptr));
+        ASSERT_NE(nullptr, OCI_EnvironmentGetFormat(env, OCI_FMT_DATE));
     }
 
     TEST(TestEnvironment, SetFormatInvalidTypeRejected)
@@ -290,7 +290,7 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_FALSE(OCI_SetFormat(env, static_cast<OCI_FormatType>(99), OTEXT("X")));
+        ASSERT_FALSE(OCI_EnvironmentSetFormat(env, static_cast<OCI_FormatType>(99), OTEXT("X")));
     }
 
     TEST(TestEnvironment, GetFormatInvalidType)
@@ -298,7 +298,7 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_EQ(nullptr, OCI_GetFormat(env, static_cast<OCI_FormatType>(99)));
+        ASSERT_EQ(nullptr, OCI_EnvironmentGetFormat(env, static_cast<OCI_FormatType>(99)));
     }
 
 
@@ -307,7 +307,7 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_EQ(nullptr, OCI_GetLocaleString(env, static_cast<OCI_LocaleCode>(0)));
+        ASSERT_EQ(nullptr, OCI_EnvironmentGetLocaleString(env, static_cast<OCI_LocaleCode>(0)));
     }
 
 
@@ -321,7 +321,7 @@ namespace TestCppApi
         if (env)
         {
             /* path ignored: only possible in a linkage build */
-            ASSERT_EQ(OCI_IMPORT_MODE_LINKAGE, OCI_GetImportMode(env));
+            ASSERT_EQ(OCI_IMPORT_MODE_LINKAGE, OCI_EnvironmentGetImportMode(env));
             ASSERT_TRUE(OCI_EnvironmentFree(env));
         }
     }
@@ -398,7 +398,7 @@ namespace TestCppApi
         const auto tbl_typinf = OCI_TypeInfoGet(conn, OTEXT("TestEnvironment_LeakTbl"), OCI_TIF_TABLE);
         ASSERT_NE(nullptr, tbl_typinf);
 
-        const auto dp = OCI_DirPathCreate(tbl_typinf, nullptr, 1, 1);
+        const auto dp = OCI_DirectPathCreate(tbl_typinf, nullptr, 1, 1);
         ASSERT_NE(nullptr, dp);
 
         ASSERT_FALSE(OCI_EnvironmentFree(env));
@@ -438,8 +438,8 @@ namespace TestCppApi
     }
 
     /* --- public-API coverage of the dropped OcilibEnv* internals:
-       OCI_GetFormat / OCI_SetFormat / OCI_GetVariable / OCI_GetImportMode /
-       OCI_GetLocaleString / OCI_GetCharset / OCI_EnvironmentFree --- */
+       OCI_EnvironmentGetFormat / OCI_EnvironmentSetFormat / OCI_GetVariable / OCI_EnvironmentGetImportMode /
+       OCI_EnvironmentGetLocaleString / OCI_EnvironmentGetCharset / OCI_EnvironmentFree --- */
 
     TEST(TestEnvironment, FormatGetSetLazyFill)
     {
@@ -447,16 +447,16 @@ namespace TestCppApi
         ASSERT_NE(nullptr, env);
 
         /* OcilibEnvironmentGetFormat lazy-fill arms: default format strings
-           are populated on first OCI_GetFormat call */
-        ASSERT_NE(nullptr, OCI_GetFormat(env, OCI_FMT_DATE));
-        ASSERT_NE(nullptr, OCI_GetFormat(env, OCI_FMT_TIMESTAMP));
-        ASSERT_NE(nullptr, OCI_GetFormat(env, OCI_FMT_NUMERIC));
-        ASSERT_EQ(nullptr, OCI_GetFormat(env, static_cast<OCI_FormatType>(0)));
+           are populated on first OCI_EnvironmentGetFormat call */
+        ASSERT_NE(nullptr, OCI_EnvironmentGetFormat(env, OCI_FMT_DATE));
+        ASSERT_NE(nullptr, OCI_EnvironmentGetFormat(env, OCI_FMT_TIMESTAMP));
+        ASSERT_NE(nullptr, OCI_EnvironmentGetFormat(env, OCI_FMT_NUMERIC));
+        ASSERT_EQ(nullptr, OCI_EnvironmentGetFormat(env, static_cast<OCI_FormatType>(0)));
 
         /* SetFormat roundtrip through OcilibEnvironmentSetFormat */
-        ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, OTEXT("YYYY/MM/DD")));
-        ASSERT_EQ(String(OTEXT("YYYY/MM/DD")), String(OCI_GetFormat(env, OCI_FMT_DATE)));
-        ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, nullptr));
+        ASSERT_TRUE(OCI_EnvironmentSetFormat(env, OCI_FMT_DATE, OTEXT("YYYY/MM/DD")));
+        ASSERT_EQ(String(OTEXT("YYYY/MM/DD")), String(OCI_EnvironmentGetFormat(env, OCI_FMT_DATE)));
+        ASSERT_TRUE(OCI_EnvironmentSetFormat(env, OCI_FMT_DATE, nullptr));
     }
 
     TEST(TestEnvironment, GetVariableLocaleAndModes)
@@ -466,11 +466,11 @@ namespace TestCppApi
 
         /* OcilibEnvironmentGetImportMode / OcilibEnvironmentGetLocaleString
            via public getters */
-        ASSERT_TRUE((OCI_Int32)OCI_GetImportMode(env) >= 0);
+        ASSERT_TRUE((OCI_Int32)OCI_EnvironmentGetImportMode(env) >= 0);
         /* locale code 0 is invalid -> NULL; valid codes return a string */
-        ASSERT_EQ(nullptr, OCI_GetLocaleString(env, static_cast<OCI_LocaleCode>(0)));
-        ASSERT_TRUE(OCI_GetCharset(env) == OCI_CHAR_WIDE || OCI_GetCharset(env) == OCI_CHAR_ANSI);
-        ASSERT_NE(0u, OCI_GetOCIRuntimeVersion(env));
+        ASSERT_EQ(nullptr, OCI_EnvironmentGetLocaleString(env, static_cast<OCI_LocaleCode>(0)));
+        ASSERT_TRUE(OCI_EnvironmentGetCharset(env) == OCI_CHAR_WIDE || OCI_EnvironmentGetCharset(env) == OCI_CHAR_ANSI);
+        ASSERT_NE(0u, OCI_EnvironmentGetOCIRuntimeVersion(env));
     }
 
     TEST(TestEnvironment, FreeWithUndisposedConn)
@@ -516,7 +516,7 @@ namespace TestCppApi
            (requires the client to still export those legacy symbols) */
         const auto env = OcilibEnvironmentCreate(nullptr, nullptr, OCI_ENV_DEFAULT, OCI_8_0);
         ASSERT_NE(nullptr, env);
-        EXPECT_EQ(OCI_8_0, OCI_GetOCIRuntimeVersion(env));
+        EXPECT_EQ(OCI_8_0, OCI_EnvironmentGetOCIRuntimeVersion(env));
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
 

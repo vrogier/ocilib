@@ -113,7 +113,7 @@ namespace ocilib
   * @include array.cpp
   *
   * @par Using collections
-  * @include coll.cpp
+  * @include collection.cpp
   *
   * @par Using connection pools
   * @include pool.cpp
@@ -219,12 +219,12 @@ namespace ocilib
 #include "ocilibcpp/detail/DirectPath.hpp"
 #include "ocilibcpp/detail/Queue.hpp"
 #include "ocilibcpp/detail/QueueTable.hpp"
-#include "ocilibcpp/detail/SodaDoc.hpp"
+#include "ocilibcpp/detail/SodaDocument.hpp"
 #include "ocilibcpp/detail/SodaOptions.hpp"
-#include "ocilibcpp/detail/SodaDb.hpp"
-#include "ocilibcpp/detail/SodaColl.hpp"
-#include "ocilibcpp/detail/SodaCollCursor.hpp"
-#include "ocilibcpp/detail/SodaDocCursor.hpp"
+#include "ocilibcpp/detail/SodaDatabase.hpp"
+#include "ocilibcpp/detail/SodaCollection.hpp"
+#include "ocilibcpp/detail/SodaCollectionCursor.hpp"
+#include "ocilibcpp/detail/SodaDocumentCursor.hpp"
 
 
 #endif

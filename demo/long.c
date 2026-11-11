@@ -58,9 +58,9 @@ int main(void)
 
         OCI_Long * lg = OCI_LongCreate(st, OCI_BLONG);
 
-        OCI_Prepare(st, "insert into test_long_raw(code, content) values (1, :data)");
-        OCI_BindLong(st, ":data", lg, n);
-        OCI_Execute(st);
+        OCI_StatementPrepare(st, "insert into test_long_raw(code, content) values (1, :data)");
+        OCI_StatementBindLong(st, ":data", lg, n);
+        OCI_StatementExecutePrepared(st);
 
         /* write data into table by chunks of SIZE_BUF bytes */
 
@@ -73,21 +73,21 @@ int main(void)
         fclose(f);
 
         OCI_LongFree(lg);
-        OCI_Commit(cn);
+        OCI_ConnectionCommit(cn);
     }
 
     /* FETCHING LONGS  -------------------------------------------- */
 
 
-    OCI_ExecuteStmt(st, "select content from test_long_raw where code = 1");
-    OCI_SetPieceSize(st, 10000);
+    OCI_StatementExecute(st, "select content from test_long_raw where code = 1");
+    OCI_StatementSetPieceSize(st, 10000);
 
-    OCI_Resultset * rs = OCI_GetResultset(st);
+    OCI_Resultset * rs = OCI_StatementGetResultset(st);
 
     /* read data by chunks of 2048 bytes*/
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        OCI_Long *lg = OCI_GetLong(rs, 0);
+        OCI_Long *lg = OCI_ResultsetGetLong(rs, 0);
 
         while ((n = OCI_LongRead(lg, buffer, sizeof(buffer)))) {}
 

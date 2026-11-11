@@ -26,14 +26,14 @@ int main(void)
     OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     OCI_Statement * st = OCI_StatementCreate(cn);
 
-    OCI_Immediate(cn, "select rowid from products where code = 1", OCI_ARG_TEXT, rowid);
+    OCI_ConnectionImmediate(cn, "select rowid from products where code = 1", OCI_ARG_TEXT, rowid);
 
-    OCI_Prepare(st, "select code, name, rowid from products where rowid = :id");
-    OCI_BindString(st, ":id", rowid, (OCI_UInt32) strlen(rowid));
-    OCI_Execute(st);
-    OCI_Resultset * rs = OCI_GetResultset(st);
-    OCI_FetchNext(rs);
-    printf("code [%d], name [%s], rowid [%s]", OCI_GetInt(rs, 0), OCI_GetString(rs, 1), OCI_GetString(rs, 2));
+    OCI_StatementPrepare(st, "select code, name, rowid from products where rowid = :id");
+    OCI_StatementBindString(st, ":id", rowid, (OCI_UInt32) strlen(rowid));
+    OCI_StatementExecutePrepared(st);
+    OCI_Resultset * rs = OCI_StatementGetResultset(st);
+    OCI_ResultsetFetchNext(rs);
+    printf("code [%d], name [%s], rowid [%s]", OCI_ResultsetGetInt32(rs, 0), OCI_ResultsetGetString(rs, 1), OCI_ResultsetGetString(rs, 2));
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);

@@ -36,67 +36,67 @@ namespace ocilib
 
     inline bool Resultset::Next()
     {
-        return (core::Check(OCI_FetchNext(*this)) == TRUE);
+        return (core::Check(OCI_ResultsetFetchNext(*this)) == TRUE);
     }
 
     inline bool Resultset::Prev()
     {
-        return (core::Check(OCI_FetchPrev(*this)) == TRUE);
+        return (core::Check(OCI_ResultsetFetchPrev(*this)) == TRUE);
     }
 
     inline bool Resultset::First()
     {
-        return (core::Check(OCI_FetchFirst(*this)) == TRUE);
+        return (core::Check(OCI_ResultsetFetchFirst(*this)) == TRUE);
     }
 
     inline bool Resultset::Last()
     {
-        return (core::Check(OCI_FetchLast(*this)) == TRUE);
+        return (core::Check(OCI_ResultsetFetchLast(*this)) == TRUE);
     }
 
     inline bool Resultset::Seek(SeekMode mode, Int32 offset)
     {
-        return (core::Check(OCI_FetchSeek(*this, mode, offset)) == TRUE);
+        return (core::Check(OCI_ResultsetFetchSeek(*this, mode, offset)) == TRUE);
     }
 
     inline UInt32 Resultset::GetCount() const
     {
-        return core::Check(OCI_GetRowCount(*this));
+        return core::Check(OCI_ResultsetGetRowCount(*this));
     }
 
     inline Int32 Resultset::GetCurrentRow() const
     {
-        return core::Check(OCI_GetCurrentRow(*this));
+        return core::Check(OCI_ResultsetGetCurrentRow(*this));
     }
 
     inline Int32 Resultset::GetColumnIndex(const String& name) const
     {
-        return core::Check(OCI_GetColumnIndex(*this, name.c_str()));
+        return core::Check(OCI_ResultsetGetColumnIndex(*this, name.c_str()));
     }
 
     inline UInt32 Resultset::GetColumnCount() const
     {
-        return core::Check(OCI_GetColumnCount(*this));
+        return core::Check(OCI_ResultsetGetColumnCount(*this));
     }
 
     inline Column Resultset::GetColumn(UInt32 index) const
     {
-        return Column(core::Check(OCI_GetColumn(*this, index)), GetHandle());
+        return Column(core::Check(OCI_ResultsetGetColumn(*this, index)), GetHandle());
     }
 
     inline Column Resultset::GetColumn(const String& name) const
     {
-        return Column(core::Check(OCI_GetColumnByName(*this, name.c_str())), GetHandle());
+        return Column(core::Check(OCI_ResultsetGetColumnByName(*this, name.c_str())), GetHandle());
     }
 
     inline bool Resultset::IsColumnNull(UInt32 index) const
     {
-        return (core::Check(OCI_IsNull(*this, index)) == TRUE);
+        return (core::Check(OCI_ResultsetIsColumnNull(*this, index)) == TRUE);
     }
 
     inline bool Resultset::IsColumnNull(const String& name) const
     {
-        return (core::Check(OCI_IsNullByName(*this, name.c_str())) == TRUE);
+        return (core::Check(OCI_ResultsetIsColumnNullByName(*this, name.c_str())) == TRUE);
     }
 
     inline Statement Resultset::GetStatement() const
@@ -195,44 +195,44 @@ namespace ocilib
     template<class T>
     inline T Resultset::Get(UInt32 index) const
     {
-        if      constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_GetShort(*this, index)); }
-        else if constexpr (std::is_same_v<T, UInt16>) { return core::Check(OCI_GetUnsignedShort(*this, index)); }
-        else if constexpr (std::is_same_v<T, Int32>)  { return core::Check(OCI_GetInt(*this, index)); }
-        else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_GetUnsignedInt(*this, index)); }
-        else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_GetBigInt(*this, index)); }
-        else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_GetUnsignedBigInt(*this, index)); }
-        else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_GetFloat(*this, index)); }
-        else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_GetDouble(*this, index)); }
-        else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_GetNumber(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, String>)    { return core::MakeString(core::Check(OCI_GetString(*this, index))); }
-        else if constexpr (std::is_same_v<T, Date>)       { return Date(core::Check(OCI_GetDate(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_GetTimestamp(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_GetInterval(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Object>)     { return Object(core::Check(OCI_GetObject(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Reference>)  { return Reference(core::Check(OCI_GetRef(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, XmlType>)    { return XmlType(core::Check(OCI_GetXmlType(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Vector>)     { return Vector(core::Check(OCI_GetVector(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Json>)       { return Json(core::Check(OCI_GetJson(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Statement>)  { return Statement(core::Check(OCI_GetStatement(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Clob>)       { return Clob(core::Check(OCI_GetLob(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, NClob>)      { return NClob(core::Check(OCI_GetLob(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Blob>)       { return Blob(core::Check(OCI_GetLob(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, File>)       { return File(core::Check(OCI_GetFile(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Clong>)      { return Clong(core::Check(OCI_GetLong(*this, index)), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Blong>)      { return Blong(core::Check(OCI_GetLong(*this, index)), GetHandle()); }
+        if      constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_ResultsetGetInt16(*this, index)); }
+        else if constexpr (std::is_same_v<T, UInt16>) { return core::Check(OCI_ResultsetGetUInt16(*this, index)); }
+        else if constexpr (std::is_same_v<T, Int32>)  { return core::Check(OCI_ResultsetGetInt32(*this, index)); }
+        else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_ResultsetGetUInt32(*this, index)); }
+        else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_ResultsetGetInt64(*this, index)); }
+        else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_ResultsetGetUInt64(*this, index)); }
+        else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_ResultsetGetFloat(*this, index)); }
+        else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_ResultsetGetDouble(*this, index)); }
+        else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_ResultsetGetNumber(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, String>)    { return core::MakeString(core::Check(OCI_ResultsetGetString(*this, index))); }
+        else if constexpr (std::is_same_v<T, Date>)       { return Date(core::Check(OCI_ResultsetGetDate(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_ResultsetGetTimestamp(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_ResultsetGetInterval(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Object>)     { return Object(core::Check(OCI_ResultsetGetObject(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Reference>)  { return Reference(core::Check(OCI_ResultsetGetReference(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, XmlType>)    { return XmlType(core::Check(OCI_ResultsetGetXmlType(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Vector>)     { return Vector(core::Check(OCI_ResultsetGetVector(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Json>)       { return Json(core::Check(OCI_ResultsetGetJson(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Statement>)  { return Statement(core::Check(OCI_ResultsetGetCursor(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Clob>)       { return Clob(core::Check(OCI_ResultsetGetLob(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, NClob>)      { return NClob(core::Check(OCI_ResultsetGetLob(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Blob>)       { return Blob(core::Check(OCI_ResultsetGetLob(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, File>)       { return File(core::Check(OCI_ResultsetGetFile(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Clong>)      { return Clong(core::Check(OCI_ResultsetGetLong(*this, index)), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Blong>)      { return Blong(core::Check(OCI_ResultsetGetLong(*this, index)), GetHandle()); }
         else if constexpr (std::is_same_v<T, StringView>)
         {
-            const otext* value = core::Check(OCI_GetString(*this, index));
+            const otext* value = core::Check(OCI_ResultsetGetString(*this, index));
 
             return value ? StringView(value) : StringView();
         }
         else if constexpr (std::is_same_v<T, Raw>)
         {
-            UInt32 size = core::Check(OCI_GetDataLength(*this, index));
+            UInt32 size = core::Check(OCI_ResultsetGetDataLength(*this, index));
 
             Raw value(static_cast<Size>(size + 1));
 
-            size = core::Check(OCI_GetRaw(*this, index, static_cast<AnyPointer>(value.data()), size));
+            size = core::Check(OCI_ResultsetGetRaw(*this, index, static_cast<AnyPointer>(value.data()), size));
             value.resize(size);
 
             return value;
@@ -241,51 +241,51 @@ namespace ocilib
         {
             static_assert(core::IsCollectionV<T>, "Resultset::Get<T> only supports scalar types, Oracle object types and Collection<U>");
 
-            return T(core::Check(OCI_GetColl(*this, index)), GetHandle());
+            return T(core::Check(OCI_ResultsetGetColl(*this, index)), GetHandle());
         }
     }
 
     template<class T>
     inline T Resultset::Get(const String& name) const
     {
-        if      constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_GetShortByName(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, UInt16>) { return core::Check(OCI_GetUnsignedShortByName(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, Int32>)  { return core::Check(OCI_GetIntByName(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_GetUnsignedIntByName(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_GetBigIntByName(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_GetUnsignedBigIntByName(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_GetFloatByName(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_GetDoubleByName(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_GetNumberByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, String>)    { return core::MakeString(core::Check(OCI_GetStringByName(*this, name.c_str()))); }
-        else if constexpr (std::is_same_v<T, Date>)       { return Date(core::Check(OCI_GetDateByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_GetTimestampByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_GetIntervalByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Object>)     { return Object(core::Check(OCI_GetObjectByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Reference>)  { return Reference(core::Check(OCI_GetRefByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, XmlType>)    { return XmlType(core::Check(OCI_GetXmlTypeByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Vector>)     { return Vector(core::Check(OCI_GetVectorByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Json>)       { return Json(core::Check(OCI_GetJsonByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Statement>)  { return Statement(core::Check(OCI_GetStatementByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Clob>)       { return Clob(core::Check(OCI_GetLobByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, NClob>)      { return NClob(core::Check(OCI_GetLobByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Blob>)       { return Blob(core::Check(OCI_GetLobByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, File>)       { return File(core::Check(OCI_GetFileByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Clong>)      { return Clong(core::Check(OCI_GetLongByName(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Blong>)      { return Blong(core::Check(OCI_GetLongByName(*this, name.c_str())), GetHandle()); }
+        if      constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_ResultsetGetInt16ByName(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, UInt16>) { return core::Check(OCI_ResultsetGetUInt16ByName(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, Int32>)  { return core::Check(OCI_ResultsetGetInt32ByName(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_ResultsetGetUInt32ByName(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_ResultsetGetInt64ByName(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_ResultsetGetUInt64ByName(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_ResultsetGetFloatByName(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_ResultsetGetDoubleByName(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_ResultsetGetNumberByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, String>)    { return core::MakeString(core::Check(OCI_ResultsetGetStringByName(*this, name.c_str()))); }
+        else if constexpr (std::is_same_v<T, Date>)       { return Date(core::Check(OCI_ResultsetGetDateByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_ResultsetGetTimestampByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_ResultsetGetIntervalByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Object>)     { return Object(core::Check(OCI_ResultsetGetObjectByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Reference>)  { return Reference(core::Check(OCI_ResultsetGetReferenceByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, XmlType>)    { return XmlType(core::Check(OCI_ResultsetGetXmlTypeByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Vector>)     { return Vector(core::Check(OCI_ResultsetGetVectorByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Json>)       { return Json(core::Check(OCI_ResultsetGetJsonByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Statement>)  { return Statement(core::Check(OCI_ResultsetGetCursorByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Clob>)       { return Clob(core::Check(OCI_ResultsetGetLobByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, NClob>)      { return NClob(core::Check(OCI_ResultsetGetLobByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Blob>)       { return Blob(core::Check(OCI_ResultsetGetLobByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, File>)       { return File(core::Check(OCI_ResultsetGetFileByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Clong>)      { return Clong(core::Check(OCI_ResultsetGetLongByName(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Blong>)      { return Blong(core::Check(OCI_ResultsetGetLongByName(*this, name.c_str())), GetHandle()); }
         else if constexpr (std::is_same_v<T, StringView>)
         {
-            const otext* value = core::Check(OCI_GetStringByName(*this, name.c_str()));
+            const otext* value = core::Check(OCI_ResultsetGetStringByName(*this, name.c_str()));
 
             return value ? StringView(value) : StringView();
         }
         else if constexpr (std::is_same_v<T, Raw>)
         {
-            UInt32 size = core::Check(OCI_GetDataLength(*this, core::Check(OCI_GetColumnIndex(*this, name.c_str()))));
+            UInt32 size = core::Check(OCI_ResultsetGetDataLength(*this, core::Check(OCI_ResultsetGetColumnIndex(*this, name.c_str()))));
 
             Raw value(static_cast<Size>(size + 1));
 
-            size = core::Check(OCI_GetRawByName(*this, name.c_str(), static_cast<AnyPointer>(value.data()), size));
+            size = core::Check(OCI_ResultsetGetRawByName(*this, name.c_str(), static_cast<AnyPointer>(value.data()), size));
             value.resize(size);
 
             return value;
@@ -294,7 +294,7 @@ namespace ocilib
         {
             static_assert(core::IsCollectionV<T>, "Resultset::Get<T> only supports scalar types, Oracle object types and Collection<U>");
 
-            return T(core::Check(OCI_GetCollByName(*this, name.c_str())), GetHandle());
+            return T(core::Check(OCI_ResultsetGetCollByName(*this, name.c_str())), GetHandle());
         }
     }
 

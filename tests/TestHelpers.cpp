@@ -25,17 +25,17 @@ namespace TestCApi
         ASSERT_TRUE(OCI_TimestampSysTimestamp(tmsp));
         ASSERT_TRUE(OCI_IntervalSetDaySecond(itv, 1, 2, 3, 4, 0));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestHelpersTable values (1, :1, :2)")));
-        ASSERT_NE(nullptr, OCI_BindTimestamp(stmt, OTEXT(":1"), tmsp));
-        ASSERT_NE(nullptr, OCI_BindInterval(stmt, OTEXT(":2"), itv));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("insert into TestHelpersTable values (1, :1, :2)")));
+        ASSERT_NE(nullptr, OCI_StatementBindTimestamp(stmt, OTEXT(":1"), tmsp));
+        ASSERT_NE(nullptr, OCI_StatementBindInterval(stmt, OTEXT(":2"), itv));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select count(*) from TestHelpersTable")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select count(*) from TestHelpersTable")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 0));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
+        ASSERT_EQ(1, OCI_ResultsetGetInt32(rs, 0));
 
         ASSERT_TRUE(OCI_IntervalFree(itv));
         ASSERT_TRUE(OCI_TimestampFree(tmsp));
@@ -60,13 +60,13 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select content from TestHelpersLongTable where id = 1")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select content from TestHelpersLongTable where id = 1")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto lg = OCI_GetLong(rs, 0);
+        const auto lg = OCI_ResultsetGetLong(rs, 0);
         ASSERT_NE(nullptr, lg);
         ASSERT_GT(OCI_LongGetSize(lg), 0u);
 

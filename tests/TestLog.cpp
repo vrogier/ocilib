@@ -108,11 +108,11 @@ namespace TestCApi
 
         /* OCI_Trace -> OcilibLogWrite / OcilibLogLevelName /
            OcilibLogCategoryName / OcilibLogNativeToUTF8 arms */
-        ASSERT_TRUE(OCI_SetTrace(conn, OCI_TRC_IDENTITY, OTEXT("TestLogIdentity")));
-        ASSERT_TRUE(OCI_SetTrace(conn, OCI_TRC_MODULE, OTEXT("TestLogModule")));
-        ASSERT_TRUE(OCI_SetTrace(conn, OCI_TRC_ACTION, OTEXT("TestLogAction")));
-        ASSERT_TRUE(OCI_SetTrace(conn, OCI_TRC_DETAIL, OTEXT("TestLogDetail")));
-        ASSERT_TRUE(OCI_SetTrace(conn, OCI_TRC_OPERATION, OTEXT("TestLogOp")));
+        ASSERT_TRUE(OCI_ConnectionSetTrace(conn, OCI_TRC_IDENTITY, OTEXT("TestLogIdentity")));
+        ASSERT_TRUE(OCI_ConnectionSetTrace(conn, OCI_TRC_MODULE, OTEXT("TestLogModule")));
+        ASSERT_TRUE(OCI_ConnectionSetTrace(conn, OCI_TRC_ACTION, OTEXT("TestLogAction")));
+        ASSERT_TRUE(OCI_ConnectionSetTrace(conn, OCI_TRC_DETAIL, OTEXT("TestLogDetail")));
+        ASSERT_TRUE(OCI_ConnectionSetTrace(conn, OCI_TRC_OPERATION, OTEXT("TestLogOp")));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ShutdownLogger();

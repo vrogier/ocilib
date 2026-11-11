@@ -354,12 +354,12 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select to_dsinterval('1 02:03:04') from dual")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select to_dsinterval('1 02:03:04') from dual")));
 
-        const auto rslt = OCI_GetResultset(stmt);
-        ASSERT_TRUE(OCI_FetchNext(rslt));
+        const auto rslt = OCI_StatementGetResultset(stmt);
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rslt));
 
-        const auto itv = OCI_GetInterval(rslt, 0);
+        const auto itv = OCI_ResultsetGetInterval(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));
@@ -383,10 +383,10 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_IntervalFromText(itv, OTEXT("+001 02:03:04.000000004")));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :itv := :itv * 2; end;")));
-        ASSERT_NE(nullptr, OCI_BindInterval(stmt, OTEXT(":itv"), itv));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN_OUT));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("begin :itv := :itv * 2; end;")));
+        ASSERT_NE(nullptr, OCI_StatementBindInterval(stmt, OTEXT(":itv"), itv));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_StatementGetBind(stmt, 0), OCI_BDM_IN_OUT));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));
@@ -408,24 +408,24 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("drop table test_interval_register"));
-        OCI_ExecuteStmt(stmt, OTEXT("create table test_interval_register (value interval day to second)"));
+        OCI_StatementExecute(stmt, OTEXT("drop table test_interval_register"));
+        OCI_StatementExecute(stmt, OTEXT("create table test_interval_register (value interval day to second)"));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into test_interval_register values(to_dsinterval('1 02:03:04')) returning value into :1")));
-        ASSERT_TRUE(OCI_RegisterInterval(stmt, OTEXT(":1"), OCI_INTERVAL_DS));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("insert into test_interval_register values(to_dsinterval('1 02:03:04')) returning value into :1")));
+        ASSERT_TRUE(OCI_StatementRegisterInterval(stmt, OTEXT(":1"), OCI_INTERVAL_DS));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        const auto rslt = OCI_GetResultset(stmt);
-        ASSERT_TRUE(OCI_FetchNext(rslt));
+        const auto rslt = OCI_StatementGetResultset(stmt);
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rslt));
 
-        const auto itv = OCI_GetInterval(rslt, 0);
+        const auto itv = OCI_ResultsetGetInterval(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_IntervalToText(itv, 3, 9, 512, buffer));
 
         ASSERT_EQ(String(OTEXT("+001 02:03:04.000000000")), String(buffer));
 
-        OCI_ExecuteStmt(stmt, OTEXT("drop table test_interval_register"));
+        OCI_StatementExecute(stmt, OTEXT("drop table test_interval_register"));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

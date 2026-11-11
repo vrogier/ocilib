@@ -18,28 +18,28 @@
  * limitations under the License.
  */
 
-#include "sodacollcursor.h"
+#include "sodacollectioncursor.h"
 
 #include "macros.h"
 #include "memory.h"
-#include "sodacoll.h"
-#include "sodadb.h"
+#include "sodacollection.h"
+#include "sodadatabase.h"
 #include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollCursorInitialize
+ * OcilibSodaCollectionCursorInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaCollCursor * OcilibSodaCollCursorInitialize
+OCI_SodaCollectionCursor * OcilibSodaCollectionCursorInitialize
 (
-    OCI_SodaCollCursor *cursor,
-    OCI_SodaDb         *sdb,
-    OCISodaCollCursor  *handle
+    OCI_SodaCollectionCursor *cursor,
+    OCI_SodaDatabase         *sdb,
+    OCISodaCollCursor        *handle
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaCollCursor*, NULL,
+        /* returns */ OCI_SodaCollectionCursor*, NULL,
         /* context */ OCI_IPC_SODA_DB, sdb
     );
 
@@ -71,22 +71,22 @@ OCI_SodaCollCursor * OcilibSodaCollCursorInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollCursorGetNext
+ * OcilibSodaCollectionCursorGetNext
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaColl * OcilibSodaCollCursorGetNext
+OCI_SodaCollection * OcilibSodaCollectionCursorGetNext
 (
-    OCI_SodaCollCursor *cursor
+    OCI_SodaCollectionCursor *cursor
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaColl*, NULL,
+        /* returns */ OCI_SodaCollection*, NULL,
         /* context */ OCI_IPC_SODA_COLL_CURSOR, cursor
     );
 
-    OCI_SodaColl *coll    = NULL;
-    sword         oci_ret = 0;
+    OCI_SodaCollection *coll    = NULL;
+    sword               oci_ret = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL_CURSOR, cursor);
     CHECK_PTR(OCI_IPC_SODA_DB, cursor->sdb);
@@ -114,7 +114,7 @@ OCI_SodaColl * OcilibSodaCollCursorGetNext
 
     CHECK(OCI_SUCCESS == oci_ret || OCI_SUCCESS_WITH_INFO == oci_ret);
 
-    CHECK(NULL != OcilibSodaCollInitialize(coll, cursor->sdb, coll->handle));
+    CHECK(NULL != OcilibSodaCollectionInitialize(coll, cursor->sdb, coll->handle));
 
     SET_RETVAL(coll);
 
@@ -130,12 +130,12 @@ OCI_SodaColl * OcilibSodaCollCursorGetNext
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollCursorFree
+ * OcilibSodaCollectionCursorFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollCursorFree
+OCI_Boolean OcilibSodaCollectionCursorFree
 (
-    OCI_SodaCollCursor *cursor
+    OCI_SodaCollectionCursor *cursor
 )
 {
     ENTER_FUNC

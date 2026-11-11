@@ -31,8 +31,8 @@ namespace TestCApi
         auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_SetErrorHandler(env, ErrorHandler));
-        ASSERT_FALSE(OCI_ExecuteStmt(stmt, OTEXT("select * from TestCallback_NoSuchTable")));
+        ASSERT_TRUE(OCI_EnvironmentSetErrorHandler(env, ErrorHandler));
+        ASSERT_FALSE(OCI_StatementExecute(stmt, OTEXT("select * from TestCallback_NoSuchTable")));
         ASSERT_TRUE(s_errorHandlerCalled);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -48,9 +48,9 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        if (OCI_IsTAFCapable(conn))
+        if (OCI_ConnectionIsTAFCapable(conn))
         {
-            EXPECT_TRUE(OCI_SetTAFHandler(conn, TAFHandler));
+            EXPECT_TRUE(OCI_ConnectionSetTAFHandler(conn, TAFHandler));
         }
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -61,6 +61,6 @@ namespace TestCApi
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_TRUE(OCI_SetHAHandler(env, HAHandler));
+        ASSERT_TRUE(OCI_EnvironmentSetHAHandler(env, HAHandler));
     }
 }

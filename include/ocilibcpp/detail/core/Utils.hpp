@@ -49,12 +49,14 @@ namespace ocilib
         template<class T>
         T Check(T result)
         {
-            /* OCI_HasError() applies the warnings gate: a suppressed warning
-               records an OCI_Error but must not raise a C++ exception */
+            /* a suppressed warning stays in the error slot but reports
+               OCI_UNKNOWN via OCI_ErrorGetType() -- it must not raise */
 
-            if (OCI_HasError())
+            OCI_Error* err = OCI_GetLastError();
+
+            if (NULL != err && OCI_UNKNOWN != OCI_ErrorGetType(err))
             {
-                throw Exception(OCI_GetLastError());
+                throw Exception(err);
             }
 
             return result;

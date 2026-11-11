@@ -22,7 +22,7 @@ int main(void)
 
     OCI_ShardingKey *skey = OCI_ShardingKeyCreate(env);
     OCI_Number *num = OCI_NumberCreate(env);
-    OCI_NumberSetValue(num, OCI_NUM_INT, &(int){42});
+    OCI_NumberSetValue(num, OCI_NUM_INT32, &(int){42});
 
     OCI_ShardingKeyAddNumber(skey, num);
     OCI_ShardingKeyAddString(skey, OTEXT("GOLD"));
@@ -44,13 +44,13 @@ int main(void)
     if (cn)
     {
         OCI_Statement *st = OCI_StatementCreate(cn);
-        OCI_ExecuteStmt(st, OTEXT("select cust_id, name, region from customers where rownum <= 5"));
+        OCI_StatementExecute(st, OTEXT("select cust_id, name, region from customers where rownum <= 5"));
 
-        OCI_Resultset *rs = OCI_GetResultset(st);
-        while (OCI_FetchNext(rs))
+        OCI_Resultset *rs = OCI_StatementGetResultset(st);
+        while (OCI_ResultsetFetchNext(rs))
         {
             printf("cust_id=%s name=%s region=%s\n",
-                   OCI_GetString(rs, 0), OCI_GetString(rs, 1), OCI_GetString(rs, 2));
+                   OCI_ResultsetGetString(rs, 0), OCI_ResultsetGetString(rs, 1), OCI_ResultsetGetString(rs, 2));
         }
 
         OCI_StatementFree(st);

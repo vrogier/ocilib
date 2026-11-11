@@ -120,14 +120,14 @@ OCI_Boolean OcilibDatabaseStartup
 
     if (start_mode & OCI_DB_SPM_MOUNT)
     {
-        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE MOUNT")));
+        CHECK(OcilibStatementExecute(stmt, OTEXT("ALTER DATABASE MOUNT")));
     }
 
     /* open database */
 
     if (start_mode & OCI_DB_SPM_OPEN)
     {
-        CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE OPEN")));
+        CHECK(OcilibStatementExecute(stmt, OTEXT("ALTER DATABASE OPEN")));
     }
 
     SET_SUCCESS();
@@ -242,14 +242,14 @@ OCI_Boolean OcilibDatabaseShutdown
 
         if (shut_mode & OCI_DB_SDM_CLOSE)
         {
-            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL")));
+            CHECK(OcilibStatementExecute(stmt, OTEXT("ALTER DATABASE CLOSE NORMAL")));
         }
 
         /* unmount database */
 
         if (shut_mode & OCI_DB_SDM_DISMOUNT)
         {
-            CHECK(OcilibStatementExecuteStmt(stmt, OTEXT("ALTER DATABASE DISMOUNT")));
+            CHECK(OcilibStatementExecute(stmt, OTEXT("ALTER DATABASE DISMOUNT")));
         }
 
         OcilibStatementFree(stmt);
@@ -308,10 +308,10 @@ OCI_Boolean OcilibDatabaseShutdown
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDatabaseSetUserPassword
+ * OcilibEnvironmentSetUserPassword
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDatabaseSetUserPassword
+OCI_Boolean OcilibEnvironmentSetUserPassword
 (
     OCI_Environment *env,
     const otext    * db,

@@ -377,13 +377,13 @@ OCI_Int32 OcilibFormatParseSql
             {
                 otext temp[128];
 
-                OCI_Ref *ref = (OCI_Ref *) va_arg(*pargs, OCI_Ref *);
+                OCI_Reference *ref = (OCI_Reference *) va_arg(*pargs, OCI_Reference *);
 
                 temp[0] = 0;
 
                 if (ref)
                 {
-                    CHECK(OcilibReferenceToString( ref, (OCI_UInt32) osizeof(temp) - 1, temp));
+                    CHECK(OcilibReferenceToText( ref, (OCI_UInt32) osizeof(temp) - 1, temp));
 
                     len = (OCI_Int32) ostrlen(temp);
 

@@ -673,43 +673,43 @@ namespace TestCApi
     static void NumInt(OCI_JsonNode* n)
     {
         OCI_Int32 v = 0;
-        ASSERT_TRUE(OCI_JsonNodeSetInt(n, 456));
-        ASSERT_TRUE(OCI_JsonNodeGetInt(n, &v));
+        ASSERT_TRUE(OCI_JsonNodeSetInt32(n, 456));
+        ASSERT_TRUE(OCI_JsonNodeGetInt32(n, &v));
         EXPECT_EQ(456, v);
     }
     static void NumShort(OCI_JsonNode* n)
     {
         OCI_Int16 v = 0;
-        ASSERT_TRUE(OCI_JsonNodeSetShort(n, (OCI_Int16)-11));
-        ASSERT_TRUE(OCI_JsonNodeGetShort(n, &v));
+        ASSERT_TRUE(OCI_JsonNodeSetInt16(n, (OCI_Int16)-11));
+        ASSERT_TRUE(OCI_JsonNodeGetInt16(n, &v));
         EXPECT_EQ((OCI_Int16)-11, v);
     }
     static void NumUShort(OCI_JsonNode* n)
     {
         OCI_UInt16 v = 0;
-        ASSERT_TRUE(OCI_JsonNodeSetUShort(n, (OCI_UInt16)12));
-        ASSERT_TRUE(OCI_JsonNodeGetUShort(n, &v));
+        ASSERT_TRUE(OCI_JsonNodeSetUInt16(n, (OCI_UInt16)12));
+        ASSERT_TRUE(OCI_JsonNodeGetUInt16(n, &v));
         EXPECT_EQ((OCI_UInt16)12, v);
     }
     static void NumUInt(OCI_JsonNode* n)
     {
         OCI_UInt32 v = 0;
-        ASSERT_TRUE(OCI_JsonNodeSetUInt(n, 5678u));
-        ASSERT_TRUE(OCI_JsonNodeGetUInt(n, &v));
+        ASSERT_TRUE(OCI_JsonNodeSetUInt32(n, 5678u));
+        ASSERT_TRUE(OCI_JsonNodeGetUInt32(n, &v));
         EXPECT_EQ(5678u, v);
     }
     static void NumBigInt(OCI_JsonNode* n)
     {
         OCI_Int64 v = 0;
-        ASSERT_TRUE(OCI_JsonNodeSetBigInt(n, -123456789012345LL));
-        ASSERT_TRUE(OCI_JsonNodeGetBigInt(n, &v));
+        ASSERT_TRUE(OCI_JsonNodeSetInt64(n, -123456789012345LL));
+        ASSERT_TRUE(OCI_JsonNodeGetInt64(n, &v));
         EXPECT_EQ(-123456789012345LL, v);
     }
     static void NumBigUInt(OCI_JsonNode* n)
     {
         OCI_UInt64 v = 0;
-        ASSERT_TRUE(OCI_JsonNodeSetBigUInt(n, 123456789012345ULL));
-        ASSERT_TRUE(OCI_JsonNodeGetBigUInt(n, &v));
+        ASSERT_TRUE(OCI_JsonNodeSetUInt64(n, 123456789012345ULL));
+        ASSERT_TRUE(OCI_JsonNodeGetUInt64(n, &v));
         EXPECT_EQ(123456789012345ULL, v);
     }
     static void NumFloat(OCI_JsonNode* n)
@@ -782,7 +782,7 @@ namespace TestCApi
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
 
-        if (OCI_GetOCIRuntimeVersion(env) < OCI_VER_MAKE(23, 4, 0))
+        if (OCI_EnvironmentGetOCIRuntimeVersion(env) < OCI_VER_MAKE(23, 4, 0))
         {
             return; /* OCIJsonSchemaValidate requires 23ai+ */
         }
@@ -926,15 +926,15 @@ namespace TestCApi
 
         for (int i = 0; i < 20; i++) cycle();
 
-        const auto handles = OCI_GetStats(env, OCI_UST_HANDLES);
-        const auto objs    = OCI_GetStats(env, OCI_UST_OBJECTS);
-        const auto bytes   = OCI_GetStats(env, OCI_UST_BYTES);
+        const auto handles = OCI_EnvironmentGetStats(env, OCI_UST_HANDLES);
+        const auto objs    = OCI_EnvironmentGetStats(env, OCI_UST_OBJECTS);
+        const auto bytes   = OCI_EnvironmentGetStats(env, OCI_UST_BYTES);
 
         for (int i = 0; i < 50; i++) cycle();
 
-        ASSERT_EQ(handles, OCI_GetStats(env, OCI_UST_HANDLES));
-        ASSERT_EQ(objs,    OCI_GetStats(env, OCI_UST_OBJECTS));
-        ASSERT_LE(OCI_GetStats(env, OCI_UST_BYTES), bytes + 64 * 1024);
+        ASSERT_EQ(handles, OCI_EnvironmentGetStats(env, OCI_UST_HANDLES));
+        ASSERT_EQ(objs,    OCI_EnvironmentGetStats(env, OCI_UST_OBJECTS));
+        ASSERT_LE(OCI_EnvironmentGetStats(env, OCI_UST_BYTES), bytes + 64 * 1024);
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }

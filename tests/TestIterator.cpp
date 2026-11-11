@@ -17,39 +17,39 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select TestIterator_VarArr(10, 20, 30) from dual")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select TestIterator_VarArr(10, 20, 30) from dual")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto coll = OCI_GetColl(rs, 0);
+        const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
-        const auto iter = OCI_IterCreate(coll);
+        const auto iter = OCI_IteratorCreate(coll);
         ASSERT_NE(nullptr, iter);
 
-        const auto e1 = OCI_IterGetNext(iter);
+        const auto e1 = OCI_IteratorGetNext(iter);
         ASSERT_NE(nullptr, e1);
-        ASSERT_EQ(10, OCI_ElemGetInt(e1));
+        ASSERT_EQ(10, OCI_ElementGetInt32(e1));
 
-        const auto e2 = OCI_IterGetNext(iter);
+        const auto e2 = OCI_IteratorGetNext(iter);
         ASSERT_NE(nullptr, e2);
-        ASSERT_EQ(20, OCI_ElemGetInt(e2));
+        ASSERT_EQ(20, OCI_ElementGetInt32(e2));
 
-        const auto cur = OCI_IterGetCurrent(iter);
+        const auto cur = OCI_IteratorGetCurrent(iter);
         ASSERT_NE(nullptr, cur);
-        ASSERT_EQ(20, OCI_ElemGetInt(cur));
+        ASSERT_EQ(20, OCI_ElementGetInt32(cur));
 
-        const auto e3 = OCI_IterGetNext(iter);
+        const auto e3 = OCI_IteratorGetNext(iter);
         ASSERT_NE(nullptr, e3);
-        ASSERT_EQ(30, OCI_ElemGetInt(e3));
+        ASSERT_EQ(30, OCI_ElementGetInt32(e3));
 
-        const auto prev = OCI_IterGetPrev(iter);
+        const auto prev = OCI_IteratorGetPrev(iter);
         ASSERT_NE(nullptr, prev);
-        ASSERT_EQ(20, OCI_ElemGetInt(prev));
+        ASSERT_EQ(20, OCI_ElementGetInt32(prev));
 
-        ASSERT_TRUE(OCI_IterFree(iter));
+        ASSERT_TRUE(OCI_IteratorFree(iter));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
@@ -66,11 +66,11 @@ namespace TestCApi
     INSTANTIATE_TEST_CASE_P(NullArgs, TestIteratorNullArgs,
         ::testing::ValuesIn(NullArgCases
         {
-            { "IterCreate", [] { return nullptr == OCI_IterCreate(nullptr); } },
-            { "IterFree", [] { return !OCI_IterFree(nullptr); } },
-            { "IterGetCurrent", [] { return nullptr == OCI_IterGetCurrent(nullptr); } },
-            { "IterGetNext", [] { return nullptr == OCI_IterGetNext(nullptr); } },
-            { "IterGetPrev", [] { return nullptr == OCI_IterGetPrev(nullptr); } },
+            { "IterCreate", [] { return nullptr == OCI_IteratorCreate(nullptr); } },
+            { "IterFree", [] { return !OCI_IteratorFree(nullptr); } },
+            { "IterGetCurrent", [] { return nullptr == OCI_IteratorGetCurrent(nullptr); } },
+            { "IterGetNext", [] { return nullptr == OCI_IteratorGetNext(nullptr); } },
+            { "IterGetPrev", [] { return nullptr == OCI_IteratorGetPrev(nullptr); } },
         }),
         &NullArgCaseName);
 

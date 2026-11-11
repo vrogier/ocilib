@@ -1,6 +1,6 @@
 #include "ocilib.h"
 
-/* requires script demo/dirpath.sql */
+/* requires script demo/directpath.sql */
 
 #define SIZE_ARRAY 100
 #define NB_LOAD    10
@@ -37,29 +37,29 @@ int main(void)
 
     OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     OCI_TypeInfo   * tbl = OCI_TypeInfoGet(cn, "dirpath_data", OCI_TIF_TABLE);
-    OCI_DirPath    * dp = OCI_DirPathCreate(tbl, NULL, NUM_COLS, nb_rows);
+    OCI_DirectPath    * dp = OCI_DirectPathCreate(tbl, NULL, NUM_COLS, nb_rows);
 
     /* optional attributes to set */
 
-    OCI_DirPathSetBufferSize(dp, 64000);
-    OCI_DirPathSetNoLog(dp, TRUE);
-    OCI_DirPathSetParallel(dp, TRUE);
+    OCI_DirectPathSetBufferSize(dp, 64000);
+    OCI_DirectPathSetNoLog(dp, TRUE);
+    OCI_DirectPathSetParallel(dp, TRUE);
 
     /* describe the target table */
 
-    OCI_DirPathSetColumn(dp, 0, "val_int", SIZE_COL1, NULL);
-    OCI_DirPathSetColumn(dp, 1, "val_str", SIZE_COL2, NULL);
-    OCI_DirPathSetColumn(dp, 2, "val_date", SIZE_COL3, "YYYYMMDD");
+    OCI_DirectPathSetColumn(dp, 0, "val_int", SIZE_COL1, NULL);
+    OCI_DirectPathSetColumn(dp, 1, "val_str", SIZE_COL2, NULL);
+    OCI_DirectPathSetColumn(dp, 2, "val_date", SIZE_COL3, "YYYYMMDD");
 
     /* prepare the load */
 
-    OCI_DirPathPrepare(dp);
+    OCI_DirectPathPrepare(dp);
 
-    nb_rows = OCI_DirPathGetMaxRows(dp);
+    nb_rows = OCI_DirectPathGetMaxRows(dp);
 
     for (i = 0; i < NB_LOAD; i++)
     {
-        OCI_DirPathReset(dp);
+        OCI_DirectPathReset(dp);
 
         for (j = 0; j < nb_rows; j++)
         {
@@ -69,19 +69,19 @@ int main(void)
             sprintf(val2, "value %05d", j + (i * 100));
             sprintf(val3, "%04d%02d%02d", (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-            OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)strlen(val1), TRUE);
-            OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)strlen(val2), TRUE);
-            OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)strlen(val3), TRUE);
+            OCI_DirectPathSetEntry(dp, j, 0, val1, (OCI_UInt32)strlen(val1), TRUE);
+            OCI_DirectPathSetEntry(dp, j, 1, val2, (OCI_UInt32)strlen(val2), TRUE);
+            OCI_DirectPathSetEntry(dp, j, 2, val3, (OCI_UInt32)strlen(val3), TRUE);
         }
 
         /* load data to the server */
 
         while (res)
         {
-            OCI_Int32 state = OCI_DirPathConvert(dp);
+            OCI_Int32 state = OCI_DirectPathConvert(dp);
 
             if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
-                res = OCI_DirPathLoad(dp);
+                res = OCI_DirectPathLoad(dp);
 
             if (state == OCI_DPR_COMPLETE)
                 break;
@@ -90,13 +90,13 @@ int main(void)
 
     /* commits changes */
 
-    OCI_DirPathFinish(dp);
+    OCI_DirectPathFinish(dp);
 
-    printf("%04d row(s) loaded\n", OCI_DirPathGetRowCount(dp));
+    printf("%04d row(s) loaded\n", OCI_DirectPathGetRowCount(dp));
 
     /* free direct path object */
 
-    OCI_DirPathFree(dp);
+    OCI_DirectPathFree(dp);
 
     OCI_EnvironmentFree(env);
 

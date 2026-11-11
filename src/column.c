@@ -92,15 +92,15 @@ OCI_Boolean OcilibColumnGetAttributeInfo
         {
             const OCI_SubType type = col->subtype;
 
-            if (type & OCI_NUM_SHORT)
+            if (type & OCI_NUM_INT16)
             {
                 *p_size = sizeof(OCI_Int16);
             }
-            else if (type & OCI_NUM_INT)
+            else if (type & OCI_NUM_INT32)
             {
                 *p_size = sizeof(OCI_Int32);
             }
-            else if (type & OCI_NUM_BIGUINT)
+            else if (type & OCI_NUM_UINT64)
             {
                 *p_size = sizeof(OCI_Int64);
             }
@@ -767,7 +767,7 @@ OCI_Boolean OcilibColumnMapInfo
 
             if (0 == col->bufsize)
             {
-                col->subtype = OCI_NUM_INT;
+                col->subtype = OCI_NUM_INT32;
                 col->bufsize = sizeof(OCI_Int32);
             }
 
@@ -785,7 +785,7 @@ OCI_Boolean OcilibColumnMapInfo
 
             if (0 == col->bufsize)
             {
-                col->subtype = OCI_NUM_UINT;
+                col->subtype = OCI_NUM_UINT32;
                 col->bufsize = sizeof(OCI_UInt32);
             }
 

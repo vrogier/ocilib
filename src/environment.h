@@ -52,7 +52,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibEnvironmentGetOCIRuntimeVersion
     OCI_Environment *env
 );
 
-OCI_SYM_LOCAL OCI_ImportMode OcilibEnvironmentGetOCIRuntimeImportMode
+OCI_SYM_LOCAL OCI_ImportMode OcilibEnvironmentGetImportMode
 (
     OCI_Environment *env
 );
@@ -97,7 +97,7 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibEnvironmentGetSubscriptionPort
     OCI_Environment *env
 );
 
-OCI_SYM_LOCAL const otext * OcilibGetLocaleString
+OCI_SYM_LOCAL const otext * OcilibEnvironmentGetLocaleString
 (
     OCI_Environment *env,
     OCI_LocaleCode   code

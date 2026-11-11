@@ -23,81 +23,81 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL OCI_HashTable * OcilibHashCreate
+OCI_SYM_LOCAL OCI_HashTable * OcilibHashTableCreate
 (
     OCI_Environment *env,
     OCI_UInt32       size,
     OCI_HashType     type
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibHashFree
+OCI_SYM_LOCAL OCI_Boolean OcilibHashTableFree
 (
     OCI_HashTable *table
 );
 
-OCI_SYM_LOCAL OCI_UInt32 OcilibHashGetSize
+OCI_SYM_LOCAL OCI_UInt32 OcilibHashTableGetSize
 (
     OCI_HashTable *table
 );
 
-OCI_SYM_LOCAL OCI_HashType OcilibHashGetType
+OCI_SYM_LOCAL OCI_HashType OcilibHashTableGetType
 (
     OCI_HashTable *table
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibHashAddString
+OCI_SYM_LOCAL OCI_Boolean OcilibHashTableAddString
 (
     OCI_HashTable *table,
     const otext   *key,
     const otext   *value
 );
 
-OCI_SYM_LOCAL const otext * OcilibHashGetString
+OCI_SYM_LOCAL const otext * OcilibHashTableGetString
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibHashAddInt
+OCI_SYM_LOCAL OCI_Boolean OcilibHashTableAddInt32
 (
     OCI_HashTable *table,
     const otext   *key,
     OCI_Int32      value
 );
 
-OCI_SYM_LOCAL OCI_Int32 OcilibHashGetInt
+OCI_SYM_LOCAL OCI_Int32 OcilibHashTableGetInt32
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibHashAddPointer
+OCI_SYM_LOCAL OCI_Boolean OcilibHashTableAddPointer
 (
     OCI_HashTable *table,
     const otext   *key,
     void          *value
 );
 
-OCI_SYM_LOCAL void * OcilibHashGetPointer
+OCI_SYM_LOCAL void * OcilibHashTableGetPointer
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-OCI_SYM_LOCAL OCI_HashEntry * OcilibHashLookup
+OCI_SYM_LOCAL OCI_HashEntry * OcilibHashTableLookup
 (
     OCI_HashTable *table,
     const otext   *key,
     OCI_Boolean    create
 );
 
-OCI_SYM_LOCAL OCI_HashValue * OcilibHashGetValue
+OCI_SYM_LOCAL OCI_HashValue * OcilibHashTableGetValue
 (
     OCI_HashTable *table,
     const otext   *key
 );
 
-OCI_SYM_LOCAL OCI_HashEntry * OcilibHashGetEntry
+OCI_SYM_LOCAL OCI_HashEntry * OcilibHashTableGetEntry
 (
     OCI_HashTable *table,
     OCI_UInt32     index

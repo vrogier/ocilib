@@ -17,15 +17,15 @@ namespace TestCApi
         ExecDML(OTEXT("create table TestMemoryPrefetch (id number)"));
         ExecDML(OTEXT("insert into TestMemoryPrefetch values (1)"));
 
-        ASSERT_TRUE(OCI_SetPrefetchMemory(stmt, 8192));
-        ASSERT_EQ(8192u, OCI_GetPrefetchMemory(stmt));
+        ASSERT_TRUE(OCI_StatementSetPrefetchMemory(stmt, 8192));
+        ASSERT_EQ(8192u, OCI_StatementGetPrefetchMemory(stmt));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select * from TestMemoryPrefetch")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select * from TestMemoryPrefetch")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
-        ASSERT_EQ(1, OCI_GetInt(rs, 0));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
+        ASSERT_EQ(1, OCI_ResultsetGetInt32(rs, 0));
 
         ExecDML(OTEXT("drop table TestMemoryPrefetch"));
 

@@ -34,7 +34,7 @@ int main(void)
 
         printf("%-30s%-10s%-8i%-8i%-8i%-s\n",
             OCI_ColumnGetName(col),
-            OCI_ColumnGetSQLType(col),
+            OCI_ColumnGetSqlType(col),
             OCI_ColumnGetSize(col),
             OCI_ColumnGetPrecision(col),
             OCI_ColumnGetScale(col),

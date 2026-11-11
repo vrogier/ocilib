@@ -129,17 +129,17 @@ namespace ocilib
     enum NumericTypeValues
     {
         /** Signed Int16 */
-        NumericShort  = OCI_NUM_SHORT,
+        NumericShort  = OCI_NUM_INT16,
         /** Signed Integer */
-        NumericInt = OCI_NUM_INT,
+        NumericInt = OCI_NUM_INT32,
         /** Signed Big Integer (Integer or Long Integer depending on the compiler )*/
-        NumericBigInt = OCI_NUM_BIGINT,
+        NumericBigInt = OCI_NUM_INT64,
         /** Unsigned Int16 */
-        NumericUnsignedShort = OCI_NUM_USHORT,
+        NumericUnsignedShort = OCI_NUM_UINT16,
         /** Unsigned Integer */
-        NumericUnsignedInt = OCI_NUM_UINT,
+        NumericUnsignedInt = OCI_NUM_UINT32,
         /** Unsigned Big Integer (Integer or Long Integer depending on the compiler )*/
-        NumericUnsignedBigInt = OCI_NUM_BIGUINT,
+        NumericUnsignedBigInt = OCI_NUM_UINT64,
         /** Double  */
         NumericDouble = OCI_NUM_DOUBLE,
         /** Float */
@@ -234,6 +234,7 @@ namespace ocilib
         SeekSet = OCI_SEEK_SET,
         /** Set the current position within the stream begin position */
         SeekEnd = OCI_SEEK_END,
+
         /** Set the current position within the stream to the given value offset from the current
          * position */
         SeekOffset = OCI_SEEK_CUR
@@ -507,8 +508,8 @@ namespace ocilib
      *
      * @note
      * The C++ layer stores its per-environment bookkeeping in the environment
-     * handle's user-data slot (OCI_SetUserData/OCI_GetUserData). Calling
-     * OCI_SetUserData on an OCI_Environment from a C++ program overwrites that
+     * handle's user-data slot (OCI_HandleSetUserData/OCI_HandleGetUserData). Calling
+     * OCI_HandleSetUserData on an OCI_Environment from a C++ program overwrites that
      * bookkeeping and is unsupported — do not use the environment user-data
      * slot when the C++ layer is in use.
      */
@@ -1561,8 +1562,8 @@ namespace ocilib
     friend class Transaction;
     friend class DirectPath;
     friend class Vector;
-    friend class SodaDb;
-    friend class SodaColl;
+    friend class SodaDatabase;
+    friend class SodaCollection;
 
     template<class, Int32>
     friend class Lob;
@@ -4979,10 +4980,10 @@ namespace ocilib
      * @brief
      * Object identifying the SQL data type REF.
      *
-     * This class wraps the OCILIB object handle OCI_Ref and its related methods
+     * This class wraps the OCILIB object handle OCI_Reference and its related methods
      *
      */
-    class Reference : public core::HandleHolder<OCI_Ref*>, public core::Streamable
+    class Reference : public core::HandleHolder<OCI_Reference*>, public core::Streamable
     {
     friend class Statement;
     friend class Resultset;
@@ -5059,7 +5060,7 @@ namespace ocilib
 
     private:
 
-        Reference(OCI_Ref* pRef, core::Handle* parent = nullptr);
+        Reference(OCI_Reference* pRef, core::Handle* parent = nullptr);
     };
 
     /**
@@ -5263,7 +5264,7 @@ namespace ocilib
     friend class Resultset;
     friend class support::BindArray;
     friend class JsonNode;
-    friend class SodaDoc;
+    friend class SodaDocument;
 
     public:
 
@@ -6289,11 +6290,11 @@ namespace ocilib
      * @brief
      * Object identifying the SQL data types VARRAY and NESTED TABLE.
      *
-     * This class wraps the OCILIB object handle OCI_Coll and its related methods
+     * This class wraps the OCILIB object handle OCI_Collection and its related methods
      *
      */
     template<class T>
-    class Collection : public core::HandleHolder<OCI_Coll*>, public core::Streamable
+    class Collection : public core::HandleHolder<OCI_Collection*>, public core::Streamable
     {
     friend class Statement;
     friend class Resultset;
@@ -6547,11 +6548,11 @@ namespace ocilib
 
     private:
 
-        [[nodiscard]] static T GetElem(OCI_Elem* elem, core::Handle* parent);
+        [[nodiscard]] static T GetElem(OCI_Element* elem, core::Handle* parent);
 
-        static void SetElem(OCI_Elem* elem, const T& value, core::Handle* parent);
+        static void SetElem(OCI_Element* elem, const T& value, core::Handle* parent);
 
-        Collection(OCI_Coll* pColl, core::Handle* parent = nullptr);
+        Collection(OCI_Collection* pColl, core::Handle* parent = nullptr);
     };
 
     /**
@@ -9252,10 +9253,10 @@ namespace ocilib
     * @brief
     * AQ message
     *
-    * This class wraps the OCILIB object handle OCI_Msg and its related methods
+    * This class wraps the OCILIB object handle OCI_Message and its related methods
     *
     */
-    class Message : public core::HandleHolder<OCI_Msg*>
+    class Message : public core::HandleHolder<OCI_Message*>
     {
     friend class Dequeue;
 
@@ -9594,7 +9595,7 @@ namespace ocilib
 
     private:
 
-        Message(OCI_Msg* pMessage, core::Handle* parent);
+        Message(OCI_Message* pMessage, core::Handle* parent);
     };
 
     /**
@@ -10454,10 +10455,10 @@ namespace ocilib
     * @brief
     * Oracle Direct path loading encapsulation
     *
-    * This class wraps the OCILIB object handle OCI_DirPath and its related methods
+    * This class wraps the OCILIB object handle OCI_DirectPath and its related methods
     *
     */
-    class DirectPath : public core::HandleHolder<OCI_DirPath*>
+    class DirectPath : public core::HandleHolder<OCI_DirectPath*>
     {
     public:
 
@@ -10906,14 +10907,14 @@ namespace ocilib
      * @brief
      * SODA (Simple Oracle Document Access) document
      *
-     * This class wraps the OCILIB object handle OCI_SodaDoc and its related methods
+     * This class wraps the OCILIB object handle OCI_SodaDocument and its related methods
      *
      */
-    class SodaDoc : public core::HandleHolder<OCI_SodaDoc*>
+    class SodaDocument : public core::HandleHolder<OCI_SodaDocument*>
     {
-    friend class SodaDb;
-    friend class SodaColl;
-    friend class SodaDocCursor;
+    friend class SodaDatabase;
+    friend class SodaCollection;
+    friend class SodaDocumentCursor;
 
     public:
 
@@ -10922,8 +10923,8 @@ namespace ocilib
          * Default constructor (null handle)
          *
          */
-        SodaDoc();
-        SodaDoc(OCI_SodaDoc* doc, core::Handle* parent);
+        SodaDocument();
+        SodaDocument(OCI_SodaDocument* doc, core::Handle* parent);
 
         /**
          * @brief
@@ -10995,7 +10996,7 @@ namespace ocilib
      */
     class SodaOptions : public core::HandleHolder<OCI_SodaOptions*>
     {
-    friend class SodaColl;
+    friend class SodaCollection;
 
     public:
 
@@ -11011,7 +11012,7 @@ namespace ocilib
          * Create a SODA options object bound to a SODA database
          *
          */
-        SodaOptions(const SodaDb& sdb);
+        SodaOptions(const SodaDatabase& sdb);
 
         /**
          * @brief
@@ -11085,14 +11086,14 @@ namespace ocilib
      * @brief
      * SODA database
      *
-     * This class wraps the OCILIB object handle OCI_SodaDb and its related methods
+     * This class wraps the OCILIB object handle OCI_SodaDatabase and its related methods
      *
      * @warning
      * SODA support requires an Oracle client 18.1 or higher and an Oracle
      * Database 18.1 or higher.
      *
      */
-    class SodaDb : public core::HandleHolder<OCI_SodaDb*>
+    class SodaDatabase : public core::HandleHolder<OCI_SodaDatabase*>
     {
     friend class SodaOptions;
 
@@ -11103,14 +11104,14 @@ namespace ocilib
          * Default constructor (null handle)
          *
          */
-        SodaDb();
+        SodaDatabase();
 
         /**
          * @brief
          * Create a SODA database handle bound to a connection
          *
          */
-        SodaDb(const Connection& connection);
+        SodaDatabase(const Connection& connection);
 
         /**
          * @brief
@@ -11124,21 +11125,21 @@ namespace ocilib
          * Create a SODA collection
          *
          */
-        SodaColl CreateCollection(const String& name, const String& metadata = String());
+        SodaCollection CreateCollection(const String& name, const String& metadata = String());
 
         /**
          * @brief
          * Open an existing SODA collection
          *
          */
-        SodaColl OpenCollection(const String& name);
+        SodaCollection OpenCollection(const String& name);
 
         /**
          * @brief
          * Return a cursor over the SODA collections in the current schema
          *
          */
-        [[nodiscard]] SodaCollCursor GetCollections(const String& startName = OTEXT(""));
+        [[nodiscard]] SodaCollectionCursor GetCollections(const String& startName = OTEXT(""));
 
         /**
          * @brief
@@ -11153,7 +11154,7 @@ namespace ocilib
          * Create a SODA document from raw text
          *
          */
-        SodaDoc CreateDocumentFromText(const String& content, const String& key = OTEXT(""));
+        SodaDocument CreateDocumentFromText(const String& content, const String& key = OTEXT(""));
 
         /**
          * @brief
@@ -11163,20 +11164,20 @@ namespace ocilib
          * Requires an Oracle client 23.4 or higher.
          *
          */
-        SodaDoc CreateDocumentFromJson(const Json& json, const String& key = OTEXT(""));
+        SodaDocument CreateDocumentFromJson(const Json& json, const String& key = OTEXT(""));
     };
 
     /**
      * @brief
      * SODA collection
      *
-     * This class wraps the OCILIB object handle OCI_SodaColl and its related methods
+     * This class wraps the OCILIB object handle OCI_SodaCollection and its related methods
      *
      */
-    class SodaColl : public core::HandleHolder<OCI_SodaColl*>
+    class SodaCollection : public core::HandleHolder<OCI_SodaCollection*>
     {
-    friend class SodaDb;
-    friend class SodaCollCursor;
+    friend class SodaDatabase;
+    friend class SodaCollectionCursor;
 
     public:
 
@@ -11185,8 +11186,8 @@ namespace ocilib
          * Default constructor (null handle)
          *
          */
-        SodaColl();
-        SodaColl(OCI_SodaColl* coll, core::Handle* parent);
+        SodaCollection();
+        SodaCollection(OCI_SodaCollection* coll, core::Handle* parent);
 
         /**
          * @brief
@@ -11247,35 +11248,35 @@ namespace ocilib
          * Insert a document into the collection
          *
          */
-        void Insert(SodaDoc& doc);
+        void Insert(SodaDocument& doc);
 
         /**
          * @brief
          * Find all documents in the collection
          *
          */
-        [[nodiscard]] SodaDocCursor Find();
+        [[nodiscard]] SodaDocumentCursor Find();
 
         /**
          * @brief
          * Find documents in the collection
          *
          */
-        [[nodiscard]] SodaDocCursor Find(const SodaOptions& options);
+        [[nodiscard]] SodaDocumentCursor Find(const SodaOptions& options);
 
         /**
          * @brief
          * Find one document in the collection
          *
          */
-        [[nodiscard]] SodaDoc FindOne(const SodaOptions& options);
+        [[nodiscard]] SodaDocument FindOne(const SodaOptions& options);
 
         /**
          * @brief
          * Find one document by key in the collection
          *
          */
-        [[nodiscard]] SodaDoc FindOne(const String& key);
+        [[nodiscard]] SodaDocument FindOne(const String& key);
 
         /**
          * @brief
@@ -11301,7 +11302,7 @@ namespace ocilib
          *                  attributes (key, version, timestamps) of the replaced
          *                  document
          */
-        void ReplaceOne(const SodaOptions& options, SodaDoc& doc, bool refresh = false);
+        void ReplaceOne(const SodaOptions& options, SodaDocument& doc, bool refresh = false);
 
         /**
          * @brief
@@ -11313,7 +11314,7 @@ namespace ocilib
          *                  attributes (key, version, timestamps) of the replaced
          *                  document
          */
-        void ReplaceOneByKey(const String& key, SodaDoc& doc, bool refresh = false);
+        void ReplaceOneByKey(const String& key, SodaDocument& doc, bool refresh = false);
 
         /**
          * @brief
@@ -11337,7 +11338,7 @@ namespace ocilib
          * @param refresh - true to refresh each document in @a docs in place with
          *                  its server-assigned attributes (key, version, timestamps)
          */
-        void InsertMany(std::vector<SodaDoc>& docs, bool refresh = false);
+        void InsertMany(std::vector<SodaDocument>& docs, bool refresh = false);
 
         /**
          * @brief
@@ -11369,9 +11370,9 @@ namespace ocilib
          * @brief
          * Return the JSON data guide document of the collection
          *
-         * @return The data guide document, or a null SodaDoc if none exists
+         * @return The data guide document, or a null SodaDocument if none exists
          */
-        [[nodiscard]] SodaDoc GetDataGuide();
+        [[nodiscard]] SodaDocument GetDataGuide();
 
         /**
          * @brief
@@ -11392,7 +11393,7 @@ namespace ocilib
          * Save a document into the collection (insert or replace by key)
          *
          */
-        void Save(SodaDoc& doc, bool refresh = false);
+        void Save(SodaDocument& doc, bool refresh = false);
 
     };
 
@@ -11400,12 +11401,12 @@ namespace ocilib
      * @brief
      * SODA collection cursor
      *
-     * This class wraps the OCILIB object handle OCI_SodaCollCursor and its related methods
+     * This class wraps the OCILIB object handle OCI_SodaCollectionCursor and its related methods
      *
      */
-    class SodaCollCursor : public core::HandleHolder<OCI_SodaCollCursor*>
+    class SodaCollectionCursor : public core::HandleHolder<OCI_SodaCollectionCursor*>
     {
-    friend class SodaDb;
+    friend class SodaDatabase;
 
     public:
 
@@ -11414,15 +11415,15 @@ namespace ocilib
          * Default constructor (null handle)
          *
          */
-        SodaCollCursor();
-        SodaCollCursor(OCI_SodaCollCursor* cursor, core::Handle* parent);
+        SodaCollectionCursor();
+        SodaCollectionCursor(OCI_SodaCollectionCursor* cursor, core::Handle* parent);
 
         /**
          * @brief
          * Return the next collection of the cursor
          *
          */
-        [[nodiscard]] SodaColl GetNext();
+        [[nodiscard]] SodaCollection GetNext();
 
         /**
          * @brief
@@ -11433,20 +11434,20 @@ namespace ocilib
          */
         class iterator
         {
-        friend class SodaCollCursor;
+        friend class SodaCollectionCursor;
 
-        SodaCollCursor* _cursor;
-        SodaColl _coll;
+        SodaCollectionCursor* _cursor;
+        SodaCollection _coll;
 
-        explicit iterator(SodaCollCursor* cursor) : _cursor(cursor) { ++(*this); }
+        explicit iterator(SodaCollectionCursor* cursor) : _cursor(cursor) { ++(*this); }
 
         public:
 
             typedef std::input_iterator_tag iterator_category;
-            typedef SodaColl value_type;
+            typedef SodaCollection value_type;
             typedef std::ptrdiff_t difference_type;
-            typedef SodaColl*               pointer;
-            typedef SodaColl&               reference;
+            typedef SodaCollection*               pointer;
+            typedef SodaCollection&               reference;
 
             iterator() : _cursor(NULL) {}
             iterator& operator++();
@@ -11476,12 +11477,12 @@ namespace ocilib
      * @brief
      * SODA document cursor
      *
-     * This class wraps the OCILIB object handle OCI_SodaDocCursor and its related methods
+     * This class wraps the OCILIB object handle OCI_SodaDocumentCursor and its related methods
      *
      */
-    class SodaDocCursor : public core::HandleHolder<OCI_SodaDocCursor*>
+    class SodaDocumentCursor : public core::HandleHolder<OCI_SodaDocumentCursor*>
     {
-    friend class SodaColl;
+    friend class SodaCollection;
 
     public:
 
@@ -11490,15 +11491,15 @@ namespace ocilib
          * Default constructor (null handle)
          *
          */
-        SodaDocCursor();
-        SodaDocCursor(OCI_SodaDocCursor* cursor, core::Handle* parent);
+        SodaDocumentCursor();
+        SodaDocumentCursor(OCI_SodaDocumentCursor* cursor, core::Handle* parent);
 
         /**
          * @brief
          * Return the next document of the cursor
          *
          */
-        [[nodiscard]] SodaDoc GetNext();
+        [[nodiscard]] SodaDocument GetNext();
 
         /**
          * @brief
@@ -11509,20 +11510,20 @@ namespace ocilib
          */
         class iterator
         {
-        friend class SodaDocCursor;
+        friend class SodaDocumentCursor;
 
-        SodaDocCursor* _cursor;
-        SodaDoc _doc;
+        SodaDocumentCursor* _cursor;
+        SodaDocument _doc;
 
-        explicit iterator(SodaDocCursor* cursor) : _cursor(cursor) { ++(*this); }
+        explicit iterator(SodaDocumentCursor* cursor) : _cursor(cursor) { ++(*this); }
 
         public:
 
             typedef std::input_iterator_tag iterator_category;
-            typedef SodaDoc value_type;
+            typedef SodaDocument value_type;
             typedef std::ptrdiff_t difference_type;
-            typedef SodaDoc*                pointer;
-            typedef SodaDoc&                reference;
+            typedef SodaDocument*                pointer;
+            typedef SodaDocument&                reference;
 
             iterator() : _cursor(NULL) {}
             iterator& operator++();
@@ -11605,6 +11606,17 @@ namespace ocilib
          */
         [[nodiscard]] String ToString() const;
     };
+
+    /* Source-compatibility aliases for the pre-rename SODA class names.
+       Define OCILIBPP_NO_COMPAT to disable them. */
+
+#ifndef OCILIBPP_NO_COMPAT
+    using SodaDb = SodaDatabase;
+    using SodaColl = SodaCollection;
+    using SodaDoc = SodaDocument;
+    using SodaCollCursor = SodaCollectionCursor;
+    using SodaDocCursor = SodaDocumentCursor;
+#endif
 
 #define OCILIB_DEFINE_FLAG_OPERATORS(T)                                                               \
         inline core::Flags<T> operator | (T a, T b) { return core::Flags<T>(a) | core::Flags<T>(b); } \

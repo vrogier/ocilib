@@ -23,107 +23,107 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL OCI_Coll * OcilibCollectionInitialize
+OCI_SYM_LOCAL OCI_Collection * OcilibCollectionInitialize
 (
     OCI_Connection *con,
-    OCI_Coll       *Coll,
+    OCI_Collection *Coll,
     void           *handle,
     OCI_TypeInfo   *typeinf
 );
 
-OCI_SYM_LOCAL OCI_Coll* OcilibCollectionCreate
+OCI_SYM_LOCAL OCI_Collection* OcilibCollectionCreate
 (
     OCI_TypeInfo* typinf
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionFree
 (
-    OCI_Coll* coll
+    OCI_Collection* coll
 );
 
-OCI_SYM_LOCAL OCI_Coll** OcilibCollectionCreateArray
+OCI_SYM_LOCAL OCI_Collection** OcilibCollectionArrayCreate
 (
     OCI_TypeInfo * typinf,
     OCI_UInt32     nbelem
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibCollectionFreeArray
+OCI_SYM_LOCAL OCI_Boolean OcilibCollectionArrayFree
 (
-    OCI_Coll** colls
+    OCI_Collection** colls
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionAssign
 (
-    OCI_Coll* coll,
-    OCI_Coll* coll_src
+    OCI_Collection* coll,
+    OCI_Collection* coll_src
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionTrim
 (
-    OCI_Coll * coll,
-    OCI_UInt32 nb_elem
+    OCI_Collection * coll,
+    OCI_UInt32       nb_elem
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionClear
 (
-    OCI_Coll* coll
+    OCI_Collection* coll
 );
 
 OCI_SYM_LOCAL OCI_CollType OcilibCollectionGetType
 (
-    OCI_Coll* coll
+    OCI_Collection* coll
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibCollectionGetMax
 (
-    OCI_Coll* coll
+    OCI_Collection* coll
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibCollectionGetSize
 (
-    OCI_Coll* coll
+    OCI_Collection* coll
 );
 
 OCI_SYM_LOCAL OCI_UInt32 OcilibCollectionGetCount
 (
-    OCI_Coll* coll
+    OCI_Collection* coll
 );
 
-OCI_SYM_LOCAL OCI_Elem* OcilibCollectionGetElement
+OCI_SYM_LOCAL OCI_Element* OcilibCollectionGetElement
 (
-    OCI_Coll * coll,
-    OCI_UInt32 index
+    OCI_Collection * coll,
+    OCI_UInt32       index
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibCollectionSetElement
 (
-    OCI_Coll * coll,
-    OCI_UInt32 index,
-    OCI_Elem * elem
+    OCI_Collection * coll,
+    OCI_UInt32       index,
+    OCI_Element    * elem
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibCollectionAddElement
+OCI_SYM_LOCAL OCI_Boolean OcilibCollectionAppend
 (
-    OCI_Coll* coll,
-    OCI_Elem* elem
+    OCI_Collection* coll,
+    OCI_Element   * elem
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibCollectionRemoveElement
+OCI_SYM_LOCAL OCI_Boolean OcilibCollectionDeleteElement
 (
-    OCI_Coll * coll,
-    OCI_UInt32 index
+    OCI_Collection * coll,
+    OCI_UInt32       index
 );
 
 OCI_SYM_LOCAL OCI_TypeInfo* OcilibCollectionGetTypeInfo
 (
-    OCI_Coll* coll
+    OCI_Collection* coll
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibCollectionToString
+OCI_SYM_LOCAL OCI_Boolean OcilibCollectionToText
 (
-    OCI_Coll  * coll,
-    OCI_UInt32* size,
-    otext     * str
+    OCI_Collection * coll,
+    OCI_UInt32     * size,
+    otext          * str
 );
 
 #endif /* OCILIB_COLLECTION_H_INCLUDED */

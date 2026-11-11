@@ -567,21 +567,21 @@ OCI_Connection* OcilibErrorGetConnection
         case OCI_IPC_OBJECT:
             return ((OCI_Object*)err->source_ptr)->con;
         case OCI_IPC_COLLECTION:
-            return ((OCI_Coll*)err->source_ptr)->con;
+            return ((OCI_Collection*)err->source_ptr)->con;
         case OCI_IPC_ITERATOR:
-            return ((OCI_Iter*)err->source_ptr)->coll->con;
+            return ((OCI_Iterator*)err->source_ptr)->coll->con;
         case OCI_IPC_ELEMENT:
-            return ((OCI_Elem*)err->source_ptr)->typinf->con;
+            return ((OCI_Element*)err->source_ptr)->typinf->con;
         case OCI_IPC_NUMBER:
             return NULL;
         case OCI_IPC_BIND:
             return ((OCI_Bind*)err->source_ptr)->stmt->con;
         case OCI_IPC_REF:
-            return ((OCI_Ref*)err->source_ptr)->con;
+            return ((OCI_Reference*)err->source_ptr)->con;
         case OCI_IPC_DIRPATH:
-            return ((OCI_DirPath*)err->source_ptr)->con;
+            return ((OCI_DirectPath*)err->source_ptr)->con;
         case OCI_IPC_MSG:
-            return ((OCI_Msg*)err->source_ptr)->typinf->con;
+            return ((OCI_Message*)err->source_ptr)->typinf->con;
         case OCI_IPC_ENQUEUE:
             return ((OCI_Enqueue*)err->source_ptr)->typinf->con;
         case OCI_IPC_DEQUEUE:
@@ -595,17 +595,17 @@ OCI_Connection* OcilibErrorGetConnection
         case OCI_IPC_EVENT:
             return ((OCI_Event*)err->source_ptr)->sub->con;
         case OCI_IPC_SODA_DB:
-            return ((OCI_SodaDb*)err->source_ptr)->con;
+            return ((OCI_SodaDatabase*)err->source_ptr)->con;
         case OCI_IPC_SODA_COLL:
-            return ((OCI_SodaColl*)err->source_ptr)->sdb->con;
+            return ((OCI_SodaCollection*)err->source_ptr)->sdb->con;
         case OCI_IPC_SODA_DOC:
-            return ((OCI_SodaDoc*)err->source_ptr)->sdb->con;
+            return ((OCI_SodaDocument*)err->source_ptr)->sdb->con;
         case OCI_IPC_SODA_OPTIONS:
             return ((OCI_SodaOptions*)err->source_ptr)->sdb->con;
         case OCI_IPC_SODA_COLL_CURSOR:
-            return ((OCI_SodaCollCursor*)err->source_ptr)->sdb->con;
+            return ((OCI_SodaCollectionCursor*)err->source_ptr)->sdb->con;
         case OCI_IPC_SODA_DOC_CURSOR:
-            return ((OCI_SodaDocCursor*)err->source_ptr)->coll->sdb->con;
+            return ((OCI_SodaDocumentCursor*)err->source_ptr)->coll->sdb->con;
         case OCI_IPC_JSON:
             return ((OCI_Json*)err->source_ptr)->con;
         case OCI_IPC_JSON_NODE:

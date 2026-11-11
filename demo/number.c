@@ -15,8 +15,8 @@ int main(void)
     OCI_TypeInfo   *tc = NULL;
     OCI_TypeInfo   *to = NULL;
     OCI_Number     *nm = NULL;
-    OCI_Coll       *cl = NULL;
-    OCI_Elem       *el = NULL;
+    OCI_Collection       *cl = NULL;
+    OCI_Element       *el = NULL;
     OCI_Object     *ob = NULL;
     OCI_Number     *no = NULL;
     OCI_Number     *nt = NULL;
@@ -41,20 +41,20 @@ int main(void)
 
     tc = OCI_TypeInfoGet(cn, "test_num_coll_t", OCI_TIF_TYPE);
     to = OCI_TypeInfoGet(cn, "test_num_t", OCI_TIF_TYPE);
-    cl = OCI_CollCreate(tc);
+    cl = OCI_CollectionCreate(tc);
     ob = OCI_ObjectCreate(to);
-    el = OCI_ElemCreate(tc);
+    el = OCI_ElementCreate(tc);
     nm = OCI_NumberCreate(env);
     ar = OCI_NumberArrayCreate(env, 5);
 
     // Testing fetching numbers (as number and using implicit conversion number to string)
-    OCI_Prepare(st, "select value from test_number");
-    OCI_Execute(st);
-    rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    OCI_StatementPrepare(st, "select value from test_number");
+    OCI_StatementExecutePrepared(st);
+    rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
-        OCI_Number  *n = OCI_GetNumber(rs, 0);
-        const otext *s = OCI_GetString(rs, 0);
+        OCI_Number  *n = OCI_ResultsetGetNumber(rs, 0);
+        const otext *s = OCI_ResultsetGetString(rs, 0);
 
         OCI_NumberToText(n, NULL, sizeof(buf), buf);
 
@@ -62,47 +62,47 @@ int main(void)
     }
 
     // Testing binding external single number
-    OCI_Prepare(st, "begin :1 := :1 *2 ; end;");
-    OCI_BindNumber(st, ":1", nm);
+    OCI_StatementPrepare(st, "begin :1 := :1 *2 ; end;");
+    OCI_StatementBindNumber(st, ":1", nm);
     OCI_NumberFromText(nm, "1234.4321", NULL);
-    OCI_Execute(st);
+    OCI_StatementExecutePrepared(st);
     OCI_NumberToText(nm, NULL, sizeof(buf), buf);
     printf("%s\n", buf);
 
     // Testing binding internal single number
-    OCI_Prepare(st, "begin :1 := :1 *2 ; end;");
-    OCI_SetBindAllocation(st, OCI_BAM_INTERNAL);
-    OCI_BindNumber(st, ":1", NULL);
-    nt = OCI_BindGetData(OCI_GetBind(st, 0));
+    OCI_StatementPrepare(st, "begin :1 := :1 *2 ; end;");
+    OCI_StatementSetBindAllocation(st, OCI_BAM_INTERNAL);
+    OCI_StatementBindNumber(st, ":1", NULL);
+    nt = OCI_BindGetData(OCI_StatementGetBind(st, 0));
     OCI_NumberFromText(nt, "1234.4321", NULL);
-    OCI_Execute(st);
+    OCI_StatementExecutePrepared(st);
     OCI_NumberToText(nt, NULL, sizeof(buf), buf);
     printf("%s\n", buf);
-    OCI_SetBindAllocation(st, OCI_BAM_EXTERNAL);
+    OCI_StatementSetBindAllocation(st, OCI_BAM_EXTERNAL);
 
     // Testing registering number for a returning into statement
-    OCI_Prepare(st, "update test_number set value  = value *2 returning value into :1");
-    OCI_RegisterNumber(st, ":1");
-    OCI_Execute(st);
-    rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    OCI_StatementPrepare(st, "update test_number set value  = value *2 returning value into :1");
+    OCI_StatementRegisterNumber(st, ":1");
+    OCI_StatementExecutePrepared(st);
+    rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
-        printf("%s\n", OCI_GetString(rs, 0));
+        printf("%s\n", OCI_ResultsetGetString(rs, 0));
     }
 
     // testing Collections
     OCI_NumberFromText(nm, "1111.2222", NULL);
-    OCI_ElemSetNumber(el, nm);
-    OCI_CollAppend(cl, el);
+    OCI_ElementSetNumber(el, nm);
+    OCI_CollectionAppend(cl, el);
     OCI_NumberFromText(nm, "3333.4444", NULL);
-    OCI_ElemSetNumber(el, nm);
-    OCI_CollAppend(cl, el);
-    printf("%d\n", OCI_CollGetCount(cl));
+    OCI_ElementSetNumber(el, nm);
+    OCI_CollectionAppend(cl, el);
+    printf("%d\n", OCI_CollectionGetCount(cl));
 
-    for (i = 0, n = OCI_CollGetCount(cl); i <= n; i++)
+    for (i = 0, n = OCI_CollectionGetCount(cl); i <= n; i++)
     {
-        OCI_Elem   *e = OCI_CollGetElem(cl, i);
-        OCI_Number *n = OCI_ElemGetNumber(e);
+        OCI_Element   *e = OCI_CollectionGetElement(cl, i);
+        OCI_Number *n = OCI_ElementGetNumber(e);
         OCI_NumberToText(n, NULL, sizeof(buf), buf);
         printf("%s\n", buf);
     }
@@ -117,13 +117,13 @@ int main(void)
     printf("%s\n", buf);
 
     // Testing fetching infinite values to string
-    OCI_Prepare(st, "SELECT utl_raw.cast_to_number('FF65'), utl_raw.cast_to_number('00') from dual");
-    OCI_Execute(st);
-    rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    OCI_StatementPrepare(st, "SELECT utl_raw.cast_to_number('FF65'), utl_raw.cast_to_number('00') from dual");
+    OCI_StatementExecutePrepared(st);
+    rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
-        printf("pos infinite = [%s]\n", OCI_GetString(rs, 0));
-        printf("neg infinite = [%s]\n", OCI_GetString(rs, 1));
+        printf("pos infinite = [%s]\n", OCI_ResultsetGetString(rs, 0));
+        printf("neg infinite = [%s]\n", OCI_ResultsetGetString(rs, 1));
     }
 
     // Testing array of numbers
@@ -146,8 +146,8 @@ int main(void)
 
     OCI_NumberArrayFree(ar);
     OCI_NumberFree(nm);
-    OCI_ElemFree(el);
-    OCI_CollFree(cl);
+    OCI_ElementFree(el);
+    OCI_CollectionFree(cl);
     OCI_ObjectFree(ob);
 
     OCI_StatementFree(st);

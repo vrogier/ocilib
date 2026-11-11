@@ -41,15 +41,15 @@ int main(void)
     OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     OCI_Statement  * st = OCI_StatementCreate(cn);
 
-    OCI_ExecuteStmt(st, "select * from products");
+    OCI_StatementExecute(st, "select * from products");
 
-    OCI_Resultset  * rs = OCI_GetResultset(st);
+    OCI_Resultset  * rs = OCI_StatementGetResultset(st);
 
-    OCI_SetStructNumericType(rs, 0, OCI_NUM_INT);
+    OCI_ResultsetSetStructNumericType(rs, 0, OCI_NUM_INT32);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        OCI_GetStruct(rs, &prd, &ind);
+        OCI_ResultsetGetStruct(rs, &prd, &ind);
 
         printf("row #%d           \n"
             "                     \n"
@@ -59,7 +59,7 @@ int main(void)
             ++i, prd.code, prd.name);
     }
 
-    printf("\n\n%d row(s) fetched\n", OCI_GetRowCount(rs));
+    printf("\n\n%d row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);

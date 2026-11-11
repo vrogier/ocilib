@@ -30,7 +30,7 @@
 
 OCI_SodaOptions * OcilibSodaOptionsCreate
 (
-    OCI_SodaDb *sdb
+    OCI_SodaDatabase *sdb
 )
 {
     ENTER_FUNC

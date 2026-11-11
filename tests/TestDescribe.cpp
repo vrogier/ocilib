@@ -15,7 +15,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, col);
 
         ASSERT_EQ(name, String(OCI_ColumnGetName(col)));
-        ASSERT_EQ(typeName, String(OCI_ColumnGetSQLType(col)));
+        ASSERT_EQ(typeName, String(OCI_ColumnGetSqlType(col)));
         ASSERT_EQ(type, OCI_ColumnGetType(col));
     }
 

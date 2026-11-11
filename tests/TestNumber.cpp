@@ -94,32 +94,32 @@ namespace TestCApi
 
     TEST(TestNumber, SetAndGetValueUnsignedShort)
     {
-        SetAndGetValue<OCI_UInt16, OCI_NUM_USHORT>(13);
+        SetAndGetValue<OCI_UInt16, OCI_NUM_UINT16>(13);
     }
 
     TEST(TestNumber, SetAndGetValueSignedShort)
     {
-        SetAndGetValue<OCI_Int16, OCI_NUM_SHORT>(-13);
+        SetAndGetValue<OCI_Int16, OCI_NUM_INT16>(-13);
     }
 
     TEST(TestNumber, SetAndGetValueUnsignedInt)
     {
-        SetAndGetValue<OCI_UInt32, OCI_NUM_UINT>(99123456);
+        SetAndGetValue<OCI_UInt32, OCI_NUM_UINT32>(99123456);
     }
 
     TEST(TestNumber, SetAndGetValueSignedInt)
     {
-        SetAndGetValue<OCI_Int32, OCI_NUM_INT>(-99123456);
+        SetAndGetValue<OCI_Int32, OCI_NUM_INT32>(-99123456);
     }
 
     TEST(TestNumber, SetAndGetValueUnsignedBigInt)
     {
-        SetAndGetValue<OCI_UInt64, OCI_NUM_BIGUINT>(81234123412341234);
+        SetAndGetValue<OCI_UInt64, OCI_NUM_UINT64>(81234123412341234);
     }
 
     TEST(TestNumber, SetAndGetValueSignedBigInt)
     {
-        SetAndGetValue<OCI_Int64, OCI_NUM_BIGINT>(-34123412341234);
+        SetAndGetValue<OCI_Int64, OCI_NUM_INT64>(-34123412341234);
     }
 
     TEST(TestNumber, SetAndGetValueFloat)
@@ -142,9 +142,9 @@ namespace TestCApi
         const auto number2 = OCI_NumberCreate(env);
         OCI_Int32 value_in = 13, value_out = 0;
 
-        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT, &value_in));
+        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT32, &value_in));
         ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_NUMBER, OCI_NumberGetContent(number1)));
-        ASSERT_TRUE(OCI_NumberGetValue(number2, OCI_NUM_INT, &value_out));
+        ASSERT_TRUE(OCI_NumberGetValue(number2, OCI_NUM_INT32, &value_out));
         ASSERT_EQ(value_in, value_out);
 
         ASSERT_TRUE(OCI_NumberFree(number1));
@@ -162,9 +162,9 @@ namespace TestCApi
         const auto number2 = OCI_NumberCreate(env);
         OCI_Int32 value_in = 13, value_out = 0;
 
-        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT, &value_in));
+        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT32, &value_in));
         ASSERT_TRUE(OCI_NumberSetContent(number2, OCI_NumberGetContent(number1)));
-        ASSERT_TRUE(OCI_NumberGetValue(number2, OCI_NUM_INT, &value_out));
+        ASSERT_TRUE(OCI_NumberGetValue(number2, OCI_NUM_INT32, &value_out));
         ASSERT_EQ(value_in, value_out);
 
         ASSERT_TRUE(OCI_NumberFree(number1));
@@ -182,9 +182,9 @@ namespace TestCApi
         const auto number2 = OCI_NumberCreate(env);
         OCI_Int32 value_in = 13, value_out = 0;
 
-        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT, &value_in));
+        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT32, &value_in));
         ASSERT_TRUE(OCI_NumberAssign(number2, number1));
-        ASSERT_TRUE(OCI_NumberGetValue(number2, OCI_NUM_INT, &value_out));
+        ASSERT_TRUE(OCI_NumberGetValue(number2, OCI_NUM_INT32, &value_out));
         ASSERT_EQ(value_in, value_out);
 
         ASSERT_TRUE(OCI_NumberFree(number1));
@@ -202,7 +202,7 @@ namespace TestCApi
         OCI_Int32 value_test = 123456789, value_out = 0;
 
         ASSERT_TRUE(OCI_NumberFromText(number, OTEXT("123456789"), OCI_STRING_FORMAT_NUM));
-        ASSERT_TRUE(OCI_NumberGetValue(number, OCI_NUM_INT, &value_out));
+        ASSERT_TRUE(OCI_NumberGetValue(number, OCI_NUM_INT32, &value_out));
 
         ASSERT_EQ(value_test, value_out);
 
@@ -221,7 +221,7 @@ namespace TestCApi
 
         const auto number = OCI_NumberCreate(env);
 
-        ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT, &value_test));
+        ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT32, &value_test));
         ASSERT_TRUE(OCI_NumberToText(number, OCI_STRING_FORMAT_NUM, 512, buffer));
 
         ASSERT_EQ(String(OTEXT("123456789")), String(buffer));
@@ -241,7 +241,7 @@ namespace TestCApi
 
         const auto number = OCI_NumberCreate(env);
 
-        ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT, &value_test));
+        ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT32, &value_test));
         ASSERT_TRUE(OCI_NumberToText(number, nullptr, 512, buffer));
 
         ASSERT_EQ(String(OTEXT("123456789")), String(buffer));
@@ -261,7 +261,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_NumberFromText(number, OTEXT("123456789"), nullptr));
 
         OCI_Int32 value_out = 0;
-        ASSERT_TRUE(OCI_NumberGetValue(number, OCI_NUM_INT, &value_out));
+        ASSERT_TRUE(OCI_NumberGetValue(number, OCI_NUM_INT32, &value_out));
         ASSERT_EQ(123456789, value_out);
 
         ASSERT_TRUE(OCI_NumberFree(number));
@@ -270,32 +270,32 @@ namespace TestCApi
 
     TEST(TestNumber, AddValueUnsignedShort)
     {
-        AddValue<OCI_UInt16, OCI_NUM_USHORT>(13, 14, 27);
+        AddValue<OCI_UInt16, OCI_NUM_UINT16>(13, 14, 27);
     }
 
     TEST(TestNumber, AddValueSignedShort)
     {
-        AddValue<OCI_Int16, OCI_NUM_SHORT>(-13, 4, -9);
+        AddValue<OCI_Int16, OCI_NUM_INT16>(-13, 4, -9);
     }
 
     TEST(TestNumber, AddValueUnsignedInt)
     {
-        AddValue<OCI_UInt32, OCI_NUM_UINT>(1876543210, 1876543210, 3753086420);
+        AddValue<OCI_UInt32, OCI_NUM_UINT32>(1876543210, 1876543210, 3753086420);
     }
 
     TEST(TestNumber, AddValueSignedInt)
     {
-        AddValue<OCI_Int32, OCI_NUM_INT>(-938271605, 1876543210, 938271605);
+        AddValue<OCI_Int32, OCI_NUM_INT32>(-938271605, 1876543210, 938271605);
     }
 
     TEST(TestNumber, AddValueUnsignedBigInt)
     {
-        AddValue<OCI_UInt64, OCI_NUM_BIGUINT>(18765432100, 18765432100, 37530864200);
+        AddValue<OCI_UInt64, OCI_NUM_UINT64>(18765432100, 18765432100, 37530864200);
     }
 
     TEST(TestNumber, AddValueSignedBigInt)
     {
-        AddValue<OCI_Int64, OCI_NUM_BIGINT>(-18765432100, 37530864200, 18765432100);
+        AddValue<OCI_Int64, OCI_NUM_INT64>(-18765432100, 37530864200, 18765432100);
     }
 
     TEST(TestNumber, AddValueFloat)
@@ -318,10 +318,10 @@ namespace TestCApi
         const auto number2 = OCI_NumberCreate(env);
         OCI_Int32 value_in_1 = 13, value_in_2 = 15, value_out = 0;
 
-        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT, &value_in_1));
-        ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_INT, &value_in_2));
+        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT32, &value_in_1));
+        ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_INT32, &value_in_2));
         ASSERT_TRUE(OCI_NumberAdd(number1, OCI_NUM_NUMBER, OCI_NumberGetContent(number2)));
-        ASSERT_TRUE(OCI_NumberGetValue(number1, OCI_NUM_INT, &value_out));
+        ASSERT_TRUE(OCI_NumberGetValue(number1, OCI_NUM_INT32, &value_out));
         ASSERT_EQ(28, value_out);
 
         ASSERT_TRUE(OCI_NumberFree(number1));
@@ -331,32 +331,32 @@ namespace TestCApi
 
     TEST(TestNumber, SubValueUnsignedShort)
     {
-        SubValue<OCI_UInt16, OCI_NUM_USHORT>(14, 13, 1);
+        SubValue<OCI_UInt16, OCI_NUM_UINT16>(14, 13, 1);
     }
 
     TEST(TestNumber, SubValueSignedShort)
     {
-        SubValue<OCI_Int16, OCI_NUM_SHORT>(-13, 4, -17);
+        SubValue<OCI_Int16, OCI_NUM_INT16>(-13, 4, -17);
     }
 
     TEST(TestNumber, SubValueUnsignedInt)
     {
-        SubValue<OCI_UInt32, OCI_NUM_UINT>(3753086420, 1876543210, 1876543210);
+        SubValue<OCI_UInt32, OCI_NUM_UINT32>(3753086420, 1876543210, 1876543210);
     }
 
     TEST(TestNumber, SubValueSignedInt)
     {
-        SubValue<OCI_Int32, OCI_NUM_INT>(-938271605, 938271605, -1876543210);
+        SubValue<OCI_Int32, OCI_NUM_INT32>(-938271605, 938271605, -1876543210);
     }
 
     TEST(TestNumber, SubValueUnsignedBigInt)
     {
-        SubValue<OCI_UInt64, OCI_NUM_BIGUINT>(37530864200, 18765432100, 18765432100);
+        SubValue<OCI_UInt64, OCI_NUM_UINT64>(37530864200, 18765432100, 18765432100);
     }
 
     TEST(TestNumber, SubValueSignedBigInt)
     {
-        SubValue<OCI_Int64, OCI_NUM_BIGINT>(-18765432100, 18765432100, -37530864200);
+        SubValue<OCI_Int64, OCI_NUM_INT64>(-18765432100, 18765432100, -37530864200);
     }
 
     TEST(TestNumber, SubValueFloat)
@@ -379,10 +379,10 @@ namespace TestCApi
         const auto number2 = OCI_NumberCreate(env);
         OCI_Int32 value_in_1 = 13, value_in_2 = 15, value_out = 0;
 
-        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT, &value_in_1));
-        ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_INT, &value_in_2));
+        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT32, &value_in_1));
+        ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_INT32, &value_in_2));
         ASSERT_TRUE(OCI_NumberSub(number1, OCI_NUM_NUMBER, OCI_NumberGetContent(number2)));
-        ASSERT_TRUE(OCI_NumberGetValue(number1, OCI_NUM_INT, &value_out));
+        ASSERT_TRUE(OCI_NumberGetValue(number1, OCI_NUM_INT32, &value_out));
         ASSERT_EQ(-2, value_out);
 
         ASSERT_TRUE(OCI_NumberFree(number1));
@@ -392,32 +392,32 @@ namespace TestCApi
 
     TEST(TestNumber, MultiplyValueUnsignedShort)
     {
-        MultiplyValue<OCI_UInt16, OCI_NUM_USHORT>(13, 2, 26);
+        MultiplyValue<OCI_UInt16, OCI_NUM_UINT16>(13, 2, 26);
     }
 
     TEST(TestNumber, MultiplyValueSignedShort)
     {
-        MultiplyValue<OCI_Int16, OCI_NUM_SHORT>(-13, 2, -26);
+        MultiplyValue<OCI_Int16, OCI_NUM_INT16>(-13, 2, -26);
     }
 
     TEST(TestNumber, MultiplyValueUnsignedInt)
     {
-        MultiplyValue<OCI_UInt32, OCI_NUM_UINT>(1876543210, 2, 3753086420);
+        MultiplyValue<OCI_UInt32, OCI_NUM_UINT32>(1876543210, 2, 3753086420);
     }
 
     TEST(TestNumber, MultiplyValueSignedInt)
     {
-        MultiplyValue<OCI_Int32, OCI_NUM_INT>(-938271605, 2, -1876543210);
+        MultiplyValue<OCI_Int32, OCI_NUM_INT32>(-938271605, 2, -1876543210);
     }
 
     TEST(TestNumber, MultiplyValueUnsignedBigInt)
     {
-        MultiplyValue<OCI_UInt64, OCI_NUM_BIGUINT>(18765432100, 2, 37530864200);
+        MultiplyValue<OCI_UInt64, OCI_NUM_UINT64>(18765432100, 2, 37530864200);
     }
 
     TEST(TestNumber, MultiplyValueSignedBigInt)
     {
-        MultiplyValue<OCI_Int64, OCI_NUM_BIGINT>(-18765432100, 2, -37530864200);
+        MultiplyValue<OCI_Int64, OCI_NUM_INT64>(-18765432100, 2, -37530864200);
     }
 
     TEST(TestNumber, MultiplyValueFloat)
@@ -440,10 +440,10 @@ namespace TestCApi
         const auto number2 = OCI_NumberCreate(env);
         OCI_Int32 value_in_1 = 13, value_in_2 = 2, value_out = 0;
 
-        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT, &value_in_1));
-        ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_INT, &value_in_2));
+        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT32, &value_in_1));
+        ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_INT32, &value_in_2));
         ASSERT_TRUE(OCI_NumberMultiply(number1, OCI_NUM_NUMBER, OCI_NumberGetContent(number2)));
-        ASSERT_TRUE(OCI_NumberGetValue(number1, OCI_NUM_INT, &value_out));
+        ASSERT_TRUE(OCI_NumberGetValue(number1, OCI_NUM_INT32, &value_out));
         ASSERT_EQ(26, value_out);
 
         ASSERT_TRUE(OCI_NumberFree(number1));
@@ -453,32 +453,32 @@ namespace TestCApi
 
     TEST(TestNumber, DivideValueUnsignedShort)
     {
-        DivideValue<OCI_UInt16, OCI_NUM_USHORT>(26, 2, 13);
+        DivideValue<OCI_UInt16, OCI_NUM_UINT16>(26, 2, 13);
     }
 
     TEST(TestNumber, DivideValueSignedShort)
     {
-        DivideValue<OCI_Int16, OCI_NUM_SHORT>(-26, 2, -13);
+        DivideValue<OCI_Int16, OCI_NUM_INT16>(-26, 2, -13);
     }
 
     TEST(TestNumber, DivideValueUnsignedInt)
     {
-        DivideValue<OCI_UInt32, OCI_NUM_UINT>(3753086420, 2, 1876543210);
+        DivideValue<OCI_UInt32, OCI_NUM_UINT32>(3753086420, 2, 1876543210);
     }
 
     TEST(TestNumber, DivideValueSignedInt)
     {
-        DivideValue<OCI_Int32, OCI_NUM_INT>(-1876543210, 2, -938271605);
+        DivideValue<OCI_Int32, OCI_NUM_INT32>(-1876543210, 2, -938271605);
     }
 
     TEST(TestNumber, DivideValueUnsignedBigInt)
     {
-        DivideValue<OCI_UInt64, OCI_NUM_BIGUINT>(37530864200, 2, 18765432100);
+        DivideValue<OCI_UInt64, OCI_NUM_UINT64>(37530864200, 2, 18765432100);
     }
 
     TEST(TestNumber, DivideValueSignedBigInt)
     {
-        DivideValue<OCI_Int64, OCI_NUM_BIGINT>(-37530864200, 2, -18765432100);
+        DivideValue<OCI_Int64, OCI_NUM_INT64>(-37530864200, 2, -18765432100);
     }
 
     TEST(TestNumber, DivideValueFloat)
@@ -502,8 +502,8 @@ namespace TestCApi
         OCI_Int32 value_in_1 = 13, value_in_2 = 2;
         OCI_Float value_out = 0;
 
-        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT, &value_in_1));
-        ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_INT, &value_in_2));
+        ASSERT_TRUE(OCI_NumberSetValue(number1, OCI_NUM_INT32, &value_in_1));
+        ASSERT_TRUE(OCI_NumberSetValue(number2, OCI_NUM_INT32, &value_in_2));
         ASSERT_TRUE(OCI_NumberDivide(number1, OCI_NUM_NUMBER, OCI_NumberGetContent(number2)));
         ASSERT_TRUE(OCI_NumberGetValue(number1, OCI_NUM_FLOAT, &value_out));
         ASSERT_EQ(6.5f, value_out);
@@ -559,8 +559,8 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_NUMERIC, OTEXT("999999")));
-        const otext* fmt = OCI_GetFormat(env, OCI_FMT_NUMERIC);
+        ASSERT_TRUE(OCI_EnvironmentSetFormat(env, OCI_FMT_NUMERIC, OTEXT("999999")));
+        const otext* fmt = OCI_EnvironmentGetFormat(env, OCI_FMT_NUMERIC);
         ASSERT_NE(nullptr, fmt);
         ASSERT_EQ(String(OTEXT("999999")), String(fmt));
 
@@ -568,7 +568,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, num);
 
         OCI_Int32 value = 12345;
-        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT, &value));
+        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT32, &value));
 
         otext buffer[64];
         ASSERT_TRUE(OCI_NumberToText(num, OTEXT("999999"), 64, buffer));
@@ -615,11 +615,11 @@ namespace TestCApi
             stmt = OCI_StatementCreate(conn);
             ASSERT_NE(nullptr, stmt);
 
-            ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select n, bf, bd, t from testnumcvt")));
+            ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select n, bf, bd, t from testnumcvt")));
 
-            rs = OCI_GetResultset(stmt);
+            rs = OCI_StatementGetResultset(stmt);
             ASSERT_NE(nullptr, rs);
-            ASSERT_TRUE(OCI_FetchNext(rs));
+            ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
         }
 
         void TearDown() override
@@ -635,74 +635,74 @@ namespace TestCApi
 
     TEST_F(TestNumberCvt, GetIntOnNumberColumn_Converts)
     {
-        ASSERT_EQ(42, OCI_GetInt(rs, 0));
+        ASSERT_EQ(42, OCI_ResultsetGetInt32(rs, 0));
     }
 
     TEST_F(TestNumberCvt, GetShortOnNumberColumn_Converts)
     {
-        ASSERT_EQ(42, OCI_GetShort(rs, 0));
+        ASSERT_EQ(42, OCI_ResultsetGetInt16(rs, 0));
     }
 
     TEST_F(TestNumberCvt, GetBigIntOnNumberColumn_Converts)
     {
-        ASSERT_EQ(42, OCI_GetBigInt(rs, 0));
+        ASSERT_EQ(42, OCI_ResultsetGetInt64(rs, 0));
     }
 
     TEST_F(TestNumberCvt, GetDoubleOnNumberColumn_Converts)
     {
-        ASSERT_NEAR(42.0, OCI_GetDouble(rs, 0), 0.001);
+        ASSERT_NEAR(42.0, OCI_ResultsetGetDouble(rs, 0), 0.001);
     }
 
     TEST_F(TestNumberCvt, GetFloatOnNumberColumn_Converts)
     {
-        ASSERT_NEAR(42.0f, OCI_GetFloat(rs, 0), 0.001f);
+        ASSERT_NEAR(42.0f, OCI_ResultsetGetFloat(rs, 0), 0.001f);
     }
 
     TEST_F(TestNumberCvt, GetDoubleOnBinaryFloatColumn_Converts)
     {
-        ASSERT_NEAR(2.5, OCI_GetDouble(rs, 1), 0.001);
+        ASSERT_NEAR(2.5, OCI_ResultsetGetDouble(rs, 1), 0.001);
     }
 
     TEST_F(TestNumberCvt, GetIntOnBinaryFloatColumn_Converts)
     {
-        ASSERT_EQ(2, OCI_GetInt(rs, 1));
+        ASSERT_EQ(2, OCI_ResultsetGetInt32(rs, 1));
     }
 
     TEST_F(TestNumberCvt, GetFloatOnBinaryDoubleColumn_Converts)
     {
-        ASSERT_NEAR(7.25f, OCI_GetFloat(rs, 2), 0.001f);
+        ASSERT_NEAR(7.25f, OCI_ResultsetGetFloat(rs, 2), 0.001f);
     }
 
     TEST_F(TestNumberCvt, GetIntOnBinaryDoubleColumn_Converts)
     {
-        ASSERT_EQ(7, OCI_GetInt(rs, 2));
+        ASSERT_EQ(7, OCI_ResultsetGetInt32(rs, 2));
     }
 
     TEST_F(TestNumberCvt, GetShortOnVarcharColumn_Converts)
     {
         /* VARCHAR2 column parsed to binary numeric types */
 
-        ASSERT_EQ(17, OCI_GetShort(rs, 3));
+        ASSERT_EQ(17, OCI_ResultsetGetInt16(rs, 3));
     }
 
     TEST_F(TestNumberCvt, GetIntOnVarcharColumn_Converts)
     {
-        ASSERT_EQ(17, OCI_GetInt(rs, 3));
+        ASSERT_EQ(17, OCI_ResultsetGetInt32(rs, 3));
     }
 
     TEST_F(TestNumberCvt, GetBigIntOnVarcharColumn_Converts)
     {
-        ASSERT_EQ(17, OCI_GetBigInt(rs, 3));
+        ASSERT_EQ(17, OCI_ResultsetGetInt64(rs, 3));
     }
 
     TEST_F(TestNumberCvt, GetDoubleOnVarcharColumn_Converts)
     {
-        ASSERT_NEAR(17.0, OCI_GetDouble(rs, 3), 0.001);
+        ASSERT_NEAR(17.0, OCI_ResultsetGetDouble(rs, 3), 0.001);
     }
 
     TEST_F(TestNumberCvt, GetFloatOnVarcharColumn_Converts)
     {
-        ASSERT_NEAR(17.0f, OCI_GetFloat(rs, 3), 0.001f);
+        ASSERT_NEAR(17.0f, OCI_ResultsetGetFloat(rs, 3), 0.001f);
     }
 
     /* --- public-API coverage of the dropped OcilibNumber* internals:
@@ -720,7 +720,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, num);
 
         int32_t val = 42;
-        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT, &val));
+        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT32, &val));
 
         /* OcilibNumberToText / OcilibNumberGetContent via public text roundtrip */
         otext buf[64] = { 0 };
@@ -733,7 +733,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, OCI_NumberGetContent(num2));
 
         int32_t val2 = 0;
-        ASSERT_TRUE(OCI_NumberGetValue(num2, OCI_NUM_INT, &val2));
+        ASSERT_TRUE(OCI_NumberGetValue(num2, OCI_NUM_INT32, &val2));
         ASSERT_EQ(42, val2);
 
         ASSERT_TRUE(OCI_NumberFree(num));
@@ -749,15 +749,15 @@ namespace TestCApi
         ASSERT_NE(nullptr, num);
 
         int32_t v = 10;
-        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT, &v));
+        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT32, &v));
         int32_t out = 0;
-        ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_INT, &out));
+        ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_INT32, &out));
         ASSERT_EQ(10, out);
 
         /* OcilibNumberAdd via OCI_NumberAdd */
         int32_t addend = 5;
-        ASSERT_TRUE(OCI_NumberAdd(num, OCI_NUM_INT, &addend));
-        ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_INT, &out));
+        ASSERT_TRUE(OCI_NumberAdd(num, OCI_NUM_INT32, &addend));
+        ASSERT_TRUE(OCI_NumberGetValue(num, OCI_NUM_INT32, &out));
         ASSERT_EQ(15, out);
 
         ASSERT_TRUE(OCI_NumberFree(num));
@@ -775,9 +775,9 @@ namespace TestCApi
         ASSERT_FALSE(OCI_NumberFromText(nullptr, nullptr, nullptr));
         ASSERT_EQ(nullptr, OCI_NumberGetContent(nullptr));
         ASSERT_FALSE(OCI_NumberSetContent(nullptr, nullptr));
-        ASSERT_FALSE(OCI_NumberSetValue(nullptr, OCI_NUM_INT, &v));
-        ASSERT_FALSE(OCI_NumberGetValue(nullptr, OCI_NUM_INT, &v));
-        ASSERT_FALSE(OCI_NumberAdd(nullptr, OCI_NUM_INT, &v));
+        ASSERT_FALSE(OCI_NumberSetValue(nullptr, OCI_NUM_INT32, &v));
+        ASSERT_FALSE(OCI_NumberGetValue(nullptr, OCI_NUM_INT32, &v));
+        ASSERT_FALSE(OCI_NumberAdd(nullptr, OCI_NUM_INT32, &v));
     }
 
     class TestNumberNullArgs : public ::testing::TestWithParam<NullArgCase> {};

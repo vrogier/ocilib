@@ -3076,81 +3076,81 @@ not_found:
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeGetShort
+ * OcilibJsonNodeGetInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeGetShort
+OCI_Boolean OcilibJsonNodeGetInt16
 (
     OCI_JsonNode *node,
     OCI_Int16    *value
 )
 {
-    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_SHORT);
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_INT16);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeGetUShort
+ * OcilibJsonNodeGetUInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeGetUShort
+OCI_Boolean OcilibJsonNodeGetUInt16
 (
     OCI_JsonNode *node,
     OCI_UInt16   *value
 )
 {
-    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_USHORT);
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_UINT16);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeGetInt
+ * OcilibJsonNodeGetInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeGetInt
+OCI_Boolean OcilibJsonNodeGetInt32
 (
     OCI_JsonNode *node,
     OCI_Int32    *value
 )
 {
-    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_INT);
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_INT32);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeGetUInt
+ * OcilibJsonNodeGetUInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeGetUInt
+OCI_Boolean OcilibJsonNodeGetUInt32
 (
     OCI_JsonNode *node,
     OCI_UInt32   *value
 )
 {
-    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_UINT);
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_UINT32);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeGetBigInt
+ * OcilibJsonNodeGetInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeGetBigInt
+OCI_Boolean OcilibJsonNodeGetInt64
 (
     OCI_JsonNode *node,
     OCI_Int64    *value
 )
 {
-    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_BIGINT);
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_INT64);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeGetBigUInt
+ * OcilibJsonNodeGetUInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeGetBigUInt
+OCI_Boolean OcilibJsonNodeGetUInt64
 (
     OCI_JsonNode *node,
     OCI_UInt64   *value
 )
 {
-    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_BIGUINT);
+    OCL_JSON_NODE_NUMBER_GETTER(OCI_NUM_UINT64);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3180,81 +3180,81 @@ OCI_Boolean OcilibJsonNodeGetDouble
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeSetShort
+ * OcilibJsonNodeSetInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeSetShort
+OCI_Boolean OcilibJsonNodeSetInt16
 (
     OCI_JsonNode *node,
     OCI_Int16     value
 )
 {
-    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_SHORT);
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_INT16);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeSetUShort
+ * OcilibJsonNodeSetUInt16
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeSetUShort
+OCI_Boolean OcilibJsonNodeSetUInt16
 (
     OCI_JsonNode *node,
     OCI_UInt16    value
 )
 {
-    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_USHORT);
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_UINT16);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeSetInt
+ * OcilibJsonNodeSetInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeSetInt
+OCI_Boolean OcilibJsonNodeSetInt32
 (
     OCI_JsonNode *node,
     OCI_Int32     value
 )
 {
-    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_INT);
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_INT32);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeSetUInt
+ * OcilibJsonNodeSetUInt32
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeSetUInt
+OCI_Boolean OcilibJsonNodeSetUInt32
 (
     OCI_JsonNode *node,
     OCI_UInt32    value
 )
 {
-    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_UINT);
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_UINT32);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeSetBigInt
+ * OcilibJsonNodeSetInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeSetBigInt
+OCI_Boolean OcilibJsonNodeSetInt64
 (
     OCI_JsonNode *node,
     OCI_Int64     value
 )
 {
-    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_BIGINT);
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_INT64);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibJsonNodeSetBigUInt
+ * OcilibJsonNodeSetUInt64
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibJsonNodeSetBigUInt
+OCI_Boolean OcilibJsonNodeSetUInt64
 (
     OCI_JsonNode *node,
     OCI_UInt64    value
 )
 {
-    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_BIGUINT);
+    OCL_JSON_NODE_NUMBER_SETTER(OCI_NUM_UINT64);
 }
 
 /* --------------------------------------------------------------------------------------------- *

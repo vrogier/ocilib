@@ -39,7 +39,7 @@ namespace TestCApi
         OCI_Number* num = OCI_NumberCreate(env);
         ASSERT_NE(nullptr, num);
         int val = 42;
-        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT, &val));
+        ASSERT_TRUE(OCI_NumberSetValue(num, OCI_NUM_INT32, &val));
         ASSERT_TRUE(OCI_ShardingKeyAddNumber(skey, num));
 
         OCI_Date* date = OCI_DateCreate(env);

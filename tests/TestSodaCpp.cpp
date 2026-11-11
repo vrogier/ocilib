@@ -4,9 +4,9 @@ using namespace ocilib;
 
 namespace
 {
-    void DropCollIfExistsCpp(SodaDb& sdb, const otext* name)
+    void DropCollIfExistsCpp(SodaDatabase& sdb, const otext* name)
     {
-        SodaColl coll = sdb.OpenCollection(name);
+        SodaCollection coll = sdb.OpenCollection(name);
         if (!coll.IsNull())
         {
             coll.Drop();
@@ -21,7 +21,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         ASSERT_FALSE(sdb.IsNull());
     }
@@ -31,7 +31,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         ASSERT_FALSE(sdb.GetConnection().IsNull());
     }
@@ -41,11 +41,11 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_COLL"));
 
-        SodaColl coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_COLL"), String());
+        SodaCollection coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_COLL"), String());
         ASSERT_FALSE(coll.IsNull());
 
         ASSERT_EQ(String(OTEXT("OCILIB_SODA_CPP_COLL")), coll.GetName());
@@ -62,21 +62,21 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_OPEN"));
 
-        SodaColl coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_OPEN"), String());
+        SodaCollection coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_OPEN"), String());
         ASSERT_FALSE(coll.IsNull());
 
-        SodaColl opened = sdb.OpenCollection(OTEXT("OCILIB_SODA_CPP_OPEN"));
+        SodaCollection opened = sdb.OpenCollection(OTEXT("OCILIB_SODA_CPP_OPEN"));
         ASSERT_FALSE(opened.IsNull());
         ASSERT_EQ(String(OTEXT("OCILIB_SODA_CPP_OPEN")), opened.GetName());
 
-        SodaCollCursor cursor = sdb.GetCollections(OTEXT("OCILIB_SODA_CPP"));
+        SodaCollectionCursor cursor = sdb.GetCollections(OTEXT("OCILIB_SODA_CPP"));
 
         bool found = false;
-        for (SodaColl item = cursor.GetNext(); !item.IsNull(); item = cursor.GetNext())
+        for (SodaCollection item = cursor.GetNext(); !item.IsNull(); item = cursor.GetNext())
         {
             if (item.GetName() == String(OTEXT("OCILIB_SODA_CPP_OPEN")))
             {
@@ -87,9 +87,9 @@ namespace TestCppApi
         ASSERT_TRUE(found);
 
         /* range-for over a fresh cursor */
-        SodaCollCursor cursor2 = sdb.GetCollections(OTEXT("OCILIB_SODA_CPP"));
+        SodaCollectionCursor cursor2 = sdb.GetCollections(OTEXT("OCILIB_SODA_CPP"));
         bool found2 = false;
-        for (SodaColl& item : cursor2)
+        for (SodaCollection& item : cursor2)
         {
             if (item.GetName() == String(OTEXT("OCILIB_SODA_CPP_OPEN")))
             {
@@ -119,11 +119,11 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_DOC"));
 
-        SodaColl coll = sdb.CreateCollection
+        SodaCollection coll = sdb.CreateCollection
         (
             OTEXT("OCILIB_SODA_CPP_DOC"),
             OTEXT("{\"keyColumn\":{\"name\":\"ID\"},"
@@ -134,7 +134,7 @@ namespace TestCppApi
         );
         ASSERT_FALSE(coll.IsNull());
 
-        SodaDoc doc = sdb.CreateDocumentFromText(OTEXT("{\"name\":\"cpp test\"}"), String());
+        SodaDocument doc = sdb.CreateDocumentFromText(OTEXT("{\"name\":\"cpp test\"}"), String());
         ASSERT_FALSE(doc.IsNull());
         ASSERT_FALSE(doc.GetMediaType().empty());
 
@@ -146,11 +146,11 @@ namespace TestCppApi
         ASSERT_FALSE(doc.GetLastModified().empty());
         ASSERT_FALSE(doc.GetText().empty());
 
-        SodaDoc found = coll.FindOne(doc.GetKey());
+        SodaDocument found = coll.FindOne(doc.GetKey());
         ASSERT_FALSE(found.IsNull());
         ASSERT_EQ(doc.GetKey(), found.GetKey());
 
-        if (OCI_GetVersionConnection(con) >= OCI_23_4 && OCI_GetOCIRuntimeVersion(env.GetHandle()) >= OCI_23_4)
+        if (OCI_ConnectionGetVersion(con) >= OCI_23_4 && OCI_EnvironmentGetOCIRuntimeVersion(env.GetHandle()) >= OCI_23_4)
         {
             Json json = found.GetJson();
             ASSERT_FALSE(json.IsNull());
@@ -165,16 +165,16 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_FIND"));
 
-        SodaColl coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_FIND"), String());
+        SodaCollection coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_FIND"), String());
         ASSERT_FALSE(coll.IsNull());
 
         for (OCI_Int32 i = 0; i < 4; i++)
         {
-            SodaDoc doc = sdb.CreateDocumentFromText
+            SodaDocument doc = sdb.CreateDocumentFromText
             (
                 (i % 2) ? OTEXT("{\"grp\":1}") : OTEXT("{\"grp\":0}"),
                 String()
@@ -194,10 +194,10 @@ namespace TestCppApi
         options.SetSkip(0);
         options.SetLimit(10);
 
-        SodaDocCursor cursor = coll.Find(options);
+        SodaDocumentCursor cursor = coll.Find(options);
 
         OCI_UInt32 count = 0;
-        for (SodaDoc doc = cursor.GetNext(); !doc.IsNull(); doc = cursor.GetNext())
+        for (SodaDocument doc = cursor.GetNext(); !doc.IsNull(); doc = cursor.GetNext())
         {
             ASSERT_FALSE(doc.GetText().empty());
             count++;
@@ -207,7 +207,7 @@ namespace TestCppApi
 
         /* FindOne with options */
 
-        SodaDoc first = coll.FindOne(options);
+        SodaDocument first = coll.FindOne(options);
         ASSERT_FALSE(first.IsNull());
 
         con.Commit();
@@ -219,14 +219,14 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_REPL"));
 
-        SodaColl coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_REPL"), String());
+        SodaCollection coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_REPL"), String());
         ASSERT_FALSE(coll.IsNull());
 
-        SodaDoc doc = sdb.CreateDocumentFromText(OTEXT("{\"v\":1}"), String());
+        SodaDocument doc = sdb.CreateDocumentFromText(OTEXT("{\"v\":1}"), String());
         coll.Insert(doc);
 
         const String key = doc.GetKey();
@@ -234,15 +234,15 @@ namespace TestCppApi
 
         /* replace by key */
 
-        SodaDoc newDoc = sdb.CreateDocumentFromText(OTEXT("{\"v\":2}"), String());
+        SodaDocument newDoc = sdb.CreateDocumentFromText(OTEXT("{\"v\":2}"), String());
         coll.ReplaceOneByKey(key, newDoc);
 
-        SodaDoc found = coll.FindOne(key);
+        SodaDocument found = coll.FindOne(key);
         ASSERT_NE(String::npos, found.GetText().find(OTEXT("\"v\":2")));
 
         /* replace-and-get by key */
 
-        SodaDoc newDoc2 = sdb.CreateDocumentFromText(OTEXT("{\"v\":3}"), String());
+        SodaDocument newDoc2 = sdb.CreateDocumentFromText(OTEXT("{\"v\":3}"), String());
         coll.ReplaceOneByKey(key, newDoc2, true);
         ASSERT_FALSE(newDoc2.GetKey().empty());
 
@@ -251,7 +251,7 @@ namespace TestCppApi
         SodaOptions options(sdb);
         options.SetKey(key);
 
-        SodaDoc newDoc3 = sdb.CreateDocumentFromText(OTEXT("{\"v\":4}"), String());
+        SodaDocument newDoc3 = sdb.CreateDocumentFromText(OTEXT("{\"v\":4}"), String());
         coll.ReplaceOne(options, newDoc3);
 
         /* replace-and-get with key + version options — fetch the current
@@ -259,7 +259,7 @@ namespace TestCppApi
 
         options.SetVersion(coll.FindOne(key).GetVersion());
 
-        SodaDoc newDoc4 = sdb.CreateDocumentFromText(OTEXT("{\"v\":5}"), String());
+        SodaDocument newDoc4 = sdb.CreateDocumentFromText(OTEXT("{\"v\":5}"), String());
         coll.ReplaceOne(options, newDoc4, true);
         ASSERT_FALSE(newDoc4.GetKey().empty());
 
@@ -268,7 +268,7 @@ namespace TestCppApi
         SodaOptions keysOptions(sdb);
         keysOptions.SetKeys(std::vector<String> { key });
 
-        SodaDoc foundByKeys = coll.FindOne(keysOptions);
+        SodaDocument foundByKeys = coll.FindOne(keysOptions);
         ASSERT_FALSE(foundByKeys.IsNull());
 
         /* remove by key */
@@ -285,16 +285,16 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_REM"));
 
-        SodaColl coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_REM"), String());
+        SodaCollection coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_REM"), String());
         ASSERT_FALSE(coll.IsNull());
 
         for (OCI_Int32 i = 0; i < 4; i++)
         {
-            SodaDoc doc = sdb.CreateDocumentFromText
+            SodaDocument doc = sdb.CreateDocumentFromText
             (
                 (i % 2) ? OTEXT("{\"del\":1}") : OTEXT("{\"del\":0}"),
                 String()
@@ -321,19 +321,19 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_JSON"));
 
-        SodaColl coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_JSON"), String());
+        SodaCollection coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_JSON"), String());
         ASSERT_FALSE(coll.IsNull());
 
-        if (OCI_GetVersionConnection(con) >= OCI_23_4 && OCI_GetOCIRuntimeVersion(env.GetHandle()) >= OCI_23_4)
+        if (OCI_ConnectionGetVersion(con) >= OCI_23_4 && OCI_EnvironmentGetOCIRuntimeVersion(env.GetHandle()) >= OCI_23_4)
         {
             Json json(con);
             json.LoadText(OTEXT("{\"name\":\"cpp json\"}"));
 
-            SodaDoc doc = sdb.CreateDocumentFromJson(json, String());
+            SodaDocument doc = sdb.CreateDocumentFromJson(json, String());
             ASSERT_FALSE(doc.IsNull());
 
             coll.Insert(doc);
@@ -346,14 +346,14 @@ namespace TestCppApi
 
     TEST(TestSodaCpp, ErrorPaths)
     {
-        ASSERT_THROW((void)(SodaColl().GetName()), Exception);
-        ASSERT_THROW((void)(SodaColl().Drop()), Exception);
-        ASSERT_THROW((void)(SodaDb().GetConnection()), Exception);
-        ASSERT_THROW((void)(SodaDoc().GetKey()), Exception);
-        ASSERT_THROW((void)(SodaDoc().GetText()), Exception);
+        ASSERT_THROW((void)(SodaCollection().GetName()), Exception);
+        ASSERT_THROW((void)(SodaCollection().Drop()), Exception);
+        ASSERT_THROW((void)(SodaDatabase().GetConnection()), Exception);
+        ASSERT_THROW((void)(SodaDocument().GetKey()), Exception);
+        ASSERT_THROW((void)(SodaDocument().GetText()), Exception);
         ASSERT_THROW((void)(SodaOptions().SetSkip(0)), Exception);
-        ASSERT_THROW((void)(SodaCollCursor().GetNext()), Exception);
-        ASSERT_THROW((void)(SodaDocCursor().GetNext()), Exception);
+        ASSERT_THROW((void)(SodaCollectionCursor().GetNext()), Exception);
+        ASSERT_THROW((void)(SodaDocumentCursor().GetNext()), Exception);
     }
 
     TEST(TestSodaCpp, BulkSaveIndexAndMeta)
@@ -361,11 +361,11 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
 
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_BULK"));
 
-        SodaColl coll = sdb.CreateCollection
+        SodaCollection coll = sdb.CreateCollection
         (
             OTEXT("OCILIB_SODA_CPP_BULK"),
             OTEXT("{\"keyColumn\":{\"name\":\"ID\",\"sqlType\":\"VARCHAR2\",\"maxLength\":255,\"assignmentMethod\":\"CLIENT\"}}")
@@ -373,7 +373,7 @@ namespace TestCppApi
         ASSERT_FALSE(coll.IsNull());
 
         /* bulk insert */
-        std::vector<SodaDoc> docs;
+        std::vector<SodaDocument> docs;
         docs.push_back(sdb.CreateDocumentFromText(OTEXT("{\"a\":1}"), OTEXT("k1")));
         docs.push_back(sdb.CreateDocumentFromText(OTEXT("{\"a\":2}"), OTEXT("k2")));
         try { coll.InsertMany(docs); } catch (const Exception&) { FAIL() << "InsertMany"; }
@@ -381,13 +381,13 @@ namespace TestCppApi
         try { ASSERT_TRUE(docs[0].IsJson()); } catch (const Exception&) { FAIL() << "IsJson"; }
 
         /* bulk insert and get metadata */
-        std::vector<SodaDoc> docs2;
+        std::vector<SodaDocument> docs2;
         docs2.push_back(sdb.CreateDocumentFromText(OTEXT("{\"a\":3}"), OTEXT("k3")));
         try { coll.InsertMany(docs2, true); } catch (const Exception&) { FAIL() << "InsertManyAndGet"; }
         ASSERT_EQ(String(OTEXT("k3")), docs2[0].GetKey());
 
         /* save (upsert) and save-and-get */
-        SodaDoc sv = sdb.CreateDocumentFromText(OTEXT("{\"a\":99}"), OTEXT("k1"));
+        SodaDocument sv = sdb.CreateDocumentFromText(OTEXT("{\"a\":99}"), OTEXT("k1"));
         try { coll.Save(sv); } catch (const Exception&) { FAIL() << "Save"; }
         try { coll.Save(sv, true); } catch (const Exception&) { FAIL() << "SaveAndGet"; }
         ASSERT_EQ(String(OTEXT("k1")), sv.GetKey());
@@ -418,13 +418,13 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
 
-        SodaDb sdb(con);
+        SodaDatabase sdb(con);
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_IDX"));
 
-        SodaColl coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_IDX"), String());
+        SodaCollection coll = sdb.CreateCollection(OTEXT("OCILIB_SODA_CPP_IDX"), String());
         ASSERT_FALSE(coll.IsNull());
 
-        SodaDoc sd = sdb.CreateDocumentFromText(OTEXT("{\"a\":1}"), String());
+        SodaDocument sd = sdb.CreateDocumentFromText(OTEXT("{\"a\":1}"), String());
         coll.Insert(sd);
         con.Commit();
 

@@ -30,31 +30,31 @@ int main(void)
 
     cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     st = OCI_StatementCreate(cn);
-    ht = OCI_HashCreate(env, 256, OCI_HASH_INTEGER);
+    ht = OCI_HashTableCreate(env, 256, OCI_HASH_INTEGER);
 
     /* fill the hash table with data from DB */
 
-    OCI_ExecuteStmt(st, "select code, name from products");
+    OCI_StatementExecute(st, "select code, name from products");
 
-    rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
-        OCI_HashAddInt(ht, OCI_GetStringByName(rs, "name"), OCI_GetIntByName(rs, "code"));
+        OCI_HashTableAddInt32(ht, OCI_ResultsetGetStringByName(rs, "name"), OCI_ResultsetGetInt32ByName(rs, "code"));
     }
 
-    printf("%d row(s) fetched\n", OCI_GetRowCount(rs));
+    printf("%d row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 
     /* lookup an entry */
 
-    printf("code for '%s' is : %d\n", "product 1", OCI_HashGetInt(ht, "product 1"));
+    printf("code for '%s' is : %d\n", "product 1", OCI_HashTableGetInt32(ht, "product 1"));
 
     /* browse the hash table */
 
-    n = OCI_HashGetSize(ht);
+    n = OCI_HashTableGetSize(ht);
 
     for (i = 0; i < n; i++)
     {
-        he = OCI_HashGetEntry(ht, i);
+        he = OCI_HashTableGetEntry(ht, i);
 
         while (he)
         {
@@ -74,7 +74,7 @@ int main(void)
 
     /* destroy table */
 
-    OCI_HashFree(ht);
+    OCI_HashTableFree(ht);
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
     OCI_EnvironmentFree(env);

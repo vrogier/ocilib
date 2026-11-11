@@ -255,7 +255,7 @@ namespace TestCppApi
 
     TEST(TestHandleCpp, UserData_OnDefaultHandle_QuietlyIgnored)
     {
-        /* OCI_SetUserData on NULL is a silent safe-fail (no error raised)
+        /* OCI_HandleSetUserData on NULL is a silent safe-fail (no error raised)
            -> core::Check does not throw -> the call is a no-op */
         Connection con;
         ASSERT_TRUE(con.IsNull());

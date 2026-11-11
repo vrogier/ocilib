@@ -317,8 +317,8 @@ namespace ocilib
     inline void Timestamp::FromString(const String& data, const String& format)
     {
         core::Check(OCI_TimestampFromText(*this, data.c_str(),
-                                          format.empty() ?  core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(),
-                                                                                                       FormatTimestamp))).c_str() : format.c_str()));
+                                          format.empty() ?  core::MakeString(core::Check(OCI_EnvironmentGetFormat(GetEnvironment(),
+                                                                                                                  FormatTimestamp))).c_str() : format.c_str()));
     }
 
     inline String Timestamp::ToString(const String& format, Int32 precision = OCI_STRING_DEFAULT_PREC) const
@@ -344,7 +344,7 @@ namespace ocilib
             return OCI_STRING_NULL;
         }
 
-        return ToString(core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatTimestamp))), OCI_STRING_DEFAULT_PREC);
+        return ToString(core::MakeString(core::Check(OCI_EnvironmentGetFormat(GetEnvironment(), FormatTimestamp))), OCI_STRING_DEFAULT_PREC);
     }
 
     inline Timestamp& Timestamp::operator ++ ()

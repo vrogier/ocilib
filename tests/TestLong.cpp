@@ -136,8 +136,8 @@ namespace TestCApi
 
     TEST_F(TestClong, SetLongModeAndPieceSize_RoundTrips)
     {
-        ASSERT_TRUE(OCI_SetLongMode(stmt, OCI_LONG_EXPLICIT));
-        ASSERT_TRUE(OCI_SetPieceSize(stmt, 8));
+        ASSERT_TRUE(OCI_StatementSetLongMode(stmt, OCI_LONG_EXPLICIT));
+        ASSERT_TRUE(OCI_StatementSetPieceSize(stmt, 8));
     }
 
     TEST_F(TestClong, WritePieces_WritesLongData)
@@ -148,12 +148,12 @@ namespace TestCApi
         const auto lg = OCI_LongCreate(stmt, OCI_CLONG);
         ASSERT_NE(nullptr, lg);
 
-        ASSERT_TRUE(OCI_SetLongMode(stmt, OCI_LONG_EXPLICIT));
-        ASSERT_TRUE(OCI_SetPieceSize(stmt, 8));
+        ASSERT_TRUE(OCI_StatementSetLongMode(stmt, OCI_LONG_EXPLICIT));
+        ASSERT_TRUE(OCI_StatementSetPieceSize(stmt, 8));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestClongData(code, content) values (1, :data)")));
-        ASSERT_NE(nullptr, OCI_BindLong(stmt, OTEXT(":data"), lg, 40));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("insert into TestClongData(code, content) values (1, :data)")));
+        ASSERT_NE(nullptr, OCI_StatementBindLong(stmt, OTEXT(":data"), lg, 40));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
         otext content[40] = OTEXT("0123456789abcdefghij");
 
@@ -161,7 +161,7 @@ namespace TestCApi
         ASSERT_EQ(4u, OCI_LongWrite(lg, content + 8, 4));
         ASSERT_EQ(0u, OCI_LongWrite(lg, content, 0));
 
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
         ASSERT_TRUE(OCI_LongFree(lg));
     }
 
@@ -172,13 +172,13 @@ namespace TestCApi
         ExecDML(OTEXT("delete from TestClongData"));
         ExecDML(OTEXT("insert into TestClongData values (2, '0123456789ab')"));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select content from TestClongData")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select content from TestClongData")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto lg = OCI_GetLong(rs, 0);
+        const auto lg = OCI_ResultsetGetLong(rs, 0);
         ASSERT_NE(nullptr, lg);
         ASSERT_EQ(OCI_CLONG, OCI_LongGetType(lg));
         ASSERT_NE(nullptr, OCI_LongGetBuffer(lg));

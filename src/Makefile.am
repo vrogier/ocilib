@@ -25,7 +25,7 @@ libocilib_la_SOURCES=   \
     database.c          \
     define.c            \
     dequeue.c           \
-    dirpath.c           \
+    directpath.c           \
     element.c           \
     enqueue.c           \
     environment.c       \
@@ -35,7 +35,7 @@ libocilib_la_SOURCES=   \
     file.c              \
     format.c            \
     handle.c            \
-    hash.c              \
+    hashtable.c              \
     helpers.c           \
     interval.c          \
     iterator.c          \
@@ -54,11 +54,11 @@ libocilib_la_SOURCES=   \
     queue.c             \
     reference.c         \
     resultset.c         \
-    sodacoll.c          \
-    sodacollcursor.c    \
-    sodadb.c            \
-    sodadoc.c           \
-    sodadoccursor.c     \
+    sodacollection.c          \
+    sodacollectioncursor.c    \
+    sodadatabase.c            \
+    sodadocument.c           \
+    sodadocumentcursor.c     \
     sodaoptions.c       \
     shardingkey.c       \
     statement.c         \
@@ -107,7 +107,7 @@ noinst_HEADERS=     \
     define.h        \
     defs.h          \
     dequeue.h       \
-    dirpath.h       \
+    directpath.h       \
     element.h       \
     enqueue.h       \
     environment.h   \
@@ -117,7 +117,7 @@ noinst_HEADERS=     \
     file.h          \
     format.h        \
     handle.h        \
-    hash.h          \
+    hashtable.h          \
     helpers.h       \
     import.h        \
     interval.h      \
@@ -138,11 +138,11 @@ noinst_HEADERS=     \
     queue.h         \
     reference.h     \
     resultset.h     \
-    sodacoll.h      \
-    sodacollcursor.h\
-    sodadb.h        \
-    sodadoc.h       \
-    sodadoccursor.h \
+    sodacollection.h      \
+    sodacollectioncursor.h\
+    sodadatabase.h        \
+    sodadocument.h       \
+    sodadocumentcursor.h \
     sodaoptions.h   \
     shardingkey.h   \
     statement.h     \

@@ -31,7 +31,7 @@ namespace TestCApi
             ASSERT_TRUE(OCI_DateSysDate(date));
             vendor = OCI_ObjectCreate(OCI_TypeInfoGet(conn, OTEXT("TestObjectSetGetBasicPropsVendor"), OCI_TIF_TYPE));
             ASSERT_NE(nullptr, vendor);
-            ASSERT_TRUE(OCI_ObjectSetInt(vendor, OTEXT("CODE"), 134));
+            ASSERT_TRUE(OCI_ObjectSetInt32(vendor, OTEXT("CODE"), 134));
             ASSERT_TRUE(OCI_ObjectSetString(vendor, OTEXT("NAME"), OTEXT("JOHN SMITH")));
             sale = OCI_ObjectCreate(OCI_TypeInfoGet(conn, OTEXT("TestObjectSetGetBasicPropsSale"), OCI_TIF_TYPE));
             ASSERT_NE(nullptr, sale);
@@ -51,12 +51,12 @@ namespace TestCApi
 
     TEST_F(TestObjectSetGet, SetAndGetScalarAttrs_RoundTripsValues)
     {
-        ASSERT_TRUE(OCI_ObjectSetInt(sale, OTEXT("CODE"), 1));
+        ASSERT_TRUE(OCI_ObjectSetInt32(sale, OTEXT("CODE"), 1));
         ASSERT_TRUE(OCI_ObjectSetDouble(sale, OTEXT("PRICE"), 12.99));
         ASSERT_TRUE(OCI_ObjectSetString(sale, OTEXT("NAME"), OTEXT("USB KEY 2go")));
         ASSERT_TRUE(OCI_ObjectSetString(sale, OTEXT("REF"), OTEXT("A56547WSAA")));
 
-        EXPECT_EQ(1, OCI_ObjectGetInt(sale, OTEXT("CODE")));
+        EXPECT_EQ(1, OCI_ObjectGetInt32(sale, OTEXT("CODE")));
         EXPECT_EQ(12.99, OCI_ObjectGetDouble(sale, OTEXT("PRICE")));
         EXPECT_EQ(String(OTEXT("USB KEY 2go")), String(OCI_ObjectGetString(sale, OTEXT("NAME"))));
         EXPECT_EQ(String(OTEXT("A56547WSAA")), String(OCI_ObjectGetString(sale, OTEXT("REF"))));
@@ -69,7 +69,7 @@ namespace TestCApi
         const auto vendor2 = OCI_ObjectGetObject(sale, OTEXT("VENDOR"));
 
         ASSERT_NE(nullptr, vendor2);
-        EXPECT_EQ(134, OCI_ObjectGetInt(vendor2, OTEXT("CODE")));
+        EXPECT_EQ(134, OCI_ObjectGetInt32(vendor2, OTEXT("CODE")));
         EXPECT_EQ(String(OTEXT("JOHN SMITH")), String(OCI_ObjectGetString(vendor2, OTEXT("NAME"))));
     }
 
@@ -140,14 +140,14 @@ namespace TestCApi
     {
         const auto number = OCI_NumberCreate(env);
         OCI_Int32 num = 42;
-        ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT, &num));
+        ASSERT_TRUE(OCI_NumberSetValue(number, OCI_NUM_INT32, &num));
 
         ASSERT_TRUE(OCI_ObjectSetNumber(obj, OTEXT("N"), number));
 
         const auto num2 = OCI_ObjectGetNumber(obj, OTEXT("N"));
         ASSERT_NE(nullptr, num2);
         OCI_Int32 numOut = 0;
-        ASSERT_TRUE(OCI_NumberGetValue(num2, OCI_NUM_INT, &numOut));
+        ASSERT_TRUE(OCI_NumberGetValue(num2, OCI_NUM_INT32, &numOut));
         EXPECT_EQ(42, numOut);
 
         ASSERT_TRUE(OCI_NumberFree(number));
@@ -155,9 +155,9 @@ namespace TestCApi
 
     TEST_F(TestObjectAttrs, SetAndGetIntAttr_RoundTripsValue)
     {
-        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("I"), 99));
+        ASSERT_TRUE(OCI_ObjectSetInt32(obj, OTEXT("I"), 99));
 
-        EXPECT_EQ(99, OCI_ObjectGetInt(obj, OTEXT("I")));
+        EXPECT_EQ(99, OCI_ObjectGetInt32(obj, OTEXT("I")));
     }
 
     TEST_F(TestObjectAttrs, SetAndGetStringAttr_RoundTripsValue)
@@ -187,11 +187,11 @@ namespace TestCApi
 
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select o from TestObject_FullRows")));
-        const auto rs = OCI_GetResultset(stmt);
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select o from TestObject_FullRows")));
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
-        const auto fetched = OCI_GetObject(rs, 0);
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
+        const auto fetched = OCI_ResultsetGetObject(rs, 0);
         ASSERT_NE(nullptr, fetched);
 
         OCI_UInt32 size = 0;
@@ -282,29 +282,29 @@ namespace TestCApi
     TEST_F(TestObjectAttrs, SetAndGetCollAttr_ReturnsCollection)
     {
         const auto collType = OCI_TypeInfoGet(conn, OTEXT("TestObject_NumVarray"), OCI_TIF_TYPE);
-        const auto coll = OCI_CollCreate(collType);
+        const auto coll = OCI_CollectionCreate(collType);
         ASSERT_NE(nullptr, coll);
-        const auto elem = OCI_ElemCreate(collType);
-        ASSERT_TRUE(OCI_ElemSetInt(elem, 1));
-        ASSERT_TRUE(OCI_CollAppend(coll, elem));
-        ASSERT_TRUE(OCI_ElemFree(elem));
+        const auto elem = OCI_ElementCreate(collType);
+        ASSERT_TRUE(OCI_ElementSetInt32(elem, 1));
+        ASSERT_TRUE(OCI_CollectionAppend(coll, elem));
+        ASSERT_TRUE(OCI_ElementFree(elem));
 
         ASSERT_TRUE(OCI_ObjectSetColl(obj, OTEXT("COLL"), coll));
 
         const auto coll2 = OCI_ObjectGetColl(obj, OTEXT("COLL"));
         ASSERT_NE(nullptr, coll2);
-        EXPECT_EQ(1u, OCI_CollGetCount(coll2));
+        EXPECT_EQ(1u, OCI_CollectionGetCount(coll2));
 
-        ASSERT_TRUE(OCI_CollFree(coll));
+        ASSERT_TRUE(OCI_CollectionFree(coll));
         ASSERT_TRUE(OCI_TypeInfoFree(collType));
     }
 
     TEST_F(TestObjectAttrs, SetNullOnRefAttr_MarksAttributeNull)
     {
-        ASSERT_TRUE(OCI_ObjectSetRef(obj, OTEXT("REF_VAL"), nullptr));
+        ASSERT_TRUE(OCI_ObjectSetReference(obj, OTEXT("REF_VAL"), nullptr));
 
         EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("REF_VAL")));
-        EXPECT_EQ(nullptr, OCI_ObjectGetRef(obj, OTEXT("REF_VAL")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetReference(obj, OTEXT("REF_VAL")));
     }
 
     TEST_F(TestObjectAttrs, SetNullOnFileAttr_MarksAttributeNull)
@@ -317,20 +317,20 @@ namespace TestCApi
 
     TEST_F(TestObjectAttrs, SetAndGetNestedObjectAttr_ReturnsNested)
     {
-        ASSERT_TRUE(OCI_ObjectSetInt(nested, OTEXT("CODE"), 7));
+        ASSERT_TRUE(OCI_ObjectSetInt32(nested, OTEXT("CODE"), 7));
         ASSERT_TRUE(OCI_ObjectSetString(nested, OTEXT("NAME"), OTEXT("nested")));
 
         ASSERT_TRUE(OCI_ObjectSetObject(obj, OTEXT("NESTED"), nested));
 
         const auto nested2 = OCI_ObjectGetObject(obj, OTEXT("NESTED"));
         ASSERT_NE(nullptr, nested2);
-        EXPECT_EQ(7, OCI_ObjectGetInt(nested2, OTEXT("CODE")));
+        EXPECT_EQ(7, OCI_ObjectGetInt32(nested2, OTEXT("CODE")));
         EXPECT_EQ(String(OTEXT("nested")), String(OCI_ObjectGetString(nested2, OTEXT("NAME"))));
     }
 
     TEST_F(TestObjectAttrs, ObjectToText_RendersNonEmptyText)
     {
-        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("I"), 99));
+        ASSERT_TRUE(OCI_ObjectSetInt32(obj, OTEXT("I"), 99));
         OCI_UInt32 size = 0;
         ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
         std::vector<otext> text(size + 1);
@@ -360,20 +360,20 @@ namespace TestCApi
         const auto arr = OCI_ObjectArrayCreate(fullType, 2);
         ASSERT_NE(nullptr, arr);
 
-        EXPECT_TRUE(OCI_ObjectSetInt(arr[0], OTEXT("I"), 1));
+        EXPECT_TRUE(OCI_ObjectSetInt32(arr[0], OTEXT("I"), 1));
 
         ASSERT_TRUE(OCI_ObjectArrayFree(arr));
     }
 
     TEST_F(TestObjectAttrs, ObjectAssign_CopiesAttributeValues)
     {
-        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("I"), 99));
+        ASSERT_TRUE(OCI_ObjectSetInt32(obj, OTEXT("I"), 99));
         const auto assigned = OCI_ObjectCreate(fullType);
         ASSERT_NE(nullptr, assigned);
 
         ASSERT_TRUE(OCI_ObjectAssign(assigned, obj));
 
-        EXPECT_EQ(99, OCI_ObjectGetInt(assigned, OTEXT("I")));
+        EXPECT_EQ(99, OCI_ObjectGetInt32(assigned, OTEXT("I")));
 
         ASSERT_TRUE(OCI_ObjectFree(assigned));
     }
@@ -392,33 +392,33 @@ namespace TestCApi
 
     static void ObjNumShort(OCI_Object* o)
     {
-        ASSERT_TRUE(OCI_ObjectSetShort(o, OTEXT("N"), 11));
-        EXPECT_EQ(11, OCI_ObjectGetShort(o, OTEXT("N")));
+        ASSERT_TRUE(OCI_ObjectSetInt16(o, OTEXT("N"), 11));
+        EXPECT_EQ(11, OCI_ObjectGetInt16(o, OTEXT("N")));
     }
     static void ObjNumUShort(OCI_Object* o)
     {
-        ASSERT_TRUE(OCI_ObjectSetUnsignedShort(o, OTEXT("N"), 12u));
-        EXPECT_EQ(12u, OCI_ObjectGetUnsignedShort(o, OTEXT("N")));
+        ASSERT_TRUE(OCI_ObjectSetUInt16(o, OTEXT("N"), 12u));
+        EXPECT_EQ(12u, OCI_ObjectGetUInt16(o, OTEXT("N")));
     }
     static void ObjNumInt(OCI_Object* o)
     {
-        ASSERT_TRUE(OCI_ObjectSetInt(o, OTEXT("N"), 13));
-        EXPECT_EQ(13, OCI_ObjectGetInt(o, OTEXT("N")));
+        ASSERT_TRUE(OCI_ObjectSetInt32(o, OTEXT("N"), 13));
+        EXPECT_EQ(13, OCI_ObjectGetInt32(o, OTEXT("N")));
     }
     static void ObjNumUInt(OCI_Object* o)
     {
-        ASSERT_TRUE(OCI_ObjectSetUnsignedInt(o, OTEXT("N"), 14u));
-        EXPECT_EQ(14u, OCI_ObjectGetUnsignedInt(o, OTEXT("N")));
+        ASSERT_TRUE(OCI_ObjectSetUInt32(o, OTEXT("N"), 14u));
+        EXPECT_EQ(14u, OCI_ObjectGetUInt32(o, OTEXT("N")));
     }
     static void ObjNumBigInt(OCI_Object* o)
     {
-        ASSERT_TRUE(OCI_ObjectSetBigInt(o, OTEXT("N"), static_cast<OCI_Int64>(15)));
-        EXPECT_EQ(15, OCI_ObjectGetBigInt(o, OTEXT("N")));
+        ASSERT_TRUE(OCI_ObjectSetInt64(o, OTEXT("N"), static_cast<OCI_Int64>(15)));
+        EXPECT_EQ(15, OCI_ObjectGetInt64(o, OTEXT("N")));
     }
     static void ObjNumUBigInt(OCI_Object* o)
     {
-        ASSERT_TRUE(OCI_ObjectSetUnsignedBigInt(o, OTEXT("N"), static_cast<OCI_UInt64>(16)));
-        EXPECT_EQ(16u, OCI_ObjectGetUnsignedBigInt(o, OTEXT("N")));
+        ASSERT_TRUE(OCI_ObjectSetUInt64(o, OTEXT("N"), static_cast<OCI_UInt64>(16)));
+        EXPECT_EQ(16u, OCI_ObjectGetUInt64(o, OTEXT("N")));
     }
     static void ObjNumFloat(OCI_Object* o)
     {
@@ -481,7 +481,7 @@ namespace TestCApi
     {
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("S"), OTEXT("1234")));
 
-        EXPECT_EQ(1234, OCI_ObjectGetInt(obj, OTEXT("S")));
+        EXPECT_EQ(1234, OCI_ObjectGetInt32(obj, OTEXT("S")));
         EXPECT_NEAR(1234.0, OCI_ObjectGetDouble(obj, OTEXT("S")), 0.01);
     }
 
@@ -491,7 +491,7 @@ namespace TestCApi
 
         EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("N")));
         EXPECT_EQ(nullptr, OCI_ObjectGetNumber(obj, OTEXT("N")));
-        EXPECT_EQ(0, OCI_ObjectGetInt(obj, OTEXT("N")));
+        EXPECT_EQ(0, OCI_ObjectGetInt32(obj, OTEXT("N")));
     }
 
     TEST(TestObject, SelfRef)
@@ -509,28 +509,28 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT REF(t) FROM TestObject_SelfRefTable t")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT REF(t) FROM TestObject_SelfRefTable t")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto ref = OCI_GetRef(rs, 0);
+        const auto ref = OCI_ResultsetGetReference(rs, 0);
         ASSERT_NE(nullptr, ref);
 
-        const auto obj = OCI_RefGetObject(ref);
+        const auto obj = OCI_ReferenceGetObject(ref);
         ASSERT_NE(nullptr, obj);
 
         const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestObject_SelfRefT"), OCI_TIF_TYPE);
         ASSERT_NE(nullptr, typinf);
 
-        const auto selfRef = OCI_RefCreate(typinf);
+        const auto selfRef = OCI_ReferenceCreate(typinf);
         ASSERT_NE(nullptr, selfRef);
 
-        ASSERT_TRUE(OCI_ObjectGetSelfRef(obj, selfRef));
-        ASSERT_FALSE(OCI_RefIsNull(selfRef));
+        ASSERT_TRUE(OCI_ObjectGetSelfReference(obj, selfRef));
+        ASSERT_FALSE(OCI_ReferenceIsNull(selfRef));
 
-        ASSERT_TRUE(OCI_RefFree(selfRef));
+        ASSERT_TRUE(OCI_ReferenceFree(selfRef));
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -555,13 +555,13 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT VALUE(t) FROM TestObject_SubNFTable t")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT VALUE(t) FROM TestObject_SubNFTable t")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto obj = OCI_GetObject(rs, 0);
+        const auto obj = OCI_ResultsetGetObject(rs, 0);
         ASSERT_NE(nullptr, obj);
 
         const auto typinf = OCI_ObjectGetTypeInfo(obj);
@@ -569,7 +569,7 @@ namespace TestCApi
 
         ASSERT_EQ(String(OTEXT("TESTOBJECT_SUBNF")), String(OCI_TypeInfoGetName(typinf)));
 
-        ASSERT_EQ(1, OCI_ObjectGetInt(obj, OTEXT("CODE")));
+        ASSERT_EQ(1, OCI_ObjectGetInt32(obj, OTEXT("CODE")));
         ASSERT_EQ(String(OTEXT("subvalue")), String(OCI_ObjectGetString(obj, OTEXT("NAME"))));
 
         OCI_UInt32 size = 0;
@@ -580,7 +580,7 @@ namespace TestCApi
 
         unsigned char buffer[256] = {};
         OCI_Int32 inds[2] = {};
-        ASSERT_TRUE(OCI_GetStruct(rs, buffer, inds));
+        ASSERT_TRUE(OCI_ResultsetGetStruct(rs, buffer, inds));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -607,14 +607,14 @@ namespace TestCApi
     {
         ASSERT_TRUE(OCI_ObjectSetNull(obj, OTEXT("N")));
         EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("N")));
-        EXPECT_EQ(0, OCI_ObjectGetInt(obj, OTEXT("N")));
+        EXPECT_EQ(0, OCI_ObjectGetInt32(obj, OTEXT("N")));
         EXPECT_EQ(nullptr, OCI_ObjectGetNumber(obj, OTEXT("N")));
     }
     static void ObjNullInt(OCI_Object* obj)
     {
         ASSERT_TRUE(OCI_ObjectSetNull(obj, OTEXT("I")));
         EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("I")));
-        EXPECT_EQ(0, OCI_ObjectGetInt(obj, OTEXT("I")));
+        EXPECT_EQ(0, OCI_ObjectGetInt32(obj, OTEXT("I")));
     }
     static void ObjNullString(OCI_Object* obj)
     {
@@ -661,9 +661,9 @@ namespace TestCApi
     }
     static void ObjNullRef(OCI_Object* obj)
     {
-        ASSERT_TRUE(OCI_ObjectSetRef(obj, OTEXT("REF_VAL"), nullptr));
+        ASSERT_TRUE(OCI_ObjectSetReference(obj, OTEXT("REF_VAL"), nullptr));
         EXPECT_TRUE(OCI_ObjectIsNull(obj, OTEXT("REF_VAL")));
-        EXPECT_EQ(nullptr, OCI_ObjectGetRef(obj, OTEXT("REF_VAL")));
+        EXPECT_EQ(nullptr, OCI_ObjectGetReference(obj, OTEXT("REF_VAL")));
     }
     static void ObjNullFile(OCI_Object* obj)
     {
@@ -757,7 +757,7 @@ namespace TestCApi
         OCI_Statement* stmt = nullptr;
         OCI_TypeInfo* fileType = nullptr;
         OCI_Object* obj = nullptr;
-        OCI_Ref* ref = nullptr;
+        OCI_Reference* ref = nullptr;
 
         void SetUp() override
         {
@@ -772,11 +772,11 @@ namespace TestCApi
             ASSERT_NE(nullptr, conn);
             stmt = OCI_StatementCreate(conn);
             ASSERT_NE(nullptr, stmt);
-            ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT REF(t) FROM TestObject_RefTgtTable t")));
-            const auto rs = OCI_GetResultset(stmt);
+            ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT REF(t) FROM TestObject_RefTgtTable t")));
+            const auto rs = OCI_StatementGetResultset(stmt);
             ASSERT_NE(nullptr, rs);
-            ASSERT_TRUE(OCI_FetchNext(rs));
-            ref = OCI_GetRef(rs, 0);
+            ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
+            ref = OCI_ResultsetGetReference(rs, 0);
             ASSERT_NE(nullptr, ref);
             fileType = OCI_TypeInfoGet(conn, OTEXT("TestObject_FileRefT"), OCI_TIF_TYPE);
             ASSERT_NE(nullptr, fileType);
@@ -815,18 +815,18 @@ namespace TestCApi
 
     TEST_F(TestObjectFileRef, SetAndGetRefAttr_ReturnsNonNullRef)
     {
-        ASSERT_FALSE(OCI_RefIsNull(ref));
+        ASSERT_FALSE(OCI_ReferenceIsNull(ref));
 
-        ASSERT_TRUE(OCI_ObjectSetRef(obj, OTEXT("R"), ref));
+        ASSERT_TRUE(OCI_ObjectSetReference(obj, OTEXT("R"), ref));
 
-        const auto ref2 = OCI_ObjectGetRef(obj, OTEXT("R"));
+        const auto ref2 = OCI_ObjectGetReference(obj, OTEXT("R"));
         ASSERT_NE(nullptr, ref2);
-        EXPECT_FALSE(OCI_RefIsNull(ref2));
+        EXPECT_FALSE(OCI_ReferenceIsNull(ref2));
     }
 
     TEST_F(TestObjectFileRef, ObjectToTextOnFileRefObject_RendersNonEmptyText)
     {
-        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("CODE"), 7));
+        ASSERT_TRUE(OCI_ObjectSetInt32(obj, OTEXT("CODE"), 7));
         OCI_UInt32 size = 0;
         ASSERT_TRUE(OCI_ObjectToText(obj, &size, nullptr));
         std::vector<otext> text(size + 1);
@@ -889,7 +889,7 @@ namespace TestCApi
         const auto obj = OCI_ObjectCreate(typinf);
         ASSERT_NE(nullptr, obj);
 
-        ASSERT_TRUE(OCI_ObjectSetInt(obj, OTEXT("I"), 1));
+        ASSERT_TRUE(OCI_ObjectSetInt32(obj, OTEXT("I"), 1));
         ASSERT_TRUE(OCI_ObjectSetDouble(obj, OTEXT("N"), 2.5));
 
         ASSERT_TRUE(OCI_ObjectFree(obj));
@@ -914,15 +914,15 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT VALUE(t) FROM TestObject_StructTable t")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT VALUE(t) FROM TestObject_StructTable t")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
         unsigned char buffer[256] = {};
         OCI_Int32 inds[2] = {};
-        ASSERT_TRUE(OCI_GetStruct(rs, buffer, inds));
+        ASSERT_TRUE(OCI_ResultsetGetStruct(rs, buffer, inds));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -981,15 +981,15 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT VALUE(t) FROM TestObject_BinNumTable t")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT VALUE(t) FROM TestObject_BinNumTable t")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
         unsigned char buffer[256] = {};
         OCI_Int32 inds[2] = {};
-        ASSERT_TRUE(OCI_GetStruct(rs, buffer, inds));
+        ASSERT_TRUE(OCI_ResultsetGetStruct(rs, buffer, inds));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ObjectFree(obj));
@@ -1046,7 +1046,7 @@ namespace TestCApi
         const auto obj = OCI_ObjectCreate(ti);
         ASSERT_NE(nullptr, obj);
 
-        ASSERT_FALSE(OCI_ObjectSetInt(obj, OTEXT("name"), 42));
+        ASSERT_FALSE(OCI_ObjectSetInt32(obj, OTEXT("name"), 42));
 
         ASSERT_TRUE(OCI_ObjectFree(obj));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -1112,53 +1112,53 @@ namespace TestCApi
             { "ObjectAssign", [] { return !OCI_ObjectAssign(nullptr, nullptr); } },
             { "ObjectCreate", [] { return nullptr == OCI_ObjectCreate(nullptr); } },
             { "ObjectFree", [] { return !OCI_ObjectFree(nullptr); } },
-            { "ObjectGetBigInt", [] { return 0 == OCI_ObjectGetBigInt(nullptr, OTEXT("x")); } },
+            { "ObjectGetBigInt", [] { return 0 == OCI_ObjectGetInt64(nullptr, OTEXT("x")); } },
             { "ObjectGetBoolean", [] { return !OCI_ObjectGetBoolean(nullptr, OTEXT("x")); } },
             { "ObjectGetColl", [] { return nullptr == OCI_ObjectGetColl(nullptr, OTEXT("x")); } },
             { "ObjectGetDate", [] { return nullptr == OCI_ObjectGetDate(nullptr, OTEXT("x")); } },
             { "ObjectGetDouble", [] { return 0.0 == OCI_ObjectGetDouble(nullptr, OTEXT("x")); } },
             { "ObjectGetFile", [] { return nullptr == OCI_ObjectGetFile(nullptr, OTEXT("x")); } },
             { "ObjectGetFloat", [] { return 0.0f == OCI_ObjectGetFloat(nullptr, OTEXT("x")); } },
-            { "ObjectGetInt", [] { return 0 == OCI_ObjectGetInt(nullptr, OTEXT("x")); } },
+            { "ObjectGetInt", [] { return 0 == OCI_ObjectGetInt32(nullptr, OTEXT("x")); } },
             { "ObjectGetInterval", [] { return nullptr == OCI_ObjectGetInterval(nullptr, OTEXT("x")); } },
             { "ObjectGetLob", [] { return nullptr == OCI_ObjectGetLob(nullptr, OTEXT("x")); } },
             { "ObjectGetNumber", [] { return nullptr == OCI_ObjectGetNumber(nullptr, OTEXT("x")); } },
             { "ObjectGetObject", [] { return nullptr == OCI_ObjectGetObject(nullptr, OTEXT("x")); } },
             { "ObjectGetRaw", [] { return 0 == OCI_ObjectGetRaw(nullptr, OTEXT("x"), NullArgBuffer(), 1); } },
             { "ObjectGetRawSize", [] { return 0 == OCI_ObjectGetRawSize(nullptr, OTEXT("x")); } },
-            { "ObjectGetRef", [] { return nullptr == OCI_ObjectGetRef(nullptr, OTEXT("x")); } },
-            { "ObjectGetSelfRef", [] { return !OCI_ObjectGetSelfRef(nullptr, nullptr); } },
-            { "ObjectGetShort", [] { return 0 == OCI_ObjectGetShort(nullptr, OTEXT("x")); } },
+            { "ObjectGetRef", [] { return nullptr == OCI_ObjectGetReference(nullptr, OTEXT("x")); } },
+            { "ObjectGetSelfRef", [] { return !OCI_ObjectGetSelfReference(nullptr, nullptr); } },
+            { "ObjectGetShort", [] { return 0 == OCI_ObjectGetInt16(nullptr, OTEXT("x")); } },
             { "ObjectGetString", [] { return nullptr == OCI_ObjectGetString(nullptr, OTEXT("x")); } },
             { "ObjectGetStruct", [] { return !OCI_ObjectGetStruct(nullptr, nullptr /* void ** */, nullptr /* void ** */); } },
             { "ObjectGetTimestamp", [] { return nullptr == OCI_ObjectGetTimestamp(nullptr, OTEXT("x")); } },
             { "ObjectGetType", [] { return OCI_UNKNOWN == OCI_ObjectGetType(nullptr); } },
             { "ObjectGetTypeInfo", [] { return nullptr == OCI_ObjectGetTypeInfo(nullptr); } },
-            { "ObjectGetUnsignedBigInt", [] { return 0 == OCI_ObjectGetUnsignedBigInt(nullptr, OTEXT("x")); } },
-            { "ObjectGetUnsignedInt", [] { return 0 == OCI_ObjectGetUnsignedInt(nullptr, OTEXT("x")); } },
-            { "ObjectGetUnsignedShort", [] { return 0 == OCI_ObjectGetUnsignedShort(nullptr, OTEXT("x")); } },
+            { "ObjectGetUnsignedBigInt", [] { return 0 == OCI_ObjectGetUInt64(nullptr, OTEXT("x")); } },
+            { "ObjectGetUnsignedInt", [] { return 0 == OCI_ObjectGetUInt32(nullptr, OTEXT("x")); } },
+            { "ObjectGetUnsignedShort", [] { return 0 == OCI_ObjectGetUInt16(nullptr, OTEXT("x")); } },
             { "ObjectIsNull", [] { return !OCI_ObjectIsNull(nullptr, OTEXT("x")); } },
-            { "ObjectSetBigInt", [] { return !OCI_ObjectSetBigInt(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetBigInt", [] { return !OCI_ObjectSetInt64(nullptr, OTEXT("x"), 1); } },
             { "ObjectSetBoolean", [] { return !OCI_ObjectSetBoolean(nullptr, OTEXT("x"), FALSE); } },
             { "ObjectSetColl", [] { return !OCI_ObjectSetColl(nullptr, OTEXT("x"), nullptr); } },
             { "ObjectSetDate", [] { return !OCI_ObjectSetDate(nullptr, OTEXT("x"), nullptr); } },
             { "ObjectSetDouble", [] { return !OCI_ObjectSetDouble(nullptr, OTEXT("x"), 1); } },
             { "ObjectSetFile", [] { return !OCI_ObjectSetFile(nullptr, OTEXT("x"), nullptr); } },
             { "ObjectSetFloat", [] { return !OCI_ObjectSetFloat(nullptr, OTEXT("x"), 1); } },
-            { "ObjectSetInt", [] { return !OCI_ObjectSetInt(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetInt", [] { return !OCI_ObjectSetInt32(nullptr, OTEXT("x"), 1); } },
             { "ObjectSetInterval", [] { return !OCI_ObjectSetInterval(nullptr, OTEXT("x"), nullptr); } },
             { "ObjectSetLob", [] { return !OCI_ObjectSetLob(nullptr, OTEXT("x"), nullptr); } },
             { "ObjectSetNull", [] { return !OCI_ObjectSetNull(nullptr, OTEXT("x")); } },
             { "ObjectSetNumber", [] { return !OCI_ObjectSetNumber(nullptr, OTEXT("x"), nullptr); } },
             { "ObjectSetObject", [] { return !OCI_ObjectSetObject(nullptr, OTEXT("x"), nullptr); } },
             { "ObjectSetRaw", [] { return !OCI_ObjectSetRaw(nullptr, OTEXT("x"), NullArgBuffer(), 1); } },
-            { "ObjectSetRef", [] { return !OCI_ObjectSetRef(nullptr, OTEXT("x"), nullptr); } },
-            { "ObjectSetShort", [] { return !OCI_ObjectSetShort(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetRef", [] { return !OCI_ObjectSetReference(nullptr, OTEXT("x"), nullptr); } },
+            { "ObjectSetShort", [] { return !OCI_ObjectSetInt16(nullptr, OTEXT("x"), 1); } },
             { "ObjectSetString", [] { return !OCI_ObjectSetString(nullptr, OTEXT("x"), OTEXT("x")); } },
             { "ObjectSetTimestamp", [] { return !OCI_ObjectSetTimestamp(nullptr, OTEXT("x"), nullptr); } },
-            { "ObjectSetUnsignedBigInt", [] { return !OCI_ObjectSetUnsignedBigInt(nullptr, OTEXT("x"), 1); } },
-            { "ObjectSetUnsignedInt", [] { return !OCI_ObjectSetUnsignedInt(nullptr, OTEXT("x"), 1); } },
-            { "ObjectSetUnsignedShort", [] { return !OCI_ObjectSetUnsignedShort(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetUnsignedBigInt", [] { return !OCI_ObjectSetUInt64(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetUnsignedInt", [] { return !OCI_ObjectSetUInt32(nullptr, OTEXT("x"), 1); } },
+            { "ObjectSetUnsignedShort", [] { return !OCI_ObjectSetUInt16(nullptr, OTEXT("x"), 1); } },
             { "ObjectToText", [] { return !OCI_ObjectToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
         }),
         &NullArgCaseName);

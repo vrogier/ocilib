@@ -18,23 +18,23 @@
  * limitations under the License.
  */
 
-#include "sodadoc.h"
+#include "sodadocument.h"
 
 #include "macros.h"
 #include "memory.h"
-#include "sodadb.h"
+#include "sodadatabase.h"
 #include "stringutils.h"
 #include "json.h"
 
 /* --------------------------------------------------------------------------------------------- *
-  * OcilibSodaDocGetStringAttribute
+  * OcilibSodaDocumentGetStringAttribute
   * --------------------------------------------------------------------------------------------- */
 
-static otext* OcilibSodaDocGetStringAttribute
+static otext* OcilibSodaDocumentGetStringAttribute
 (
-    OCI_SodaDoc* doc,
-    OCI_Int32    attr,
-    otext     ** str
+    OCI_SodaDocument* doc,
+    OCI_Int32         attr,
+    otext          ** str
 )
 {
     ENTER_FUNC
@@ -74,12 +74,12 @@ static otext* OcilibSodaDocGetStringAttribute
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocRefreshContent
+ * OcilibSodaDocumentRefreshContent
  * --------------------------------------------------------------------------------------------- */
 
-static OCI_Boolean OcilibSodaDocRefreshContent
+static OCI_Boolean OcilibSodaDocumentRefreshContent
 (
-    OCI_SodaDoc* doc
+    OCI_SodaDocument* doc
 )
 {
     ENTER_FUNC
@@ -134,23 +134,23 @@ static OCI_Boolean OcilibSodaDocRefreshContent
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocInitialize
+ * OcilibSodaDocumentInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaDoc* OcilibSodaDocInitialize
+OCI_SodaDocument* OcilibSodaDocumentInitialize
 (
-    OCI_SodaDb * sdb,
-    OCI_SodaDoc* doc,
-    OCISodaDoc * handle,
-    const void * content,
-    OCI_UInt32   contentSize,
-    const otext* key,
-    ub4          docFlags
+    OCI_SodaDatabase * sdb,
+    OCI_SodaDocument * doc,
+    OCISodaDoc       * handle,
+    const void       * content,
+    OCI_UInt32         contentSize,
+    const otext      * key,
+    ub4                docFlags
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaDoc*, NULL,
+        /* returns */ OCI_SodaDocument*, NULL,
         /* context */ OCI_IPC_SODA_DB, sdb
     );
 
@@ -250,7 +250,7 @@ OCI_SodaDoc* OcilibSodaDocInitialize
     doc->content_len  = 0;
     doc->content_text = NULL;
 
-    CHECK(OcilibSodaDocRefreshContent(doc));
+    CHECK(OcilibSodaDocumentRefreshContent(doc));
 
     if (NULL == handle && OCI_SODA_JSON_DESC == docFlags && NULL != doc->content)
     {
@@ -285,7 +285,7 @@ OCI_SodaDoc* OcilibSodaDocInitialize
         {
             if (NULL != doc->sdb)
             {
-                OcilibSodaDocFree(doc);
+                OcilibSodaDocumentFree(doc);
             }
             else
             {
@@ -297,46 +297,46 @@ OCI_SodaDoc* OcilibSodaDocInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocCreateFromText
+ * OcilibSodaDocumentCreateFromText
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaDoc* OcilibSodaDocCreateFromText
+OCI_SodaDocument* OcilibSodaDocumentCreateFromText
 (
-    OCI_SodaDb * sdb,
-    const otext* content,
-    OCI_UInt32   contentSize,
-    const otext* key
+    OCI_SodaDatabase * sdb,
+    const otext      * content,
+    OCI_UInt32         contentSize,
+    const otext      * key
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaDoc*, NULL,
+        /* returns */ OCI_SodaDocument*, NULL,
         /* context */ OCI_IPC_SODA_DB, sdb
     );
 
     CHECK_PTR(OCI_IPC_SODA_DB, sdb);
     CHECK_SODA_ENABLED(sdb->con);
 
-    SET_RETVAL(OcilibSodaDocInitialize(sdb, NULL, NULL, content, contentSize, key, OCI_DEFAULT));
+    SET_RETVAL(OcilibSodaDocumentInitialize(sdb, NULL, NULL, content, contentSize, key, OCI_DEFAULT));
 
     EXIT_FUNC();
 
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocCreateFromJson
+ * OcilibSodaDocumentCreateFromJson
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaDoc* OcilibSodaDocCreateFromJson
+OCI_SodaDocument* OcilibSodaDocumentCreateFromJson
 (
-    OCI_SodaDb * sdb,
-    OCI_Json   * json,
-    const otext* key
+    OCI_SodaDatabase * sdb,
+    OCI_Json         * json,
+    const otext      * key
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaDoc*, NULL,
+        /* returns */ OCI_SodaDocument*, NULL,
         /* context */ OCI_IPC_SODA_DB, sdb
     );
 
@@ -345,18 +345,18 @@ OCI_SodaDoc* OcilibSodaDocCreateFromJson
     CHECK_SODA_ENABLED(sdb->con);
     CHECK_FEATURE(sdb->con, OCI_FEATURE_JSON, OCI_23_4);
 
-    SET_RETVAL(OcilibSodaDocInitialize(sdb, NULL, NULL, json, 0, key, OCI_SODA_JSON_DESC));
+    SET_RETVAL(OcilibSodaDocumentInitialize(sdb, NULL, NULL, json, 0, key, OCI_SODA_JSON_DESC));
 
     EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocFree
+ * OcilibSodaDocumentFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaDocFree
+OCI_Boolean OcilibSodaDocumentFree
 (
-    OCI_SodaDoc* doc
+    OCI_SodaDocument* doc
 )
 {
     ENTER_FUNC
@@ -399,73 +399,73 @@ OCI_Boolean OcilibSodaDocFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocGetKey
+ * OcilibSodaDocumentGetKey
  * --------------------------------------------------------------------------------------------- */
 
-const otext* OcilibSodaDocGetKey
+const otext* OcilibSodaDocumentGetKey
 (
-    OCI_SodaDoc* doc
+    OCI_SodaDocument* doc
 )
 {
-    return OcilibSodaDocGetStringAttribute(doc, OCI_ATTR_SODA_KEY, &doc->key);
+    return OcilibSodaDocumentGetStringAttribute(doc, OCI_ATTR_SODA_KEY, &doc->key);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocGetVersion
+ * OcilibSodaDocumentGetVersion
  * --------------------------------------------------------------------------------------------- */
 
-const otext* OcilibSodaDocGetVersion
+const otext* OcilibSodaDocumentGetVersion
 (
-    OCI_SodaDoc* doc
+    OCI_SodaDocument* doc
 )
 {
-    return OcilibSodaDocGetStringAttribute(doc, OCI_ATTR_SODA_VERSION, &doc->version);
+    return OcilibSodaDocumentGetStringAttribute(doc, OCI_ATTR_SODA_VERSION, &doc->version);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocGetCreatedOn
+ * OcilibSodaDocumentGetCreatedOn
  * --------------------------------------------------------------------------------------------- */
 
-const otext* OcilibSodaDocGetCreatedOn
+const otext* OcilibSodaDocumentGetCreatedOn
 (
-    OCI_SodaDoc* doc
+    OCI_SodaDocument* doc
 )
 {
-    return OcilibSodaDocGetStringAttribute(doc, OCI_ATTR_SODA_CREATE_TIMESTAMP, &doc->created_on);
+    return OcilibSodaDocumentGetStringAttribute(doc, OCI_ATTR_SODA_CREATE_TIMESTAMP, &doc->created_on);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocGetLastModified
+ * OcilibSodaDocumentGetLastModified
  * --------------------------------------------------------------------------------------------- */
 
-const otext* OcilibSodaDocGetLastModified
+const otext* OcilibSodaDocumentGetLastModified
 (
-    OCI_SodaDoc* doc
+    OCI_SodaDocument* doc
 )
 {
-    return OcilibSodaDocGetStringAttribute(doc, OCI_ATTR_SODA_LASTMOD_TIMESTAMP, &doc->last_modified);
+    return OcilibSodaDocumentGetStringAttribute(doc, OCI_ATTR_SODA_LASTMOD_TIMESTAMP, &doc->last_modified);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocGetMediaType
+ * OcilibSodaDocumentGetMediaType
  * --------------------------------------------------------------------------------------------- */
 
-const otext* OcilibSodaDocGetMediaType
+const otext* OcilibSodaDocumentGetMediaType
 (
-    OCI_SodaDoc* doc
+    OCI_SodaDocument* doc
 )
 {
-    return OcilibSodaDocGetStringAttribute(doc, OCI_ATTR_SODA_MEDIA_TYPE, &doc->media_type);
+    return OcilibSodaDocumentGetStringAttribute(doc, OCI_ATTR_SODA_MEDIA_TYPE, &doc->media_type);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocRefreshMetadata
+ * OcilibSodaDocumentRefreshMetadata
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaDocRefreshMetadata
+OCI_Boolean OcilibSodaDocumentRefreshMetadata
 (
-    OCI_SodaDoc* doc,
-    OCISodaDoc * reshandle
+    OCI_SodaDocument* doc,
+    OCISodaDoc      * reshandle
 )
 {
     ENTER_FUNC
@@ -489,11 +489,11 @@ OCI_Boolean OcilibSodaDocRefreshMetadata
         FREE(doc->last_modified);
         FREE(doc->media_type);
 
-        OcilibSodaDocGetKey(doc);
-        OcilibSodaDocGetVersion(doc);
-        OcilibSodaDocGetCreatedOn(doc);
-        OcilibSodaDocGetLastModified(doc);
-        OcilibSodaDocGetMediaType(doc);
+        OcilibSodaDocumentGetKey(doc);
+        OcilibSodaDocumentGetVersion(doc);
+        OcilibSodaDocumentGetCreatedOn(doc);
+        OcilibSodaDocumentGetLastModified(doc);
+        OcilibSodaDocumentGetMediaType(doc);
 
         doc->handle = dochandle;
 
@@ -506,12 +506,12 @@ OCI_Boolean OcilibSodaDocRefreshMetadata
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocGetText
+ * OcilibSodaDocumentGetText
  * --------------------------------------------------------------------------------------------- */
 
-const otext* OcilibSodaDocGetText
+const otext* OcilibSodaDocumentGetText
 (
-    OCI_SodaDoc* doc
+    OCI_SodaDocument* doc
 )
 {
     ENTER_FUNC
@@ -601,12 +601,12 @@ const otext* OcilibSodaDocGetText
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocGetJson
+ * OcilibSodaDocumentGetJson
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Json* OcilibSodaDocGetJson
+OCI_Json* OcilibSodaDocumentGetJson
 (
-    OCI_SodaDoc* doc
+    OCI_SodaDocument* doc
 )
 {
     ENTER_FUNC
@@ -639,12 +639,12 @@ OCI_Json* OcilibSodaDocGetJson
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaDocGetIsJson
+ * OcilibSodaDocumentGetIsJson
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaDocGetIsJson
+OCI_Boolean OcilibSodaDocumentGetIsJson
 (
-    OCI_SodaDoc *doc
+    OCI_SodaDocument *doc
 )
 {
     ENTER_FUNC
@@ -657,7 +657,7 @@ OCI_Boolean OcilibSodaDocGetIsJson
 
     CHECK_PTR(OCI_IPC_SODA_DOC, doc);
 
-    media_type = OcilibSodaDocGetMediaType(doc);
+    media_type = OcilibSodaDocumentGetMediaType(doc);
 
     /* documents with no explicit media type are JSON by default in SODA */
 

@@ -31,18 +31,18 @@
  * OcilibMessageCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Msg * OcilibMessageCreate
+OCI_Message * OcilibMessageCreate
 (
     OCI_TypeInfo *typinf
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Msg*, NULL,
+        /* returns */ OCI_Message*, NULL,
         /* context */ OCI_IPC_TYPE_INFO, typinf
     );
 
-    OCI_Msg* msg = NULL;
+    OCI_Message* msg = NULL;
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf);
 
@@ -92,7 +92,7 @@ OCI_Msg * OcilibMessageCreate
 
 OCI_Boolean OcilibMessageFree
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -182,7 +182,7 @@ OCI_Boolean OcilibMessageFree
 
 OCI_Boolean OcilibMessageReset
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     const OCI_UInt32 len = 0;
@@ -220,7 +220,7 @@ OCI_Boolean OcilibMessageReset
 
 OCI_Object * OcilibMessageGetObject
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -245,8 +245,8 @@ OCI_Object * OcilibMessageGetObject
 
 OCI_Boolean OcilibMessageSetObject
 (
-    OCI_Msg    *msg,
-    OCI_Object *obj
+    OCI_Message *msg,
+    OCI_Object  *obj
 )
 {
     ENTER_FUNC
@@ -282,9 +282,9 @@ OCI_Boolean OcilibMessageSetObject
 
 OCI_Boolean OcilibMessageGetRaw
 (
-    OCI_Msg    *msg,
-    void       *raw,
-    OCI_UInt32 *size
+    OCI_Message *msg,
+    void        *raw,
+    OCI_UInt32  *size
 )
 {
     ENTER_FUNC
@@ -339,9 +339,9 @@ OCI_Boolean OcilibMessageGetRaw
 
 OCI_Boolean OcilibMessageSetRaw
 (
-    OCI_Msg    *msg,
-    const void *raw,
-    OCI_UInt32  size
+    OCI_Message *msg,
+    const void  *raw,
+    OCI_UInt32   size
 )
 {
     ENTER_FUNC
@@ -380,7 +380,7 @@ OCI_Boolean OcilibMessageSetRaw
 
 OCI_Int32 OcilibMessageGetAttemptCount
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -411,7 +411,7 @@ OCI_Int32 OcilibMessageGetAttemptCount
 
 OCI_Int32 OcilibMessageGetEnqueueDelay
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -442,8 +442,8 @@ OCI_Int32 OcilibMessageGetEnqueueDelay
 
 OCI_Boolean OcilibMessageSetEnqueueDelay
 (
-    OCI_Msg  *msg,
-    OCI_Int32 value
+    OCI_Message *msg,
+    OCI_Int32    value
 )
 {
     ENTER_FUNC
@@ -474,7 +474,7 @@ OCI_Boolean OcilibMessageSetEnqueueDelay
 
 OCI_Date * OcilibMessageGetEnqueueTime
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -506,7 +506,7 @@ OCI_Date * OcilibMessageGetEnqueueTime
 
 OCI_Int32 OcilibMessageGetExpiration
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -537,8 +537,8 @@ OCI_Int32 OcilibMessageGetExpiration
 
 OCI_Boolean OcilibMessageSetExpiration
 (
-    OCI_Msg  *msg,
-    OCI_Int32 value
+    OCI_Message *msg,
+    OCI_Int32    value
 )
 {
     ENTER_FUNC
@@ -569,7 +569,7 @@ OCI_Boolean OcilibMessageSetExpiration
 
 OCI_MsgState OcilibMessageGetState
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -602,7 +602,7 @@ OCI_MsgState OcilibMessageGetState
 
 OCI_Int32 OcilibMessageGetPriority
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -633,8 +633,8 @@ OCI_Int32 OcilibMessageGetPriority
 
 OCI_Boolean OcilibMessageSetPriority
 (
-    OCI_Msg  *msg,
-    OCI_Int32 value
+    OCI_Message *msg,
+    OCI_Int32    value
 )
 {
     ENTER_FUNC
@@ -665,9 +665,9 @@ OCI_Boolean OcilibMessageSetPriority
 
 OCI_Boolean OcilibMessageGetID
 (
-    OCI_Msg    *msg,
-    void       *id,
-    OCI_UInt32 *len
+    OCI_Message *msg,
+    void        *id,
+    OCI_UInt32  *len
 )
 {
     ENTER_FUNC
@@ -711,9 +711,9 @@ OCI_Boolean OcilibMessageGetID
 
 OCI_Boolean OcilibMessageGetOriginalID
 (
-    OCI_Msg    *msg,
-    void       *id,
-    OCI_UInt32 *len
+    OCI_Message *msg,
+    void        *id,
+    OCI_UInt32  *len
 )
 {
     ENTER_FUNC
@@ -767,9 +767,9 @@ OCI_Boolean OcilibMessageGetOriginalID
 
 OCI_Boolean OcilibMessageSetOriginalID
 (
-    OCI_Msg    *msg,
-    const void *id,
-    OCI_UInt32  len
+    OCI_Message *msg,
+    const void  *id,
+    OCI_UInt32   len
 )
 {
     ENTER_FUNC
@@ -808,7 +808,7 @@ OCI_Boolean OcilibMessageSetOriginalID
 
 const otext * OcilibMessageGetCorrelation
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -842,7 +842,7 @@ const otext * OcilibMessageGetCorrelation
 
 OCI_Boolean OcilibMessageSetCorrelation
 (
-    OCI_Msg     *msg,
+    OCI_Message *msg,
     const otext *correlation
 )
 {
@@ -872,7 +872,7 @@ OCI_Boolean OcilibMessageSetCorrelation
 
 const otext * OcilibMessageGetExceptionQueue
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -906,7 +906,7 @@ const otext * OcilibMessageGetExceptionQueue
 
 OCI_Boolean OcilibMessageSetExceptionQueue
 (
-    OCI_Msg     *msg,
+    OCI_Message *msg,
     const otext *queue
 )
 {
@@ -936,7 +936,7 @@ OCI_Boolean OcilibMessageSetExceptionQueue
 
 OCI_Agent * OcilibMessageGetSender
 (
-    OCI_Msg *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC
@@ -974,8 +974,8 @@ OCI_Agent * OcilibMessageGetSender
 
 OCI_Boolean OcilibMessageSetSender
 (
-    OCI_Msg   *msg,
-    OCI_Agent *sender
+    OCI_Message *msg,
+    OCI_Agent   *sender
 )
 {
     ENTER_FUNC
@@ -1004,9 +1004,9 @@ OCI_Boolean OcilibMessageSetSender
 
 OCI_Boolean OcilibMessageSetConsumers
 (
-    OCI_Msg    *msg,
-    OCI_Agent **consumers,
-    OCI_UInt32  count
+    OCI_Message *msg,
+    OCI_Agent  **consumers,
+    OCI_UInt32   count
 )
 {
     ENTER_FUNC

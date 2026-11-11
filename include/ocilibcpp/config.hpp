@@ -164,12 +164,12 @@ namespace ocilib
     class QueueTable;
     class DirectPath;
     class BindInfo;
-    class SodaDb;
-    class SodaColl;
-    class SodaDoc;
+    class SodaDatabase;
+    class SodaCollection;
+    class SodaDocument;
     class SodaOptions;
-    class SodaCollCursor;
-    class SodaDocCursor;
+    class SodaCollectionCursor;
+    class SodaDocumentCursor;
     class ShardingKey;
     class Row;
     class RowIterator;

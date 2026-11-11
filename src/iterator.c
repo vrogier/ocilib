@@ -27,18 +27,18 @@
  * OcilibIteratorCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Iter * OcilibIteratorCreate
+OCI_Iterator * OcilibIteratorCreate
 (
-    OCI_Coll *coll
+    OCI_Collection *coll
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Iter*, NULL,
+        /* returns */ OCI_Iterator*, NULL,
         /* context */ OCI_IPC_COLLECTION, coll
     );
 
-    OCI_Iter* iter = NULL;
+    OCI_Iterator* iter = NULL;
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll);
 
@@ -85,7 +85,7 @@ OCI_Iter * OcilibIteratorCreate
 
 OCI_Boolean OcilibIteratorFree
 (
-    OCI_Iter *iter
+    OCI_Iterator *iter
 )
 {
     ENTER_FUNC
@@ -134,14 +134,14 @@ OCI_Boolean OcilibIteratorFree
  * OcilibIteratorGetNext
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OcilibIteratorGetNext
+OCI_Element * OcilibIteratorGetNext
 (
-    OCI_Iter *iter
+    OCI_Iterator *iter
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Elem*, NULL,
+        /* returns */ OCI_Element*, NULL,
         /* context */ OCI_IPC_ITERATOR, iter
     );
 
@@ -179,14 +179,14 @@ OCI_Elem * OcilibIteratorGetNext
  * OcilibIteratorGetPrev
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OcilibIteratorGetPrev
+OCI_Element * OcilibIteratorGetPrev
 (
-    OCI_Iter *iter
+    OCI_Iterator *iter
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Elem*, NULL,
+        /* returns */ OCI_Element*, NULL,
         /* context */ OCI_IPC_ITERATOR, iter
     );
 
@@ -223,14 +223,14 @@ OCI_Elem * OcilibIteratorGetPrev
  * OcilibIteratorGetCurrent
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OcilibIteratorGetCurrent
+OCI_Element * OcilibIteratorGetCurrent
 (
-    OCI_Iter *iter
+    OCI_Iterator *iter
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Elem*, NULL,
+        /* returns */ OCI_Element*, NULL,
         /* context */ OCI_IPC_ITERATOR, iter
     );
 

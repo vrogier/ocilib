@@ -73,22 +73,22 @@ namespace TestCApi
 
     TEST_F(TestQueueOps, EnqueueDequeue_ReturnsMessagePayload)
     {
-        const auto msg_in = OCI_MsgCreate(inf);
+        const auto msg_in = OCI_MessageCreate(inf);
         ASSERT_NE(nullptr, msg_in);
         const auto obj_in = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj_in);
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("title"), OTEXT("NEXT MEETING")));
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("content"), OTEXT("12:00 PM IN STARBUCKS")));
-        ASSERT_TRUE(OCI_MsgSetObject(msg_in, obj_in));
+        ASSERT_TRUE(OCI_MessageSetObject(msg_in, obj_in));
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
-        ASSERT_TRUE(OCI_MsgFree(msg_in));
+        ASSERT_TRUE(OCI_MessageFree(msg_in));
         ASSERT_TRUE(OCI_ObjectFree(obj_in));
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         const auto msg_out = OCI_DequeueGet(deq);
 
         ASSERT_NE(nullptr, msg_out);
-        const auto obj_out = OCI_MsgGetObject(msg_out);
+        const auto obj_out = OCI_MessageGetObject(msg_out);
         ASSERT_NE(nullptr, obj_out);
         EXPECT_EQ(String(OTEXT("NEXT MEETING")), String(OCI_ObjectGetString(obj_out, OTEXT("title"))));
         EXPECT_EQ(String(OTEXT("12:00 PM IN STARBUCKS")), String(OCI_ObjectGetString(obj_out, OTEXT("content"))));
@@ -105,7 +105,7 @@ namespace TestCApi
         const auto msg_out = OCI_DequeueGet(deq);
         ASSERT_NE(nullptr, msg_out);
 
-        const auto obj_out = OCI_MsgGetObject(msg_out);
+        const auto obj_out = OCI_MessageGetObject(msg_out);
         ASSERT_NE(nullptr, obj_out);
 
         ASSERT_EQ(String(OTEXT("NEXT MEETING")), String(OCI_ObjectGetString(obj_out, OTEXT("title"))));
@@ -202,20 +202,20 @@ namespace TestCApi
         std::array<OCI_Dequeue*, 2> dequeues{ deq1, deq2 };
         ASSERT_TRUE(OCI_DequeueSubscribe(conn, dequeues.data(), static_cast<OCI_UInt32>(dequeues.size()), 0, OnMessage));
 
-        const auto msg_in = OCI_MsgCreate(inf);
+        const auto msg_in = OCI_MessageCreate(inf);
         ASSERT_NE(nullptr, msg_in);
         const auto obj_in = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj_in);
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("title"), OTEXT("NEXT MEETING")));
         ASSERT_TRUE(OCI_ObjectSetString(obj_in, OTEXT("content"), OTEXT("12:00 PM IN STARBUCKS")));
-        ASSERT_TRUE(OCI_MsgSetObject(msg_in, obj_in));
-        ASSERT_TRUE(OCI_MsgSetConsumers(msg_in, agents, 2));
+        ASSERT_TRUE(OCI_MessageSetObject(msg_in, obj_in));
+        ASSERT_TRUE(OCI_MessageSetConsumers(msg_in, agents, 2));
 
         MessageWithConsumersCount = 0;
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
-        ASSERT_TRUE(OCI_MsgFree(msg_in));
+        ASSERT_TRUE(OCI_MessageFree(msg_in));
         ASSERT_TRUE(OCI_ObjectFree(obj_in));
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         const OCI_Int32 MaxRetries = 15;
         OCI_Int32 retry = 1;
@@ -259,24 +259,24 @@ namespace TestCApi
         const auto deq = OCI_DequeueCreate(inf, OTEXT("TestQueueSingleRawMessage"));
         ASSERT_NE(nullptr, deq);
 
-        const auto msg_in = OCI_MsgCreate(inf);
+        const auto msg_in = OCI_MessageCreate(inf);
         ASSERT_NE(nullptr, msg_in);
 
         const auto byteBring = std::string("123456789");
-        ASSERT_TRUE(OCI_MsgSetRaw(msg_in, static_cast<const void*>(byteBring.data()), static_cast<OCI_UInt32>(byteBring.size())));
+        ASSERT_TRUE(OCI_MessageSetRaw(msg_in, static_cast<const void*>(byteBring.data()), static_cast<OCI_UInt32>(byteBring.size())));
 
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
 
-        ASSERT_TRUE(OCI_MsgFree(msg_in));
+        ASSERT_TRUE(OCI_MessageFree(msg_in));
 
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         const auto msg_out = OCI_DequeueGet(deq);
         ASSERT_NE(nullptr, msg_out);
 
         char buffer[100] = "";
         OCI_UInt32 size = 100;
-        ASSERT_TRUE(OCI_MsgGetRaw(msg_out, static_cast<void*>(buffer), &size));
+        ASSERT_TRUE(OCI_MessageGetRaw(msg_out, static_cast<void*>(buffer), &size));
 
         ASSERT_EQ(byteBring, std::string(buffer));
         ASSERT_EQ(byteBring.size(), size);
@@ -284,7 +284,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_EnqueueFree(enq));
         ASSERT_TRUE(OCI_DequeueFree(deq));
 
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestQueueSingleRawMessage"), TRUE, TRUE, FALSE));
         ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestQueueSingleRawMessage")));
@@ -322,37 +322,37 @@ namespace TestCApi
         const auto deq = OCI_DequeueCreate(inf, OTEXT("TestQueueSingleRawMessageEmptyPayload"));
         ASSERT_NE(nullptr, deq);
 
-        const auto msg_in = OCI_MsgCreate(inf);
+        const auto msg_in = OCI_MessageCreate(inf);
         ASSERT_NE(nullptr, msg_in);
 
         const auto byteBring = std::string("123456789");
-        ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<OCI_UInt32>(byteBring.size())));
+        ASSERT_TRUE(OCI_MessageSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<OCI_UInt32>(byteBring.size())));
 
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
 
-        ASSERT_TRUE(OCI_MsgFree(msg_in));
+        ASSERT_TRUE(OCI_MessageFree(msg_in));
 
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         const auto msg_out = OCI_DequeueGet(deq);
         ASSERT_NE(nullptr, msg_out);
 
         char buffer[100] = "";
         OCI_UInt32 size = 100;
-        ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &size));
+        ASSERT_TRUE(OCI_MessageGetOriginalID(msg_out, static_cast<void*>(buffer), &size));
 
         ASSERT_EQ(byteBring, std::string(buffer));
         ASSERT_EQ(byteBring.size(), size);
 
         otext payload[100] = OTEXT("");
         OCI_UInt32 payloadSize = 100;
-        ASSERT_TRUE(OCI_MsgGetRaw(msg_out, static_cast<void*>(payload), &payloadSize));
+        ASSERT_TRUE(OCI_MessageGetRaw(msg_out, static_cast<void*>(payload), &payloadSize));
         ASSERT_EQ(0, payloadSize);
 
         ASSERT_TRUE(OCI_EnqueueFree(enq));
         ASSERT_TRUE(OCI_DequeueFree(deq));
 
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestQueueSingleRawMessageEmptyPayload"), TRUE, TRUE, FALSE));
         ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestQueueSingleRawMessageEmptyPayload")));
@@ -392,46 +392,46 @@ namespace TestCApi
         const auto deq = OCI_DequeueCreate(inf, OTEXT("TestQueueSingleMessageEmptyPayload"));
         ASSERT_NE(nullptr, deq);
 
-        const auto msg_in = OCI_MsgCreate(inf);
+        const auto msg_in = OCI_MessageCreate(inf);
         ASSERT_NE(nullptr, msg_in);
 
         const auto byteBring = std::string("123456789");
-        ASSERT_TRUE(OCI_MsgSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<OCI_UInt32>(byteBring.size())));
+        ASSERT_TRUE(OCI_MessageSetOriginalID(msg_in, static_cast<const void*>(byteBring.data()), static_cast<OCI_UInt32>(byteBring.size())));
 
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg_in));
 
         otext msgIDIn[100] = OTEXT("");
         OCI_UInt32 sizeMsgIDIn = 100;
-        ASSERT_TRUE(OCI_MsgGetID(msg_in, static_cast<void*>(msgIDIn), &sizeMsgIDIn));
+        ASSERT_TRUE(OCI_MessageGetID(msg_in, static_cast<void*>(msgIDIn), &sizeMsgIDIn));
 
-        ASSERT_TRUE(OCI_MsgFree(msg_in));
+        ASSERT_TRUE(OCI_MessageFree(msg_in));
 
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         const auto msg_out = OCI_DequeueGet(deq);
         ASSERT_NE(nullptr, msg_out);
 
         char buffer[100] = "";
         OCI_UInt32 sizeBuffer = 100;
-        ASSERT_TRUE(OCI_MsgGetOriginalID(msg_out, static_cast<void*>(buffer), &sizeBuffer));
+        ASSERT_TRUE(OCI_MessageGetOriginalID(msg_out, static_cast<void*>(buffer), &sizeBuffer));
 
         ASSERT_EQ(byteBring, std::string(buffer));
         ASSERT_EQ(byteBring.size(), sizeBuffer);
 
         otext msgIDOut[100] = OTEXT("");
         OCI_UInt32 sizeMsgIDOut = 100;
-        ASSERT_TRUE(OCI_MsgGetID(msg_out, static_cast<void*>(msgIDOut), &sizeMsgIDOut));
+        ASSERT_TRUE(OCI_MessageGetID(msg_out, static_cast<void*>(msgIDOut), &sizeMsgIDOut));
 
         ASSERT_EQ(String(msgIDIn), String(msgIDOut));
         ASSERT_EQ(sizeMsgIDIn, sizeMsgIDOut);
 
-        const auto obj_out = OCI_MsgGetObject(msg_out);
+        const auto obj_out = OCI_MessageGetObject(msg_out);
         ASSERT_EQ(nullptr, obj_out);
 
         ASSERT_TRUE(OCI_EnqueueFree(enq));
         ASSERT_TRUE(OCI_DequeueFree(deq));
 
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         ASSERT_TRUE(OCI_QueueStop(conn, OTEXT("TestQueueSingleMessageEmptyPayload"), TRUE, TRUE, FALSE));
         ASSERT_TRUE(OCI_QueueDrop(conn, OTEXT("TestQueueSingleMessageEmptyPayload")));

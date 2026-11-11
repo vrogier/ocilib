@@ -18,7 +18,7 @@
  * limitations under the License.
  */
 
-#include "dirpath.h"
+#include "directpath.h"
 
 #include "connection.h"
 #include "macros.h"
@@ -33,13 +33,13 @@ static const OCI_UInt32 ConversionModeValues[] =
 };
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetArray
+ * OcilibDirectPathSetArray
  * --------------------------------------------------------------------------------------------- */
 
-static OCI_Boolean OcilibDirPathSetArray
+static OCI_Boolean OcilibDirectPathSetArray
 (
-    OCI_DirPath *dp,
-    ub4          row_from
+    OCI_DirectPath *dp,
+    ub4             row_from
 )
 {
     ENTER_FUNC
@@ -102,13 +102,13 @@ static OCI_Boolean OcilibDirPathSetArray
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathArrayToStream
+ * OcilibDirectPathArrayToStream
  * --------------------------------------------------------------------------------------------- */
 
-static OCI_DirPathResult OcilibDirPathArrayToStream
+static OCI_DirPathResult OcilibDirectPathArrayToStream
 (
-    OCI_DirPath *dp,
-    ub4          row_from
+    OCI_DirectPath *dp,
+    ub4             row_from
 )
 {
     ENTER_FUNC
@@ -208,12 +208,12 @@ static OCI_DirPathResult OcilibDirPathArrayToStream
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathLoadStream
+ * OcilibDirectPathLoadStream
  * --------------------------------------------------------------------------------------------- */
 
-static OCI_DirPathResult OcilibDirPathLoadStream
+static OCI_DirPathResult OcilibDirectPathLoadStream
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -298,10 +298,10 @@ static OCI_DirPathResult OcilibDirPathLoadStream
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathCreate
+ * OcilibDirectPathCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_DirPath * OcilibDirPathCreate
+OCI_DirectPath * OcilibDirectPathCreate
 (
     OCI_TypeInfo *typinf,
     const otext  *partition,
@@ -311,7 +311,7 @@ OCI_DirPath * OcilibDirPathCreate
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_DirPath*, NULL,
+        /* returns */ OCI_DirectPath*, NULL,
         /* context */ OCI_IPC_TYPE_INFO, typinf
     );
 
@@ -323,7 +323,7 @@ OCI_DirPath * OcilibDirPathCreate
     OCI_Int32 dbsize2 = -1;
     OCI_Int32 dbsize3 = -1;
 
-    OCI_DirPath* dp = NULL;
+    OCI_DirectPath* dp = NULL;
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf);
     CHECK_COMPAT(typinf->type != OCI_TIF_TYPE);
@@ -430,7 +430,7 @@ OCI_DirPath * OcilibDirPathCreate
 
         if (FAILURE)
         {
-            OcilibDirPathFree(dp);
+            OcilibDirectPathFree(dp);
             dp = NULL;
         }
 
@@ -439,12 +439,12 @@ OCI_DirPath * OcilibDirPathCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathFree
+ * OcilibDirectPathFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathFree
+OCI_Boolean OcilibDirectPathFree
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -483,16 +483,16 @@ OCI_Boolean OcilibDirPathFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetColumn
+ * OcilibDirectPathSetColumn
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSetColumn
+OCI_Boolean OcilibDirectPathSetColumn
 (
-    OCI_DirPath *dp,
-    OCI_UInt32   index,
-    const otext *name,
-    OCI_UInt32   maxsize,
-    const otext *format
+    OCI_DirectPath *dp,
+    OCI_UInt32      index,
+    const otext    *name,
+    OCI_UInt32      maxsize,
+    const otext    *format
 )
 {
     ENTER_FUNC
@@ -756,12 +756,12 @@ OCI_Boolean OcilibDirPathSetColumn
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathPrepare
+ * OcilibDirectPathPrepare
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathPrepare
+OCI_Boolean OcilibDirectPathPrepare
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -851,17 +851,17 @@ OCI_Boolean OcilibDirPathPrepare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetEntry
+ * OcilibDirectPathSetEntry
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSetEntry
+OCI_Boolean OcilibDirectPathSetEntry
 (
-    OCI_DirPath *dp,
-    OCI_UInt32   row,
-    OCI_UInt32   index,
-    const void  *value,
-    OCI_UInt32   size,
-    OCI_Boolean  complete
+    OCI_DirectPath *dp,
+    OCI_UInt32      row,
+    OCI_UInt32      index,
+    const void     *value,
+    OCI_UInt32      size,
+    OCI_Boolean     complete
 )
 {
     ENTER_FUNC
@@ -962,12 +962,12 @@ OCI_Boolean OcilibDirPathSetEntry
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathReset
+ * OcilibDirectPathReset
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathReset
+OCI_Boolean OcilibDirectPathReset
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -1011,12 +1011,12 @@ OCI_Boolean OcilibDirPathReset
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathConvert
+ * OcilibDirectPathConvert
  * --------------------------------------------------------------------------------------------- */
 
-OCI_DirPathResult OcilibDirPathConvert
+OCI_DirPathResult OcilibDirectPathConvert
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -1060,11 +1060,11 @@ OCI_DirPathResult OcilibDirPathConvert
 
     /* set array values */
 
-    CHECK(OcilibDirPathSetArray(dp, row_from));
+    CHECK(OcilibDirectPathSetArray(dp, row_from));
 
     /* try to convert values from array into stream */
 
-    dp->res_conv = OcilibDirPathArrayToStream(dp, row_from);
+    dp->res_conv = OcilibDirectPathArrayToStream(dp, row_from);
 
     /* in case of conversion error, continue conversion in force mode
        other return from conversion */
@@ -1081,11 +1081,11 @@ OCI_DirPathResult OcilibDirPathConvert
 
             /* set values again */
 
-            CHECK(OcilibDirPathSetArray(dp, row_from));
+            CHECK(OcilibDirectPathSetArray(dp, row_from));
 
             /* perform conversion again */
 
-            dp->res_conv = OcilibDirPathArrayToStream(dp, row_from);
+            dp->res_conv = OcilibDirectPathArrayToStream(dp, row_from);
         }
     }
 
@@ -1097,12 +1097,12 @@ OCI_DirPathResult OcilibDirPathConvert
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathLoad
+ * OcilibDirectPathLoad
  * --------------------------------------------------------------------------------------------- */
 
-OCI_DirPathResult OcilibDirPathLoad
+OCI_DirPathResult OcilibDirectPathLoad
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -1120,7 +1120,7 @@ OCI_DirPathResult OcilibDirPathLoad
 
     dp->nb_processed = 0;
 
-    /* reset errors variables as OCI_DirPathLoad() is not re-entrant */
+    /* reset errors variables as OCI_DirectPathLoad() is not re-entrant */
 
     dp->nb_err      = 0;
     dp->idx_err_col = 0;
@@ -1129,7 +1129,7 @@ OCI_DirPathResult OcilibDirPathLoad
 
     /* load the stream */
 
-    dp->res_load = OcilibDirPathLoadStream(dp);
+    dp->res_load = OcilibDirectPathLoadStream(dp);
 
     load_offset = dp->load_offset;
 
@@ -1137,7 +1137,7 @@ OCI_DirPathResult OcilibDirPathLoad
 
     while (OCI_DPR_ERROR == dp->res_load)
     {
-        dp->res_load = OcilibDirPathLoadStream(dp);
+        dp->res_load = OcilibDirectPathLoadStream(dp);
 
         /* if number of converted rows does not increase, the error is not related to conversion error
            thus, we need to exit the loop to not iterate for ever
@@ -1156,12 +1156,12 @@ OCI_DirPathResult OcilibDirPathLoad
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathFinish
+ * OcilibDirectPathFinish
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathFinish
+OCI_Boolean OcilibDirectPathFinish
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -1188,12 +1188,12 @@ OCI_Boolean OcilibDirPathFinish
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathAbort
+ * OcilibDirectPathAbort
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathAbort
+OCI_Boolean OcilibDirectPathAbort
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -1220,12 +1220,12 @@ OCI_Boolean OcilibDirPathAbort
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSave
+ * OcilibDirectPathSave
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSave
+OCI_Boolean OcilibDirectPathSave
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -1251,12 +1251,12 @@ OCI_Boolean OcilibDirPathSave
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathFlushRow
+ * OcilibDirectPathFlushRow
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathFlushRow
+OCI_Boolean OcilibDirectPathFlushRow
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -1281,13 +1281,13 @@ OCI_Boolean OcilibDirPathFlushRow
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetCurrentRows
+ * OcilibDirectPathSetCurrentRows
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSetCurrentRows
+OCI_Boolean OcilibDirectPathSetCurrentRows
 (
-    OCI_DirPath *dp,
-    OCI_UInt32   nb_rows
+    OCI_DirectPath *dp,
+    OCI_UInt32      nb_rows
 )
 {
     ENTER_FUNC
@@ -1308,12 +1308,12 @@ OCI_Boolean OcilibDirPathSetCurrentRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathGetCurrentRows
+ * OcilibDirectPathGetCurrentRows
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibDirPathGetCurrentRows
+OCI_UInt32 OcilibDirectPathGetCurrentRows
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     GET_PROP
@@ -1325,12 +1325,12 @@ OCI_UInt32 OcilibDirPathGetCurrentRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathGetMaxRows
+ * OcilibDirectPathGetMaxRows
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibDirPathGetMaxRows
+OCI_UInt32 OcilibDirectPathGetMaxRows
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     GET_PROP
@@ -1342,13 +1342,13 @@ OCI_UInt32 OcilibDirPathGetMaxRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetDateFormat
+ * OcilibDirectPathSetDateFormat
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSetDateFormat
+OCI_Boolean OcilibDirectPathSetDateFormat
 (
-    OCI_DirPath *dp,
-    const otext *format
+    OCI_DirectPath *dp,
+    const otext    *format
 )
 {
     ENTER_FUNC
@@ -1381,13 +1381,13 @@ OCI_Boolean OcilibDirPathSetDateFormat
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetParallel
+ * OcilibDirectPathSetParallel
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSetParallel
+OCI_Boolean OcilibDirectPathSetParallel
 (
-    OCI_DirPath *dp,
-    OCI_Boolean  value
+    OCI_DirectPath *dp,
+    OCI_Boolean     value
 )
 {
     ENTER_FUNC
@@ -1414,13 +1414,13 @@ OCI_Boolean OcilibDirPathSetParallel
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetNoLog
+ * OcilibDirectPathSetNoLog
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSetNoLog
+OCI_Boolean OcilibDirectPathSetNoLog
 (
-    OCI_DirPath *dp,
-    OCI_Boolean  value
+    OCI_DirectPath *dp,
+    OCI_Boolean     value
 )
 {
     ENTER_FUNC
@@ -1447,13 +1447,13 @@ OCI_Boolean OcilibDirPathSetNoLog
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetCacheSize
+ * OcilibDirectPathSetCacheSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSetCacheSize
+OCI_Boolean OcilibDirectPathSetCacheSize
 (
-    OCI_DirPath *dp,
-    OCI_UInt32   size
+    OCI_DirectPath *dp,
+    OCI_UInt32      size
 )
 {
     ENTER_FUNC
@@ -1497,13 +1497,13 @@ OCI_Boolean OcilibDirPathSetCacheSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetBufferSize
+ * OcilibDirectPathSetBufferSize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSetBufferSize
+OCI_Boolean OcilibDirectPathSetBufferSize
 (
-    OCI_DirPath *dp,
-    OCI_UInt32   size
+    OCI_DirectPath *dp,
+    OCI_UInt32      size
 )
 {
     ENTER_FUNC
@@ -1530,12 +1530,12 @@ OCI_Boolean OcilibDirPathSetBufferSize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathSetConvertMode
+ * OcilibDirectPathSetConvertMode
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibDirPathSetConvertMode
+OCI_Boolean OcilibDirectPathSetConvertMode
 (
-    OCI_DirPath           *dp,
+    OCI_DirectPath        *dp,
     OCI_DirPathConvertMode mode
 )
 {
@@ -1557,12 +1557,12 @@ OCI_Boolean OcilibDirPathSetConvertMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathGetRowCount
+ * OcilibDirectPathGetRowCount
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibDirPathGetRowCount
+OCI_UInt32 OcilibDirectPathGetRowCount
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     GET_PROP
@@ -1574,12 +1574,12 @@ OCI_UInt32 OcilibDirPathGetRowCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathGetAffectedRows
+ * OcilibDirectPathGetAffectedRows
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt32 OcilibDirPathGetAffectedRows
+OCI_UInt32 OcilibDirectPathGetAffectedRows
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     GET_PROP
@@ -1591,12 +1591,12 @@ OCI_UInt32 OcilibDirPathGetAffectedRows
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathGetErrorColumn
+ * OcilibDirectPathGetErrorColumn
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int32 OcilibDirPathGetErrorColumn
+OCI_Int32 OcilibDirectPathGetErrorColumn
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC
@@ -1615,12 +1615,12 @@ OCI_Int32 OcilibDirPathGetErrorColumn
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibDirPathGetErrorRow
+ * OcilibDirectPathGetErrorRow
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int32 OcilibDirPathGetErrorRow
+OCI_Int32 OcilibDirectPathGetErrorRow
 (
-    OCI_DirPath *dp
+    OCI_DirectPath *dp
 )
 {
     ENTER_FUNC

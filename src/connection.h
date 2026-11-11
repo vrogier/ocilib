@@ -124,7 +124,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibConnectionGetAutoCommit
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibConnectionIsConnected
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionIsAlive
 (
     OCI_Connection* con
 );
@@ -166,7 +166,7 @@ OCI_SYM_LOCAL OCI_SessionMode OcilibConnectionGetSessionMode
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL const otext* OcilibConnectionGetServerVersion
+OCI_SYM_LOCAL const otext* OcilibConnectionGetServerVersionString
 (
     OCI_Connection* con
 );
@@ -324,14 +324,14 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibConnectionGetMaxCursors
     OCI_Connection* con
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibConnectionExecuteImmediate
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionImmediate
 (
     OCI_Connection* con,
     const otext   * sql,
     va_list         args
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibConnectionExecuteImmediateFmt
+OCI_SYM_LOCAL OCI_Boolean OcilibConnectionImmediateFormat
 (
     OCI_Connection* con,
     const otext   * sql,

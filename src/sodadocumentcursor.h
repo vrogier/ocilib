@@ -23,21 +23,21 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL OCI_SodaDocCursor * OcilibSodaDocCursorInitialize
+OCI_SYM_LOCAL OCI_SodaDocumentCursor * OcilibSodaDocumentCursorInitialize
 (
-    OCI_SodaDocCursor *cursor,
-    OCI_SodaColl      *coll,
-    OCISodaDocCursor  *handle
+    OCI_SodaDocumentCursor *cursor,
+    OCI_SodaCollection     *coll,
+    OCISodaDocCursor       *handle
 );
 
-OCI_SYM_LOCAL OCI_SodaDoc * OcilibSodaDocCursorGetNext
+OCI_SYM_LOCAL OCI_SodaDocument * OcilibSodaDocumentCursorGetNext
 (
-    OCI_SodaDocCursor *cursor
+    OCI_SodaDocumentCursor *cursor
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibSodaDocCursorFree
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaDocumentCursorFree
 (
-    OCI_SodaDocCursor *cursor
+    OCI_SodaDocumentCursor *cursor
 );
 
 #endif /* OCILIB_SODADOCCURSOR_H_INCLUDED */

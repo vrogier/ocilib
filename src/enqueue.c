@@ -121,7 +121,7 @@ OCI_Boolean OcilibEnqueueFree
 OCI_Boolean OcilibEnqueuePut
 (
     OCI_Enqueue *enqueue,
-    OCI_Msg     *msg
+    OCI_Message *msg
 )
 {
     ENTER_FUNC

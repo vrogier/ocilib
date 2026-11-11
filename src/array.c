@@ -139,12 +139,12 @@ OCI_Boolean OcilibArrayInitialize
             }
             case OCI_CDT_COLLECTION:
             {
-                ARRAY_INIT(OCI_Coll, OcilibCollectionInitialize(arr->con, (OCI_Coll *)data, handle, typinf));
+                ARRAY_INIT(OCI_Collection, OcilibCollectionInitialize(arr->con, (OCI_Collection *)data, handle, typinf));
                 break;
             }
             case OCI_CDT_REF:
             {
-                ARRAY_INIT(OCI_Ref, OcilibReferenceInitialize(arr->con, typinf, (OCI_Ref *) data, handle));
+                ARRAY_INIT(OCI_Reference, OcilibReferenceInitialize(arr->con, typinf, (OCI_Reference *) data, handle));
                 break;
             }
             case OCI_CDT_VECTOR:

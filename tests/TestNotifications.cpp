@@ -178,16 +178,16 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-1"), OCI_CNT_ALL, SingleDDL1EventEventHandler, OCI_SRM_DEFAULT, 0);
+        const auto sub = OCI_SubscriptionCreate(conn, OTEXT("sub-1"), OCI_CNT_ALL, SingleDDL1EventEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestTableSingleDDL1")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select * from TestTableSingleDDL1")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("alter table TestTableSingleDDL1 add price number")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("alter table TestTableSingleDDL1 add price number")));
 
         Sleep(1000);
 
@@ -212,17 +212,17 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-2"), OCI_CNT_ALL, SingleDDL2EventEventHandler, OCI_SRM_DEFAULT, 0);
+        const auto sub = OCI_SubscriptionCreate(conn, OTEXT("sub-2"), OCI_CNT_ALL, SingleDDL2EventEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestTableSingleDDL2")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select * from TestTableSingleDDL2")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("alter table TestTableSingleDDL2 add price1 number")));
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("alter table TestTableSingleDDL2 add price2 number")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("alter table TestTableSingleDDL2 add price1 number")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("alter table TestTableSingleDDL2 add price2 number")));
 
         Sleep(1000);
 
@@ -249,21 +249,21 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-3"), OCI_CNT_ALL, MultipleDDLEventEventHandler, OCI_SRM_DEFAULT, 0);
+        const auto sub = OCI_SubscriptionCreate(conn, OTEXT("sub-3"), OCI_CNT_ALL, MultipleDDLEventEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestTableMultipleDDLTable1")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select * from TestTableMultipleDDLTable1")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestTableMultipleDDLTable2")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select * from TestTableMultipleDDLTable2")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("alter table TestTableMultipleDDLTable1 add price number")));
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("alter table TestTableMultipleDDLTable2 add price number")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("alter table TestTableMultipleDDLTable1 add price number")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("alter table TestTableMultipleDDLTable2 add price number")));
 
         Sleep(1000);
 
@@ -289,24 +289,24 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("sub-4"), OCI_CNT_ALL, MultipleDMLEventEventHandler, OCI_SRM_DEFAULT, 0);
+        const auto sub = OCI_SubscriptionCreate(conn, OTEXT("sub-4"), OCI_CNT_ALL, MultipleDMLEventEventHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestTableMultipleDML")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select * from TestTableMultipleDML")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("insert into TestTableMultipleDML(code) values (1)")));
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("insert into TestTableMultipleDML(code) values (2)")));
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("update TestTableMultipleDML set code = 3 where code = 2")));
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("update TestTableMultipleDML set code = 4 where code = 999999"))); // shall not trigger event
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("delete from TestTableMultipleDML where code = 1")));
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("delete from TestTableMultipleDML where code = 3")));
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("delete from TestTableMultipleDML where code = 77777"))); // shall not trigger event
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("insert into TestTableMultipleDML(code) values (1)")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("insert into TestTableMultipleDML(code) values (2)")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("update TestTableMultipleDML set code = 3 where code = 2")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("update TestTableMultipleDML set code = 4 where code = 999999"))); // shall not trigger event
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("delete from TestTableMultipleDML where code = 1")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("delete from TestTableMultipleDML where code = 3")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("delete from TestTableMultipleDML where code = 77777"))); // shall not trigger event
 
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         Sleep(2000);
 

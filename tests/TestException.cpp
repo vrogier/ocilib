@@ -30,7 +30,7 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_FALSE(OCI_ExecuteStmt(stmt, OTEXT("select * from non_existent_table_for_exception_test")));
+        ASSERT_FALSE(OCI_StatementExecute(stmt, OTEXT("select * from non_existent_table_for_exception_test")));
 
         const auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);

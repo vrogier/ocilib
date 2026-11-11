@@ -92,9 +92,9 @@ namespace ocilib
             bool operator()(OCI_File* handle, AnyPointer) const { return OCI_FileFree(handle); }
         };
 
-        template<> struct HandleDeleter<OCI_Coll*>
+        template<> struct HandleDeleter<OCI_Collection*>
         {
-            bool operator()(OCI_Coll* handle, AnyPointer) const { return OCI_CollFree(handle); }
+            bool operator()(OCI_Collection* handle, AnyPointer) const { return OCI_CollectionFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Object*>
@@ -102,9 +102,9 @@ namespace ocilib
             bool operator()(OCI_Object* handle, AnyPointer) const { return OCI_ObjectFree(handle); }
         };
 
-        template<> struct HandleDeleter<OCI_Ref*>
+        template<> struct HandleDeleter<OCI_Reference*>
         {
-            bool operator()(OCI_Ref* handle, AnyPointer) const { return OCI_RefFree(handle); }
+            bool operator()(OCI_Reference* handle, AnyPointer) const { return OCI_ReferenceFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Vector*>
@@ -142,9 +142,9 @@ namespace ocilib
             bool operator()(OCI_Agent* handle, AnyPointer) const { return OCI_AgentFree(handle); }
         };
 
-        template<> struct HandleDeleter<OCI_Msg*>
+        template<> struct HandleDeleter<OCI_Message*>
         {
-            bool operator()(OCI_Msg* handle, AnyPointer) const { return OCI_MsgFree(handle); }
+            bool operator()(OCI_Message* handle, AnyPointer) const { return OCI_MessageFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_Enqueue*>
@@ -157,14 +157,14 @@ namespace ocilib
             bool operator()(OCI_Dequeue* handle, AnyPointer) const { return OCI_DequeueFree(handle); }
         };
 
-        template<> struct HandleDeleter<OCI_DirPath*>
+        template<> struct HandleDeleter<OCI_DirectPath*>
         {
-            bool operator()(OCI_DirPath* handle, AnyPointer) const { return OCI_DirPathFree(handle); }
+            bool operator()(OCI_DirectPath* handle, AnyPointer) const { return OCI_DirectPathFree(handle); }
         };
 
-        template<> struct HandleDeleter<OCI_SodaDb*>
+        template<> struct HandleDeleter<OCI_SodaDatabase*>
         {
-            bool operator()(OCI_SodaDb* handle, AnyPointer) const { return OCI_SodaDbFree(handle); }
+            bool operator()(OCI_SodaDatabase* handle, AnyPointer) const { return OCI_SodaDatabaseFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_ShardingKey*>
@@ -172,14 +172,14 @@ namespace ocilib
             bool operator()(OCI_ShardingKey* handle, AnyPointer) const { return OCI_ShardingKeyFree(handle); }
         };
 
-        template<> struct HandleDeleter<OCI_SodaColl*>
+        template<> struct HandleDeleter<OCI_SodaCollection*>
         {
-            bool operator()(OCI_SodaColl* handle, AnyPointer) const { return OCI_SodaCollFree(handle); }
+            bool operator()(OCI_SodaCollection* handle, AnyPointer) const { return OCI_SodaCollectionFree(handle); }
         };
 
-        template<> struct HandleDeleter<OCI_SodaDoc*>
+        template<> struct HandleDeleter<OCI_SodaDocument*>
         {
-            bool operator()(OCI_SodaDoc* handle, AnyPointer) const { return OCI_SodaDocFree(handle); }
+            bool operator()(OCI_SodaDocument* handle, AnyPointer) const { return OCI_SodaDocumentFree(handle); }
         };
 
         template<> struct HandleDeleter<OCI_SodaOptions*>
@@ -187,14 +187,14 @@ namespace ocilib
             bool operator()(OCI_SodaOptions* handle, AnyPointer) const { return OCI_SodaOptionsFree(handle); }
         };
 
-        template<> struct HandleDeleter<OCI_SodaCollCursor*>
+        template<> struct HandleDeleter<OCI_SodaCollectionCursor*>
         {
-            bool operator()(OCI_SodaCollCursor* handle, AnyPointer) const { return OCI_SodaCollCursorFree(handle); }
+            bool operator()(OCI_SodaCollectionCursor* handle, AnyPointer) const { return OCI_SodaCollectionCursorFree(handle); }
         };
 
-        template<> struct HandleDeleter<OCI_SodaDocCursor*>
+        template<> struct HandleDeleter<OCI_SodaDocumentCursor*>
         {
-            bool operator()(OCI_SodaDocCursor* handle, AnyPointer) const { return OCI_SodaDocCursorFree(handle); }
+            bool operator()(OCI_SodaDocumentCursor* handle, AnyPointer) const { return OCI_SodaDocumentCursorFree(handle); }
         };
     }
 }

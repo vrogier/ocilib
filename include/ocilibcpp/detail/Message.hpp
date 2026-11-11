@@ -31,19 +31,19 @@ namespace ocilib
 
         AcquireAllocated
         (
-            core::Check(OCI_MsgCreate(typeInfo)),
+            core::Check(OCI_MessageCreate(typeInfo)),
             connection.GetHandle()
         );
     }
 
-    inline Message::Message(OCI_Msg *pMessage, core::Handle *parent)
+    inline Message::Message(OCI_Message *pMessage, core::Handle *parent)
     {
         AcquireTransient(pMessage, parent);
     }
 
     inline void Message::Reset()
     {
-        core::Check(OCI_MsgReset(*this));
+        core::Check(OCI_MessageReset(*this));
     }
 
     template<class T>
@@ -51,17 +51,17 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, Object>)
         {
-            return Object(core::Check(OCI_MsgGetObject(*this)), nullptr);
+            return Object(core::Check(OCI_MessageGetObject(*this)), nullptr);
         }
         else if constexpr (std::is_same_v<T, Raw>)
         {
             UInt32 size = 0;
 
-            core::Check(OCI_MsgGetRaw(*this, nullptr, &size));
+            core::Check(OCI_MessageGetRaw(*this, nullptr, &size));
 
             std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
 
-            core::Check(OCI_MsgGetRaw(*this, static_cast<AnyPointer>(buffer.data()), &size));
+            core::Check(OCI_MessageGetRaw(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
             return core::MakeRaw(buffer.data(), size);
         }
@@ -76,13 +76,13 @@ namespace ocilib
     {
         if constexpr (std::is_same_v<T, Object>)
         {
-            core::Check(OCI_MsgSetObject(*this, value));
+            core::Check(OCI_MessageSetObject(*this, value));
         }
         else if constexpr (std::is_same_v<T, Raw>)
         {
             const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0]));
 
-            core::Check(OCI_MsgSetRaw(*this, data, static_cast<UInt32>(value.size())));
+            core::Check(OCI_MessageSetRaw(*this, data, static_cast<UInt32>(value.size())));
         }
         else
         {
@@ -92,17 +92,17 @@ namespace ocilib
 
     inline Date Message::GetEnqueueTime() const
     {
-        return Date(core::Check(OCI_MsgGetEnqueueTime(*this)), nullptr);
+        return Date(core::Check(OCI_MessageGetEnqueueTime(*this)), nullptr);
     }
 
     inline Int32 Message::GetAttemptCount() const
     {
-        return core::Check(OCI_MsgGetAttemptCount(*this));
+        return core::Check(OCI_MessageGetAttemptCount(*this));
     }
 
     inline Message::MessageState Message::GetState() const
     {
-        return MessageState(static_cast<MessageState::Type>(core::Check(OCI_MsgGetState(*this))));
+        return MessageState(static_cast<MessageState::Type>(core::Check(OCI_MessageGetState(*this))));
     }
 
     inline Raw Message::GetID() const
@@ -111,39 +111,39 @@ namespace ocilib
 
         std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
 
-        core::Check(OCI_MsgGetID(*this, static_cast<AnyPointer>(buffer.data()), &size));
+        core::Check(OCI_MessageGetID(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
         return core::MakeRaw(buffer.data(), size);
     }
 
     inline Int32 Message::GetExpiration() const
     {
-        return core::Check(OCI_MsgGetExpiration(*this));
+        return core::Check(OCI_MessageGetExpiration(*this));
     }
 
     inline void Message::SetExpiration(Int32 value)
     {
-        core::Check(OCI_MsgSetExpiration(*this, value));
+        core::Check(OCI_MessageSetExpiration(*this, value));
     }
 
     inline Int32 Message::GetEnqueueDelay() const
     {
-        return core::Check(OCI_MsgGetEnqueueDelay(*this));
+        return core::Check(OCI_MessageGetEnqueueDelay(*this));
     }
 
     inline void Message::SetEnqueueDelay(Int32 value)
     {
-        core::Check(OCI_MsgSetEnqueueDelay(*this, value));
+        core::Check(OCI_MessageSetEnqueueDelay(*this, value));
     }
 
     inline Int32 Message::GetPriority() const
     {
-        return core::Check(OCI_MsgGetPriority(*this));
+        return core::Check(OCI_MessageGetPriority(*this));
     }
 
     inline void Message::SetPriority(Int32 value)
     {
-        core::Check(OCI_MsgSetPriority(*this, value));
+        core::Check(OCI_MessageSetPriority(*this, value));
     }
 
     inline Raw Message::GetOriginalID() const
@@ -152,7 +152,7 @@ namespace ocilib
 
         std::vector<unsigned char> buffer(static_cast<Size>(size + 1));
 
-        core::Check(OCI_MsgGetOriginalID(*this, static_cast<AnyPointer>(buffer.data()), &size));
+        core::Check(OCI_MessageGetOriginalID(*this, static_cast<AnyPointer>(buffer.data()), &size));
 
         return core::MakeRaw(buffer.data(), size);
     }
@@ -161,37 +161,37 @@ namespace ocilib
     {
         const AnyPointer data = value.empty() ? nullptr : static_cast<AnyPointer>(const_cast<Raw::value_type*>(&value[0]));
 
-        core::Check(OCI_MsgSetOriginalID(*this, data, static_cast<UInt32>(value.size())));
+        core::Check(OCI_MessageSetOriginalID(*this, data, static_cast<UInt32>(value.size())));
     }
 
     inline String Message::GetCorrelation() const
     {
-        return core::MakeString(core::Check(OCI_MsgGetCorrelation(*this)));
+        return core::MakeString(core::Check(OCI_MessageGetCorrelation(*this)));
     }
 
     inline void Message::SetCorrelation(const String& value)
     {
-        core::Check(OCI_MsgSetCorrelation(*this, value.c_str()));
+        core::Check(OCI_MessageSetCorrelation(*this, value.c_str()));
     }
 
     inline String Message::GetExceptionQueue() const
     {
-        return core::MakeString(core::Check(OCI_MsgGetExceptionQueue(*this)));
+        return core::MakeString(core::Check(OCI_MessageGetExceptionQueue(*this)));
     }
 
     inline void Message::SetExceptionQueue(const String& value)
     {
-        core::Check(OCI_MsgSetExceptionQueue(*this, value.c_str()));
+        core::Check(OCI_MessageSetExceptionQueue(*this, value.c_str()));
     }
 
     inline Agent Message::GetSender() const
     {
-        return Agent(core::Check(OCI_MsgGetSender(*this)), nullptr);
+        return Agent(core::Check(OCI_MessageGetSender(*this)), nullptr);
     }
 
     inline void Message::SetSender(const Agent &agent)
     {
-        core::Check(OCI_MsgSetSender(*this, agent));
+        core::Check(OCI_MessageSetSender(*this, agent));
     }
 
     inline void Message::SetConsumers(std::vector<Agent> &agents)
@@ -204,7 +204,7 @@ namespace ocilib
             buffer[i] = static_cast<const Agent &>(agents[i]);
         }
 
-        core::Check(OCI_MsgSetConsumers(*this, buffer.data(), static_cast<UInt32>(size)));
+        core::Check(OCI_MessageSetConsumers(*this, buffer.data(), static_cast<UInt32>(size)));
     }
 
 }

@@ -52,7 +52,7 @@ namespace ocilib
         {
             if (GetMode() & OCI_BDM_OUT)
             {
-                OCI_Bind* bnd = core::Check(OCI_GetBindByName(_statement, _name.c_str()));
+                OCI_Bind* bnd = core::Check(OCI_StatementGetBindByName(_statement, _name.c_str()));
                 Size      size = core::Check(OCI_BindGetDataSize(bnd));
 
                 _object.assign(_data, _data + size);

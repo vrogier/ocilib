@@ -36,7 +36,7 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_FALSE(OCI_ExecuteStmt(stmt, OTEXT("select * from nonexistent_table_xyz")));
+        ASSERT_FALSE(OCI_StatementExecute(stmt, OTEXT("select * from nonexistent_table_xyz")));
 
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
@@ -65,7 +65,7 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_FALSE(OCI_ExecuteStmt(stmt, OTEXT("insert into TestErrorData values ('too long')")));
+        ASSERT_FALSE(OCI_StatementExecute(stmt, OTEXT("insert into TestErrorData values ('too long')")));
 
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
@@ -118,7 +118,7 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_FALSE(OCI_SetFetchMode(stmt, 9999));
+        ASSERT_FALSE(OCI_StatementSetFetchMode(stmt, 9999));
 
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
@@ -189,12 +189,12 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select 1 from dual")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select 1 from dual")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        ASSERT_FALSE(OCI_FetchPrev(rs));
+        ASSERT_FALSE(OCI_ResultsetFetchPrev(rs));
 
         auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
@@ -213,10 +213,10 @@ namespace TestCApi
         ASSERT_NE(nullptr, con);
         const auto stmt = OCI_StatementCreate(con);
         ASSERT_NE(nullptr, stmt);
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select :i from dual")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select :i from dual")));
         OCI_Int32 i = 1;
-        ASSERT_NE(nullptr, OCI_BindInt(stmt, OTEXT(":i"), &i));
-        const auto bnd = OCI_GetBindByName(stmt, OTEXT(":i"));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32(stmt, OTEXT(":i"), &i));
+        const auto bnd = OCI_StatementGetBindByName(stmt, OTEXT(":i"));
         ASSERT_NE(nullptr, bnd);
 
         ASSERT_EQ(0u, OCI_BindGetDataSizeAtPos(bnd, 2));
@@ -338,29 +338,29 @@ namespace TestCApi
 
         const auto typinf = OCI_TypeInfoGet(con, OTEXT("TestErrDateColl"), OCI_TIF_TYPE);
         ASSERT_NE(nullptr, typinf);
-        const auto coll = OCI_CollCreate(typinf);
-        const auto elem = OCI_ElemCreate(typinf);
+        const auto coll = OCI_CollectionCreate(typinf);
+        const auto elem = OCI_ElementCreate(typinf);
         const auto date = OCI_DateCreate(env);
         ASSERT_NE(nullptr, coll);
         ASSERT_NE(nullptr, elem);
         ASSERT_NE(nullptr, date);
-        ASSERT_TRUE(OCI_ElemSetDate(elem, date));
-        ASSERT_TRUE(OCI_CollAppend(coll, elem));
-        ASSERT_TRUE(OCI_ElemFree(elem));   /* append copies — caller keeps ownership */
+        ASSERT_TRUE(OCI_ElementSetDate(elem, date));
+        ASSERT_TRUE(OCI_CollectionAppend(coll, elem));
+        ASSERT_TRUE(OCI_ElementFree(elem));   /* append copies — caller keeps ownership */
 
-        const auto got = OCI_CollGetElem(coll, 0);
+        const auto got = OCI_CollectionGetElement(coll, 0);
         ASSERT_NE(nullptr, got);
 
         /* DATE element read as int -> OcilibExceptionTypeNotCompatible, source = element */
 
-        ASSERT_EQ(0, OCI_ElemGetInt(got));
+        ASSERT_EQ(0, OCI_ElementGetInt32(got));
 
         const auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);
         EXPECT_EQ(con, OCI_ErrorGetConnection(err));
 
         ASSERT_TRUE(OCI_DateFree(date));
-        ASSERT_TRUE(OCI_CollFree(coll));
+        ASSERT_TRUE(OCI_CollectionFree(coll));
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
         ExecDML(OTEXT("drop type TestErrDateColl"));
@@ -401,13 +401,13 @@ namespace TestCApi
 
         const auto env = OCI_EnvironmentCreate(nullptr, nullptr, OCI_ENV_DEFAULT);
         ASSERT_NE(nullptr, env);
-        ASSERT_TRUE(OCI_SetErrorHandler(env, error_handler));
+        ASSERT_TRUE(OCI_EnvironmentSetErrorHandler(env, error_handler));
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
         const auto stmt = OCI_StatementCreate(conn);
         handler_calls = 0;
 
-        OCI_ExecuteStmt(stmt, OTEXT("select * from table_that_does_not_exist_xyz"));
+        OCI_StatementExecute(stmt, OTEXT("select * from table_that_does_not_exist_xyz"));
 
         ASSERT_GT(handler_calls, 0);
 

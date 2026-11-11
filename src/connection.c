@@ -861,7 +861,7 @@ OCI_Boolean OcilibConnectionLogon
 
     /* get server version */
 
-    OcilibConnectionGetServerVersion(con);
+    OcilibConnectionGetServerVersionString(con);
 
     /* update internal status */
 
@@ -1409,10 +1409,10 @@ OCI_Boolean OcilibConnectionGetAutoCommit
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibConnectionIsConnected
+ * OcilibConnectionIsAlive
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibConnectionIsConnected
+OCI_Boolean OcilibConnectionIsAlive
 (
     OCI_Connection *con
 )
@@ -1629,10 +1629,10 @@ OCI_SessionMode OcilibConnectionGetSessionMode
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibConnectionGetServerVersion
+ * OcilibConnectionGetServerVersionString
  * --------------------------------------------------------------------------------------------- */
 
-const otext * OcilibConnectionGetServerVersion
+const otext * OcilibConnectionGetServerVersionString
 (
     OCI_Connection *con
 )
@@ -1765,7 +1765,7 @@ OCI_UInt32 OcilibConnectionGetServerMajorVersion
 
     if (OCI_UNKNOWN == con->ver_num)
     {
-        OcilibConnectionGetServerVersion(con);
+        OcilibConnectionGetServerVersionString(con);
     }
 
     SET_RETVAL((OCI_UInt32) OCI_VER_MAJ(con->ver_num));
@@ -1792,7 +1792,7 @@ OCI_UInt32 OcilibConnectionGetServerMinorVersion
 
     if (OCI_UNKNOWN == con->ver_num)
     {
-        OcilibConnectionGetServerVersion(con);
+        OcilibConnectionGetServerVersionString(con);
     }
 
     SET_RETVAL((OCI_UInt32) OCI_VER_MIN(con->ver_num));
@@ -1819,7 +1819,7 @@ OCI_UInt32 OcilibConnectionGetServerRevisionVersion
 
     if (OCI_UNKNOWN == con->ver_num)
     {
-        OcilibConnectionGetServerVersion(con);
+        OcilibConnectionGetServerVersionString(con);
     }
 
     SET_RETVAL((OCI_UInt32) OCI_VER_REV(con->ver_num));
@@ -1991,7 +1991,7 @@ OCI_Boolean OcilibConnectionEnableServerOutput
     /* enable server output */
 
     CHECK(OcilibStatementPrepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.ENABLE(:n); END;")));
-    CHECK_NULL(OcilibStatementBindUnsignedInt(con->svopt->stmt, OTEXT(":n"), &bufsize));
+    CHECK_NULL(OcilibStatementBindUInt32(con->svopt->stmt, OTEXT(":n"), &bufsize));
 
     if (0 == bufsize)
     {
@@ -2001,7 +2001,7 @@ OCI_Boolean OcilibConnectionEnableServerOutput
         CHECK(OcilibBindSetNull(bnd));
     }
 
-    CHECK(OcilibStatementExecute(con->svopt->stmt));
+    CHECK(OcilibStatementExecutePrepared(con->svopt->stmt));
 
     /* prepare the retrieval statement call */
 
@@ -2009,7 +2009,7 @@ OCI_Boolean OcilibConnectionEnableServerOutput
 
     CHECK(OcilibStatementPrepare(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.GET_LINES(:s, :i); END;")));
 
-    CHECK_NULL(OcilibStatementBindArrayOfStrings
+    CHECK_NULL(OcilibStatementBindStringArray
                (
                    con->svopt->stmt, OTEXT(":s"),
                    (otext *) con->svopt->arrbuf,
@@ -2018,7 +2018,7 @@ OCI_Boolean OcilibConnectionEnableServerOutput
                )
                );
 
-    CHECK_NULL(OcilibStatementBindUnsignedInt
+    CHECK_NULL(OcilibStatementBindUInt32
                (
                    con->svopt->stmt, OTEXT(":i"),
                    &con->svopt->cursize
@@ -2055,7 +2055,7 @@ OCI_Boolean OcilibConnectionDisableServerOutput
 
     if (NULL != con->svopt)
     {
-        OcilibStatementExecuteStmt(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.DISABLE(); END;"));
+        OcilibStatementExecute(con->svopt->stmt, OTEXT("BEGIN DBMS_OUTPUT.DISABLE(); END;"));
 
         if (NULL != con->svopt->stmt)
         {
@@ -2097,7 +2097,7 @@ const otext * OcilibConnectionGetServerOutput
         {
             con->svopt->cursize = con->svopt->arrsize;
 
-            CHECK(OcilibStatementExecute(con->svopt->stmt));
+            CHECK(OcilibStatementExecutePrepared(con->svopt->stmt));
 
             con->svopt->curpos = 0;
         }
@@ -2979,10 +2979,10 @@ OCI_UInt32 OcilibConnectionGetMaxCursors
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibConnectionExecuteImmediate
+ * OcilibConnectionImmediate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibConnectionExecuteImmediate
+OCI_Boolean OcilibConnectionImmediate
 (
     OCI_Connection *con,
     const otext    *sql,
@@ -3007,11 +3007,11 @@ OCI_Boolean OcilibConnectionExecuteImmediate
 
     /* First, execute SQL */
 
-    CHECK(OcilibStatementExecuteStmt(stmt, sql));
+    CHECK(OcilibStatementExecute(stmt, sql));
 
     /* get resultset and set up variables */
 
-    if (OCI_CST_SELECT == OcilibStatementGetStatementType(stmt))
+    if (OCI_CST_SELECT == OcilibStatementGetType(stmt))
     {
         CHECK(OcilibStatementFetchIntoUserVariables(stmt, args));
     }
@@ -3028,10 +3028,10 @@ OCI_Boolean OcilibConnectionExecuteImmediate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibConnectionExecuteImmediateFmt
+ * OcilibConnectionImmediateFormat
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibConnectionExecuteImmediateFmt
+OCI_Boolean OcilibConnectionImmediateFormat
 (
     OCI_Connection *con,
     const otext    *sql,
@@ -3082,7 +3082,7 @@ OCI_Boolean OcilibConnectionExecuteImmediateFmt
 
     /* get resultset and set up variables */
 
-    if (OCI_CST_SELECT == OcilibStatementGetStatementType(stmt))
+    if (OCI_CST_SELECT == OcilibStatementGetType(stmt))
     {
         CHECK(OcilibStatementFetchIntoUserVariables(stmt, second_pass_args));
     }

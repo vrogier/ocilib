@@ -16,6 +16,13 @@ For the C layer (`ocilib.h`), see `migration-guide-c-api.md`.
 > it compiles silently but changes runtime behaviour. Steps 5–9 are mechanical or
 > feature-scoped. Steps 10–11 only affect users of specific features.
 
+> **The big renaming:** v5 normalizes the entire public **C** API on the
+> `OCI_<Type><Action>` handle model (~460 functions, 11 typedefs, 12 constants —
+> see `migration-guide-c-api.md`, Appendix A). On the **C++** side there is
+> nothing to do: class and method names already match the model and are
+> unchanged. If your code mixes `ocilib` wrappers with raw `OCI_*` calls,
+> check the C guide for the functions you call directly.
+
 ---
 
 ## 1. Breaking changes at a glance
@@ -651,6 +658,7 @@ int main()
     return 0;   // no explicit cleanup needed
 }
 ```
+
 
 ---
 

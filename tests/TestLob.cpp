@@ -583,12 +583,12 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT c FROM TestLob_Fetch WHERE id = 1")));
-        const auto rs = OCI_GetResultset(stmt);
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT c FROM TestLob_Fetch WHERE id = 1")));
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto fetched = OCI_GetLob(rs, 0);
+        const auto fetched = OCI_ResultsetGetLob(rs, 0);
         ASSERT_NE(nullptr, fetched);
         ASSERT_EQ((OCI_UInt32) OCI_CLOB, OCI_LobGetType(fetched));
 
@@ -679,7 +679,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, lob);
         const auto text = OTEXT("abc");
 
-        ASSERT_EQ(OCI_9_2, OCI_GetVersionConnection(conn));
+        ASSERT_EQ(OCI_9_2, OCI_ConnectionGetVersion(conn));
 
         OCI_UInt32 cc = 3, bc = 0;
         ASSERT_TRUE(OCI_LobWrite(lob, (void*)text, &cc, &bc));
@@ -748,7 +748,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, lob);
         const auto text = OTEXT("abc");
 
-        ASSERT_EQ(OCI_9_2, OCI_GetVersionConnection(conn));
+        ASSERT_EQ(OCI_9_2, OCI_ConnectionGetVersion(conn));
 
         OCI_UInt32 cc = 3, bc = 0;
         ASSERT_TRUE(OCI_LobWrite(lob, (void*)text, &cc, &bc));
@@ -790,7 +790,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, env);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
-        ASSERT_EQ(OCI_10_1, OCI_GetVersionConnection(conn));
+        ASSERT_EQ(OCI_10_1, OCI_ConnectionGetVersion(conn));
 
         const auto arr = OCI_LobArrayCreate(conn, OCI_CLOB, 2);
         ASSERT_NE(nullptr, arr);

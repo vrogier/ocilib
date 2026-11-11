@@ -25,10 +25,10 @@ namespace TestCApi
         auto ints = static_cast<OCI_Int32*>(calloc(actualRowCount, sizeof(OCI_Int32)));
         auto dates = static_cast<OCI_Date**>(calloc(actualRowCount, sizeof(OCI_Date*)));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("INSERT INTO ISSUE_216(ID, DATEVALUE) VALUES(:i, :d)")));
-        ASSERT_TRUE(OCI_BindArraySetSize(stmt, bufferSize));
-        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":i"), ints, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfDates(stmt, OTEXT(":d"), dates, 0));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("INSERT INTO ISSUE_216(ID, DATEVALUE) VALUES(:i, :d)")));
+        ASSERT_TRUE(OCI_StatementBindArraySetSize(stmt, bufferSize));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32Array(stmt, OTEXT(":i"), ints, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindDateArray(stmt, OTEXT(":d"), dates, 0));
 
         while (offset < totalRowCount)
         {
@@ -52,10 +52,10 @@ namespace TestCApi
 
             if (actualRowCount < bufferSize)
             {
-                ASSERT_TRUE(OCI_BindArraySetSize(stmt, actualRowCount));
+                ASSERT_TRUE(OCI_StatementBindArraySetSize(stmt, actualRowCount));
             }
 
-            ASSERT_TRUE(OCI_Execute(stmt));
+            ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
             offset += actualRowCount;
         }
 
@@ -97,12 +97,12 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        ASSERT_TRUE(OCI_ServerEnableOutput(conn, 32000, 5, 255));
+        ASSERT_TRUE(OCI_ConnectionEnableServerOutput(conn, 32000, 5, 255));
 
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt,
+        ASSERT_TRUE(OCI_StatementPrepare(stmt,
             OTEXT(
                 "declare "
                 "type val_tab is table of number index by binary_integer;"
@@ -127,17 +127,17 @@ namespace TestCApi
             ASSERT_TRUE(OCI_NumberFromText(numbers[i], TO_STRING(i + 1).data(), nullptr));
         }
 
-        ASSERT_NE(nullptr, OCI_BindArrayOfNumbers(stmt, OTEXT(":v"), numbers.data(), static_cast<OCI_UInt32>(numbers.size())));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN_OUT));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_NE(nullptr, OCI_StatementBindNumberArray(stmt, OTEXT(":v"), numbers.data(), static_cast<OCI_UInt32>(numbers.size())));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_StatementGetBind(stmt, 0), OCI_BDM_IN_OUT));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        ASSERT_EQ(TO_STRING(numbers.size()), String(OCI_ServerGetOutput(conn)));
+        ASSERT_EQ(TO_STRING(numbers.size()), String(OCI_ConnectionGetServerOutput(conn)));
 
         for (OCI_Size i = 0; i < numbers.size(); i++)
         {
             otext buffer[100];
             osprintf(buffer, OTEXT("v(%d) = %d"), static_cast<OCI_Int32>(i) + 1, static_cast<OCI_Int32>(i) + 1 + 10);
-            ASSERT_EQ(String(buffer), String(OCI_ServerGetOutput(conn)));
+            ASSERT_EQ(String(buffer), String(OCI_ConnectionGetServerOutput(conn)));
         }
 
         for (OCI_Size i = 0; i < numbers.size(); i++)
@@ -150,7 +150,7 @@ namespace TestCApi
         }
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
-        ASSERT_TRUE(OCI_ServerDisableOutput(conn));
+        ASSERT_TRUE(OCI_ConnectionDisableServerOutput(conn));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
     }
@@ -175,15 +175,15 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("declare c clob;  begin  c := c||rpad('a', 32767, 'a'); insert into FetchLobAsString values (c); end;")));
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select value from FetchLobAsString")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("declare c clob;  begin  c := c||rpad('a', 32767, 'a'); insert into FetchLobAsString values (c); end;")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select value from FetchLobAsString")));
 
-        auto rslt = OCI_GetResultset(stmt);
+        auto rslt = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rslt);
 
-        ASSERT_TRUE(OCI_FetchNext(rslt));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rslt));
 
-        auto value = OCI_GetString(rslt, 0);
+        auto value = OCI_ResultsetGetString(rslt, 0);
         ASSERT_NE(nullptr, value);
         auto len = strlen(value);
         ASSERT_EQ(32767, len);
@@ -242,17 +242,17 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("SELECT NAME, LENGTH(ROWID), ROWID FROM test_urowid")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("SELECT NAME, LENGTH(ROWID), ROWID FROM test_urowid")));
 
-        const auto rslt = OCI_GetResultset(stmt);
+        const auto rslt = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rslt);
 
-        ASSERT_TRUE(OCI_FetchNext(rslt));
-        const auto name = OCI_GetString(rslt, 0);
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rslt));
+        const auto name = OCI_ResultsetGetString(rslt, 0);
         ASSERT_NE(nullptr, name);
-        const auto length = static_cast<OCI_Size>(OCI_GetInt(rslt, 1));
+        const auto length = static_cast<OCI_Size>(OCI_ResultsetGetInt32(rslt, 1));
         ASSERT_EQ(true, length > 0);
-        const auto rowid = OCI_GetString(rslt, 2);
+        const auto rowid = OCI_ResultsetGetString(rslt, 2);
         ASSERT_NE(nullptr, rowid);
 
         const auto expected_length = length;
@@ -288,20 +288,20 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select id, val, length(val) from TestIssue288 order by id")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select id, val, length(val) from TestIssue288 order by id")));
 
-        auto rslt = OCI_GetResultset(stmt);
+        auto rslt = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rslt);
 
         auto counter = 0u;
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
             counter++;
 
-            auto id = OCI_GetInt(rslt, 0);
-            auto val = OCI_GetString(rslt, 1);
-            auto len = OCI_GetInt(rslt, 2);
+            auto id = OCI_ResultsetGetInt32(rslt, 0);
+            auto val = OCI_ResultsetGetString(rslt, 1);
+            auto len = OCI_ResultsetGetInt32(rslt, 2);
 
             ASSERT_NE(nullptr, val);
 
@@ -370,16 +370,16 @@ namespace TestCApi
             OTEXT("  :id  := item.id;")
             OTEXT("end; ");
 
-        ASSERT_TRUE(OCI_Prepare(stmt, sql));
-        ASSERT_NE(nullptr, OCI_BindBigInt(stmt, OTEXT(":num"), &num));
-        ASSERT_NE(nullptr, OCI_BindBigInt(stmt, OTEXT(":id"), &id));
-        ASSERT_NE(nullptr, OCI_BindBigInt(stmt, OTEXT(":ret"), &ret));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, sql));
+        ASSERT_NE(nullptr, OCI_StatementBindInt64(stmt, OTEXT(":num"), &num));
+        ASSERT_NE(nullptr, OCI_StatementBindInt64(stmt, OTEXT(":id"), &id));
+        ASSERT_NE(nullptr, OCI_StatementBindInt64(stmt, OTEXT(":ret"), &ret));
 
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_OUT));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 2), OCI_BDM_OUT));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_StatementGetBind(stmt, 0), OCI_BDM_IN));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_StatementGetBind(stmt, 1), OCI_BDM_OUT));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_StatementGetBind(stmt, 2), OCI_BDM_OUT));
 
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -407,17 +407,17 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select test, value from TestIssue313")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select test, value from TestIssue313")));
 
-        auto rslt = OCI_GetResultset(stmt);
+        auto rslt = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rslt);
 
         auto counter = 0u;
 
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
-            auto test = OCI_GetInt(rslt, 0);
-            auto value = OCI_GetString(rslt, 1);
+            auto test = OCI_ResultsetGetInt32(rslt, 0);
+            auto value = OCI_ResultsetGetString(rslt, 1);
 
             if (test == 1 || test == 2)
             {
@@ -480,12 +480,12 @@ namespace TestCApi
             const auto msg = OCI_DequeueGet(dequeue);
             if (msg == nullptr) return false;
 
-            OCI_Commit(conn);
+            OCI_ConnectionCommit(conn);
 
-            const auto jmsBytesMessage = OCI_MsgGetObject(msg);
+            const auto jmsBytesMessage = OCI_MessageGetObject(msg);
             if (jmsBytesMessage == nullptr) return false;
 
-            const auto bytesLen = OCI_ObjectGetUnsignedInt(jmsBytesMessage, OTEXT("BYTES_LEN"));
+            const auto bytesLen = OCI_ObjectGetUInt32(jmsBytesMessage, OTEXT("BYTES_LEN"));
             if (bytesLen != info.Size) return false;
 
             if (info.Type == ExpectedPayloadType::Raw)
@@ -529,19 +529,19 @@ namespace TestCApi
         const auto jmsHeader = OCI_ObjectCreate(typeJmsHeader);
         if (jmsHeader == nullptr) return nullptr;
 
-        const auto jmsPropArray = OCI_CollCreate(typeJmsPropArray);
+        const auto jmsPropArray = OCI_CollectionCreate(typeJmsPropArray);
         if (jmsPropArray == nullptr) return nullptr;
 
         const auto jmsProp = OCI_ObjectCreate(typeJmsProperty);
         if (jmsProp == nullptr) return nullptr;
 
-        const auto elem = OCI_ElemCreate(typeJmsPropArray);
+        const auto elem = OCI_ElementCreate(typeJmsPropArray);
         if (elem == nullptr) return nullptr;
 
-        auto res = OCI_ObjectSetInt(jmsProp, OTEXT("TYPE"), 100);
+        auto res = OCI_ObjectSetInt32(jmsProp, OTEXT("TYPE"), 100);
         if (res == false) return nullptr;
 
-        res = OCI_ObjectSetInt(jmsProp, OTEXT("JAVA_TYPE"), 27);
+        res = OCI_ObjectSetInt32(jmsProp, OTEXT("JAVA_TYPE"), 27);
         if (res == false) return nullptr;
 
         res = OCI_ObjectSetString(jmsProp, OTEXT("STR_VALUE"), OTEXT("prop"));
@@ -550,10 +550,10 @@ namespace TestCApi
         res = OCI_ObjectSetString(jmsProp, OTEXT("NAME"), OTEXT("value"));
         if (res == false) return nullptr;
 
-        res = OCI_ElemSetObject(elem, jmsProp);
+        res = OCI_ElementSetObject(elem, jmsProp);
         if (res == false) return nullptr;
 
-        res = OCI_CollAppend(jmsPropArray, elem);
+        res = OCI_CollectionAppend(jmsPropArray, elem);
         if (res == false) return nullptr;
 
         res = OCI_ObjectSetColl(jmsHeader, OTEXT("PROPERTIES"), jmsPropArray);
@@ -565,26 +565,26 @@ namespace TestCApi
         res = OCI_ObjectFree(jmsHeader);
         if (res == false) return nullptr;
 
-        res = OCI_CollFree(jmsPropArray);
+        res = OCI_CollectionFree(jmsPropArray);
         if (res == false) return nullptr;
 
         res = OCI_ObjectFree(jmsProp);
         if (res == false) return nullptr;
 
-        res = OCI_ElemFree(elem);
+        res = OCI_ElementFree(elem);
         if (res == false) return nullptr;
 
         return jmsBytesMessage;
     }
 
-    OCI_Msg* Issue316_CreateRawMessage(OCI_Connection* conn)
+    OCI_Message* Issue316_CreateRawMessage(OCI_Connection* conn)
     {
         auto res{ true };
 
         const auto typeJmsBytesMessage = OCI_TypeInfoGet(conn, JmsBytesMessageType, OCI_TIF_TYPE);
         if (typeJmsBytesMessage == nullptr) return nullptr;
 
-        const auto msgRaw = OCI_MsgCreate(typeJmsBytesMessage);
+        const auto msgRaw = OCI_MessageCreate(typeJmsBytesMessage);
         if (msgRaw == nullptr) return nullptr;
 
         const auto objectRaw = Issue316_CreateJmsBytesMessage(conn);
@@ -598,7 +598,7 @@ namespace TestCApi
         res = OCI_ObjectSetDouble(objectRaw, OTEXT("BYTES_LEN"), 6);
         if (res == false) return nullptr;
 
-        res = OCI_MsgSetObject(msgRaw, objectRaw);
+        res = OCI_MessageSetObject(msgRaw, objectRaw);
         if (res == false) return nullptr;
 
         res = OCI_ObjectFree(objectRaw);
@@ -607,14 +607,14 @@ namespace TestCApi
         return msgRaw;
     }
 
-    OCI_Msg* Issue316_CreateLobMessage(OCI_Connection* conn)
+    OCI_Message* Issue316_CreateLobMessage(OCI_Connection* conn)
     {
         auto res{ true };
 
         const auto typeJmsBytesMessage = OCI_TypeInfoGet(conn, JmsBytesMessageType, OCI_TIF_TYPE);
         if (typeJmsBytesMessage == nullptr) return nullptr;
 
-        const auto msgBlob = OCI_MsgCreate(typeJmsBytesMessage);
+        const auto msgBlob = OCI_MessageCreate(typeJmsBytesMessage);
         if (msgBlob == nullptr) return nullptr;
 
         const auto objectBlob = Issue316_CreateJmsBytesMessage(conn);
@@ -635,7 +635,7 @@ namespace TestCApi
         res = OCI_ObjectSetDouble(objectBlob, OTEXT("BYTES_LEN"), 9);
         if (res == false) return nullptr;
 
-        res = OCI_MsgSetObject(msgBlob, objectBlob);
+        res = OCI_MessageSetObject(msgBlob, objectBlob);
         if (res == false) return nullptr;
 
         res = OCI_LobFree(lob);
@@ -678,10 +678,10 @@ namespace TestCApi
         ASSERT_TRUE(OCI_EnqueuePut(enqueue, rawMsg));
         ASSERT_TRUE(OCI_EnqueuePut(enqueue, lobMsg));
 
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
-        ASSERT_TRUE(OCI_MsgFree(rawMsg));
-        ASSERT_TRUE(OCI_MsgFree(lobMsg));
+        ASSERT_TRUE(OCI_MessageFree(rawMsg));
+        ASSERT_TRUE(OCI_MessageFree(lobMsg));
 
         ASSERT_TRUE(Issue316_ReadMessages(conn, dequeue));
 
@@ -706,13 +706,13 @@ namespace TestCApi
 
         ASSERT_NE(nullptr, conn);
 
-        ASSERT_TRUE(OCI_SetTimeout(conn, OCI_NTO_SEND, 1000));
-        ASSERT_TRUE(OCI_SetTimeout(conn, OCI_NTO_RECEIVE, 2000));
-        ASSERT_TRUE(OCI_SetTimeout(conn, OCI_NTO_CALL, 3000));
+        ASSERT_TRUE(OCI_ConnectionSetTimeout(conn, OCI_NTO_SEND, 1000));
+        ASSERT_TRUE(OCI_ConnectionSetTimeout(conn, OCI_NTO_RECEIVE, 2000));
+        ASSERT_TRUE(OCI_ConnectionSetTimeout(conn, OCI_NTO_CALL, 3000));
 
-        ASSERT_EQ(1000, OCI_GetTimeout(conn, OCI_NTO_SEND));
-        ASSERT_EQ(2000, OCI_GetTimeout(conn, OCI_NTO_RECEIVE));
-        ASSERT_EQ(3000, OCI_GetTimeout(conn, OCI_NTO_CALL));
+        ASSERT_EQ(1000, OCI_ConnectionGetTimeout(conn, OCI_NTO_SEND));
+        ASSERT_EQ(2000, OCI_ConnectionGetTimeout(conn, OCI_NTO_RECEIVE));
+        ASSERT_EQ(3000, OCI_ConnectionGetTimeout(conn, OCI_NTO_CALL));
 
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -731,20 +731,20 @@ namespace TestCApi
         const auto typeJmsBytesMessage = OCI_TypeInfoGet(conn, JmsBytesMessageType, OCI_TIF_TYPE);
         ASSERT_NE(nullptr, typeJmsBytesMessage);
 
-        const auto msgRaw = OCI_MsgCreate(typeJmsBytesMessage);
+        const auto msgRaw = OCI_MessageCreate(typeJmsBytesMessage);
         ASSERT_NE(nullptr, msgRaw);
 
-        const auto enqueueDate = OCI_MsgGetEnqueueTime(msgRaw);
+        const auto enqueueDate = OCI_MessageGetEnqueueTime(msgRaw);
         ASSERT_NE(nullptr, enqueueDate);
 
-        ASSERT_TRUE(OCI_MsgFree(msgRaw));
+        ASSERT_TRUE(OCI_MessageFree(msgRaw));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
     }
 /*
     TEST(ReportedIssues, Issue370)
     {
-        ASSERT_EQ(nullptr, OCI_GetUserData(nullptr));
+        ASSERT_EQ(nullptr, OCI_HandleGetUserData(nullptr));
 
         const auto err = OCI_GetLastError();
         ASSERT_NE(nullptr, err);

@@ -34,19 +34,19 @@ namespace ocilib
         Connection connection = typeInfo.GetConnection();
         AcquireAllocated
         (
-            core::Check(OCI_RefCreate(typeInfo)),
+            core::Check(OCI_ReferenceCreate(typeInfo)),
             connection.GetHandle()
         );
     }
 
-    inline Reference::Reference(OCI_Ref *pRef, core::Handle *parent)
+    inline Reference::Reference(OCI_Reference *pRef, core::Handle *parent)
     {
         AcquireTransient(pRef, parent);
     }
 
     inline TypeInfo Reference::GetTypeInfo() const
     {
-        OCI_TypeInfo* typeInfo = core::Check(OCI_RefGetTypeInfo(*this));
+        OCI_TypeInfo* typeInfo = core::Check(OCI_ReferenceGetTypeInfo(*this));
 
         Connection connection
         (
@@ -60,7 +60,7 @@ namespace ocilib
 
     inline Object Reference::GetObject() const
     {
-        return Object(core::Check(OCI_RefGetObject(*this)), GetHandle());
+        return Object(core::Check(OCI_ReferenceGetObject(*this)), GetHandle());
     }
 
     inline Reference Reference::Clone() const
@@ -70,36 +70,36 @@ namespace ocilib
         Connection connection = typeInfo.GetConnection();
         result.AcquireAllocated
         (
-            core::Check(OCI_RefCreate(typeInfo)),
+            core::Check(OCI_ReferenceCreate(typeInfo)),
             connection.GetHandle()
         );
 
-        core::Check(OCI_RefAssign(result, *this));
+        core::Check(OCI_ReferenceAssign(result, *this));
 
         return result;
     }
 
     inline bool Reference::IsReferenceNull() const
     {
-        return (core::Check(OCI_RefIsNull(*this)) == TRUE);
+        return (core::Check(OCI_ReferenceIsNull(*this)) == TRUE);
     }
 
     inline void Reference::SetReferenceNull()
     {
-        core::Check(OCI_RefSetNull(*this));
+        core::Check(OCI_ReferenceSetNull(*this));
     }
 
     inline String Reference::ToString() const
     {
         if (!IsNull())
         {
-            const UInt32 size = core::Check(OCI_RefGetHexSize(*this));
+            const UInt32 size = core::Check(OCI_ReferenceGetHexSize(*this));
 
             String result;
 
             result.resize(static_cast<Size>(size));
 
-            core::Check(OCI_RefToText(*this, size, const_cast<otext*>(result.data())));
+            core::Check(OCI_ReferenceToText(*this, size, const_cast<otext*>(result.data())));
 
             return result;
         }

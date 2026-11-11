@@ -24,7 +24,7 @@ static void CheckColumnFullType
 
     otext buffer[256] = OTEXT("");
 
-    OCI_ColumnGetFullSQLType(col, buffer, 256);
+    OCI_ColumnGetFullSqlType(col, buffer, 256);
 
     ASSERT_EQ(typeName, String(buffer));  
 }
@@ -238,20 +238,20 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("INSERT INTO TestBindVector values(:v)")));
-        ASSERT_NE(nullptr, OCI_BindVector(stmt, OTEXT(":v"), vect));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("INSERT INTO TestBindVector values(:v)")));
+        ASSERT_NE(nullptr, OCI_StatementBindVector(stmt, OTEXT(":v"), vect));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
     
         ASSERT_TRUE(OCI_VectorFree(vect));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select value from TestBindVector")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select value from TestBindVector")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        vect = OCI_GetVector(rs, 0);
+        vect = OCI_ResultsetGetVector(rs, 0);
         ASSERT_NE(nullptr, vect);
 
         OCI_UInt32 dimensions = 0;
@@ -291,14 +291,14 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select value from TestFetchVector")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select value from TestFetchVector")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        auto vect = OCI_GetVector(rs, 0);
+        auto vect = OCI_ResultsetGetVector(rs, 0);
         ASSERT_NE(nullptr, vect);
 
         OCI_UInt32 dimensions = 0;
@@ -338,14 +338,14 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select value from TestFetchVectorAsString")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select value from TestFetchVectorAsString")));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        auto str = OCI_GetString(rs, 0);
+        auto str = OCI_ResultsetGetString(rs, 0);
 
         ASSERT_EQ(String(OTEXT("[1,2,3,4]")), String(str));
 
@@ -371,16 +371,16 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("update TestRegisterVector set code = 2 returning value into :value")));
-        ASSERT_TRUE(OCI_RegisterVector(stmt, OTEXT(":value")));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("update TestRegisterVector set code = 2 returning value into :value")));
+        ASSERT_TRUE(OCI_StatementRegisterVector(stmt, OTEXT(":value")));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        auto rslt = OCI_GetResultset(stmt);
+        auto rslt = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rslt);
 
-          ASSERT_TRUE(OCI_FetchNext(rslt));
+          ASSERT_TRUE(OCI_ResultsetFetchNext(rslt));
 
-        auto str = OCI_GetString(rslt, 0);
+        auto str = OCI_ResultsetGetString(rslt, 0);
 
         ASSERT_EQ(String(OTEXT("[1,2,3,4]")), str);
 

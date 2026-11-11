@@ -104,20 +104,20 @@ namespace TestCApi
 
     TEST_F(TestEnqOps, EnqueuePutThenCommit_EnqueuesMessage)
     {
-        const auto msg = OCI_MsgCreate(inf);
+        const auto msg = OCI_MessageCreate(inf);
         ASSERT_NE(nullptr, msg);
         const auto obj = OCI_ObjectCreate(inf);
         ASSERT_NE(nullptr, obj);
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("title"), OTEXT("Enqueue test")));
         ASSERT_TRUE(OCI_ObjectSetString(obj, OTEXT("content"), OTEXT("hello")));
-        ASSERT_TRUE(OCI_MsgSetObject(msg, obj));
+        ASSERT_TRUE(OCI_MessageSetObject(msg, obj));
 
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg));
 
-        EXPECT_TRUE(OCI_Commit(conn));
+        EXPECT_TRUE(OCI_ConnectionCommit(conn));
 
         ASSERT_TRUE(OCI_ObjectFree(obj));
-        ASSERT_TRUE(OCI_MsgFree(msg));
+        ASSERT_TRUE(OCI_MessageFree(msg));
     }
 
     /* shared fixture: payload type + started queue + live enqueue */
@@ -171,15 +171,15 @@ namespace TestCApi
             OCI_ConnectionFree(conn);
         }
 
-        OCI_Msg* CreateMsg()
+        OCI_Message* CreateMsg()
         {
-            const auto msg = OCI_MsgCreate(inf);
+            const auto msg = OCI_MessageCreate(inf);
             EXPECT_NE(nullptr, msg);
 
             const auto obj = OCI_ObjectCreate(inf);
             EXPECT_NE(nullptr, obj);
             EXPECT_TRUE(OCI_ObjectSetString(obj, OTEXT("title"), OTEXT("rel id")));
-            EXPECT_TRUE(OCI_MsgSetObject(msg, obj));
+            EXPECT_TRUE(OCI_MessageSetObject(msg, obj));
             EXPECT_TRUE(OCI_ObjectFree(obj));
 
             return msg;
@@ -199,14 +199,14 @@ namespace TestCApi
         ASSERT_NE(nullptr, msg);
 
         ASSERT_TRUE(OCI_EnqueuePut(enq, msg));
-        ASSERT_TRUE(OCI_Commit(conn));
+        ASSERT_TRUE(OCI_ConnectionCommit(conn));
 
         unsigned char outMsgId[32] = {};
         OCI_UInt32 outMsgIdLen = sizeof(outMsgId);
         ASSERT_TRUE(OCI_EnqueueGetRelativeMsgID(enq, outMsgId, &outMsgIdLen));
         ASSERT_LE(outMsgIdLen, sizeof(outMsgId));
 
-        ASSERT_TRUE(OCI_MsgFree(msg));
+        ASSERT_TRUE(OCI_MessageFree(msg));
     }
 
     TEST_F(TestEnqQueue, EnqueuePutOnMissingQueue_Fails)
@@ -217,12 +217,12 @@ namespace TestCApi
         const auto bad = OCI_EnqueueCreate(inf, OTEXT("TestEnqNoSuchQueue"));
         ASSERT_NE(nullptr, bad);
 
-        const auto msg = OCI_MsgCreate(inf);
+        const auto msg = OCI_MessageCreate(inf);
         ASSERT_NE(nullptr, msg);
         ASSERT_FALSE(OCI_EnqueuePut(bad, msg));
         ASSERT_NE(nullptr, OCI_GetLastError());
 
-        ASSERT_TRUE(OCI_MsgFree(msg));
+        ASSERT_TRUE(OCI_MessageFree(msg));
         ASSERT_TRUE(OCI_EnqueueFree(bad));
     }
 
@@ -238,10 +238,10 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        /* NULL typeinfo -> OCI_EnqueueCreate / OCI_MsgCreate fail */
+        /* NULL typeinfo -> OCI_EnqueueCreate / OCI_MessageCreate fail */
         ASSERT_EQ(nullptr, OCI_EnqueueCreate(nullptr, OTEXT("TestEnqNullQ")));
-        ASSERT_EQ(nullptr, OCI_MsgCreate(nullptr));
-        ASSERT_FALSE(OCI_MsgFree(nullptr));
+        ASSERT_EQ(nullptr, OCI_MessageCreate(nullptr));
+        ASSERT_FALSE(OCI_MessageFree(nullptr));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }

@@ -18,25 +18,25 @@
  * limitations under the License.
  */
 
-#include "sodacoll.h"
+#include "sodacollection.h"
 
 #include "macros.h"
 #include "memory.h"
-#include "sodadb.h"
-#include "sodadoc.h"
-#include "sodadoccursor.h"
+#include "sodadatabase.h"
+#include "sodadocument.h"
+#include "sodadocumentcursor.h"
 #include "sodaoptions.h"
 #include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
-  * OcilibSodaCollGetStringAttribute
+  * OcilibSodaCollectionGetStringAttribute
   * --------------------------------------------------------------------------------------------- */
 
-static otext* OcilibSodaCollGetStringAttribute
+static otext* OcilibSodaCollectionGetStringAttribute
 (
-    OCI_SodaColl* coll,
-    OCI_Int32     attr,
-    otext      ** str
+    OCI_SodaCollection* coll,
+    OCI_Int32           attr,
+    otext            ** str
 )
 {
     ENTER_FUNC
@@ -76,12 +76,12 @@ static otext* OcilibSodaCollGetStringAttribute
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollRefreshContentInfo
+ * OcilibSodaCollectionRefreshContentInfo
  * --------------------------------------------------------------------------------------------- */
 
-static OCI_Boolean OcilibSodaCollRefreshContentInfo
+static OCI_Boolean OcilibSodaCollectionRefreshContentInfo
 (
-    OCI_SodaColl* coll
+    OCI_SodaCollection* coll
 )
 {
     ENTER_FUNC
@@ -127,19 +127,19 @@ static OCI_Boolean OcilibSodaCollRefreshContentInfo
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollInitialize
+ * OcilibSodaCollectionInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaColl* OcilibSodaCollInitialize
+OCI_SodaCollection* OcilibSodaCollectionInitialize
 (
-    OCI_SodaColl* coll,
-    OCI_SodaDb  * sdb,
-    OCISodaColl * handle
+    OCI_SodaCollection* coll,
+    OCI_SodaDatabase  * sdb,
+    OCISodaColl       * handle
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaColl*, NULL,
+        /* returns */ OCI_SodaCollection*, NULL,
         /* context */ OCI_IPC_SODA_DB, sdb
     );
 
@@ -157,7 +157,7 @@ OCI_SodaColl* OcilibSodaCollInitialize
     coll->sdb    = sdb;
     coll->handle = handle;
 
-    CHECK(OcilibSodaCollRefreshContentInfo(coll));
+    CHECK(OcilibSodaCollectionRefreshContentInfo(coll));
 
     SET_RETVAL(coll);
 
@@ -173,36 +173,36 @@ OCI_SodaColl* OcilibSodaCollInitialize
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollGetName
+ * OcilibSodaCollectionGetName
  * --------------------------------------------------------------------------------------------- */
 
-const otext* OcilibSodaCollGetName
+const otext* OcilibSodaCollectionGetName
 (
-    OCI_SodaColl* coll
+    OCI_SodaCollection* coll
 )
 {
-    return OcilibSodaCollGetStringAttribute(coll, OCI_ATTR_SODA_COLL_NAME, &coll->name);
+    return OcilibSodaCollectionGetStringAttribute(coll, OCI_ATTR_SODA_COLL_NAME, &coll->name);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollGetMetadata
+ * OcilibSodaCollectionGetMetadata
  * --------------------------------------------------------------------------------------------- */
 
-const otext* OcilibSodaCollGetMetadata
+const otext* OcilibSodaCollectionGetMetadata
 (
-    OCI_SodaColl* coll
+    OCI_SodaCollection* coll
 )
 {
-    return OcilibSodaCollGetStringAttribute(coll, OCI_ATTR_SODA_DESCRIPTOR, &coll->descriptor);
+    return OcilibSodaCollectionGetStringAttribute(coll, OCI_ATTR_SODA_DESCRIPTOR, &coll->descriptor);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollGetConnection
+ * OcilibSodaCollectionGetConnection
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Connection* OcilibSodaCollGetConnection
+OCI_Connection* OcilibSodaCollectionGetConnection
 (
-    OCI_SodaColl* coll
+    OCI_SodaCollection* coll
 )
 {
     ENTER_FUNC
@@ -221,12 +221,12 @@ OCI_Connection* OcilibSodaCollGetConnection
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollIsMapped
+ * OcilibSodaCollectionIsMapped
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollIsMapped
+OCI_Boolean OcilibSodaCollectionIsMapped
 (
-    OCI_SodaColl* coll
+    OCI_SodaCollection* coll
 )
 {
     ENTER_FUNC
@@ -242,7 +242,7 @@ OCI_Boolean OcilibSodaCollIsMapped
 
     if (coll->sdb->env->version_runtime >= OCI_23_4)
     {
-        (void)OcilibSodaCollGetStringAttribute(coll, OCI_ATTR_SODA_VIEW_NAME, &view);
+        (void)OcilibSodaCollectionGetStringAttribute(coll, OCI_ATTR_SODA_VIEW_NAME, &view);
 
         mapped = IS_STRING_VALID(view);
     }
@@ -256,12 +256,12 @@ OCI_Boolean OcilibSodaCollIsMapped
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollDrop
+ * OcilibSodaCollectionDrop
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollDrop
+OCI_Boolean OcilibSodaCollectionDrop
 (
-    OCI_SodaColl* coll
+    OCI_SodaCollection* coll
 )
 {
     ENTER_FUNC
@@ -299,12 +299,12 @@ OCI_Boolean OcilibSodaCollDrop
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollTruncate
+ * OcilibSodaCollectionTruncate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollTruncate
+OCI_Boolean OcilibSodaCollectionTruncate
 (
-    OCI_SodaColl* coll
+    OCI_SodaCollection* coll
 )
 {
     ENTER_FUNC
@@ -334,12 +334,12 @@ OCI_Boolean OcilibSodaCollTruncate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollFree
+ * OcilibSodaCollectionFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollFree
+OCI_Boolean OcilibSodaCollectionFree
 (
-    OCI_SodaColl* coll
+    OCI_SodaCollection* coll
 )
 {
     ENTER_FUNC
@@ -367,13 +367,13 @@ OCI_Boolean OcilibSodaCollFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollInsertDoc
+ * OcilibSodaCollectionInsertDocument
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollInsertDoc
+OCI_Boolean OcilibSodaCollectionInsertDocument
 (
-    OCI_SodaColl* coll,
-    OCI_SodaDoc * doc
+    OCI_SodaCollection* coll,
+    OCI_SodaDocument  * doc
 )
 {
     ENTER_FUNC
@@ -402,7 +402,7 @@ OCI_Boolean OcilibSodaCollInsertDoc
         (ub4)OCI_DEFAULT
     );
 
-    CHECK(OcilibSodaDocRefreshMetadata(doc, reshandle));
+    CHECK(OcilibSodaDocumentRefreshMetadata(doc, reshandle));
 
     SET_SUCCESS();
 
@@ -410,22 +410,22 @@ OCI_Boolean OcilibSodaCollInsertDoc
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollFind
+ * OcilibSodaCollectionFind
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaDocCursor* OcilibSodaCollFind
+OCI_SodaDocumentCursor* OcilibSodaCollectionFind
 (
-    OCI_SodaColl   * coll,
-    OCI_SodaOptions* options
+    OCI_SodaCollection * coll,
+    OCI_SodaOptions    * options
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaDocCursor*, NULL,
+        /* returns */ OCI_SodaDocumentCursor*, NULL,
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    OCI_SodaDocCursor      * cursor    = NULL;
+    OCI_SodaDocumentCursor * cursor    = NULL;
     OCI_SodaOptions        * tmpopts   = NULL;
     OCISodaOperationOptions* opthandle = NULL;
     OCISodaDoc             **mat_docs  = NULL;
@@ -562,7 +562,7 @@ OCI_SodaDocCursor* OcilibSodaCollFind
             OCI_DEFAULT
         );
 
-        CHECK(NULL != OcilibSodaDocCursorInitialize(cursor, coll, cursor->handle));
+        CHECK(NULL != OcilibSodaDocumentCursorInitialize(cursor, coll, cursor->handle));
 
         SET_RETVAL(cursor);
     }
@@ -607,22 +607,22 @@ OCI_SodaDocCursor* OcilibSodaCollFind
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollFindOne
+ * OcilibSodaCollectionFindOne
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaDoc* OcilibSodaCollFindOne
+OCI_SodaDocument* OcilibSodaCollectionFindOne
 (
-    OCI_SodaColl   * coll,
-    OCI_SodaOptions* options
+    OCI_SodaCollection * coll,
+    OCI_SodaOptions    * options
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaDoc*, NULL,
+        /* returns */ OCI_SodaDocument*, NULL,
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    OCI_SodaDoc            * doc       = NULL;
+    OCI_SodaDocument       * doc       = NULL;
     OCI_SodaOptions        * tmpopts   = NULL;
     OCISodaOperationOptions* opthandle = NULL;
     sword                    oci_ret   = 0;
@@ -691,7 +691,7 @@ OCI_SodaDoc* OcilibSodaCollFindOne
         JUMP_CLEANUP();
     }
 
-    CHECK(NULL != OcilibSodaDocInitialize(doc->sdb, doc, doc->handle, NULL, 0, NULL, 0));
+    CHECK(NULL != OcilibSodaDocumentInitialize(doc->sdb, doc, doc->handle, NULL, 0, NULL, 0));
 
     SET_RETVAL(doc);
 
@@ -704,32 +704,32 @@ OCI_SodaDoc* OcilibSodaCollFindOne
 
         if (FAILURE && NULL != doc)
         {
-            OcilibSodaDocFree(doc);
+            OcilibSodaDocumentFree(doc);
         }
     );
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollFindOneByKey
+ * OcilibSodaCollectionFindOneByKey
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaDoc* OcilibSodaCollFindOneByKey
+OCI_SodaDocument* OcilibSodaCollectionFindOneByKey
 (
-    OCI_SodaColl* coll,
-    const otext * key
+    OCI_SodaCollection* coll,
+    const otext       * key
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaDoc*, NULL,
+        /* returns */ OCI_SodaDocument*, NULL,
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    OCI_SodaDoc* doc      = NULL;
-    dbtext     * dbkey    = NULL;
-    OCI_Int32    dbkeylen = -1;
-    sword        oci_ret  = 0;
-    OCISodaDoc * handle   = NULL;
+    OCI_SodaDocument* doc      = NULL;
+    dbtext          * dbkey    = NULL;
+    OCI_Int32         dbkeylen = -1;
+    sword             oci_ret  = 0;
+    OCISodaDoc      * handle   = NULL;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, key);
@@ -761,7 +761,7 @@ OCI_SodaDoc* OcilibSodaCollFindOneByKey
         THROW(OcilibExceptionOCI, coll->sdb->con->err, oci_ret);
     }
 
-    doc = OcilibSodaDocInitialize(coll->sdb, NULL, handle, NULL, 0, NULL, 0);
+    doc = OcilibSodaDocumentInitialize(coll->sdb, NULL, handle, NULL, 0, NULL, 0);
 
     SET_RETVAL(doc);
 
@@ -779,13 +779,13 @@ OCI_SodaDoc* OcilibSodaCollFindOneByKey
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollDocCount
+ * OcilibSodaCollectionDocumentCount
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt64 OcilibSodaCollDocCount
+OCI_UInt64 OcilibSodaCollectionDocumentCount
 (
-    OCI_SodaColl   * coll,
-    OCI_SodaOptions* options
+    OCI_SodaCollection * coll,
+    OCI_SodaOptions    * options
 )
 {
     ENTER_FUNC
@@ -860,13 +860,13 @@ OCI_UInt64 OcilibSodaCollDocCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollDocCountWithFilter
+ * OcilibSodaCollectionDocumentCountWithFilter
  * --------------------------------------------------------------------------------------------- */
 
-OCI_UInt64 OcilibSodaCollDocCountWithFilter
+OCI_UInt64 OcilibSodaCollectionDocumentCountWithFilter
 (
-    OCI_SodaColl* coll,
-    const otext * filterSpec
+    OCI_SodaCollection* coll,
+    const otext       * filterSpec
 )
 {
     ENTER_FUNC
@@ -908,15 +908,15 @@ OCI_UInt64 OcilibSodaCollDocCountWithFilter
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollReplaceOne
+ * OcilibSodaCollectionReplaceOne
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollReplaceOne
+OCI_Boolean OcilibSodaCollectionReplaceOne
 (
-    OCI_SodaColl   * coll,
-    OCI_SodaOptions* options,
-    OCI_SodaDoc    * doc,
-    OCI_Boolean      refresh
+    OCI_SodaCollection * coll,
+    OCI_SodaOptions    * options,
+    OCI_SodaDocument   * doc,
+    OCI_Boolean          refresh
 )
 {
     ENTER_FUNC
@@ -983,7 +983,7 @@ OCI_Boolean OcilibSodaCollReplaceOne
 
             if (replaced)
             {
-                CHECK(OcilibSodaDocRefreshMetadata(doc, reshandle));
+                CHECK(OcilibSodaDocumentRefreshMetadata(doc, reshandle));
 
                 /* OCI does not populate the doc's key — the storage key comes
                    from the options, not the document */
@@ -1023,15 +1023,15 @@ OCI_Boolean OcilibSodaCollReplaceOne
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollReplaceOneByKey
+ * OcilibSodaCollectionReplaceOneByKey
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollReplaceOneByKey
+OCI_Boolean OcilibSodaCollectionReplaceOneByKey
 (
-    OCI_SodaColl* coll,
-    const otext * key,
-    OCI_SodaDoc * doc,
-    OCI_Boolean   refresh
+    OCI_SodaCollection* coll,
+    const otext       * key,
+    OCI_SodaDocument  * doc,
+    OCI_Boolean         refresh
 )
 {
     ENTER_FUNC
@@ -1072,7 +1072,7 @@ OCI_Boolean OcilibSodaCollReplaceOneByKey
 
         if (replaced)
         {
-            CHECK(OcilibSodaDocRefreshMetadata(doc, reshandle));
+            CHECK(OcilibSodaDocumentRefreshMetadata(doc, reshandle));
         }
     }
     else
@@ -1101,14 +1101,14 @@ OCI_Boolean OcilibSodaCollReplaceOneByKey
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollRemove
+ * OcilibSodaCollectionRemove
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollRemove
+OCI_Boolean OcilibSodaCollectionRemove
 (
-    OCI_SodaColl   * coll,
-    OCI_SodaOptions* options,
-    OCI_UInt64     * count
+    OCI_SodaCollection * coll,
+    OCI_SodaOptions    * options,
+    OCI_UInt64         * count
 )
 {
     ENTER_FUNC
@@ -1188,13 +1188,13 @@ OCI_Boolean OcilibSodaCollRemove
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollRemoveOneByKey
+ * OcilibSodaCollectionRemoveOneByKey
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollRemoveOneByKey
+OCI_Boolean OcilibSodaCollectionRemoveOneByKey
 (
-    OCI_SodaColl* coll,
-    const otext * key
+    OCI_SodaCollection* coll,
+    const otext       * key
 )
 {
     ENTER_FUNC
@@ -1236,15 +1236,15 @@ OCI_Boolean OcilibSodaCollRemoveOneByKey
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollInsertMany
+ * OcilibSodaCollectionInsertMany
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollInsertMany
+OCI_Boolean OcilibSodaCollectionInsertMany
 (
-    OCI_SodaColl * coll,
-    OCI_SodaDoc ** docs,
-    OCI_UInt32     count,
-    OCI_Boolean    refresh
+    OCI_SodaCollection * coll,
+    OCI_SodaDocument  ** docs,
+    OCI_UInt32           count,
+    OCI_Boolean          refresh
 )
 {
     ENTER_FUNC
@@ -1319,7 +1319,7 @@ OCI_Boolean OcilibSodaCollInsertMany
     {
         for (i = 0; i < count; i++)
         {
-            CHECK(OcilibSodaDocRefreshMetadata(docs[i], handles[i]));
+            CHECK(OcilibSodaDocumentRefreshMetadata(docs[i], handles[i]));
         }
     }
 
@@ -1339,13 +1339,13 @@ OCI_Boolean OcilibSodaCollInsertMany
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollCreateIndex
+ * OcilibSodaCollectionCreateIndex
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollCreateIndex
+OCI_Boolean OcilibSodaCollectionCreateIndex
 (
-    OCI_SodaColl * coll,
-    const otext  * indexSpec
+    OCI_SodaCollection * coll,
+    const otext        * indexSpec
 )
 {
     ENTER_FUNC
@@ -1385,13 +1385,13 @@ OCI_Boolean OcilibSodaCollCreateIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollDropIndex
+ * OcilibSodaCollectionDropIndex
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollDropIndex
+OCI_Boolean OcilibSodaCollectionDropIndex
 (
-    OCI_SodaColl * coll,
-    const otext  * name
+    OCI_SodaCollection * coll,
+    const otext        * name
 )
 {
     ENTER_FUNC
@@ -1432,23 +1432,23 @@ OCI_Boolean OcilibSodaCollDropIndex
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollGetDataGuide
+ * OcilibSodaCollectionGetDataGuide
  * --------------------------------------------------------------------------------------------- */
 
-OCI_SodaDoc * OcilibSodaCollGetDataGuide
+OCI_SodaDocument * OcilibSodaCollectionGetDataGuide
 (
-    OCI_SodaColl * coll
+    OCI_SodaCollection * coll
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_SodaDoc*, NULL,
+        /* returns */ OCI_SodaDocument*, NULL,
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    OCI_SodaDoc *doc     = NULL;
-    OCISodaDoc  *handle  = NULL;
-    sword        oci_ret = 0;
+    OCI_SodaDocument *doc     = NULL;
+    OCISodaDoc       *handle  = NULL;
+    sword             oci_ret = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
@@ -1473,7 +1473,7 @@ OCI_SodaDoc * OcilibSodaCollGetDataGuide
     }
     else
     {
-        doc = OcilibSodaDocInitialize(coll->sdb, NULL, handle, NULL, 0, NULL, 0);
+        doc = OcilibSodaDocumentInitialize(coll->sdb, NULL, handle, NULL, 0, NULL, 0);
 
         SET_RETVAL(doc);
     }
@@ -1482,14 +1482,14 @@ OCI_SodaDoc * OcilibSodaCollGetDataGuide
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollSave
+ * OcilibSodaCollectionSave
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollSave
+OCI_Boolean OcilibSodaCollectionSave
 (
-    OCI_SodaColl * coll,
-    OCI_SodaDoc  * doc,
-    OCI_Boolean    refresh
+    OCI_SodaCollection * coll,
+    OCI_SodaDocument   * doc,
+    OCI_Boolean          refresh
 )
 {
     ENTER_FUNC
@@ -1519,22 +1519,22 @@ OCI_Boolean OcilibSodaCollSave
         /* OCISodaSaveAndGet() crashes on some client/server combinations;
            emulate with a lookup to refresh the document metadata in place */
 
-        const otext *key   = OcilibSodaDocGetKey(doc);
-        OCI_SodaDoc *found = NULL;
+        const otext      *key   = OcilibSodaDocumentGetKey(doc);
+        OCI_SodaDocument *found = NULL;
 
         CHECK(NULL != key);
 
-        found = OcilibSodaCollFindOneByKey(coll, key);
+        found = OcilibSodaCollectionFindOneByKey(coll, key);
         CHECK_NULL(found);
 
         {
             OCISodaDoc *fresh = found->handle;
             found->handle = NULL;    /* consumed by RefreshMetadata */
 
-            CHECK(OcilibSodaDocRefreshMetadata(doc, fresh));
+            CHECK(OcilibSodaDocumentRefreshMetadata(doc, fresh));
         }
 
-        OcilibSodaDocFree(found);
+        OcilibSodaDocumentFree(found);
     }
 
     SET_SUCCESS();
@@ -1543,13 +1543,13 @@ OCI_Boolean OcilibSodaCollSave
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollListIndexes
+ * OcilibSodaCollectionListIndexes
  * --------------------------------------------------------------------------------------------- */
 
-otext** OcilibSodaCollListIndexes
+otext** OcilibSodaCollectionListIndexes
 (
-    OCI_SodaColl * coll,
-    OCI_UInt32   * count
+    OCI_SodaCollection * coll,
+    OCI_UInt32         * count
 )
 {
     ENTER_FUNC
@@ -1663,14 +1663,14 @@ otext** OcilibSodaCollListIndexes
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSodaCollFreeIndexNames
+ * OcilibSodaCollectionFreeIndexNames
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibSodaCollFreeIndexNames
+OCI_Boolean OcilibSodaCollectionFreeIndexNames
 (
-    OCI_SodaColl * coll,
-    otext       ** names,
-    OCI_UInt32     count
+    OCI_SodaCollection * coll,
+    otext             ** names,
+    OCI_UInt32           count
 )
 {
     ENTER_FUNC

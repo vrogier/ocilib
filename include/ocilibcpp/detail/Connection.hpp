@@ -79,117 +79,117 @@ namespace ocilib
 
     inline void Connection::Commit()
     {
-        core::Check(OCI_Commit(*this));
+        core::Check(OCI_ConnectionCommit(*this));
     }
 
     inline void Connection::Rollback()
     {
-        core::Check(OCI_Rollback(*this));
+        core::Check(OCI_ConnectionRollback(*this));
     }
 
     inline void Connection::Break()
     {
-        core::Check(OCI_Break(*this));
+        core::Check(OCI_ConnectionBreak(*this));
     }
 
     inline void Connection::SetAutoCommit(bool enabled)
     {
-        core::Check(OCI_SetAutoCommit(*this, enabled));
+        core::Check(OCI_ConnectionSetAutoCommit(*this, enabled));
     }
 
     inline bool Connection::GetAutoCommit() const
     {
-        return (core::Check(OCI_GetAutoCommit(*this)) == TRUE);
+        return (core::Check(OCI_ConnectionGetAutoCommit(*this)) == TRUE);
     }
 
     inline bool Connection::IsServerAlive() const
     {
-        return (core::Check(OCI_IsConnected(*this)) == TRUE);
+        return (core::Check(OCI_ConnectionIsAlive(*this)) == TRUE);
     }
 
     inline bool Connection::PingServer() const
     {
-        return( core::Check(OCI_Ping(*this)) == TRUE);
+        return( core::Check(OCI_ConnectionPing(*this)) == TRUE);
     }
 
     inline String Connection::GetConnectionString() const
     {
-        return core::MakeString(core::Check(OCI_GetDatabase(*this)));
+        return core::MakeString(core::Check(OCI_ConnectionGetConnectionString(*this)));
     }
 
     inline String Connection::GetUserName() const
     {
-        return core::MakeString(core::Check(OCI_GetUserName(*this)));
+        return core::MakeString(core::Check(OCI_ConnectionGetUserName(*this)));
     }
 
     inline String Connection::GetPassword() const
     {
-        return core::MakeString(core::Check(OCI_GetPassword(*this)));
+        return core::MakeString(core::Check(OCI_ConnectionGetPassword(*this)));
     }
 
     inline OracleVersion Connection::GetVersion() const
     {
-        return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetVersionConnection(*this))));
+        return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_ConnectionGetVersion(*this))));
     }
 
     inline String Connection::GetServerVersion() const
     {
-        return core::MakeString(core::Check(OCI_GetVersionServer(*this)));
+        return core::MakeString(core::Check(OCI_ConnectionGetServerVersionString(*this)));
     }
 
     inline UInt32 Connection::GetServerMajorVersion() const
     {
-        return core::Check(OCI_GetServerMajorVersion(*this));
+        return core::Check(OCI_ConnectionGetServerMajorVersion(*this));
     }
 
     inline UInt32 Connection::GetServerMinorVersion() const
     {
-        return core::Check(OCI_GetServerMinorVersion(*this));
+        return core::Check(OCI_ConnectionGetServerMinorVersion(*this));
     }
 
     inline UInt32 Connection::GetServerRevisionVersion() const
     {
-        return core::Check(OCI_GetServerRevisionVersion(*this));
+        return core::Check(OCI_ConnectionGetServerRevisionVersion(*this));
     }
 
     inline void Connection::ChangePassword(const String& newPwd)
     {
-        core::Check(OCI_SetPassword(*this, newPwd.c_str()));
+        core::Check(OCI_ConnectionSetPassword(*this, newPwd.c_str()));
     }
 
     inline String Connection::GetSessionTag() const
     {
-        return core::MakeString(core::Check(OCI_GetSessionTag(*this)));
+        return core::MakeString(core::Check(OCI_ConnectionGetSessionTag(*this)));
     }
 
     inline void Connection::SetSessionTag(const String& tag)
     {
-        core::Check(OCI_SetSessionTag(*this, tag.c_str()));
+        core::Check(OCI_ConnectionSetSessionTag(*this, tag.c_str()));
     }
 
     inline Transaction Connection::GetTransaction() const
     {
-        return Transaction(core::Check(OCI_GetTransaction(*this)));
+        return Transaction(core::Check(OCI_ConnectionGetTransaction(*this)));
     }
 
     inline void Connection::SetTransaction(const Transaction &transaction)
     {
-        core::Check(OCI_SetTransaction(*this, transaction));
+        core::Check(OCI_ConnectionSetTransaction(*this, transaction));
     }
 
     inline void Connection::EnableServerOutput(UInt32 bufsize, UInt32 arrsize, UInt32 lnsize)
     {
-        core::Check(OCI_ServerEnableOutput(*this, bufsize, arrsize, lnsize));
+        core::Check(OCI_ConnectionEnableServerOutput(*this, bufsize, arrsize, lnsize));
     }
 
     inline void Connection::DisableServerOutput()
     {
-        core::Check(OCI_ServerDisableOutput(*this));
+        core::Check(OCI_ConnectionDisableServerOutput(*this));
     }
 
     inline bool Connection::GetServerOutput(String &line) const
     {
-        const otext * str = core::Check(OCI_ServerGetOutput(*this));
+        const otext * str = core::Check(OCI_ConnectionGetServerOutput(*this));
 
         line = core::MakeString(str);
 
@@ -198,88 +198,88 @@ namespace ocilib
 
     inline void Connection::GetServerOutput(std::vector<String> &lines) const
     {
-        const otext * str = core::Check(OCI_ServerGetOutput(*this));
+        const otext * str = core::Check(OCI_ConnectionGetServerOutput(*this));
 
         while (str)
         {
             lines.push_back(str);
-            str = core::Check(OCI_ServerGetOutput(*this));
+            str = core::Check(OCI_ConnectionGetServerOutput(*this));
         }
     }
 
     inline void Connection::SetTrace(SessionTrace trace, const String& value)
     {
-        core::Check(OCI_SetTrace(*this, trace, value.c_str()));
+        core::Check(OCI_ConnectionSetTrace(*this, trace, value.c_str()));
     }
 
     inline String Connection::GetTrace(SessionTrace trace) const
     {
-        return core::MakeString(core::Check(OCI_GetTrace(*this, trace)));
+        return core::MakeString(core::Check(OCI_ConnectionGetTrace(*this, trace)));
     }
 
     inline String Connection::GetDatabase() const
     {
-        return core::MakeString(core::Check(OCI_GetDBName(*this)));
+        return core::MakeString(core::Check(OCI_ConnectionGetDatabaseName(*this)));
     }
 
     inline String Connection::GetInstance() const
     {
-        return core::Check(OCI_GetInstanceName(*this));
+        return core::Check(OCI_ConnectionGetInstanceName(*this));
     }
 
     inline String Connection::GetService() const
     {
-        return core::MakeString(core::Check(OCI_GetServiceName(*this)));
+        return core::MakeString(core::Check(OCI_ConnectionGetServiceName(*this)));
     }
 
     inline String Connection::GetServer() const
     {
-        return core::Check(OCI_GetServerName(*this));
+        return core::Check(OCI_ConnectionGetServerName(*this));
     }
 
     inline String Connection::GetDomain() const
     {
-        return core::MakeString(core::Check(OCI_GetDomainName(*this)));
+        return core::MakeString(core::Check(OCI_ConnectionGetDomainName(*this)));
     }
 
     inline Timestamp Connection::GetInstanceStartTime() const
     {
-        return Timestamp(core::Check(OCI_GetInstanceStartTime(*this)), GetHandle());
+        return Timestamp(core::Check(OCI_ConnectionGetInstanceStartTime(*this)), GetHandle());
     }
 
     inline UInt32 Connection::GetStatementCacheSize() const
     {
-        return core::Check(OCI_GetStatementCacheSize(*this));
+        return core::Check(OCI_ConnectionGetStatementCacheSize(*this));
     }
 
     inline void Connection::SetStatementCacheSize(UInt32 value)
     {
-        core::Check(OCI_SetStatementCacheSize(*this, value));
+        core::Check(OCI_ConnectionSetStatementCacheSize(*this, value));
     }
 
     inline UInt32 Connection::GetDefaultLobPrefetchSize() const
     {
-        return core::Check(OCI_GetDefaultLobPrefetchSize(*this));
+        return core::Check(OCI_ConnectionGetDefaultLobPrefetchSize(*this));
     }
 
     inline void Connection::SetDefaultLobPrefetchSize(UInt32 value)
     {
-        core::Check(OCI_SetDefaultLobPrefetchSize(*this, value));
+        core::Check(OCI_ConnectionSetDefaultLobPrefetchSize(*this, value));
     }
 
     inline UInt32 Connection::GetMaxCursors() const
     {
-        return core::Check(OCI_GetMaxCursors(*this));
+        return core::Check(OCI_ConnectionGetMaxCursors(*this));
     }
 
     inline bool Connection::IsTAFCapable() const
     {
-        return (core::Check(OCI_IsTAFCapable(*this)) == TRUE);
+        return (core::Check(OCI_ConnectionIsTAFCapable(*this)) == TRUE);
     }
 
     inline void Connection::SetTAFHandler(TAFHandlerProc handler)
     {
-        core::Check(OCI_SetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != nullptr ? Environment::TAFHandler : nullptr)));
+        core::Check(OCI_ConnectionSetTAFHandler(*this, static_cast<POCI_TAF_HANDLER>(handler != nullptr ? Environment::TAFHandler : nullptr)));
 
         Environment* env = Environment::GetInstance(GetEnvironment());
         if (env)
@@ -290,22 +290,22 @@ namespace ocilib
 
     inline AnyPointer Connection::GetUserData()
     {
-        return core::Check(OCI_GetUserData(*this));
+        return core::Check(OCI_HandleGetUserData(*this));
     }
 
     inline void Connection::SetUserData(AnyPointer value)
     {
-        core::Check(OCI_SetUserData(*this, value));
+        core::Check(OCI_HandleSetUserData(*this, value));
     }
 
     inline UInt32 Connection::GetTimeout(TimeoutType timeout)
     {
-        return core::Check(OCI_GetTimeout(*this, timeout));
+        return core::Check(OCI_ConnectionGetTimeout(*this, timeout));
     }
 
     inline void Connection::SetTimeout(TimeoutType timeout, UInt32 value)
     {
-        core::Check(OCI_SetTimeout(*this, timeout, value));
+        core::Check(OCI_ConnectionSetTimeout(*this, timeout, value));
     }
 
 }

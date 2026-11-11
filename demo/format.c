@@ -29,23 +29,23 @@ int main(void)
     /* sql format with params ----------------------------------------------- */
 
     OCI_Int32 code = 1;
-    OCI_ExecuteStmtFmt(st, "select name from products where code = %i", code);
+    OCI_StatementExecuteFormat(st, "select name from products where code = %i", code);
 
-    OCI_Resultset  * rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    OCI_Resultset  * rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
-        printf("article : %s\n", OCI_GetString(rs, 0));
+        printf("article : %s\n", OCI_ResultsetGetString(rs, 0));
     }
 
     /* sql immediate (parse, exec, one fetch) ------------------------------- */
 
-    OCI_Immediate(cn, "select name from products where code = 2", OCI_ARG_TEXT, name);
+    OCI_ConnectionImmediate(cn, "select name from products where code = 2", OCI_ARG_TEXT, name);
     printf("article : %s\n", name);
 
     /* sql immediate (parse, exec, one fetch) with params ------------------- */
 
     code = 1;
-    OCI_ImmediateFmt(cn, "select name from products where code = %i", code, OCI_ARG_TEXT, name);
+    OCI_ConnectionImmediateFormat(cn, "select name from products where code = %i", code, OCI_ARG_TEXT, name);
     printf("article : %s\n", name);
 
     OCI_StatementFree(st);

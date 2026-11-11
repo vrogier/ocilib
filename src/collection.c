@@ -29,17 +29,17 @@
  * OcilibCollectionInitialize
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OcilibCollectionInitialize
+OCI_Collection * OcilibCollectionInitialize
 (
     OCI_Connection *con,
-    OCI_Coll       *coll,
+    OCI_Collection *coll,
     void           *handle,
     OCI_TypeInfo   *typinf
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Coll*, coll,
+        /* returns */ OCI_Collection*, coll,
         /* context */ OCI_IPC_CONNECTION, con
     );
 
@@ -91,14 +91,14 @@ OCI_Coll * OcilibCollectionInitialize
  * OcilibCollectionCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll * OcilibCollectionCreate
+OCI_Collection * OcilibCollectionCreate
 (
     OCI_TypeInfo *typinf
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Coll*, NULL,
+        /* returns */ OCI_Collection*, NULL,
         /* context */ OCI_IPC_TYPE_INFO, typinf
     );
 
@@ -115,7 +115,7 @@ OCI_Coll * OcilibCollectionCreate
 
 OCI_Boolean OcilibCollectionFree
 (
-    OCI_Coll *coll
+    OCI_Collection *coll
 )
 {
     ENTER_FUNC
@@ -158,10 +158,10 @@ OCI_Boolean OcilibCollectionFree
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibCollectionCreateArray
+ * OcilibCollectionArrayCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Coll ** OcilibCollectionCreateArray
+OCI_Collection ** OcilibCollectionArrayCreate
 (
     OCI_TypeInfo *typinf,
     OCI_UInt32    nbelem
@@ -169,7 +169,7 @@ OCI_Coll ** OcilibCollectionCreateArray
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Coll**, NULL,
+        /* returns */ OCI_Collection**, NULL,
         /* context */ OCI_IPC_TYPE_INFO, typinf
     );
 
@@ -178,22 +178,22 @@ OCI_Coll ** OcilibCollectionCreateArray
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf);
 
     arr = OcilibArrayCreate(typinf->con->env, typinf->con, nbelem, OCI_CDT_COLLECTION, 0,
-                            sizeof(OCIColl*), sizeof(OCI_Coll), 0, typinf);
+                            sizeof(OCIColl*), sizeof(OCI_Collection), 0, typinf);
 
     CHECK_NULL(arr);
 
-    SET_RETVAL((OCI_Coll **) arr->tab_obj);
+    SET_RETVAL((OCI_Collection **) arr->tab_obj);
 
     EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibCollectionFreeArray
+ * OcilibCollectionArrayFree
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibCollectionFreeArray
+OCI_Boolean OcilibCollectionArrayFree
 (
-    OCI_Coll **colls
+    OCI_Collection **colls
 )
 {
     ENTER_FUNC
@@ -204,7 +204,7 @@ OCI_Boolean OcilibCollectionFreeArray
 
     CHECK_PTR(OCI_IPC_ARRAY, colls);
 
-    OCI_Coll *col = colls[0];
+    OCI_Collection *col = colls[0];
 
     CHECK_PTR(OCI_IPC_COLLECTION, col);
 
@@ -219,8 +219,8 @@ OCI_Boolean OcilibCollectionFreeArray
 
 OCI_Boolean OcilibCollectionAssign
 (
-    OCI_Coll *coll,
-    OCI_Coll *coll_src
+    OCI_Collection *coll,
+    OCI_Collection *coll_src
 )
 {
     ENTER_FUNC
@@ -252,7 +252,7 @@ OCI_Boolean OcilibCollectionAssign
 
 OCI_CollType OcilibCollectionGetType
 (
-    OCI_Coll *coll
+    OCI_Collection *coll
 )
 {
     ENTER_FUNC
@@ -294,7 +294,7 @@ OCI_CollType OcilibCollectionGetType
 
 OCI_UInt32 OcilibCollectionGetMax
 (
-    OCI_Coll *coll
+    OCI_Collection *coll
 )
 {
     ENTER_FUNC
@@ -320,7 +320,7 @@ OCI_UInt32 OcilibCollectionGetMax
 
 OCI_UInt32 OcilibCollectionGetSize
 (
-    OCI_Coll *coll
+    OCI_Collection *coll
 )
 {
     ENTER_FUNC
@@ -352,8 +352,8 @@ OCI_UInt32 OcilibCollectionGetSize
 
 OCI_Boolean OcilibCollectionTrim
 (
-    OCI_Coll  *coll,
-    OCI_UInt32 nb_elem
+    OCI_Collection *coll,
+    OCI_UInt32      nb_elem
 )
 {
     ENTER_FUNC
@@ -382,15 +382,15 @@ OCI_Boolean OcilibCollectionTrim
  * OcilibCollectionGetElement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Elem * OcilibCollectionGetElement
+OCI_Element * OcilibCollectionGetElement
 (
-    OCI_Coll  *coll,
-    OCI_UInt32 index
+    OCI_Collection *coll,
+    OCI_UInt32      index
 )
 {
     ENTER_FUNC
     (
-        /* returns */ OCI_Elem*, NULL,
+        /* returns */ OCI_Element*, NULL,
         /* context */ OCI_IPC_COLLECTION, coll
     );
 
@@ -409,7 +409,7 @@ OCI_Elem * OcilibCollectionGetElement
         (dvoid**)(dvoid*)&ind
     );
 
-    OCI_Elem* elem = NULL;
+    OCI_Element* elem = NULL;
 
     if (exists && NULL != data)
     {
@@ -428,9 +428,9 @@ OCI_Elem * OcilibCollectionGetElement
 
 OCI_Boolean OcilibCollectionSetElement
 (
-    OCI_Coll  *coll,
-    OCI_UInt32 index,
-    OCI_Elem  *elem
+    OCI_Collection *coll,
+    OCI_UInt32      index,
+    OCI_Element    *elem
 )
 {
     ENTER_FUNC
@@ -458,13 +458,13 @@ OCI_Boolean OcilibCollectionSetElement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibCollectionAddElement
+ * OcilibCollectionAppend
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibCollectionAddElement
+OCI_Boolean OcilibCollectionAppend
 (
-    OCI_Coll *coll,
-    OCI_Elem *elem
+    OCI_Collection *coll,
+    OCI_Element    *elem
 )
 {
     ENTER_FUNC
@@ -496,7 +496,7 @@ OCI_Boolean OcilibCollectionAddElement
 
 OCI_TypeInfo * OcilibCollectionGetTypeInfo
 (
-    OCI_Coll *coll
+    OCI_Collection *coll
 )
 {
     GET_PROP
@@ -513,7 +513,7 @@ OCI_TypeInfo * OcilibCollectionGetTypeInfo
 
 OCI_Boolean OcilibCollectionClear
 (
-    OCI_Coll *coll
+    OCI_Collection *coll
 )
 {
     ENTER_FUNC
@@ -532,13 +532,13 @@ OCI_Boolean OcilibCollectionClear
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibCollectionRemoveElement
+ * OcilibCollectionDeleteElement
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibCollectionRemoveElement
+OCI_Boolean OcilibCollectionDeleteElement
 (
-    OCI_Coll  *coll,
-    OCI_UInt32 index
+    OCI_Collection *coll,
+    OCI_UInt32      index
 )
 {
     ENTER_FUNC
@@ -571,7 +571,7 @@ OCI_Boolean OcilibCollectionRemoveElement
 
 OCI_UInt32 OcilibCollectionGetCount
 (
-    OCI_Coll *coll
+    OCI_Collection *coll
 )
 {
     ENTER_FUNC
@@ -611,14 +611,14 @@ OCI_UInt32 OcilibCollectionGetCount
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibCollectionToString
+ * OcilibCollectionToText
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibCollectionToString
+OCI_Boolean OcilibCollectionToText
 (
-    OCI_Coll   *coll,
-    OCI_UInt32 *size,
-    otext      *str
+    OCI_Collection *coll,
+    OCI_UInt32     *size,
+    otext          *str
 )
 {
     ENTER_FUNC
@@ -652,7 +652,7 @@ OCI_Boolean OcilibCollectionToString
 
     for (OCI_UInt32 i = 0; i < count; i++)
     {
-        OCI_Elem* elem = OcilibCollectionGetElement(coll, i);
+        OCI_Element* elem = OcilibCollectionGetElement(coll, i);
 
         quote = TRUE;
 

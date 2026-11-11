@@ -14,7 +14,7 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt,
+        ASSERT_TRUE(OCI_StatementExecute(stmt,
             OTEXT("declare")
             OTEXT("  c1 sys_refcursor;")
             OTEXT("  c2 sys_refcursor;")
@@ -25,7 +25,7 @@ namespace TestCApi
             OTEXT("  dbms_sql.return_result (c2); ")
             OTEXT("end;")));
 
-        auto rset = OCI_GetResultset(stmt);
+        auto rset = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rset);
 
         static std::vector<OCI_Int32> counts;
@@ -34,14 +34,14 @@ namespace TestCApi
         {
             OCI_Int32 count = 0;
 
-            while (OCI_FetchNext(rset))
+            while (OCI_ResultsetFetchNext(rset))
             {
                 count++;
             }
 
             counts.push_back(count);
 
-            rset = OCI_GetNextResultset(stmt);
+            rset = OCI_StatementGetNextResultset(stmt);
         }
 
         ASSERT_EQ(2, counts.size());

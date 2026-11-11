@@ -30,16 +30,16 @@ int main(void)
     OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     OCI_Statement * st = OCI_StatementCreate(cn);
 
-    OCI_ExecuteStmt(st, "select code, obj from large_objects for update");
+    OCI_StatementExecute(st, "select code, obj from large_objects for update");
 
-    OCI_Resultset * rs = OCI_GetResultset(st);
+    OCI_Resultset * rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
         char *str = "- ABC must have replaced 3 first chars";
         OCI_UInt32 char_count = 0, byte_count = 0;
 
-        lob1 = OCI_GetLob(rs, 1);
+        lob1 = OCI_ResultsetGetLob(rs, 1);
         lob2 = OCI_LobCreate(cn, OCI_CLOB);
 
         char_count = 3;
@@ -61,12 +61,12 @@ int main(void)
         n = char_count;
         temp[n] = 0;
 
-        printf("code: %i, obj : %s\n", OCI_GetInt(rs, 0), temp);
+        printf("code: %i, obj : %s\n", OCI_ResultsetGetInt32(rs, 0), temp);
 
         OCI_LobFree(lob2);
     }
 
-    printf("\n%d row(s) fetched\n", OCI_GetRowCount(rs));
+    printf("\n%d row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);

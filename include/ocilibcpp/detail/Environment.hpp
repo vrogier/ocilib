@@ -40,7 +40,7 @@ namespace ocilib
             _handle.Acquire(env, true, nullptr, _store);
             _initialized = true;
 
-            OCI_SetUserData(env, this);
+            OCI_HandleSetUserData(env, this);
 
             _charMaxSize = core::ComputeCharMaxSize(GetCharset());
         }
@@ -50,7 +50,7 @@ namespace ocilib
     {
         if (GetHandle())
         {
-            OCI_SetUserData(GetHandle(), nullptr);
+            OCI_HandleSetUserData(GetHandle(), nullptr);
         }
 
         _handle.Release();
@@ -64,12 +64,12 @@ namespace ocilib
 
     inline Environment::ImportMode Environment::GetImportMode() const
     {
-        return ImportMode(static_cast<ImportMode::Type>(core::Check(OCI_GetImportMode(GetHandle()))));
+        return ImportMode(static_cast<ImportMode::Type>(core::Check(OCI_EnvironmentGetImportMode(GetHandle()))));
     }
 
     inline Environment::CharsetMode Environment::GetCharset() const
     {
-        return CharsetMode(static_cast<CharsetMode::Type>(core::Check(OCI_GetCharset(GetHandle()))));
+        return CharsetMode(static_cast<CharsetMode::Type>(core::Check(OCI_EnvironmentGetCharset(GetHandle()))));
     }
 
     inline UInt32 Environment::GetCharMaxSize() const
@@ -79,67 +79,67 @@ namespace ocilib
 
     inline UInt64 Environment::GetStats(OCI_Stat stat) const
     {
-        return core::Check(OCI_GetStats(GetHandle(), stat));
+        return core::Check(OCI_EnvironmentGetStats(GetHandle(), stat));
     }
 
     inline OracleVersion Environment::GetCompileVersion() const
     {
-        return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetOCICompileVersion(GetHandle()))));
+        return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_EnvironmentGetOCICompileVersion(GetHandle()))));
     }
 
     inline OracleVersion Environment::GetRuntimeVersion() const
     {
-        return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_GetOCIRuntimeVersion(GetHandle()))));
+        return OracleVersion(static_cast<OracleVersion::Type>(core::Check(OCI_EnvironmentGetOCIRuntimeVersion(GetHandle()))));
     }
 
     inline UInt32 Environment::GetCompileMajorVersion() const
     {
-        return OCI_VER_MAJ(core::Check(OCI_GetOCICompileVersion(GetHandle())));
+        return OCI_VER_MAJ(core::Check(OCI_EnvironmentGetOCICompileVersion(GetHandle())));
     }
 
     inline UInt32 Environment::GetCompileMinorVersion() const
     {
-        return OCI_VER_MIN(core::Check(OCI_GetOCICompileVersion(GetHandle())));
+        return OCI_VER_MIN(core::Check(OCI_EnvironmentGetOCICompileVersion(GetHandle())));
     }
 
     inline UInt32 Environment::GetCompileRevisionVersion() const
     {
-        return OCI_VER_REV(core::Check(OCI_GetOCICompileVersion(GetHandle())));
+        return OCI_VER_REV(core::Check(OCI_EnvironmentGetOCICompileVersion(GetHandle())));
     }
 
     inline UInt32 Environment::GetRuntimeMajorVersion() const
     {
-        return OCI_VER_MAJ(core::Check(OCI_GetOCIRuntimeVersion(GetHandle())));
+        return OCI_VER_MAJ(core::Check(OCI_EnvironmentGetOCIRuntimeVersion(GetHandle())));
     }
 
     inline UInt32 Environment::GetRuntimeMinorVersion() const
     {
-        return OCI_VER_MIN(core::Check(OCI_GetOCIRuntimeVersion(GetHandle())));
+        return OCI_VER_MIN(core::Check(OCI_EnvironmentGetOCIRuntimeVersion(GetHandle())));
     }
 
     inline UInt32 Environment::GetRuntimeRevisionVersion() const
     {
-        return OCI_VER_REV(core::Check(OCI_GetOCIRuntimeVersion(GetHandle())));
+        return OCI_VER_REV(core::Check(OCI_EnvironmentGetOCIRuntimeVersion(GetHandle())));
     }
 
     inline void Environment::EnableWarnings(bool value)
     {
-        OCI_EnableWarnings(GetHandle(), static_cast<OCI_Boolean>(value));
+        OCI_EnvironmentEnableWarnings(GetHandle(), static_cast<OCI_Boolean>(value));
     }
 
     inline bool Environment::SetFormat(FormatType formatType, const String& format)
     {
-        return core::Check(OCI_SetFormat(GetHandle(), formatType, format.c_str()) == TRUE);
+        return core::Check(OCI_EnvironmentSetFormat(GetHandle(), formatType, format.c_str()) == TRUE);
     }
 
     inline String Environment::GetFormat(FormatType formatType) const
     {
-        return core::MakeString(core::Check(OCI_GetFormat(GetHandle(), formatType)));
+        return core::MakeString(core::Check(OCI_EnvironmentGetFormat(GetHandle(), formatType)));
     }
 
     inline String Environment::GetLocaleString(LocaleCode code) const
     {
-        return core::MakeString(core::Check(OCI_GetLocaleString(GetHandle(), code)));
+        return core::MakeString(core::Check(OCI_EnvironmentGetLocaleString(GetHandle(), code)));
     }
 
     inline void Environment::StartDatabase(const String& db, const String& user, const String &pwd, Environment::StartFlags startFlags,
@@ -158,29 +158,29 @@ namespace ocilib
 
     inline void Environment::ChangeUserPassword(const String& db, const String& user, const String& pwd, const String& newPwd)
     {
-        core::Check(OCI_SetUserPassword(GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), newPwd.c_str()));
+        core::Check(OCI_EnvironmentSetUserPassword(GetHandle(), db.c_str(), user.c_str(), pwd.c_str(), newPwd.c_str()));
     }
 
     inline void Environment::SetHAHandler(HAHandlerProc handler)
     {
-        core::Check(OCI_SetHAHandler(GetHandle(), static_cast<POCI_HA_HANDLER>(handler != nullptr ? Environment::HAHandler : nullptr)) == TRUE);
+        core::Check(OCI_EnvironmentSetHAHandler(GetHandle(), static_cast<POCI_HA_HANDLER>(handler != nullptr ? Environment::HAHandler : nullptr)) == TRUE);
 
         SetUserCallback<HAHandlerProc>(GetEnvironmentHandle(), handler);
     }
 
     inline void Environment::SetSubscriptionPort(UInt32 port)
     {
-        core::Check(OCI_SetSubscriptionPort(GetHandle(), port) == TRUE);
+        core::Check(OCI_EnvironmentSetSubscriptionPort(GetHandle(), port) == TRUE);
     }
 
     inline UInt32 Environment::GetSubscriptionPort() const
     {
-        return core::Check(OCI_GetSubscriptionPort(GetHandle()));
+        return core::Check(OCI_EnvironmentGetSubscriptionPort(GetHandle()));
     }
 
     inline Environment* Environment::GetInstance(OCI_Environment* env)
     {
-        return env ? static_cast<Environment*>(OCI_GetUserData(env)) : nullptr;
+        return env ? static_cast<Environment*>(OCI_HandleGetUserData(env)) : nullptr;
     }
 
     namespace core

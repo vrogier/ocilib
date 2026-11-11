@@ -14,7 +14,7 @@
 - `OCI_Environment` is now a public, first-class handle
   - Added `OCI_EnvironmentCreate()` and `OCI_EnvironmentFree()`, replacing `OCI_Initialize()` and `OCI_Cleanup()`
   - Added `OCI_HandleGetEnvironment()` to retrieve the owning environment from any OCILIB handle
-  - Top-level object constructors now take an `OCI_Environment*` first argument: `OCI_ConnectionCreate()`, `OCI_PoolCreate()`, `OCI_DateCreate()`, `OCI_NumberCreate()`, `OCI_TimestampCreate()`, `OCI_IntervalCreate()`, `OCI_HashCreate()`, etc.
+  - Top-level object constructors now take an `OCI_Environment*` first argument: `OCI_ConnectionCreate()`, `OCI_PoolCreate()`, `OCI_DateCreate()`, `OCI_NumberCreate()`, `OCI_TimestampCreate()`, `OCI_IntervalCreate()`, `OCI_HashTableCreate()`, etc.
   - Runtime OCI symbols are now loaded per environment, so multiple environments can use different Oracle client libraries in runtime-import builds
 
 - Oracle JSON type support (requires Oracle 21c client and database)
@@ -26,27 +26,27 @@
     - Array operations: `OCI_JsonNodeGetItem()`, `OCI_JsonNodeSetItem()`, `OCI_JsonNodeAppendItem()`, `OCI_JsonNodeInsertItem()`, `OCI_JsonNodeRemoveItem()`, `OCI_JsonNodeGetItemCount()`
     - `OCI_JsonNodeGetParent()`, `OCI_JsonNodeGetByPath()` (JSON path expressions), `OCI_JsonNodeGetType()`, `OCI_JsonNodeClear()`
     - JSON DOM errors are reported through `OCI_Error` with the `OCI_ERR_CAT_JZN` category
-  - Added statement integration: `OCI_GetJson()`, `OCI_GetJsonByName()`, `OCI_BindJson()`, `OCI_BindArrayOfJsons()`, and `OCI_RegisterJson()`
-  - `OCI_GetString()` returns a string representation of JSON columns
+  - Added statement integration: `OCI_ResultsetGetJson()`, `OCI_ResultsetGetJsonByName()`, `OCI_StatementBindJson()`, `OCI_StatementBindJsonArray()`, and `OCI_StatementRegisterJson()`
+  - `OCI_ResultsetGetString()` returns a string representation of JSON columns
 
 - Oracle SODA (Simple Oracle Document Access) support (requires Oracle 18c client and database)
-  - Added `OCI_SodaDb*`, `OCI_SodaColl*`, `OCI_SodaDoc*`, `OCI_SodaOptions*`, `OCI_SodaCollCursor*`, and `OCI_SodaDocCursor*` opaque handle types
-  - Added SODA database context APIs: `OCI_SodaDbCreate()`, `OCI_SodaDbFree()`, `OCI_SodaDbGetConnection()`
-  - Added collection administration APIs: `OCI_SodaDbCreateColl()` (with optional collection metadata), `OCI_SodaDbOpenColl()`, `OCI_SodaDbGetColls()`, `OCI_SodaCollGetName()`, `OCI_SodaCollGetMetadata()`, `OCI_SodaCollGetConnection()`, `OCI_SodaCollIsMapped()`, `OCI_SodaCollDrop()`, `OCI_SodaCollTruncate()`, `OCI_SodaCollFree()`
-  - Added document APIs: `OCI_SodaDocCreateFromText()`, `OCI_SodaDocCreateFromJson()` (requires Oracle client 23.4+), `OCI_SodaDocFree()`, `OCI_SodaDocGetKey()`, `OCI_SodaDocGetVersion()`, `OCI_SodaDocGetCreatedOn()`, `OCI_SodaDocGetLastModified()`, `OCI_SodaDocGetMediaType()`, `OCI_SodaDocGetText()`, `OCI_SodaDocGetJson()`
+  - Added `OCI_SodaDatabase*`, `OCI_SodaCollection*`, `OCI_SodaDocument*`, `OCI_SodaOptions*`, `OCI_SodaCollectionCursor*`, and `OCI_SodaDocumentCursor*` opaque handle types
+  - Added SODA database context APIs: `OCI_SodaDatabaseCreate()`, `OCI_SodaDatabaseFree()`, `OCI_SodaDatabaseGetConnection()`
+  - Added collection administration APIs: `OCI_SodaDatabaseCreateCollection()` (with optional collection metadata), `OCI_SodaDatabaseOpenCollection()`, `OCI_SodaDatabaseGetCollections()`, `OCI_SodaCollectionGetName()`, `OCI_SodaCollectionGetMetadata()`, `OCI_SodaCollectionGetConnection()`, `OCI_SodaCollectionIsMapped()`, `OCI_SodaCollectionDrop()`, `OCI_SodaCollectionTruncate()`, `OCI_SodaCollectionFree()`
+  - Added document APIs: `OCI_SodaDocumentCreateFromText()`, `OCI_SodaDocumentCreateFromJson()` (requires Oracle client 23.4+), `OCI_SodaDocumentFree()`, `OCI_SodaDocumentGetKey()`, `OCI_SodaDocumentGetVersion()`, `OCI_SodaDocumentGetCreatedOn()`, `OCI_SodaDocumentGetLastModified()`, `OCI_SodaDocumentGetMediaType()`, `OCI_SodaDocumentGetText()`, `OCI_SodaDocumentGetJson()`
   - Added operation options APIs: `OCI_SodaOptionsCreate()`, `OCI_SodaOptionsFree()`, and setters for key(s), version, filter, skip, limit, fetch array size, lock, and hint
-  - Added cursor APIs: `OCI_SodaCollCursorGetNext()`, `OCI_SodaCollCursorFree()`, `OCI_SodaDocCursorGetNext()`, `OCI_SodaDocCursorFree()`
-  - Added CRUD APIs: `OCI_SodaCollInsertDoc()`, `OCI_SodaCollFind()`, `OCI_SodaCollFindOne()`, `OCI_SodaCollFindOneByKey()`, `OCI_SodaCollDocCount()`, `OCI_SodaCollDocCountWithFilter()`, `OCI_SodaCollReplaceOne()`, `OCI_SodaCollReplaceOneByKey()`, `OCI_SodaCollRemove()`, `OCI_SodaCollRemoveOneByKey()`
-  - Added bulk insert APIs: `OCI_SodaCollInsertMany()`
-  - Added save (upsert) APIs: `OCI_SodaCollSave()`
-  - Added metadata APIs: `OCI_SodaCollGetDataGuide()`, `OCI_SodaDbGetCollectionNames()`, `OCI_SodaDbFreeCollectionNames()`
-  - Added index management APIs: `OCI_SodaCollCreateIndex()`, `OCI_SodaCollDropIndex()`, `OCI_SodaCollListIndexes()`, `OCI_SodaCollFreeIndexNames()`
+  - Added cursor APIs: `OCI_SodaCollectionCursorGetNext()`, `OCI_SodaCollectionCursorFree()`, `OCI_SodaDocumentCursorGetNext()`, `OCI_SodaDocumentCursorFree()`
+  - Added CRUD APIs: `OCI_SodaCollectionInsertDocument()`, `OCI_SodaCollectionFind()`, `OCI_SodaCollectionFindOne()`, `OCI_SodaCollectionFindOneByKey()`, `OCI_SodaCollectionDocumentCount()`, `OCI_SodaCollectionDocumentCountWithFilter()`, `OCI_SodaCollectionReplaceOne()`, `OCI_SodaCollectionReplaceOneByKey()`, `OCI_SodaCollectionRemove()`, `OCI_SodaCollectionRemoveOneByKey()`
+  - Added bulk insert APIs: `OCI_SodaCollectionInsertMany()`
+  - Added save (upsert) APIs: `OCI_SodaCollectionSave()`
+  - Added metadata APIs: `OCI_SodaCollectionGetDataGuide()`, `OCI_SodaDatabaseGetCollectionNames()`, `OCI_SodaDatabaseFreeCollectionNames()`
+  - Added index management APIs: `OCI_SodaCollectionCreateIndex()`, `OCI_SodaCollectionDropIndex()`, `OCI_SodaCollectionListIndexes()`, `OCI_SodaCollectionFreeIndexNames()`
     - Note: the underlying `OCISodaIndex*` OCI calls currently fail inside the Oracle client itself under `OCI_CHARSET_WIDE` (UNICODE builds), verified on Oracle 23ai — an Oracle client bug, not an OCILIB bug; ANSI builds work correctly
   - Oracle 23ai JSON/SODA additions
     - `OCI_JsonValidate()` — validate a JSON document against a JSON schema; returns FALSE on failure with an error-report document via the `errors` out-parameter
     - `OCI_ColumnHasJsonSchema()` — report whether a column has a JSON schema constraint
     - New `OCI_JsonNode` operations: `OCI_JsonNodeRemoveItems()` (range delete), `OCI_JsonNodeRenameField()`, `OCI_JsonNodeEquals()` (deep compare), `OCI_JsonNodeAssign()` (deep copy into a node), `OCI_JsonNodeGetJson()` (owning document)
-    - `OCI_SodaCollFind()` uses the native `OCISodaOperKeysSet` multi-key path when the client supports it
+    - `OCI_SodaCollectionFind()` uses the native `OCISodaOperKeysSet` multi-key path when the client supports it
 
 - Oracle Sharding support (requires Oracle 12cR2 client and database)
   - Added `OCI_ShardingKey` opaque handle type
@@ -61,15 +61,14 @@
   - Selectable levels (`ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`) and categories (`LIB`, `MEM`, `OCI`) covering OCILIB entry/exit call tracing, connection and statement lifecycle events, memory allocation and leak reports, raw OCI call tracing, and error information
 
 - Added diagnostic statistics API
-  - Replaced `OCI_GetAllocatedBytes()` with `OCI_GetStats(OCI_Environment* env, OCI_Stat stat)`
+  - Replaced `OCI_GetAllocatedBytes()` with `OCI_EnvironmentGetStats(OCI_Environment* env, OCI_Stat stat)`
   - Added `OCI_UST_BYTES`, `OCI_UST_HANDLES`, `OCI_UST_DESCRIPTORS`, and `OCI_UST_OBJECTS`
 
 - Added convenience helpers
-  - `OCI_ExecuteAndGetResultset()` and `OCI_ExecuteStmtAndGetResultset()`
-  - `OCI_HasError()`
-  - `OCI_ARG_OF(ptr)` macro for compile-time type-checked `OCI_Immediate*` output arguments
+  - `OCI_StatementExecutePreparedAndGetResultset()` and `OCI_StatementExecuteAndGetResultset()`
+  - `OCI_ARG_OF(ptr)` macro for compile-time type-checked `OCI_ConnectionImmediate*` output arguments
 
-- `OCI_SubscriptionRegister()` gains an `OCI_SubscriptionMode mode` parameter (`OCI_SRM_DEFAULT` / `OCI_SRM_SECURE_NOTIFICATION`) letting the client initiate the notification listener connection on Oracle client 12c+ (#383)
+- `OCI_SubscriptionCreate()` gains an `OCI_SubscriptionMode mode` parameter (`OCI_SRM_DEFAULT` / `OCI_SRM_SECURE_NOTIFICATION`) letting the client initiate the notification listener connection on Oracle client 12c+ (#383)
 
 ### Enhancements (C++ API)
 
@@ -84,7 +83,7 @@
   - All former static accessors (`GetMode`, `GetImportMode`, `GetCharset`, `GetCompileVersion`, `GetRuntimeVersion`, `SetFormat`, `GetFormat`, `GetLocaleString`, `StartDatabase`, `ShutdownDatabase`, etc.) are now instance methods
 
 - Added `ocilib::Json` and `ocilib::JsonNode` wrapper classes
-- Added `ocilib::SodaDb`, `ocilib::SodaColl`, `ocilib::SodaDoc`, `ocilib::SodaOptions`, `ocilib::SodaCollCursor`, and `ocilib::SodaDocCursor` wrapper classes
+- Added `ocilib::SodaDatabase`, `ocilib::SodaCollection`, `ocilib::SodaDocument`, `ocilib::SodaOptions`, `ocilib::SodaCollectionCursor`, and `ocilib::SodaDocumentCursor` wrapper classes
   - Oracle 23ai JSON/SODA additions
     - `Json::Validate()` — validate against a JSON schema; returns `false` on failure, with an overload filling an error-report `Json`
     - `Column::HasJsonSchema()` — JSON schema constraint check
@@ -101,11 +100,12 @@
     - `ocilib::Resultset` exposes `begin()`/`end()` input iterators yielding `ocilib::Row` proxies (typed `Get<T>(index)`/`Get<T>(name)`), usable in range-for loops and `std::ranges` algorithms; scrollable resultsets additionally support `operator--`, `operator+=`, `operator-=` and `operator[]` (seek) navigation
     - `Resultset::Rows()`/`Resultset::Columns()`/`TypeInfo::Columns()` return view objects for range-for access; `ocilib::ColumnView` proxies expose column attributes (name, type, size, nullability)
     - `ocilib::JsonNode` exposes `begin()`/`end()` input iterators over array items and object fields
-    - SODA cursors (`SodaCollCursor`/`SodaDocCursor`) expose `begin()`/`end()` for range-for
+    - SODA cursors (`SodaCollectionCursor`/`SodaDocumentCursor`) expose `begin()`/`end()` for range-for
 - Added `Statement::ExecuteAndGetResultset()` convenience methods
 
 ### Changes (C API)
 
+- Public API naming overhaul: the entire C API is now normalized on the handle/ownership model (`OCI_<Type><Action>` naming — `OCI_<Type>Create`/`OCI_<Type>Free` factories, `Get`/`Set` accessors). ~460 functions, 11 handle typedefs and 12 integer-type constants were renamed, e.g. `OCI_Execute` → `OCI_StatementExecutePrepared`, `OCI_ExecuteStmt` → `OCI_StatementExecute`, `OCI_FetchNext` → `OCI_ResultsetFetchNext`, `OCI_Coll` → `OCI_Collection`, `OCI_Msg` → `OCI_Message`, `OCI_NUM_INT` → `OCI_NUM_INT32`. `include/ocilibc/compat.h` maps the old names to the new ones for source compatibility; define `OCI_NO_COMPAT` before including `ocilib.h` to opt out. Binary compatibility is not preserved — applications must be recompiled.
 - Fixed-width public integer typedefs have been added: `OCI_Int16`/`OCI_UInt16`, `OCI_Int32`/`OCI_UInt32`, `OCI_Int64`/`OCI_UInt64` (the canonical C type of each width on all platforms) and `OCI_Size` for byte sizes and buffer lengths. The public API and the whole codebase now use them in place of bare `int`/`unsigned int`/`short`/`unsigned short`/`size_t`.
   - `OCI_Float`/`OCI_Double` are the single/double precision floating point types, used throughout the API in place of bare `float`/`double`.
   - `big_int`/`big_uint` remain available as compatibility typedefs for `OCI_Int64`/`OCI_UInt64` in `platform.h`.
@@ -113,27 +113,27 @@
 - The following constructors and functions now take an explicit `OCI_Environment*` first argument:
   - `OCI_ConnectionCreate()`, `OCI_PoolCreate()`, `OCI_PoolGetConnection()`, `OCI_PoolFree()`
   - `OCI_DateCreate()` / `OCI_DateArrayCreate()`, `OCI_NumberCreate()` / `OCI_NumberArrayCreate()`, `OCI_TimestampCreate()` / `OCI_TimestampArrayCreate()`, `OCI_IntervalCreate()` / `OCI_IntervalArrayCreate()`
-  - `OCI_HashCreate()`
-  - `OCI_DatabaseStartup()`, `OCI_DatabaseShutdown()`, `OCI_SetUserPassword()`
-  - `OCI_GetOCICompileVersion()`, `OCI_GetOCIRuntimeVersion()`, `OCI_GetImportMode()`, `OCI_GetCharset()`, `OCI_GetStats()`, `OCI_GetLocaleString()`, `OCI_SetFormat()`, `OCI_GetFormat()`, `OCI_EnableWarnings()`, `OCI_SetErrorHandler()`, `OCI_SetHAHandler()`
+  - `OCI_HashTableCreate()`
+  - `OCI_DatabaseStartup()`, `OCI_DatabaseShutdown()`, `OCI_EnvironmentSetUserPassword()`
+  - `OCI_EnvironmentGetOCICompileVersion()`, `OCI_EnvironmentGetOCIRuntimeVersion()`, `OCI_EnvironmentGetImportMode()`, `OCI_EnvironmentGetCharset()`, `OCI_EnvironmentGetStats()`, `OCI_EnvironmentGetLocaleString()`, `OCI_EnvironmentSetFormat()`, `OCI_EnvironmentGetFormat()`, `OCI_EnvironmentEnableWarnings()`, `OCI_EnvironmentSetErrorHandler()`, `OCI_EnvironmentSetHAHandler()`
 - `OCI_GetLastError()` always returns the calling thread's `OCI_Error`; the `OCI_ENV_CONTEXT` flag has been removed.
 - The error model now separates error type, origin category, and code:
   - `OCI_ErrorGetType()` reports the error type only: `OCI_ERR_TYPE_ERROR` or `OCI_ERR_TYPE_WARNING` (the `OCI_ERR_ORACLE`, `OCI_ERR_OCILIB`, and `OCI_ERR_WARNING` type constants are removed)
   - Added `OCI_ErrorGetCategory()` reporting the originating subsystem: `OCI_ERR_CAT_LIB`, `OCI_ERR_CAT_OCI`, or `OCI_ERR_CAT_JZN` (JSON DOM errors)
   - `OCI_ErrorGetCode()` returns the code in the category's namespace; `OCI_ErrorGetOCICode()` and `OCI_ErrorGetInternalCode()` are removed
-- `OCI_SubscriptionRegister()` no longer takes a `port` argument; configure the subscription port once with `OCI_SetSubscriptionPort()`.
+- `OCI_SubscriptionCreate()` no longer takes a `port` argument; configure the subscription port once with `OCI_EnvironmentSetSubscriptionPort()`.
 - `OCI_DequeueSubscribe()` is now a batch call taking a connection and an array of `OCI_Dequeue*`.
-- All `OCI_Bind*()` and `OCI_BindArrayOf*()` functions now return `OCI_Bind*` instead of `boolean`. `OCI_Register*` functions are unchanged.
-- The `*2` by-name resultset/getter suffixes have been renamed to `*ByName` (e.g. `OCI_GetString2()` -> `OCI_GetStringByName()`).
+- All `OCI_StatementBind*()` functions now return `OCI_Bind*` instead of `OCI_Boolean`. `OCI_StatementRegister*()` functions are unchanged.
+- The `*2` by-name resultset/getter suffixes have been renamed to `*ByName` (e.g. `OCI_GetString2()` -> `OCI_ResultsetGetStringByName()`).
 - LOB read/write/append functions now take `OCI_UInt32 *char_count` and `OCI_UInt32 *byte_count` out-parameters; the old `*2` variants are promoted to the primary names.
-- `OCI_CollGetElem2()` has been removed; use `OCI_CollGetElem()`.
-- `OCI_GetAllocatedBytes()` has been removed; use `OCI_GetStats(env, OCI_UST_BYTES)`.
-- `include/ocilibc/compat.h` has been removed; all v3-era compatibility macros are gone. `big_int`/`big_uint` remain available as compatibility typedefs for `OCI_Int64`/`OCI_UInt64` in `platform.h`.
+- `OCI_CollGetElem2()` has been removed; use `OCI_CollectionGetElement()`.
+- `OCI_GetAllocatedBytes()` has been removed; use `OCI_EnvironmentGetStats(env, OCI_UST_BYTES)`.
+- `include/ocilibc/compat.h` has been recreated with v4-to-v5 aliases (functions, handle typedefs, integer constants); all v3-era compatibility macros are gone. `big_int`/`big_uint` remain available as compatibility typedefs for `OCI_Int64`/`OCI_UInt64` in `platform.h`.
 - All `OCI_HandleGet*` raw OCI handle accessors have been removed except `OCI_HandleGetEnvironment()`, which now returns the owning `OCI_Environment*`.
 - XA / distributed transaction support (`OCI_SESSION_XA`) has been removed.
 - The public threading API (`OCI_Mutex*`, `OCI_Thread*`, `OCI_ThreadKey*`) has been removed; use standard C11 `<threads.h>`, C++ `<thread>` / `<mutex>`, or platform APIs.
 
-- All index parameters and index-returning functions are now 0-based (resultset columns, binds, collection elements, JSON items/fields, type-info columns, direct-path rows/columns, bind array positions, absolute fetch seeks). Lookups and positions that can miss now return `OCI_Int32` with **`-1`** as the "not found / no position" sentinel: `OCI_GetColumnIndex`, `OCI_GetBindIndex`, `OCI_GetCurrentRow`, `OCI_ErrorGetRow`.
+- All index parameters and index-returning functions are now 0-based (resultset columns, binds, collection elements, JSON items/fields, type-info columns, direct-path rows/columns, bind array positions, absolute fetch seeks). Lookups and positions that can miss now return `OCI_Int32` with **`-1`** as the "not found / no position" sentinel: `OCI_ResultsetGetColumnIndex`, `OCI_StatementGetBindIndex`, `OCI_ResultsetGetCurrentRow`, `OCI_ErrorGetRow`.
 
 ### Changes (C++ API)
 

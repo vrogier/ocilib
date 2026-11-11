@@ -87,11 +87,11 @@ namespace TestCApi
 
         std::thread thrd([&threadResult, stmt]()
             {
-                threadResult = OCI_ExecuteStmt(stmt, OTEXT("begin dbms_lock.sleep(10); end;"));
+                threadResult = OCI_StatementExecute(stmt, OTEXT("begin dbms_lock.sleep(10); end;"));
             });
 
         Sleep(1000);
-        ASSERT_TRUE(OCI_Break(conn));
+        ASSERT_TRUE(OCI_ConnectionBreak(conn));
 
         thrd.join();
 
@@ -115,8 +115,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, con);
 
         const otext* module = OTEXT("CApiCovModule");
-        ASSERT_TRUE(OCI_SetTrace(con, OCI_TRC_MODULE, module));
-        const otext* value = OCI_GetTrace(con, OCI_TRC_MODULE);
+        ASSERT_TRUE(OCI_ConnectionSetTrace(con, OCI_TRC_MODULE, module));
+        const otext* value = OCI_ConnectionGetTrace(con, OCI_TRC_MODULE);
         ASSERT_NE(nullptr, value);
         ASSERT_EQ(String(module), String(value));
 
@@ -134,27 +134,27 @@ namespace TestCApi
 
         ASSERT_EQ(env, OCI_HandleGetEnvironment(con));
 
-        ASSERT_TRUE(OCI_IsConnected(con));
-        ASSERT_NE(nullptr, OCI_GetDatabase(con));
-        ASSERT_NE(nullptr, OCI_GetUserName(con));
-        ASSERT_NE(nullptr, OCI_GetPassword(con));
-        ASSERT_EQ(OCI_SESSION_DEFAULT, OCI_GetSessionMode(con));
-        ASSERT_NE(nullptr, OCI_GetDBName(con));
-        ASSERT_NE(nullptr, OCI_GetInstanceName(con));
-        ASSERT_NE(nullptr, OCI_GetServiceName(con));
-        ASSERT_NE(nullptr, OCI_GetServerName(con));
-        (void) OCI_GetDomainName(con);
+        ASSERT_TRUE(OCI_ConnectionIsAlive(con));
+        ASSERT_NE(nullptr, OCI_ConnectionGetConnectionString(con));
+        ASSERT_NE(nullptr, OCI_ConnectionGetUserName(con));
+        ASSERT_NE(nullptr, OCI_ConnectionGetPassword(con));
+        ASSERT_EQ(OCI_SESSION_DEFAULT, OCI_ConnectionGetSessionMode(con));
+        ASSERT_NE(nullptr, OCI_ConnectionGetDatabaseName(con));
+        ASSERT_NE(nullptr, OCI_ConnectionGetInstanceName(con));
+        ASSERT_NE(nullptr, OCI_ConnectionGetServiceName(con));
+        ASSERT_NE(nullptr, OCI_ConnectionGetServerName(con));
+        (void) OCI_ConnectionGetDomainName(con);
 
-        ASSERT_TRUE(OCI_SetAutoCommit(con, FALSE));
-        ASSERT_FALSE(OCI_GetAutoCommit(con));
+        ASSERT_TRUE(OCI_ConnectionSetAutoCommit(con, FALSE));
+        ASSERT_FALSE(OCI_ConnectionGetAutoCommit(con));
 
-        ASSERT_TRUE(OCI_SetStatementCacheSize(con, 42));
-        ASSERT_EQ(42u, OCI_GetStatementCacheSize(con));
+        ASSERT_TRUE(OCI_ConnectionSetStatementCacheSize(con, 42));
+        ASSERT_EQ(42u, OCI_ConnectionGetStatementCacheSize(con));
 
-        ASSERT_TRUE(OCI_SetDefaultLobPrefetchSize(con, 4096));
-        ASSERT_EQ(4096u, OCI_GetDefaultLobPrefetchSize(con));
+        ASSERT_TRUE(OCI_ConnectionSetDefaultLobPrefetchSize(con, 4096));
+        ASSERT_EQ(4096u, OCI_ConnectionGetDefaultLobPrefetchSize(con));
 
-        ASSERT_GE(OCI_GetMaxCursors(con), 0u);
+        ASSERT_GE(OCI_ConnectionGetMaxCursors(con), 0u);
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
@@ -168,11 +168,11 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        ASSERT_TRUE(OCI_Immediate(con, OTEXT("create table TestConnT (id int)")));
-        ASSERT_TRUE(OCI_Immediate(con, OTEXT("insert into TestConnT values (1)")));
-        ASSERT_TRUE(OCI_Rollback(con));
-        ASSERT_TRUE(OCI_Commit(con));
-        ASSERT_TRUE(OCI_Immediate(con, OTEXT("drop table TestConnT")));
+        ASSERT_TRUE(OCI_ConnectionImmediate(con, OTEXT("create table TestConnT (id int)")));
+        ASSERT_TRUE(OCI_ConnectionImmediate(con, OTEXT("insert into TestConnT values (1)")));
+        ASSERT_TRUE(OCI_ConnectionRollback(con));
+        ASSERT_TRUE(OCI_ConnectionCommit(con));
+        ASSERT_TRUE(OCI_ConnectionImmediate(con, OTEXT("drop table TestConnT")));
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
@@ -186,16 +186,16 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        const auto major = OCI_GetServerMajorVersion(con);
+        const auto major = OCI_ConnectionGetServerMajorVersion(con);
         ASSERT_GT(major, 0u);
-        const auto minor = OCI_GetServerMinorVersion(con);
+        const auto minor = OCI_ConnectionGetServerMinorVersion(con);
         ASSERT_GE(minor, 0u);
-        const auto rev = OCI_GetServerRevisionVersion(con);
+        const auto rev = OCI_ConnectionGetServerRevisionVersion(con);
         ASSERT_GE(rev, 0u);
 
-        ASSERT_NE(nullptr, OCI_GetVersionServer(con));
-        ASSERT_NE(OCI_UNKNOWN, OCI_GetVersionConnection(con));
-        ASSERT_NE(nullptr, OCI_GetServerName(con));
+        ASSERT_NE(nullptr, OCI_ConnectionGetServerVersionString(con));
+        ASSERT_NE(OCI_UNKNOWN, OCI_ConnectionGetVersion(con));
+        ASSERT_NE(nullptr, OCI_ConnectionGetServerName(con));
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
@@ -209,10 +209,10 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        ASSERT_TRUE(OCI_ServerEnableOutput(con, 32000, 5, 255));
-        ASSERT_TRUE(OCI_Immediate(con, OTEXT("begin dbms_output.put_line('hello'); end;")));
-        ASSERT_NE(nullptr, OCI_ServerGetOutput(con));
-        ASSERT_TRUE(OCI_ServerDisableOutput(con));
+        ASSERT_TRUE(OCI_ConnectionEnableServerOutput(con, 32000, 5, 255));
+        ASSERT_TRUE(OCI_ConnectionImmediate(con, OTEXT("begin dbms_output.put_line('hello'); end;")));
+        ASSERT_NE(nullptr, OCI_ConnectionGetServerOutput(con));
+        ASSERT_TRUE(OCI_ConnectionDisableServerOutput(con));
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
@@ -226,10 +226,10 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        ASSERT_TRUE(OCI_Ping(con));
+        ASSERT_TRUE(OCI_ConnectionPing(con));
 
-        ASSERT_TRUE(OCI_SetTimeout(con, OCI_NTO_SEND, 60));
-        ASSERT_EQ(60u, OCI_GetTimeout(con, OCI_NTO_SEND));
+        ASSERT_TRUE(OCI_ConnectionSetTimeout(con, OCI_NTO_SEND, 60));
+        ASSERT_EQ(60u, OCI_ConnectionGetTimeout(con, OCI_NTO_SEND));
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
@@ -275,8 +275,8 @@ namespace TestCApi
 
     TEST_P(TestConnectionTrace, SetAndGet)
     {
-        ASSERT_TRUE(OCI_SetTrace(con, GetParam().type, GetParam().value));
-        ASSERT_EQ(String(GetParam().value), String(OCI_GetTrace(con, GetParam().type)));
+        ASSERT_TRUE(OCI_ConnectionSetTrace(con, GetParam().type, GetParam().value));
+        ASSERT_EQ(String(GetParam().value), String(OCI_ConnectionGetTrace(con, GetParam().type)));
     }
 
     INSTANTIATE_TEST_CASE_P(TraceTypes, TestConnectionTrace,
@@ -294,10 +294,10 @@ namespace TestCApi
 
         /* OcilibDatabaseSetUserPassword() performs an OCI_AUTH logon that
            changes the password (OCIPasswordChange) instead of OCISessionBegin */
-        ASSERT_TRUE(OCI_SetUserPassword(env, DBS, USR, PWD, OTEXT("OcilibCovPwd1")));
+        ASSERT_TRUE(OCI_EnvironmentSetUserPassword(env, DBS, USR, PWD, OTEXT("OcilibCovPwd1")));
 
         /* restore the original password, logging on with the new one */
-        ASSERT_TRUE(OCI_SetUserPassword(env, DBS, USR, OTEXT("OcilibCovPwd1"), PWD));
+        ASSERT_TRUE(OCI_EnvironmentSetUserPassword(env, DBS, USR, OTEXT("OcilibCovPwd1"), PWD));
     }
 
     TEST(TestConnection, SetPasswordWhileLogged)
@@ -309,8 +309,8 @@ namespace TestCApi
         ASSERT_NE(nullptr, con);
 
         /* logged connection -> plain OCIPasswordChange */
-        ASSERT_TRUE(OCI_SetPassword(con, OTEXT("OcilibCovPwd2")));
-        ASSERT_TRUE(OCI_SetPassword(con, PWD));
+        ASSERT_TRUE(OCI_ConnectionSetPassword(con, OTEXT("OcilibCovPwd2")));
+        ASSERT_TRUE(OCI_ConnectionSetPassword(con, PWD));
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
@@ -326,10 +326,10 @@ namespace TestCApi
 
         /* bufsize = 0 binds a NULL (unlimited buffer) and lnsize above the
            maximum gets clamped */
-        ASSERT_TRUE(OCI_ServerEnableOutput(con, 0, 5, 40000));
-        ASSERT_TRUE(OCI_Immediate(con, OTEXT("begin dbms_output.put_line('hello'); end;")));
-        ASSERT_NE(nullptr, OCI_ServerGetOutput(con));
-        ASSERT_TRUE(OCI_ServerDisableOutput(con));
+        ASSERT_TRUE(OCI_ConnectionEnableServerOutput(con, 0, 5, 40000));
+        ASSERT_TRUE(OCI_ConnectionImmediate(con, OTEXT("begin dbms_output.put_line('hello'); end;")));
+        ASSERT_NE(nullptr, OCI_ConnectionGetServerOutput(con));
+        ASSERT_TRUE(OCI_ConnectionDisableServerOutput(con));
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
@@ -357,7 +357,7 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        const auto sub = OCI_SubscriptionRegister(con, OTEXT("TestConnSub"), OCI_CNT_ALL, TestConnSubHandler, OCI_SRM_DEFAULT, 0);
+        const auto sub = OCI_SubscriptionCreate(con, OTEXT("TestConnSub"), OCI_CNT_ALL, TestConnSubHandler, OCI_SRM_DEFAULT, 0);
         ASSERT_NE(nullptr, sub);
 
         /* freeing the connection first detaches the subscription, which keeps
@@ -375,10 +375,10 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        const auto capable = OCI_IsTAFCapable(con);
+        const auto capable = OCI_ConnectionIsTAFCapable(con);
 
         /* on a non TAF-enabled service the call is rejected */
-        ASSERT_EQ(capable, OCI_SetTAFHandler(con, TestConnTAFHandler));
+        ASSERT_EQ(capable, OCI_ConnectionSetTAFHandler(con, TestConnTAFHandler));
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
@@ -394,8 +394,8 @@ namespace TestCApi
         /* tag a pooled session so the next get with the same tag finds it */
         const auto con1 = OCI_PoolGetConnection(env, pool, OTEXT("covtag"));
         ASSERT_NE(nullptr, con1);
-        ASSERT_TRUE(OCI_SetSessionTag(con1, OTEXT("covtag")));
-        ASSERT_TRUE(OCI_SetAutoCommit(con1, TRUE));
+        ASSERT_TRUE(OCI_ConnectionSetSessionTag(con1, OTEXT("covtag")));
+        ASSERT_TRUE(OCI_ConnectionSetAutoCommit(con1, TRUE));
         ASSERT_TRUE(OCI_ConnectionFree(con1));
 
         /* session returned with a matching tag -> OcilibConnectionSetSessionTag */
@@ -407,8 +407,8 @@ namespace TestCApi
     }
 
     /* --- public-API coverage of the dropped OcilibCon* / OcilibParseVersionString
-       internals: OCI_GetServerMajorVersion / Minor / Revision and
-       OCI_SetPassword exercise the version-string parse + password-change
+       internals: OCI_ConnectionGetServerMajorVersion / Minor / Revision and
+       OCI_ConnectionSetPassword exercise the version-string parse + password-change
        arms the dropped tests used --- */
 
     TEST(TestConnection, GetServerVersionComponents)
@@ -421,9 +421,9 @@ namespace TestCApi
 
         /* OcilibCon* version internals via public getters
            (OcilibConnectionGetServer* + OcilibParseVersionString arms) */
-        const auto major = OCI_GetServerMajorVersion(conn);
-        const auto minor = OCI_GetServerMinorVersion(conn);
-        const auto rev   = OCI_GetServerRevisionVersion(conn);
+        const auto major = OCI_ConnectionGetServerMajorVersion(conn);
+        const auto minor = OCI_ConnectionGetServerMinorVersion(conn);
+        const auto rev   = OCI_ConnectionGetServerRevisionVersion(conn);
 
         ASSERT_GE(major, 8u);
         ASSERT_LE(major, 99u);
@@ -447,7 +447,7 @@ namespace TestCApi
            password API on a logged connection. Setting the password to its
            current value exercises the OCI call without mutating server state
            (a real change would break every other test's connect) */
-        ASSERT_TRUE(OCI_SetPassword(conn, PWD));
+        ASSERT_TRUE(OCI_ConnectionSetPassword(conn, PWD));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
@@ -483,25 +483,25 @@ namespace TestCApi
         {
             const auto stmt = OCI_StatementCreate(conn);
             EXPECT_NE(nullptr, stmt);
-            EXPECT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select 1 as v, 'x' as s from dual")));
-            const auto rs = OCI_GetResultset(stmt);
+            EXPECT_TRUE(OCI_StatementExecute(stmt, OTEXT("select 1 as v, 'x' as s from dual")));
+            const auto rs = OCI_StatementGetResultset(stmt);
             EXPECT_NE(nullptr, rs);
-            EXPECT_TRUE(OCI_FetchNext(rs));
+            EXPECT_TRUE(OCI_ResultsetFetchNext(rs));
             EXPECT_TRUE(OCI_StatementFree(stmt));
         };
 
         for (int i = 0; i < 20; i++) cycle();
 
-        const auto bytes   = OCI_GetStats(env, OCI_UST_BYTES);
-        const auto handles = OCI_GetStats(env, OCI_UST_HANDLES);
-        const auto objs    = OCI_GetStats(env, OCI_UST_OBJECTS);
+        const auto bytes   = OCI_EnvironmentGetStats(env, OCI_UST_BYTES);
+        const auto handles = OCI_EnvironmentGetStats(env, OCI_UST_HANDLES);
+        const auto objs    = OCI_EnvironmentGetStats(env, OCI_UST_OBJECTS);
 
         for (int i = 0; i < 50; i++) cycle();
 
-        ASSERT_EQ(handles, OCI_GetStats(env, OCI_UST_HANDLES));
-        ASSERT_EQ(objs,    OCI_GetStats(env, OCI_UST_OBJECTS));
+        ASSERT_EQ(handles, OCI_EnvironmentGetStats(env, OCI_UST_HANDLES));
+        ASSERT_EQ(objs,    OCI_EnvironmentGetStats(env, OCI_UST_OBJECTS));
         /* bytes may legitimately grow a little via caching but must be bounded */
-        ASSERT_LE(OCI_GetStats(env, OCI_UST_BYTES), bytes + 64 * 1024);
+        ASSERT_LE(OCI_EnvironmentGetStats(env, OCI_UST_BYTES), bytes + 64 * 1024);
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
@@ -517,7 +517,7 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        ASSERT_EQ(TRUE, OCI_Ping(conn));
+        ASSERT_EQ(TRUE, OCI_ConnectionPing(conn));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ASSERT_TRUE(OCI_EnvironmentFree(env));
@@ -533,8 +533,8 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        ASSERT_NE(nullptr, OCI_GetVersionServer(conn));
-        ASSERT_NE(0u, OCI_GetVersionConnection(conn));
+        ASSERT_NE(nullptr, OCI_ConnectionGetServerVersionString(conn));
+        ASSERT_NE(0u, OCI_ConnectionGetVersion(conn));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ASSERT_TRUE(OCI_EnvironmentFree(env));
@@ -549,7 +549,7 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
-        ASSERT_EQ(FALSE, OCI_IsTAFCapable(conn));
+        ASSERT_EQ(FALSE, OCI_ConnectionIsTAFCapable(conn));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ASSERT_TRUE(OCI_EnvironmentFree(env));
@@ -566,48 +566,48 @@ namespace TestCApi
     INSTANTIATE_TEST_CASE_P(NullArgs, TestConnectionNullArgs,
         ::testing::ValuesIn(NullArgCases
         {
-            { "Break", [] { return !OCI_Break(nullptr); } },
-            { "Commit", [] { return !OCI_Commit(nullptr); } },
+            { "Break", [] { return !OCI_ConnectionBreak(nullptr); } },
+            { "Commit", [] { return !OCI_ConnectionCommit(nullptr); } },
             { "ConnectionFree", [] { return !OCI_ConnectionFree(nullptr); } },
-            { "GetAutoCommit", [] { return !OCI_GetAutoCommit(nullptr); } },
-            { "GetDBName", [] { return nullptr == OCI_GetDBName(nullptr); } },
-            { "GetDatabase", [] { return nullptr == OCI_GetDatabase(nullptr); } },
-            { "GetDefaultLobPrefetchSize", [] { return 0 == OCI_GetDefaultLobPrefetchSize(nullptr); } },
-            { "GetDomainName", [] { return nullptr == OCI_GetDomainName(nullptr); } },
-            { "GetInstanceName", [] { return nullptr == OCI_GetInstanceName(nullptr); } },
-            { "GetInstanceStartTime", [] { return nullptr == OCI_GetInstanceStartTime(nullptr); } },
-            { "GetMaxCursors", [] { return 0 == OCI_GetMaxCursors(nullptr); } },
-            { "GetPassword", [] { return nullptr == OCI_GetPassword(nullptr); } },
-            { "GetServerMajorVersion", [] { return OCI_UNKNOWN == OCI_GetServerMajorVersion(nullptr); } },
-            { "GetServerMinorVersion", [] { return OCI_UNKNOWN == OCI_GetServerMinorVersion(nullptr); } },
-            { "GetServerName", [] { return nullptr == OCI_GetServerName(nullptr); } },
-            { "GetServerRevisionVersion", [] { return OCI_UNKNOWN == OCI_GetServerRevisionVersion(nullptr); } },
-            { "GetServiceName", [] { return nullptr == OCI_GetServiceName(nullptr); } },
-            { "GetSessionMode", [] { return OCI_UNKNOWN == OCI_GetSessionMode(nullptr); } },
-            { "GetSessionTag", [] { return nullptr == OCI_GetSessionTag(nullptr); } },
-            { "GetStatementCacheSize", [] { return 0 == OCI_GetStatementCacheSize(nullptr); } },
-            { "GetTimeout", [] { return 0 == OCI_GetTimeout(nullptr, 1); } },
-            { "GetTrace", [] { return nullptr == OCI_GetTrace(nullptr, 1); } },
-            { "GetTransaction", [] { return nullptr == OCI_GetTransaction(nullptr); } },
-            { "GetUserName", [] { return nullptr == OCI_GetUserName(nullptr); } },
-            { "GetVersionConnection", [] { return OCI_UNKNOWN == OCI_GetVersionConnection(nullptr); } },
-            { "GetVersionServer", [] { return nullptr == OCI_GetVersionServer(nullptr); } },
-            { "IsConnected", [] { return !OCI_IsConnected(nullptr); } },
-            { "IsTAFCapable", [] { return !OCI_IsTAFCapable(nullptr); } },
-            { "Ping", [] { return !OCI_Ping(nullptr); } },
-            { "Rollback", [] { return !OCI_Rollback(nullptr); } },
-            { "ServerDisableOutput", [] { return !OCI_ServerDisableOutput(nullptr); } },
-            { "ServerEnableOutput", [] { return !OCI_ServerEnableOutput(nullptr, 1, 1, 1); } },
-            { "ServerGetOutput", [] { return nullptr == OCI_ServerGetOutput(nullptr); } },
-            { "SetAutoCommit", [] { return !OCI_SetAutoCommit(nullptr, FALSE); } },
-            { "SetDefaultLobPrefetchSize", [] { return !OCI_SetDefaultLobPrefetchSize(nullptr, 1); } },
-            { "SetPassword", [] { return !OCI_SetPassword(nullptr, OTEXT("x")); } },
-            { "SetSessionTag", [] { return !OCI_SetSessionTag(nullptr, OTEXT("x")); } },
-            { "SetStatementCacheSize", [] { return !OCI_SetStatementCacheSize(nullptr, 1); } },
-            { "SetTAFHandler", [] { return !OCI_SetTAFHandler(nullptr, nullptr); } },
-            { "SetTimeout", [] { return !OCI_SetTimeout(nullptr, 1, 1); } },
-            { "SetTrace", [] { return !OCI_SetTrace(nullptr, 1, OTEXT("x")); } },
-            { "SetTransaction", [] { return !OCI_SetTransaction(nullptr, nullptr); } },
+            { "GetAutoCommit", [] { return !OCI_ConnectionGetAutoCommit(nullptr); } },
+            { "GetDBName", [] { return nullptr == OCI_ConnectionGetDatabaseName(nullptr); } },
+            { "GetDatabase", [] { return nullptr == OCI_ConnectionGetConnectionString(nullptr); } },
+            { "GetDefaultLobPrefetchSize", [] { return 0 == OCI_ConnectionGetDefaultLobPrefetchSize(nullptr); } },
+            { "GetDomainName", [] { return nullptr == OCI_ConnectionGetDomainName(nullptr); } },
+            { "GetInstanceName", [] { return nullptr == OCI_ConnectionGetInstanceName(nullptr); } },
+            { "GetInstanceStartTime", [] { return nullptr == OCI_ConnectionGetInstanceStartTime(nullptr); } },
+            { "GetMaxCursors", [] { return 0 == OCI_ConnectionGetMaxCursors(nullptr); } },
+            { "GetPassword", [] { return nullptr == OCI_ConnectionGetPassword(nullptr); } },
+            { "GetServerMajorVersion", [] { return OCI_UNKNOWN == OCI_ConnectionGetServerMajorVersion(nullptr); } },
+            { "GetServerMinorVersion", [] { return OCI_UNKNOWN == OCI_ConnectionGetServerMinorVersion(nullptr); } },
+            { "GetServerName", [] { return nullptr == OCI_ConnectionGetServerName(nullptr); } },
+            { "GetServerRevisionVersion", [] { return OCI_UNKNOWN == OCI_ConnectionGetServerRevisionVersion(nullptr); } },
+            { "GetServiceName", [] { return nullptr == OCI_ConnectionGetServiceName(nullptr); } },
+            { "GetSessionMode", [] { return OCI_UNKNOWN == OCI_ConnectionGetSessionMode(nullptr); } },
+            { "GetSessionTag", [] { return nullptr == OCI_ConnectionGetSessionTag(nullptr); } },
+            { "GetStatementCacheSize", [] { return 0 == OCI_ConnectionGetStatementCacheSize(nullptr); } },
+            { "GetTimeout", [] { return 0 == OCI_ConnectionGetTimeout(nullptr, 1); } },
+            { "GetTrace", [] { return nullptr == OCI_ConnectionGetTrace(nullptr, 1); } },
+            { "GetTransaction", [] { return nullptr == OCI_ConnectionGetTransaction(nullptr); } },
+            { "GetUserName", [] { return nullptr == OCI_ConnectionGetUserName(nullptr); } },
+            { "GetVersionConnection", [] { return OCI_UNKNOWN == OCI_ConnectionGetVersion(nullptr); } },
+            { "GetVersionServer", [] { return nullptr == OCI_ConnectionGetServerVersionString(nullptr); } },
+            { "IsConnected", [] { return !OCI_ConnectionIsAlive(nullptr); } },
+            { "IsTAFCapable", [] { return !OCI_ConnectionIsTAFCapable(nullptr); } },
+            { "Ping", [] { return !OCI_ConnectionPing(nullptr); } },
+            { "Rollback", [] { return !OCI_ConnectionRollback(nullptr); } },
+            { "ServerDisableOutput", [] { return !OCI_ConnectionDisableServerOutput(nullptr); } },
+            { "ServerEnableOutput", [] { return !OCI_ConnectionEnableServerOutput(nullptr, 1, 1, 1); } },
+            { "ServerGetOutput", [] { return nullptr == OCI_ConnectionGetServerOutput(nullptr); } },
+            { "SetAutoCommit", [] { return !OCI_ConnectionSetAutoCommit(nullptr, FALSE); } },
+            { "SetDefaultLobPrefetchSize", [] { return !OCI_ConnectionSetDefaultLobPrefetchSize(nullptr, 1); } },
+            { "SetPassword", [] { return !OCI_ConnectionSetPassword(nullptr, OTEXT("x")); } },
+            { "SetSessionTag", [] { return !OCI_ConnectionSetSessionTag(nullptr, OTEXT("x")); } },
+            { "SetStatementCacheSize", [] { return !OCI_ConnectionSetStatementCacheSize(nullptr, 1); } },
+            { "SetTAFHandler", [] { return !OCI_ConnectionSetTAFHandler(nullptr, nullptr); } },
+            { "SetTimeout", [] { return !OCI_ConnectionSetTimeout(nullptr, 1, 1); } },
+            { "SetTrace", [] { return !OCI_ConnectionSetTrace(nullptr, 1, OTEXT("x")); } },
+            { "SetTransaction", [] { return !OCI_ConnectionSetTransaction(nullptr, nullptr); } },
             { "StatementCreate", [] { return nullptr == OCI_StatementCreate(nullptr); } },
         }),
         &NullArgCaseName);

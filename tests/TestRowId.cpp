@@ -19,8 +19,8 @@ namespace TestCApi
         otext rowid1[OCI_SIZE_ROWID + 1] = OTEXT("");
         otext rowid2[OCI_SIZE_ROWID + 1] = OTEXT("");
 
-        ASSERT_TRUE(OCI_Immediate(conn, OTEXT("select rowid from TestRowIdFetch where code = 1"), OCI_ARG_TEXT, rowid1));
-        ASSERT_TRUE(OCI_Immediate(conn, OTEXT("select rowid from TestRowIdFetch where code = 2"), OCI_ARG_TEXT, rowid2));
+        ASSERT_TRUE(OCI_ConnectionImmediate(conn, OTEXT("select rowid from TestRowIdFetch where code = 1"), OCI_ARG_TEXT, rowid1));
+        ASSERT_TRUE(OCI_ConnectionImmediate(conn, OTEXT("select rowid from TestRowIdFetch where code = 2"), OCI_ARG_TEXT, rowid2));
 
         ASSERT_TRUE(String(rowid1).length() > 0);
         ASSERT_TRUE(String(rowid2).length() > 0);
@@ -51,21 +51,21 @@ namespace TestCApi
 
         otext rowid[OCI_SIZE_ROWID + 1] = OTEXT("");
 
-        ASSERT_TRUE(OCI_Immediate(conn, OTEXT("select rowid from TestRowIdBind where code = 2"), OCI_ARG_TEXT, rowid));
+        ASSERT_TRUE(OCI_ConnectionImmediate(conn, OTEXT("select rowid from TestRowIdBind where code = 2"), OCI_ARG_TEXT, rowid));
 
         ASSERT_TRUE(String(rowid).length() > 0);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select code, name, rowid from TestRowIdBind where rowid = :id")));
-        ASSERT_NE(nullptr, OCI_BindString(stmt, OTEXT(":id"), rowid, OCI_SIZE_ROWID));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select code, name, rowid from TestRowIdBind where rowid = :id")));
+        ASSERT_NE(nullptr, OCI_StatementBindString(stmt, OTEXT(":id"), rowid, OCI_SIZE_ROWID));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
 
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        ASSERT_EQ(2, OCI_GetInt(rs, 0));
-        ASSERT_EQ(String(OTEXT("name 2")), OCI_GetString(rs, 1));
+        ASSERT_EQ(2, OCI_ResultsetGetInt32(rs, 0));
+        ASSERT_EQ(String(OTEXT("name 2")), OCI_ResultsetGetString(rs, 1));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

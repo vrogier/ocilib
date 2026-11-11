@@ -15,6 +15,16 @@ For the C++ layer (`ocilib.hpp`), see `migration-guide-cpp-api.md`.
 > they compile silently but change runtime behaviour. Steps 5–8 are mechanical,
 > compiler-flagged renames. Steps 9–15 only affect users of specific features.
 
+> **The big renaming:** v5 normalizes the entire public C API on the
+> `OCI_<Type><Action>` handle model — ~460 functions, 11 handle typedefs and 12
+> integer-type constants were renamed (e.g. `OCI_Execute` →
+> `OCI_StatementExecutePrepared`, `OCI_Coll` → `OCI_Collection`,
+> `OCI_NUM_INT` → `OCI_NUM_INT32`). `include/ocilibc/compat.h` maps every old
+> name to its new one, so most v4 code still compiles as-is; define
+> `OCI_NO_COMPAT` before including `ocilib.h` to disable the aliases and let the
+> compiler flag every old name. The complete v4 → v5 table is in
+> [Appendix A](#appendix-a--renamed-symbols-v4--v5).
+
 ---
 
 ## 1. Breaking changes at a glance
@@ -33,7 +43,7 @@ For the C++ layer (`ocilib.hpp`), see `migration-guide-cpp-api.md`.
 | 10 | Threading API removed (`OCI_Mutex`/`OCI_Thread`/`OCI_ThreadKey`) | Low–High (depends on usage) |
 | 11 | Raw `OCI_HandleGet*` accessors removed | Low–Medium |
 | 12 | XA / `OCI_SESSION_XA` removed | Low |
-| 13 | `compat.h` removed — all v3-era compatibility macros gone | Low–Medium |
+| 13 | `compat.h` recreated with v4→v5 aliases — v3-era macros are gone | Low–Medium |
 | 14 | `OCI_GetAllocatedBytes` removed; use `OCI_GetStats(env, OCI_UST_BYTES)` | Trivial |
 | 15 | New typed typedefs replace bare `unsigned int` parameters | None (source-compatible) |
 
@@ -270,8 +280,6 @@ index-returning functions are 0-based**, and lookups that can miss return
    `OCI_ENV_CONTEXT`. In v5 it **always** returns the calling thread's `OCI_Error`;
    the flag is gone and there is no global error slot. Code that read "the last error
    produced anywhere" must be reworked to read errors on the thread that produced them.
-   New helper: `OCI_Boolean OCI_HasError(void)` — quick check without fetching the
-   handle.
 2. **`OCI_EnableWarnings(env, value)`** — beyond the new `env` parameter, warnings are
    now scoped per-environment; enabling them no longer affects other environments.
 3. **Row-level change notifications now fire.** `OCI_SubscriptionRegister` with
@@ -605,11 +613,15 @@ resource manager integration outside OCILIB (or stay on v4 for that component).
 
 ---
 
-## 14. Step 13 — Removed compatibility macros (`compat.h`)
+## 14. Step 13 — Compatibility macros (`compat.h`)
 
-`include/ocilibc/compat.h` has been **deleted**. It contained backward-compatibility
-macros mapping pre-v4 names onto the modern API. All of these aliases are gone —
-rename each usage to its modern equivalent:
+`include/ocilibc/compat.h` has been **recreated** for the v5 naming overhaul: it
+now defines every v4 API name as a macro mapping to its v5 equivalent (see
+[Appendix A](#appendix-a--renamed-symbols-v4--v5)). Define `OCI_NO_COMPAT` before
+including `ocilib.h` to disable the aliases.
+
+The **v3-era** backward-compatibility macros that the old file contained are gone
+— rename each usage to its modern equivalent:
 
 | Removed alias | Replacement |
 |---------------|-------------|
@@ -697,7 +709,6 @@ The OCI-client-side figure is no longer exposed.
   ```c
   OCI_Resultset *OCI_ExecuteAndGetResultset(OCI_Statement *stmt);
   OCI_Resultset *OCI_ExecuteStmtAndGetResultset(OCI_Statement *stmt, const otext *sql);
-  OCI_Boolean    OCI_HasError(void);
   ```
 
   `OCI_Execute` + `OCI_GetResultset` and `OCI_ExecuteStmt` + `OCI_GetResultset` in
@@ -828,6 +839,541 @@ int main(void)
     return 0;
 }
 ```
+
+---
+
+## Appendix A — Renamed symbols (v4 → v5)
+
+Complete list of the ~430 public symbols renamed to normalize the API on the
+`OCI_<Type><Action>` handle model. Every old name is defined in
+`include/ocilibc/compat.h` as a macro for its v5 equivalent, so existing code
+keeps compiling; define `OCI_NO_COMPAT` to disable the aliases. Tables are
+grouped by the family the function belongs to.
+
+### Handle types (typedefs)
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_Coll` | `OCI_Collection` |
+| `OCI_DirPath` | `OCI_DirectPath` |
+| `OCI_Elem` | `OCI_Element` |
+| `OCI_Iter` | `OCI_Iterator` |
+| `OCI_Msg` | `OCI_Message` |
+| `OCI_Ref` | `OCI_Reference` |
+| `OCI_SodaColl` | `OCI_SodaCollection` |
+| `OCI_SodaCollCursor` | `OCI_SodaCollectionCursor` |
+| `OCI_SodaDb` | `OCI_SodaDatabase` |
+| `OCI_SodaDoc` | `OCI_SodaDocument` |
+| `OCI_SodaDocCursor` | `OCI_SodaDocumentCursor` |
+
+### Integer-type constants
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_ARG_BIGINT` | `OCI_ARG_INT64` |
+| `OCI_ARG_BIGUINT` | `OCI_ARG_UINT64` |
+| `OCI_ARG_INT` | `OCI_ARG_INT32` |
+| `OCI_ARG_SHORT` | `OCI_ARG_INT16` |
+| `OCI_ARG_UINT` | `OCI_ARG_UINT32` |
+| `OCI_ARG_USHORT` | `OCI_ARG_UINT16` |
+| `OCI_NUM_BIGINT` | `OCI_NUM_INT64` |
+| `OCI_NUM_BIGUINT` | `OCI_NUM_UINT64` |
+| `OCI_NUM_INT` | `OCI_NUM_INT32` |
+| `OCI_NUM_SHORT` | `OCI_NUM_INT16` |
+| `OCI_NUM_UINT` | `OCI_NUM_UINT32` |
+| `OCI_NUM_USHORT` | `OCI_NUM_UINT16` |
+
+### Collection
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_CollAppend` | `OCI_CollectionAppend` |
+| `OCI_CollArrayCreate` | `OCI_CollectionArrayCreate` |
+| `OCI_CollArrayFree` | `OCI_CollectionArrayFree` |
+| `OCI_CollAssign` | `OCI_CollectionAssign` |
+| `OCI_CollClear` | `OCI_CollectionClear` |
+| `OCI_CollCreate` | `OCI_CollectionCreate` |
+| `OCI_CollDeleteElem` | `OCI_CollectionDeleteElement` |
+| `OCI_CollFree` | `OCI_CollectionFree` |
+| `OCI_CollGetCount` | `OCI_CollectionGetCount` |
+| `OCI_CollGetElem` | `OCI_CollectionGetElement` |
+| `OCI_CollGetMax` | `OCI_CollectionGetMax` |
+| `OCI_CollGetSize` | `OCI_CollectionGetSize` |
+| `OCI_CollGetType` | `OCI_CollectionGetType` |
+| `OCI_CollGetTypeInfo` | `OCI_CollectionGetTypeInfo` |
+| `OCI_CollSetElem` | `OCI_CollectionSetElement` |
+| `OCI_CollToText` | `OCI_CollectionToText` |
+| `OCI_CollTrim` | `OCI_CollectionTrim` |
+
+### Column
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_ColumnGetFullSQLType` | `OCI_ColumnGetFullSqlType` |
+| `OCI_ColumnGetSQLType` | `OCI_ColumnGetSqlType` |
+
+### Connection
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_Break` | `OCI_ConnectionBreak` |
+| `OCI_Commit` | `OCI_ConnectionCommit` |
+| `OCI_GetAutoCommit` | `OCI_ConnectionGetAutoCommit` |
+| `OCI_GetDBName` | `OCI_ConnectionGetDatabaseName` |
+| `OCI_GetDatabase` | `OCI_ConnectionGetConnectionString` |
+| `OCI_GetDefaultLobPrefetchSize` | `OCI_ConnectionGetDefaultLobPrefetchSize` |
+| `OCI_GetDomainName` | `OCI_ConnectionGetDomainName` |
+| `OCI_GetInstanceName` | `OCI_ConnectionGetInstanceName` |
+| `OCI_GetInstanceStartTime` | `OCI_ConnectionGetInstanceStartTime` |
+| `OCI_GetMaxCursors` | `OCI_ConnectionGetMaxCursors` |
+| `OCI_GetPassword` | `OCI_ConnectionGetPassword` |
+| `OCI_GetServerMajorVersion` | `OCI_ConnectionGetServerMajorVersion` |
+| `OCI_GetServerMinorVersion` | `OCI_ConnectionGetServerMinorVersion` |
+| `OCI_GetServerName` | `OCI_ConnectionGetServerName` |
+| `OCI_GetServerRevisionVersion` | `OCI_ConnectionGetServerRevisionVersion` |
+| `OCI_GetServiceName` | `OCI_ConnectionGetServiceName` |
+| `OCI_GetSessionMode` | `OCI_ConnectionGetSessionMode` |
+| `OCI_GetSessionTag` | `OCI_ConnectionGetSessionTag` |
+| `OCI_GetStatementCacheSize` | `OCI_ConnectionGetStatementCacheSize` |
+| `OCI_GetTimeout` | `OCI_ConnectionGetTimeout` |
+| `OCI_GetTrace` | `OCI_ConnectionGetTrace` |
+| `OCI_GetTransaction` | `OCI_ConnectionGetTransaction` |
+| `OCI_GetUserName` | `OCI_ConnectionGetUserName` |
+| `OCI_GetVersionConnection` | `OCI_ConnectionGetVersion` |
+| `OCI_GetVersionServer` | `OCI_ConnectionGetServerVersionString` |
+| `OCI_Immediate` | `OCI_ConnectionImmediate` |
+| `OCI_ImmediateFmt` | `OCI_ConnectionImmediateFormat` |
+| `OCI_IsConnected` | `OCI_ConnectionIsAlive` |
+| `OCI_IsTAFCapable` | `OCI_ConnectionIsTAFCapable` |
+| `OCI_Ping` | `OCI_ConnectionPing` |
+| `OCI_Rollback` | `OCI_ConnectionRollback` |
+| `OCI_ServerDisableOutput` | `OCI_ConnectionDisableServerOutput` |
+| `OCI_ServerEnableOutput` | `OCI_ConnectionEnableServerOutput` |
+| `OCI_ServerGetOutput` | `OCI_ConnectionGetServerOutput` |
+| `OCI_SetAutoCommit` | `OCI_ConnectionSetAutoCommit` |
+| `OCI_SetDefaultLobPrefetchSize` | `OCI_ConnectionSetDefaultLobPrefetchSize` |
+| `OCI_SetPassword` | `OCI_ConnectionSetPassword` |
+| `OCI_SetSessionTag` | `OCI_ConnectionSetSessionTag` |
+| `OCI_SetStatementCacheSize` | `OCI_ConnectionSetStatementCacheSize` |
+| `OCI_SetTAFHandler` | `OCI_ConnectionSetTAFHandler` |
+| `OCI_SetTimeout` | `OCI_ConnectionSetTimeout` |
+| `OCI_SetTrace` | `OCI_ConnectionSetTrace` |
+| `OCI_SetTransaction` | `OCI_ConnectionSetTransaction` |
+
+### DirectPath
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_DirPathAbort` | `OCI_DirectPathAbort` |
+| `OCI_DirPathConvert` | `OCI_DirectPathConvert` |
+| `OCI_DirPathCreate` | `OCI_DirectPathCreate` |
+| `OCI_DirPathFinish` | `OCI_DirectPathFinish` |
+| `OCI_DirPathFlushRow` | `OCI_DirectPathFlushRow` |
+| `OCI_DirPathFree` | `OCI_DirectPathFree` |
+| `OCI_DirPathGetAffectedRows` | `OCI_DirectPathGetAffectedRows` |
+| `OCI_DirPathGetCurrentRows` | `OCI_DirectPathGetCurrentRows` |
+| `OCI_DirPathGetErrorColumn` | `OCI_DirectPathGetErrorColumn` |
+| `OCI_DirPathGetErrorRow` | `OCI_DirectPathGetErrorRow` |
+| `OCI_DirPathGetMaxRows` | `OCI_DirectPathGetMaxRows` |
+| `OCI_DirPathGetRowCount` | `OCI_DirectPathGetRowCount` |
+| `OCI_DirPathLoad` | `OCI_DirectPathLoad` |
+| `OCI_DirPathPrepare` | `OCI_DirectPathPrepare` |
+| `OCI_DirPathReset` | `OCI_DirectPathReset` |
+| `OCI_DirPathSave` | `OCI_DirectPathSave` |
+| `OCI_DirPathSetBufferSize` | `OCI_DirectPathSetBufferSize` |
+| `OCI_DirPathSetCacheSize` | `OCI_DirectPathSetCacheSize` |
+| `OCI_DirPathSetColumn` | `OCI_DirectPathSetColumn` |
+| `OCI_DirPathSetConvertMode` | `OCI_DirectPathSetConvertMode` |
+| `OCI_DirPathSetCurrentRows` | `OCI_DirectPathSetCurrentRows` |
+| `OCI_DirPathSetDateFormat` | `OCI_DirectPathSetDateFormat` |
+| `OCI_DirPathSetEntry` | `OCI_DirectPathSetEntry` |
+| `OCI_DirPathSetNoLog` | `OCI_DirectPathSetNoLog` |
+| `OCI_DirPathSetParallel` | `OCI_DirectPathSetParallel` |
+
+### Element
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_ElemCreate` | `OCI_ElementCreate` |
+| `OCI_ElemFree` | `OCI_ElementFree` |
+| `OCI_ElemGetBigInt` | `OCI_ElementGetInt64` |
+| `OCI_ElemGetBoolean` | `OCI_ElementGetBoolean` |
+| `OCI_ElemGetColl` | `OCI_ElementGetCollection` |
+| `OCI_ElemGetDate` | `OCI_ElementGetDate` |
+| `OCI_ElemGetDouble` | `OCI_ElementGetDouble` |
+| `OCI_ElemGetFile` | `OCI_ElementGetFile` |
+| `OCI_ElemGetFloat` | `OCI_ElementGetFloat` |
+| `OCI_ElemGetInt` | `OCI_ElementGetInt32` |
+| `OCI_ElemGetInterval` | `OCI_ElementGetInterval` |
+| `OCI_ElemGetLob` | `OCI_ElementGetLob` |
+| `OCI_ElemGetNumber` | `OCI_ElementGetNumber` |
+| `OCI_ElemGetObject` | `OCI_ElementGetObject` |
+| `OCI_ElemGetRaw` | `OCI_ElementGetRaw` |
+| `OCI_ElemGetRawSize` | `OCI_ElementGetRawSize` |
+| `OCI_ElemGetRef` | `OCI_ElementGetReference` |
+| `OCI_ElemGetShort` | `OCI_ElementGetInt16` |
+| `OCI_ElemGetString` | `OCI_ElementGetString` |
+| `OCI_ElemGetTimestamp` | `OCI_ElementGetTimestamp` |
+| `OCI_ElemGetUnsignedBigInt` | `OCI_ElementGetUInt64` |
+| `OCI_ElemGetUnsignedInt` | `OCI_ElementGetUInt32` |
+| `OCI_ElemGetUnsignedShort` | `OCI_ElementGetUInt16` |
+| `OCI_ElemIsNull` | `OCI_ElementIsNull` |
+| `OCI_ElemSetBigInt` | `OCI_ElementSetInt64` |
+| `OCI_ElemSetBoolean` | `OCI_ElementSetBoolean` |
+| `OCI_ElemSetColl` | `OCI_ElementSetCollection` |
+| `OCI_ElemSetDate` | `OCI_ElementSetDate` |
+| `OCI_ElemSetDouble` | `OCI_ElementSetDouble` |
+| `OCI_ElemSetFile` | `OCI_ElementSetFile` |
+| `OCI_ElemSetFloat` | `OCI_ElementSetFloat` |
+| `OCI_ElemSetInt` | `OCI_ElementSetInt32` |
+| `OCI_ElemSetInterval` | `OCI_ElementSetInterval` |
+| `OCI_ElemSetLob` | `OCI_ElementSetLob` |
+| `OCI_ElemSetNull` | `OCI_ElementSetNull` |
+| `OCI_ElemSetNumber` | `OCI_ElementSetNumber` |
+| `OCI_ElemSetObject` | `OCI_ElementSetObject` |
+| `OCI_ElemSetRaw` | `OCI_ElementSetRaw` |
+| `OCI_ElemSetRef` | `OCI_ElementSetReference` |
+| `OCI_ElemSetShort` | `OCI_ElementSetInt16` |
+| `OCI_ElemSetString` | `OCI_ElementSetString` |
+| `OCI_ElemSetTimestamp` | `OCI_ElementSetTimestamp` |
+| `OCI_ElemSetUnsignedBigInt` | `OCI_ElementSetUInt64` |
+| `OCI_ElemSetUnsignedInt` | `OCI_ElementSetUInt32` |
+| `OCI_ElemSetUnsignedShort` | `OCI_ElementSetUInt16` |
+
+### Environment
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_EnableWarnings` | `OCI_EnvironmentEnableWarnings` |
+| `OCI_GetCharset` | `OCI_EnvironmentGetCharset` |
+| `OCI_GetFormat` | `OCI_EnvironmentGetFormat` |
+| `OCI_GetImportMode` | `OCI_EnvironmentGetImportMode` |
+| `OCI_GetLocaleString` | `OCI_EnvironmentGetLocaleString` |
+| `OCI_GetOCICompileVersion` | `OCI_EnvironmentGetOCICompileVersion` |
+| `OCI_GetOCIRuntimeVersion` | `OCI_EnvironmentGetOCIRuntimeVersion` |
+| `OCI_GetStats` | `OCI_EnvironmentGetStats` |
+| `OCI_GetSubscriptionPort` | `OCI_EnvironmentGetSubscriptionPort` |
+| `OCI_SetErrorHandler` | `OCI_EnvironmentSetErrorHandler` |
+| `OCI_SetFormat` | `OCI_EnvironmentSetFormat` |
+| `OCI_SetHAHandler` | `OCI_EnvironmentSetHAHandler` |
+| `OCI_SetSubscriptionPort` | `OCI_EnvironmentSetSubscriptionPort` |
+| `OCI_SetUserPassword` | `OCI_EnvironmentSetUserPassword` |
+
+### Handle
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_GetUserData` | `OCI_HandleGetUserData` |
+| `OCI_SetUserData` | `OCI_HandleSetUserData` |
+
+### HashTable
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_HashAddInt` | `OCI_HashTableAddInt32` |
+| `OCI_HashAddPointer` | `OCI_HashTableAddPointer` |
+| `OCI_HashAddString` | `OCI_HashTableAddString` |
+| `OCI_HashCreate` | `OCI_HashTableCreate` |
+| `OCI_HashFree` | `OCI_HashTableFree` |
+| `OCI_HashGetEntry` | `OCI_HashTableGetEntry` |
+| `OCI_HashGetInt` | `OCI_HashTableGetInt32` |
+| `OCI_HashGetPointer` | `OCI_HashTableGetPointer` |
+| `OCI_HashGetSize` | `OCI_HashTableGetSize` |
+| `OCI_HashGetString` | `OCI_HashTableGetString` |
+| `OCI_HashGetType` | `OCI_HashTableGetType` |
+| `OCI_HashGetValue` | `OCI_HashTableGetValue` |
+| `OCI_HashLookup` | `OCI_HashTableLookup` |
+
+### Iterator
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_IterCreate` | `OCI_IteratorCreate` |
+| `OCI_IterFree` | `OCI_IteratorFree` |
+| `OCI_IterGetCurrent` | `OCI_IteratorGetCurrent` |
+| `OCI_IterGetNext` | `OCI_IteratorGetNext` |
+| `OCI_IterGetPrev` | `OCI_IteratorGetPrev` |
+
+### Json
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_JsonNodeGetBigInt` | `OCI_JsonNodeGetInt64` |
+| `OCI_JsonNodeGetBigUInt` | `OCI_JsonNodeGetUInt64` |
+| `OCI_JsonNodeGetInt` | `OCI_JsonNodeGetInt32` |
+| `OCI_JsonNodeGetShort` | `OCI_JsonNodeGetInt16` |
+| `OCI_JsonNodeGetUInt` | `OCI_JsonNodeGetUInt32` |
+| `OCI_JsonNodeGetUShort` | `OCI_JsonNodeGetUInt16` |
+| `OCI_JsonNodeSetBigInt` | `OCI_JsonNodeSetInt64` |
+| `OCI_JsonNodeSetBigUInt` | `OCI_JsonNodeSetUInt64` |
+| `OCI_JsonNodeSetInt` | `OCI_JsonNodeSetInt32` |
+| `OCI_JsonNodeSetShort` | `OCI_JsonNodeSetInt16` |
+| `OCI_JsonNodeSetUInt` | `OCI_JsonNodeSetUInt32` |
+| `OCI_JsonNodeSetUShort` | `OCI_JsonNodeSetUInt16` |
+
+### Message
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_MsgCreate` | `OCI_MessageCreate` |
+| `OCI_MsgFree` | `OCI_MessageFree` |
+| `OCI_MsgGetAttemptCount` | `OCI_MessageGetAttemptCount` |
+| `OCI_MsgGetCorrelation` | `OCI_MessageGetCorrelation` |
+| `OCI_MsgGetEnqueueDelay` | `OCI_MessageGetEnqueueDelay` |
+| `OCI_MsgGetEnqueueTime` | `OCI_MessageGetEnqueueTime` |
+| `OCI_MsgGetExceptionQueue` | `OCI_MessageGetExceptionQueue` |
+| `OCI_MsgGetExpiration` | `OCI_MessageGetExpiration` |
+| `OCI_MsgGetID` | `OCI_MessageGetID` |
+| `OCI_MsgGetObject` | `OCI_MessageGetObject` |
+| `OCI_MsgGetOriginalID` | `OCI_MessageGetOriginalID` |
+| `OCI_MsgGetPriority` | `OCI_MessageGetPriority` |
+| `OCI_MsgGetRaw` | `OCI_MessageGetRaw` |
+| `OCI_MsgGetSender` | `OCI_MessageGetSender` |
+| `OCI_MsgGetState` | `OCI_MessageGetState` |
+| `OCI_MsgReset` | `OCI_MessageReset` |
+| `OCI_MsgSetConsumers` | `OCI_MessageSetConsumers` |
+| `OCI_MsgSetCorrelation` | `OCI_MessageSetCorrelation` |
+| `OCI_MsgSetEnqueueDelay` | `OCI_MessageSetEnqueueDelay` |
+| `OCI_MsgSetExceptionQueue` | `OCI_MessageSetExceptionQueue` |
+| `OCI_MsgSetExpiration` | `OCI_MessageSetExpiration` |
+| `OCI_MsgSetObject` | `OCI_MessageSetObject` |
+| `OCI_MsgSetOriginalID` | `OCI_MessageSetOriginalID` |
+| `OCI_MsgSetPriority` | `OCI_MessageSetPriority` |
+| `OCI_MsgSetRaw` | `OCI_MessageSetRaw` |
+| `OCI_MsgSetSender` | `OCI_MessageSetSender` |
+
+### Object
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_ObjectGetBigInt` | `OCI_ObjectGetInt64` |
+| `OCI_ObjectGetInt` | `OCI_ObjectGetInt32` |
+| `OCI_ObjectGetRef` | `OCI_ObjectGetReference` |
+| `OCI_ObjectGetSelfRef` | `OCI_ObjectGetSelfReference` |
+| `OCI_ObjectGetShort` | `OCI_ObjectGetInt16` |
+| `OCI_ObjectGetUnsignedBigInt` | `OCI_ObjectGetUInt64` |
+| `OCI_ObjectGetUnsignedInt` | `OCI_ObjectGetUInt32` |
+| `OCI_ObjectGetUnsignedShort` | `OCI_ObjectGetUInt16` |
+| `OCI_ObjectSetBigInt` | `OCI_ObjectSetInt64` |
+| `OCI_ObjectSetInt` | `OCI_ObjectSetInt32` |
+| `OCI_ObjectSetRef` | `OCI_ObjectSetReference` |
+| `OCI_ObjectSetShort` | `OCI_ObjectSetInt16` |
+| `OCI_ObjectSetUnsignedBigInt` | `OCI_ObjectSetUInt64` |
+| `OCI_ObjectSetUnsignedInt` | `OCI_ObjectSetUInt32` |
+| `OCI_ObjectSetUnsignedShort` | `OCI_ObjectSetUInt16` |
+
+### Reference
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_RefArrayCreate` | `OCI_ReferenceArrayCreate` |
+| `OCI_RefArrayFree` | `OCI_ReferenceArrayFree` |
+| `OCI_RefAssign` | `OCI_ReferenceAssign` |
+| `OCI_RefCreate` | `OCI_ReferenceCreate` |
+| `OCI_RefFree` | `OCI_ReferenceFree` |
+| `OCI_RefGetHexSize` | `OCI_ReferenceGetHexSize` |
+| `OCI_RefGetObject` | `OCI_ReferenceGetObject` |
+| `OCI_RefGetTypeInfo` | `OCI_ReferenceGetTypeInfo` |
+| `OCI_RefIsNull` | `OCI_ReferenceIsNull` |
+| `OCI_RefSetNull` | `OCI_ReferenceSetNull` |
+| `OCI_RefToText` | `OCI_ReferenceToText` |
+
+### Resultset
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_FetchFirst` | `OCI_ResultsetFetchFirst` |
+| `OCI_FetchLast` | `OCI_ResultsetFetchLast` |
+| `OCI_FetchNext` | `OCI_ResultsetFetchNext` |
+| `OCI_FetchPrev` | `OCI_ResultsetFetchPrev` |
+| `OCI_FetchSeek` | `OCI_ResultsetFetchSeek` |
+| `OCI_GetBigInt` | `OCI_ResultsetGetInt64` |
+| `OCI_GetBigIntByName` | `OCI_ResultsetGetInt64ByName` |
+| `OCI_GetColl` | `OCI_ResultsetGetColl` |
+| `OCI_GetCollByName` | `OCI_ResultsetGetCollByName` |
+| `OCI_GetColumn` | `OCI_ResultsetGetColumn` |
+| `OCI_GetColumnByName` | `OCI_ResultsetGetColumnByName` |
+| `OCI_GetColumnCount` | `OCI_ResultsetGetColumnCount` |
+| `OCI_GetColumnIndex` | `OCI_ResultsetGetColumnIndex` |
+| `OCI_GetCurrentRow` | `OCI_ResultsetGetCurrentRow` |
+| `OCI_GetDataLength` | `OCI_ResultsetGetDataLength` |
+| `OCI_GetDataSize` | `OCI_ResultsetGetDataSize` |
+| `OCI_GetDataSizeByName` | `OCI_ResultsetGetDataSizeByName` |
+| `OCI_GetDate` | `OCI_ResultsetGetDate` |
+| `OCI_GetDateByName` | `OCI_ResultsetGetDateByName` |
+| `OCI_GetDouble` | `OCI_ResultsetGetDouble` |
+| `OCI_GetDoubleByName` | `OCI_ResultsetGetDoubleByName` |
+| `OCI_GetFile` | `OCI_ResultsetGetFile` |
+| `OCI_GetFileByName` | `OCI_ResultsetGetFileByName` |
+| `OCI_GetFloat` | `OCI_ResultsetGetFloat` |
+| `OCI_GetFloatByName` | `OCI_ResultsetGetFloatByName` |
+| `OCI_GetInt` | `OCI_ResultsetGetInt32` |
+| `OCI_GetIntByName` | `OCI_ResultsetGetInt32ByName` |
+| `OCI_GetInterval` | `OCI_ResultsetGetInterval` |
+| `OCI_GetIntervalByName` | `OCI_ResultsetGetIntervalByName` |
+| `OCI_GetJson` | `OCI_ResultsetGetJson` |
+| `OCI_GetJsonByName` | `OCI_ResultsetGetJsonByName` |
+| `OCI_GetLob` | `OCI_ResultsetGetLob` |
+| `OCI_GetLobByName` | `OCI_ResultsetGetLobByName` |
+| `OCI_GetLong` | `OCI_ResultsetGetLong` |
+| `OCI_GetLongByName` | `OCI_ResultsetGetLongByName` |
+| `OCI_GetNumber` | `OCI_ResultsetGetNumber` |
+| `OCI_GetNumberByName` | `OCI_ResultsetGetNumberByName` |
+| `OCI_GetObject` | `OCI_ResultsetGetObject` |
+| `OCI_GetObjectByName` | `OCI_ResultsetGetObjectByName` |
+| `OCI_GetRaw` | `OCI_ResultsetGetRaw` |
+| `OCI_GetRawByName` | `OCI_ResultsetGetRawByName` |
+| `OCI_GetRef` | `OCI_ResultsetGetReference` |
+| `OCI_GetRefByName` | `OCI_ResultsetGetReferenceByName` |
+| `OCI_GetRowCount` | `OCI_ResultsetGetRowCount` |
+| `OCI_GetShort` | `OCI_ResultsetGetInt16` |
+| `OCI_GetShortByName` | `OCI_ResultsetGetInt16ByName` |
+| `OCI_GetStatement` | `OCI_ResultsetGetCursor` |
+| `OCI_GetStatementByName` | `OCI_ResultsetGetCursorByName` |
+| `OCI_GetString` | `OCI_ResultsetGetString` |
+| `OCI_GetStringByName` | `OCI_ResultsetGetStringByName` |
+| `OCI_GetStruct` | `OCI_ResultsetGetStruct` |
+| `OCI_GetTimestamp` | `OCI_ResultsetGetTimestamp` |
+| `OCI_GetTimestampByName` | `OCI_ResultsetGetTimestampByName` |
+| `OCI_GetUnsignedBigInt` | `OCI_ResultsetGetUInt64` |
+| `OCI_GetUnsignedBigIntByName` | `OCI_ResultsetGetUInt64ByName` |
+| `OCI_GetUnsignedInt` | `OCI_ResultsetGetUInt32` |
+| `OCI_GetUnsignedIntByName` | `OCI_ResultsetGetUInt32ByName` |
+| `OCI_GetUnsignedShort` | `OCI_ResultsetGetUInt16` |
+| `OCI_GetUnsignedShortByName` | `OCI_ResultsetGetUInt16ByName` |
+| `OCI_GetVector` | `OCI_ResultsetGetVector` |
+| `OCI_GetVectorByName` | `OCI_ResultsetGetVectorByName` |
+| `OCI_GetXmlType` | `OCI_ResultsetGetXmlType` |
+| `OCI_GetXmlTypeByName` | `OCI_ResultsetGetXmlTypeByName` |
+| `OCI_IsNull` | `OCI_ResultsetIsColumnNull` |
+| `OCI_IsNullByName` | `OCI_ResultsetIsColumnNullByName` |
+| `OCI_SetStructNumericType` | `OCI_ResultsetSetStructNumericType` |
+| `OCI_SetStructNumericTypeByName` | `OCI_ResultsetSetStructNumericTypeByName` |
+
+
+### Statement
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_AllowRebinding` | `OCI_StatementAllowRebinding` |
+| `OCI_BindArrayGetSize` | `OCI_StatementBindArrayGetSize` |
+| `OCI_BindArrayOfBigInts` | `OCI_StatementBindInt64Array` |
+| `OCI_BindArrayOfColls` | `OCI_StatementBindCollectionArray` |
+| `OCI_BindArrayOfDates` | `OCI_StatementBindDateArray` |
+| `OCI_BindArrayOfDoubles` | `OCI_StatementBindDoubleArray` |
+| `OCI_BindArrayOfFiles` | `OCI_StatementBindFileArray` |
+| `OCI_BindArrayOfFloats` | `OCI_StatementBindFloatArray` |
+| `OCI_BindArrayOfIntervals` | `OCI_StatementBindIntervalArray` |
+| `OCI_BindArrayOfInts` | `OCI_StatementBindInt32Array` |
+| `OCI_BindArrayOfJsons` | `OCI_StatementBindJsonArray` |
+| `OCI_BindArrayOfLobs` | `OCI_StatementBindLobArray` |
+| `OCI_BindArrayOfNumbers` | `OCI_StatementBindNumberArray` |
+| `OCI_BindArrayOfObjects` | `OCI_StatementBindObjectArray` |
+| `OCI_BindArrayOfRaws` | `OCI_StatementBindRawArray` |
+| `OCI_BindArrayOfRefs` | `OCI_StatementBindReferenceArray` |
+| `OCI_BindArrayOfShorts` | `OCI_StatementBindInt16Array` |
+| `OCI_BindArrayOfStrings` | `OCI_StatementBindStringArray` |
+| `OCI_BindArrayOfTimestamps` | `OCI_StatementBindTimestampArray` |
+| `OCI_BindArrayOfUnsignedBigInts` | `OCI_StatementBindUInt64Array` |
+| `OCI_BindArrayOfUnsignedInts` | `OCI_StatementBindUInt32Array` |
+| `OCI_BindArrayOfUnsignedShorts` | `OCI_StatementBindUInt16Array` |
+| `OCI_BindArrayOfVectors` | `OCI_StatementBindVectorArray` |
+| `OCI_BindArraySetSize` | `OCI_StatementBindArraySetSize` |
+| `OCI_BindBigInt` | `OCI_StatementBindInt64` |
+| `OCI_BindBoolean` | `OCI_StatementBindBoolean` |
+| `OCI_BindColl` | `OCI_StatementBindCollection` |
+| `OCI_BindDate` | `OCI_StatementBindDate` |
+| `OCI_BindDouble` | `OCI_StatementBindDouble` |
+| `OCI_BindFile` | `OCI_StatementBindFile` |
+| `OCI_BindFloat` | `OCI_StatementBindFloat` |
+| `OCI_BindInt` | `OCI_StatementBindInt32` |
+| `OCI_BindInterval` | `OCI_StatementBindInterval` |
+| `OCI_BindJson` | `OCI_StatementBindJson` |
+| `OCI_BindLob` | `OCI_StatementBindLob` |
+| `OCI_BindLong` | `OCI_StatementBindLong` |
+| `OCI_BindNumber` | `OCI_StatementBindNumber` |
+| `OCI_BindObject` | `OCI_StatementBindObject` |
+| `OCI_BindRaw` | `OCI_StatementBindRaw` |
+| `OCI_BindRef` | `OCI_StatementBindReference` |
+| `OCI_BindShort` | `OCI_StatementBindInt16` |
+| `OCI_BindStatement` | `OCI_StatementBindCursor` |
+| `OCI_BindString` | `OCI_StatementBindString` |
+| `OCI_BindTimestamp` | `OCI_StatementBindTimestamp` |
+| `OCI_BindUnsignedBigInt` | `OCI_StatementBindUInt64` |
+| `OCI_BindUnsignedInt` | `OCI_StatementBindUInt32` |
+| `OCI_BindUnsignedShort` | `OCI_StatementBindUInt16` |
+| `OCI_BindVector` | `OCI_StatementBindVector` |
+| `OCI_Describe` | `OCI_StatementDescribe` |
+| `OCI_DescribeFmt` | `OCI_StatementDescribeFormat` |
+| `OCI_Execute` | `OCI_StatementExecutePrepared` |
+| `OCI_ExecuteAndGetResultset` | `OCI_StatementExecutePreparedAndGetResultset` |
+| `OCI_ExecuteStmt` | `OCI_StatementExecute` |
+| `OCI_ExecuteStmtAndGetResultset` | `OCI_StatementExecuteAndGetResultset` |
+| `OCI_ExecuteStmtFmt` | `OCI_StatementExecuteFormat` |
+| `OCI_GetAffectedRows` | `OCI_StatementGetAffectedRows` |
+| `OCI_GetBatchError` | `OCI_StatementGetBatchError` |
+| `OCI_GetBatchErrorCount` | `OCI_StatementGetBatchErrorCount` |
+| `OCI_GetBind` | `OCI_StatementGetBind` |
+| `OCI_GetBindAllocation` | `OCI_StatementGetBindAllocation` |
+| `OCI_GetBindByName` | `OCI_StatementGetBindByName` |
+| `OCI_GetBindCount` | `OCI_StatementGetBindCount` |
+| `OCI_GetBindIndex` | `OCI_StatementGetBindIndex` |
+| `OCI_GetBindMode` | `OCI_StatementGetBindMode` |
+| `OCI_GetFetchMode` | `OCI_StatementGetFetchMode` |
+| `OCI_GetFetchSize` | `OCI_StatementGetFetchSize` |
+| `OCI_GetLongMode` | `OCI_StatementGetLongMode` |
+| `OCI_GetNextResultset` | `OCI_StatementGetNextResultset` |
+| `OCI_GetParseBindNames` | `OCI_StatementGetParseBindNames` |
+| `OCI_GetPieceSize` | `OCI_StatementGetPieceSize` |
+| `OCI_GetPrefetchMemory` | `OCI_StatementGetPrefetchMemory` |
+| `OCI_GetPrefetchSize` | `OCI_StatementGetPrefetchSize` |
+| `OCI_GetResultset` | `OCI_StatementGetResultset` |
+| `OCI_GetSQLCommand` | `OCI_StatementGetSqlCommand` |
+| `OCI_GetSQLVerb` | `OCI_StatementGetSqlVerb` |
+| `OCI_GetSql` | `OCI_StatementGetSql` |
+| `OCI_GetSqlErrorPos` | `OCI_StatementGetSqlErrorPos` |
+| `OCI_GetSqlIdentifier` | `OCI_StatementGetSqlIdentifier` |
+| `OCI_GetStatementType` | `OCI_StatementGetType` |
+| `OCI_IsRebindingAllowed` | `OCI_StatementIsRebindingAllowed` |
+| `OCI_Parse` | `OCI_StatementParse` |
+| `OCI_ParseFmt` | `OCI_StatementParseFormat` |
+| `OCI_Prepare` | `OCI_StatementPrepare` |
+| `OCI_PrepareFmt` | `OCI_StatementPrepareFormat` |
+| `OCI_RegisterBigInt` | `OCI_StatementRegisterInt64` |
+| `OCI_RegisterDate` | `OCI_StatementRegisterDate` |
+| `OCI_RegisterDouble` | `OCI_StatementRegisterDouble` |
+| `OCI_RegisterFile` | `OCI_StatementRegisterFile` |
+| `OCI_RegisterFloat` | `OCI_StatementRegisterFloat` |
+| `OCI_RegisterInt` | `OCI_StatementRegisterInt32` |
+| `OCI_RegisterInterval` | `OCI_StatementRegisterInterval` |
+| `OCI_RegisterJson` | `OCI_StatementRegisterJson` |
+| `OCI_RegisterLob` | `OCI_StatementRegisterLob` |
+| `OCI_RegisterNumber` | `OCI_StatementRegisterNumber` |
+| `OCI_RegisterObject` | `OCI_StatementRegisterObject` |
+| `OCI_RegisterRaw` | `OCI_StatementRegisterRaw` |
+| `OCI_RegisterRef` | `OCI_StatementRegisterReference` |
+| `OCI_RegisterShort` | `OCI_StatementRegisterInt16` |
+| `OCI_RegisterString` | `OCI_StatementRegisterString` |
+| `OCI_RegisterTimestamp` | `OCI_StatementRegisterTimestamp` |
+| `OCI_RegisterUnsignedBigInt` | `OCI_StatementRegisterUInt64` |
+| `OCI_RegisterUnsignedInt` | `OCI_StatementRegisterUInt32` |
+| `OCI_RegisterUnsignedShort` | `OCI_StatementRegisterUInt16` |
+| `OCI_RegisterVector` | `OCI_StatementRegisterVector` |
+| `OCI_ReleaseResultsets` | `OCI_StatementReleaseResultsets` |
+| `OCI_SetBindAllocation` | `OCI_StatementSetBindAllocation` |
+| `OCI_SetBindMode` | `OCI_StatementSetBindMode` |
+| `OCI_SetFetchMode` | `OCI_StatementSetFetchMode` |
+| `OCI_SetFetchSize` | `OCI_StatementSetFetchSize` |
+| `OCI_SetLongMode` | `OCI_StatementSetLongMode` |
+| `OCI_SetPieceSize` | `OCI_StatementSetPieceSize` |
+| `OCI_SetPrefetchMemory` | `OCI_StatementSetPrefetchMemory` |
+| `OCI_SetPrefetchSize` | `OCI_StatementSetPrefetchSize` |
+
+### Subscription
+
+| v4 name | v5 name |
+|---------|---------|
+| `OCI_SubscriptionRegister` | `OCI_SubscriptionCreate` |
 
 ---
 

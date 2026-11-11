@@ -43,7 +43,7 @@ namespace TestCApi
         otext tab_results[ArraySize][StringSize + 1];
 
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("BEGIN test_plsqltables.combine_values(:tab_names, :tab_values, :tab_results); END;")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("BEGIN test_plsqltables.combine_values(:tab_names, :tab_values, :tab_results); END;")));
 
         /* set values */
 
@@ -57,17 +57,17 @@ namespace TestCApi
 
         /* prepare call and bind local arrays */
 
-        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":tab_names"), reinterpret_cast<otext*>(tab_names), StringSize, ArraySize));
-        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":tab_values"), reinterpret_cast<otext*>(tab_values), StringSize, ArraySize));
-        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":tab_results"), reinterpret_cast<otext*>(tab_results), StringSize, ArraySize));
+        ASSERT_NE(nullptr, OCI_StatementBindStringArray(stmt, OTEXT(":tab_names"), reinterpret_cast<otext*>(tab_names), StringSize, ArraySize));
+        ASSERT_NE(nullptr, OCI_StatementBindStringArray(stmt, OTEXT(":tab_values"), reinterpret_cast<otext*>(tab_values), StringSize, ArraySize));
+        ASSERT_NE(nullptr, OCI_StatementBindStringArray(stmt, OTEXT(":tab_results"), reinterpret_cast<otext*>(tab_results), StringSize, ArraySize));
 
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 1), OCI_BDM_IN));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 2), OCI_BDM_OUT));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_StatementGetBind(stmt, 0), OCI_BDM_IN));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_StatementGetBind(stmt, 1), OCI_BDM_IN));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_StatementGetBind(stmt, 2), OCI_BDM_OUT));
 
         /* execute */
 
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
         otext buffer[512];
 

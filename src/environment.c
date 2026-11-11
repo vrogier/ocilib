@@ -24,7 +24,7 @@
 #include "callback.h"
 #include "connection.h"
 #include "error.h"
-#include "hash.h"
+#include "hashtable.h"
 #include "list.h"
 #include "log.h"
 #include "macros.h"
@@ -323,7 +323,7 @@ static const otext * FormatDefaultValues[OCI_FMT_COUNT] =
    Each OCI_Environment gets its own copy in env->locale_strings; only the
    'code' fields below matter here, the 'str' slots always start out NULL. */
 
-static const OCI_LocaleStringInfo LocaleStringDefaults[OCI_LSI_COUNT] =
+static const OCI_LocaleInfo LocaleStringDefaults[OCI_LSI_COUNT] =
 {
     { OCI_LSI_DAYNAME1,
       NULL                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                },
@@ -1870,10 +1870,10 @@ OCI_UInt32 OcilibEnvironmentGetOCIRuntimeVersion
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibEnvironmentGetOCIRuntimeImportMode
+ * OcilibEnvironmentGetImportMode
  * --------------------------------------------------------------------------------------------- */
 
-OCI_ImportMode OcilibEnvironmentGetOCIRuntimeImportMode
+OCI_ImportMode OcilibEnvironmentGetImportMode
 (
     OCI_Environment *env
 )
@@ -2115,10 +2115,10 @@ OCI_UInt32 OcilibEnvironmentGetSubscriptionPort
 }
 
 /* --------------------------------------------------------------------------------------------- *
-* OcilibGetLocaleString
+* OcilibEnvironmentGetLocaleString
 * --------------------------------------------------------------------------------------------- */
 
-const otext* OcilibGetLocaleString
+const otext* OcilibEnvironmentGetLocaleString
 (
     OCI_Environment *env,
     OCI_LocaleCode   code

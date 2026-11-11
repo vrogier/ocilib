@@ -56,31 +56,31 @@ namespace TestCApi
         const auto table = OCI_TypeInfoGet(conn, OTEXT("TestDirectPathTable1"), OCI_TIF_TABLE);
         ASSERT_NE(nullptr, table);
 
-        const auto dp = OCI_DirPathCreate(table, NULL, ColCount, nb_rows);
+        const auto dp = OCI_DirectPathCreate(table, NULL, ColCount, nb_rows);
         ASSERT_NE(nullptr, dp);
 
         /* optional attributes to set */
 
-        ASSERT_TRUE(OCI_DirPathSetBufferSize(dp, 64000));
-        ASSERT_TRUE(OCI_DirPathSetNoLog(dp, TRUE));
-        ASSERT_TRUE(OCI_DirPathSetParallel(dp, TRUE));
+        ASSERT_TRUE(OCI_DirectPathSetBufferSize(dp, 64000));
+        ASSERT_TRUE(OCI_DirectPathSetNoLog(dp, TRUE));
+        ASSERT_TRUE(OCI_DirectPathSetParallel(dp, TRUE));
 
         /* describe the target table */
 
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 0, OTEXT("val_int"), ColSize1, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"), ColSize2, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD")));
+        ASSERT_TRUE(OCI_DirectPathSetColumn(dp, 0, OTEXT("val_int"), ColSize1, nullptr));
+        ASSERT_TRUE(OCI_DirectPathSetColumn(dp, 1, OTEXT("val_str"), ColSize2, nullptr));
+        ASSERT_TRUE(OCI_DirectPathSetColumn(dp, 2, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD")));
 
         /* prepare the load */
 
-        ASSERT_TRUE(OCI_DirPathPrepare(dp));
+        ASSERT_TRUE(OCI_DirectPathPrepare(dp));
 
-        nb_rows = OCI_DirPathGetMaxRows(dp);
+        nb_rows = OCI_DirectPathGetMaxRows(dp);
         ASSERT_NE(0, nb_rows);
 
         for (i = 0; i < LoadSize; i++)
         {
-            ASSERT_TRUE(OCI_DirPathReset(dp));
+            ASSERT_TRUE(OCI_DirectPathReset(dp));
 
             for (j = 0; j < nb_rows; j++)
             {
@@ -90,19 +90,19 @@ namespace TestCApi
                 osprintf(val2, OTEXT("value %05d"), j + (i * 100));
                 osprintf(val3, OTEXT("%04d%02d%02d"), (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
             }
 
             /* load data to the server */
 
             while (res)
             {
-                OCI_Int32 state = OCI_DirPathConvert(dp);
+                OCI_Int32 state = OCI_DirectPathConvert(dp);
 
                 if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
-                    res = OCI_DirPathLoad(dp);
+                    res = OCI_DirectPathLoad(dp);
 
                 if (state == OCI_DPR_COMPLETE)
                     break;
@@ -114,24 +114,24 @@ namespace TestCApi
 
         /* commits changes */
 
-        ASSERT_TRUE(OCI_DirPathFinish(dp));
+        ASSERT_TRUE(OCI_DirectPathFinish(dp));
 
-        ASSERT_EQ(ArraySize * LoadSize, OCI_DirPathGetRowCount(dp));
+        ASSERT_EQ(ArraySize * LoadSize, OCI_DirectPathGetRowCount(dp));
 
         /* cleanup */
 
-        ASSERT_TRUE(OCI_DirPathFree(dp));
+        ASSERT_TRUE(OCI_DirectPathFree(dp));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         ExecDML(OTEXT("drop table TestDirectPathTable1"));
     }
 
-    void CheckAllErrorWorkflows(OCI_Connection* con, OCI_DirPath* dp, OCI_Int32 expected, OCI_Int32 result, const char* str)
+    void CheckAllErrorWorkflows(OCI_Connection* con, OCI_DirectPath* dp, OCI_Int32 expected, OCI_Int32 result, const char* str)
     {
         ASSERT_EQ(expected, result) << str;
     }
 
-    void CheckAllErrorWorkflowsData(OCI_Connection* con, OCI_DirPath* dp, OCI_Boolean gen_conv_error, OCI_Boolean gen_load_error, OCI_Boolean force)
+    void CheckAllErrorWorkflowsData(OCI_Connection* con, OCI_DirectPath* dp, OCI_Boolean gen_conv_error, OCI_Boolean gen_load_error, OCI_Boolean force)
     {
         auto constexpr ArraySize = 10u;
         auto constexpr LoadSize = 10u;
@@ -140,10 +140,10 @@ namespace TestCApi
 
         OCI_Int32 nb_rows = 0;
 
-        OCI_Immediate(con, OTEXT("select count(*) from TestDirectPathTable2"), OCI_ARG_INT, &nb_rows);
+        OCI_ConnectionImmediate(con, OTEXT("select count(*) from TestDirectPathTable2"), OCI_ARG_INT32, &nb_rows);
         CheckAllErrorWorkflows(con, dp, ((gen_conv_error && force) || gen_load_error) ? (TotalCount - ErrCount) : TotalCount, nb_rows, "total rows in database");
 
-        OCI_ImmediateFmt(con, OTEXT("select count(distinct val_int) from TestDirectPathTable2"), OCI_ARG_INT, &nb_rows);
+        OCI_ConnectionImmediateFormat(con, OTEXT("select count(distinct val_int) from TestDirectPathTable2"), OCI_ARG_INT32, &nb_rows);
         CheckAllErrorWorkflows(con, dp, ((gen_conv_error && force) || gen_load_error) ? (TotalCount - ErrCount) : TotalCount, nb_rows, "distinct rows in database");
     }
 
@@ -179,7 +179,7 @@ namespace TestCApi
         const auto table = OCI_TypeInfoGet(conn, OTEXT("TestDirectPathTable2"), OCI_TIF_TABLE);
         ASSERT_NE(nullptr, table);
 
-        const auto dp = OCI_DirPathCreate(table, NULL, ColCount, nb_rows);
+        const auto dp = OCI_DirectPathCreate(table, NULL, ColCount, nb_rows);
         ASSERT_NE(nullptr, dp);
 
         bool force = mode & DirectPathErrorTestMode::ForceLoad;
@@ -189,25 +189,25 @@ namespace TestCApi
 
         /* optional attributes to set */
 
-        ASSERT_TRUE(OCI_DirPathSetBufferSize(dp, gen_buffer_error ? 100 : 64000));
-        ASSERT_TRUE(OCI_DirPathSetConvertMode(dp, force ? OCI_DCM_FORCE : OCI_DCM_DEFAULT));
+        ASSERT_TRUE(OCI_DirectPathSetBufferSize(dp, gen_buffer_error ? 100 : 64000));
+        ASSERT_TRUE(OCI_DirectPathSetConvertMode(dp, force ? OCI_DCM_FORCE : OCI_DCM_DEFAULT));
 
         /* describe the target table */
 
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 0, OTEXT("val_int"), ColSize1, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 1, OTEXT("val_str"), ColSize2, nullptr));
-        ASSERT_TRUE(OCI_DirPathSetColumn(dp, 2, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD")));
+        ASSERT_TRUE(OCI_DirectPathSetColumn(dp, 0, OTEXT("val_int"), ColSize1, nullptr));
+        ASSERT_TRUE(OCI_DirectPathSetColumn(dp, 1, OTEXT("val_str"), ColSize2, nullptr));
+        ASSERT_TRUE(OCI_DirectPathSetColumn(dp, 2, OTEXT("val_date"), ColSize3, OTEXT("YYYYMMDD")));
 
         /* prepare the load */
 
-        ASSERT_TRUE(OCI_DirPathPrepare(dp));
+        ASSERT_TRUE(OCI_DirectPathPrepare(dp));
 
-        nb_rows = OCI_DirPathGetMaxRows(dp);
+        nb_rows = OCI_DirectPathGetMaxRows(dp);
         ASSERT_NE(0, nb_rows);
 
         for (i = 0; i < LoadSize; i++)
         {
-            ASSERT_TRUE(OCI_DirPathReset(dp));
+            ASSERT_TRUE(OCI_DirectPathReset(dp));
 
             /* set the values for the current load iteration */
             for (j = 0; j < nb_rows; j++)
@@ -216,9 +216,9 @@ namespace TestCApi
                 if (i == 0 && (j == 5 || j == 8) && gen_conv_error)
                 {
                     /* generate a conversion error - not null clause violation on column val_int  */
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, NULL, 0, TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, NULL, 0, TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, NULL, 0, TRUE));
+                    ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 2, NULL, 0, TRUE));
+                    ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 0, NULL, 0, TRUE));
+                    ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 1, NULL, 0, TRUE));
                 }
                 else if (i == 0 && (j == 5 || j == 8) && gen_load_error)
                 {
@@ -227,9 +227,9 @@ namespace TestCApi
                     osprintf(val2, OTEXT("value %05d"), j + (i * ArraySize));
                     osprintf(val3, OTEXT("%04d%02d%02d"), (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                    ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                    ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                    ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
                 }
                 else
                 {
@@ -238,9 +238,9 @@ namespace TestCApi
                     osprintf(val2, OTEXT("value %05d"), j + (i * ArraySize));
                     osprintf(val3, OTEXT("%04d%02d%02d"), (j % 23) + 1 + 2000, (j % 11) + 1, (j % 23) + 1);
 
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                    ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                    ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                    ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                    ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
                 }
             }
 
@@ -251,10 +251,10 @@ namespace TestCApi
                 OCI_Int32 nb_error = 0;
 
                 /* convert data*/
-                OCI_Int32 state = OCI_DirPathConvert(dp);
+                OCI_Int32 state = OCI_DirectPathConvert(dp);
 
                 /* retrieve the number of converted rows */
-                nb_conv += OCI_DirPathGetAffectedRows(dp);
+                nb_conv += OCI_DirectPathGetAffectedRows(dp);
 
                 /* conversion or loading errors are performed on the first load */
                 if (i == 0)
@@ -262,15 +262,15 @@ namespace TestCApi
                     if (gen_conv_error && !force && state == OCI_DPR_ERROR)
                     {
                         /* on conversion error in default mode, correct values for next conversion */
-                        OCI_Int32 row = OCI_DirPathGetErrorRow(dp);
+                        OCI_Int32 row = OCI_DirectPathGetErrorRow(dp);
 
                         osprintf(val1, OTEXT("%04d"), row);
                         osprintf(val2, OTEXT("value %05d"), row);
                         osprintf(val3, OTEXT("%04d%02d%02d"), (row % 23) + 1 + 2000, (row % 11) + 1, (row % 23) + 1);
 
-                        ASSERT_TRUE(OCI_DirPathSetEntry(dp, row, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                        ASSERT_TRUE(OCI_DirPathSetEntry(dp, row, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                        ASSERT_TRUE(OCI_DirPathSetEntry(dp, row, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                        ASSERT_TRUE(OCI_DirectPathSetEntry(dp, row, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                        ASSERT_TRUE(OCI_DirectPathSetEntry(dp, row, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                        ASSERT_TRUE(OCI_DirectPathSetEntry(dp, row, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
 
                         nb_conv = 0;
                     }
@@ -278,16 +278,16 @@ namespace TestCApi
                     if (gen_conv_error && force && state == OCI_DPR_COMPLETE)
                     {
                         /* on conversion error in force mode, check we got the expected errors*/
-                        OCI_Int32 err_row = OCI_DirPathGetErrorRow(dp);
-                        OCI_Int32 err_col = OCI_DirPathGetErrorColumn(dp);
+                        OCI_Int32 err_row = OCI_DirectPathGetErrorRow(dp);
+                        OCI_Int32 err_col = OCI_DirectPathGetErrorColumn(dp);
 
                         while (err_row != -1)
                         {
                             CheckAllErrorWorkflows(conn, dp, nb_error == 0 ? 5 : 8, err_row, "erred converted row index (force mode)");
                             CheckAllErrorWorkflows(conn, dp, err_col, 0, "erred column index in force mode");
 
-                            err_row = OCI_DirPathGetErrorRow(dp);
-                            err_col = OCI_DirPathGetErrorColumn(dp);
+                            err_row = OCI_DirectPathGetErrorRow(dp);
+                            err_col = OCI_DirectPathGetErrorColumn(dp);
 
                             nb_error++;
                         }
@@ -300,7 +300,7 @@ namespace TestCApi
                 {
                     /* buffer is too small - load the stream */
 
-                    state = OCI_DirPathLoad(dp);
+                    state = OCI_DirectPathLoad(dp);
 
                     /* as the stream cannot accept all rows in one go,
                     we need to do conversion+load until all rows are processed */
@@ -313,20 +313,20 @@ namespace TestCApi
                             osprintf(val2, OTEXT("value %05d"), (j + nb_conv) + (i * ArraySize));
                             osprintf(val3, OTEXT("%04d%02d%02d"), ((j + nb_conv) % 23) + 1 + 2000, ((j + nb_conv) % 11) + 1, ((j + nb_conv) % 23) + 1);
 
-                            ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
-                            ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
-                            ASSERT_TRUE(OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
+                            ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 0, val1, (OCI_UInt32)ostrlen(val1), TRUE));
+                            ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 1, val2, (OCI_UInt32)ostrlen(val2), TRUE));
+                            ASSERT_TRUE(OCI_DirectPathSetEntry(dp, j, 2, val3, (OCI_UInt32)ostrlen(val3), TRUE));
                         }
 
                         /* convert again */
 
-                        state = OCI_DirPathConvert(dp);
+                        state = OCI_DirectPathConvert(dp);
 
-                        nb_conv = OCI_DirPathGetAffectedRows(dp);
+                        nb_conv = OCI_DirectPathGetAffectedRows(dp);
 
                         /* load again */
 
-                        state = OCI_DirPathLoad(dp);
+                        state = OCI_DirectPathLoad(dp);
                     }
 
                     break;
@@ -337,18 +337,18 @@ namespace TestCApi
 
                     CheckAllErrorWorkflows(conn, dp, (gen_conv_error && i == 0 && force) ? (ArraySize - ErrCount) : ArraySize, nb_conv, "converted rows");
 
-                    state = OCI_DirPathLoad(dp);
+                    state = OCI_DirectPathLoad(dp);
 
                     if (gen_load_error && i == 0)
                     {
                         /* on loading error in force mode, check we got the expected errors*/
-                        OCI_Int32 err_row = OCI_DirPathGetErrorRow(dp);
+                        OCI_Int32 err_row = OCI_DirectPathGetErrorRow(dp);
 
                         while (err_row != -1)
                         {
                             CheckAllErrorWorkflows(conn, dp, nb_error == 0 ? 5 : 8, err_row, "erred loaded row index");
 
-                            err_row = OCI_DirPathGetErrorRow(dp);
+                            err_row = OCI_DirectPathGetErrorRow(dp);
 
                             nb_error++;
                         }
@@ -356,7 +356,7 @@ namespace TestCApi
                         CheckAllErrorWorkflows(conn, dp, ErrCount, nb_error, "loading errors in force mode");
                     }
 
-                    CheckAllErrorWorkflows(conn, dp, (gen_load_error && i == 0) ? nb_conv - ErrCount : nb_conv, OCI_DirPathGetAffectedRows(dp), "loaded rows");
+                    CheckAllErrorWorkflows(conn, dp, (gen_load_error && i == 0) ? nb_conv - ErrCount : nb_conv, OCI_DirectPathGetAffectedRows(dp), "loaded rows");
 
                     break;
                 }
@@ -365,17 +365,17 @@ namespace TestCApi
 
         /* commits changes */
 
-        ASSERT_TRUE(OCI_DirPathFinish(dp));
+        ASSERT_TRUE(OCI_DirectPathFinish(dp));
 
         /* verify loading results */
-        CheckAllErrorWorkflows(conn, dp, ((gen_conv_error && force) || gen_load_error) ? (TotalCount - ErrCount) : TotalCount, OCI_DirPathGetRowCount(dp), "total loaded rows");
+        CheckAllErrorWorkflows(conn, dp, ((gen_conv_error && force) || gen_load_error) ? (TotalCount - ErrCount) : TotalCount, OCI_DirectPathGetRowCount(dp), "total loaded rows");
 
         /* check data integrity in database */
         CheckAllErrorWorkflowsData(conn, dp, gen_conv_error, gen_load_error, force);
 
         /* cleanup */
 
-        ASSERT_TRUE(OCI_DirPathFree(dp));
+        ASSERT_TRUE(OCI_DirectPathFree(dp));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         ExecDML(OTEXT("drop table TestDirectPathTable2"));

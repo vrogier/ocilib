@@ -80,37 +80,37 @@ OCI_SYM_LOCAL OCI_Number * OcilibObjectGetNumber
     const otext *attr
 );
 
-OCI_SYM_LOCAL OCI_Int16 OcilibObjectGetShort
+OCI_SYM_LOCAL OCI_Int16 OcilibObjectGetInt16
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL OCI_UInt16 OcilibObjectGetUnsignedShort
+OCI_SYM_LOCAL OCI_UInt16 OcilibObjectGetUInt16
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL OCI_Int32 OcilibObjectGetInt
+OCI_SYM_LOCAL OCI_Int32 OcilibObjectGetInt32
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL OCI_UInt32 OcilibObjectGetUnsignedInt
+OCI_SYM_LOCAL OCI_UInt32 OcilibObjectGetUInt32
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL OCI_Int64 OcilibObjectGetBigInt
+OCI_SYM_LOCAL OCI_Int64 OcilibObjectGetInt64
 (
     OCI_Object  *obj,
     const otext *attr
 );
 
-OCI_SYM_LOCAL OCI_UInt64 OcilibObjectGetUnsignedBigInt
+OCI_SYM_LOCAL OCI_UInt64 OcilibObjectGetUInt64
 (
     OCI_Object  *obj,
     const otext *attr
@@ -166,7 +166,7 @@ OCI_SYM_LOCAL OCI_Interval * OcilibObjectGetInterval
     const otext *attr
 );
 
-OCI_SYM_LOCAL OCI_Coll * OcilibObjectGetColl
+OCI_SYM_LOCAL OCI_Collection * OcilibObjectGetColl
 (
     OCI_Object  *obj,
     const otext *attr
@@ -190,7 +190,7 @@ OCI_SYM_LOCAL OCI_File * OcilibObjectGetFile
     const otext *attr
 );
 
-OCI_SYM_LOCAL OCI_Ref * OcilibObjectGetReference
+OCI_SYM_LOCAL OCI_Reference * OcilibObjectGetReference
 (
     OCI_Object  *obj,
     const otext *attr
@@ -210,42 +210,42 @@ OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetNumber
     OCI_Number  *value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetShort
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetInt16
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Int16    value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUnsignedShort
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUInt16
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_UInt16   value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetInt
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetInt32
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Int32    value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUnsignedInt
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUInt32
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_UInt32   value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetBigInt
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetInt64
 (
     OCI_Object  *obj,
     const otext *attr,
     OCI_Int64    value
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUnsignedBigInt
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetUInt64
 (
     OCI_Object  *obj,
     const otext *attr,
@@ -304,9 +304,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetInterval
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetColl
 (
-    OCI_Object  *obj,
-    const otext *attr,
-    OCI_Coll    *value
+    OCI_Object     *obj,
+    const otext    *attr,
+    OCI_Collection *value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetObject
@@ -332,9 +332,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetFile
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetReference
 (
-    OCI_Object  *obj,
-    const otext *attr,
-    OCI_Ref     *value
+    OCI_Object    *obj,
+    const otext   *attr,
+    OCI_Reference *value
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectSetNull
@@ -359,10 +359,10 @@ OCI_SYM_LOCAL OCI_ObjectType OcilibObjectGetType
     OCI_Object *obj
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibObjectGetSelfRef
+OCI_SYM_LOCAL OCI_Boolean OcilibObjectGetSelfReference
 (
-    OCI_Object *obj,
-    OCI_Ref    *ref
+    OCI_Object    *obj,
+    OCI_Reference *ref
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibObjectGetStruct

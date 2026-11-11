@@ -97,12 +97,12 @@ private:
     {
         /* pre-populate format strings so that lazy allocations do not show up as per-test memory deltas */
 
-        OCI_GetFormat(env, OCI_FMT_DATE);
-        OCI_GetFormat(env, OCI_FMT_TIMESTAMP);
-        OCI_GetFormat(env, OCI_FMT_TIMESTAMP_TZ);
-        OCI_GetFormat(env, OCI_FMT_NUMERIC);
-        OCI_GetFormat(env, OCI_FMT_BINARY_DOUBLE);
-        OCI_GetFormat(env, OCI_FMT_BINARY_FLOAT);
+        OCI_EnvironmentGetFormat(env, OCI_FMT_DATE);
+        OCI_EnvironmentGetFormat(env, OCI_FMT_TIMESTAMP);
+        OCI_EnvironmentGetFormat(env, OCI_FMT_TIMESTAMP_TZ);
+        OCI_EnvironmentGetFormat(env, OCI_FMT_NUMERIC);
+        OCI_EnvironmentGetFormat(env, OCI_FMT_BINARY_DOUBLE);
+        OCI_EnvironmentGetFormat(env, OCI_FMT_BINARY_FLOAT);
 
         /* pre-populate common locale strings */
 
@@ -127,30 +127,30 @@ private:
 
         for (OCI_Size i = 0; i < sizeof(locale_codes) / sizeof(locale_codes[0]); i++)
         {
-            (void)OCI_GetLocaleString(env, locale_codes[i]);
+            (void)OCI_EnvironmentGetLocaleString(env, locale_codes[i]);
         }
     }
 
     void ResetEnvironment(OCI_Environment* env)
     {
-        OCI_EnableWarnings(env, FALSE);
+        OCI_EnvironmentEnableWarnings(env, FALSE);
 
-        OCI_SetFormat(env, OCI_FMT_DATE, NULL);
-        OCI_SetFormat(env, OCI_FMT_TIMESTAMP, NULL);
-        OCI_SetFormat(env, OCI_FMT_NUMERIC, NULL);
-        OCI_SetFormat(env, OCI_FMT_BINARY_DOUBLE, NULL);
-        OCI_SetFormat(env, OCI_FMT_BINARY_FLOAT, NULL);
-        OCI_SetFormat(env, OCI_FMT_TIMESTAMP_TZ, NULL);
+        OCI_EnvironmentSetFormat(env, OCI_FMT_DATE, NULL);
+        OCI_EnvironmentSetFormat(env, OCI_FMT_TIMESTAMP, NULL);
+        OCI_EnvironmentSetFormat(env, OCI_FMT_NUMERIC, NULL);
+        OCI_EnvironmentSetFormat(env, OCI_FMT_BINARY_DOUBLE, NULL);
+        OCI_EnvironmentSetFormat(env, OCI_FMT_BINARY_FLOAT, NULL);
+        OCI_EnvironmentSetFormat(env, OCI_FMT_TIMESTAMP_TZ, NULL);
     }
 
     Statistics GetEnvironmentStatistics(OCI_Environment* env)
     {
         return Statistics
         {
-            OCI_GetStats(env, OCI_UST_BYTES),
-            OCI_GetStats(env, OCI_UST_HANDLES),
-            OCI_GetStats(env, OCI_UST_DESCRIPTORS),
-            OCI_GetStats(env, OCI_UST_OBJECTS)
+            OCI_EnvironmentGetStats(env, OCI_UST_BYTES),
+            OCI_EnvironmentGetStats(env, OCI_UST_HANDLES),
+            OCI_EnvironmentGetStats(env, OCI_UST_DESCRIPTORS),
+            OCI_EnvironmentGetStats(env, OCI_UST_OBJECTS)
         };
     }
 

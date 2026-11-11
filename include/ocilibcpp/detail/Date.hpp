@@ -293,7 +293,8 @@ namespace ocilib
     inline void Date::FromString(const String& str, const String& format)
     {
         core::Check(OCI_DateFromText(*this, str.c_str(),
-                                     format.empty() ?  core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatDate))).c_str() : format.c_str()));
+                                     format.empty() ?  core::MakeString(core::Check(OCI_EnvironmentGetFormat(GetEnvironment(),
+                                                                                                             FormatDate))).c_str() : format.c_str()));
     }
 
     inline String Date::ToString(const String& format) const
@@ -319,7 +320,7 @@ namespace ocilib
             return OCI_STRING_NULL;
         }
 
-        return ToString(core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatDate))));
+        return ToString(core::MakeString(core::Check(OCI_EnvironmentGetFormat(GetEnvironment(), FormatDate))));
     }
 
     inline Date& Date::operator ++ ()

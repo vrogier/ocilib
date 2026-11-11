@@ -239,7 +239,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_DateFromText(date, OTEXT("1978-04-13 20:30:15"), OCI_STRING_FORMAT_DATETIME));
 
-        const otext* sunday = OCI_GetLocaleString(env, OCI_LSI_DAYNAME7);
+        const otext* sunday = OCI_EnvironmentGetLocaleString(env, OCI_LSI_DAYNAME7);
         ASSERT_NE(nullptr, sunday);
         ASSERT_TRUE(OCI_DateNextDay(date, sunday));
 
@@ -286,12 +286,12 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select to_date('1978-04-13 20:30:15', 'YYYY-MM-DD HH24:MI:SS') from dual")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select to_date('1978-04-13 20:30:15', 'YYYY-MM-DD HH24:MI:SS') from dual")));
 
-        const auto rslt = OCI_GetResultset(stmt);
-        ASSERT_TRUE(OCI_FetchNext(rslt));
+        const auto rslt = OCI_StatementGetResultset(stmt);
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rslt));
 
-        const auto date = OCI_GetDate(rslt, 0);
+        const auto date = OCI_ResultsetGetDate(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_DateToText(date, OCI_STRING_FORMAT_DATETIME, 512, buffer));
@@ -314,10 +314,10 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
 
         ASSERT_TRUE(OCI_DateFromText(date, OTEXT("1978-04-12 20:30:15"), OCI_STRING_FORMAT_DATETIME));
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("begin :date := :date + 1; end;")));
-        ASSERT_NE(nullptr, OCI_BindDate(stmt, OTEXT(":date"), date));
-        ASSERT_TRUE(OCI_BindSetDirection(OCI_GetBind(stmt, 0), OCI_BDM_IN_OUT));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("begin :date := :date + 1; end;")));
+        ASSERT_NE(nullptr, OCI_StatementBindDate(stmt, OTEXT(":date"), date));
+        ASSERT_TRUE(OCI_BindSetDirection(OCI_StatementGetBind(stmt, 0), OCI_BDM_IN_OUT));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_DateToText(date, OCI_STRING_FORMAT_DATETIME, 512, buffer));
@@ -339,24 +339,24 @@ namespace TestCApi
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto stmt = OCI_StatementCreate(conn);
 
-        OCI_ExecuteStmt(stmt, OTEXT("drop table test_date_register"));
-        OCI_ExecuteStmt(stmt, OTEXT("create table test_date_register (value date)"));
+        OCI_StatementExecute(stmt, OTEXT("drop table test_date_register"));
+        OCI_StatementExecute(stmt, OTEXT("create table test_date_register (value date)"));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into test_date_register values (to_date('1978-04-13 20:30:15', 'YYYY-MM-DD HH24:MI:SS')) returning value into :1")));
-        ASSERT_TRUE(OCI_RegisterDate(stmt, OTEXT(":1")));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("insert into test_date_register values (to_date('1978-04-13 20:30:15', 'YYYY-MM-DD HH24:MI:SS')) returning value into :1")));
+        ASSERT_TRUE(OCI_StatementRegisterDate(stmt, OTEXT(":1")));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        const auto rslt = OCI_GetResultset(stmt);
-        ASSERT_TRUE(OCI_FetchNext(rslt));
+        const auto rslt = OCI_StatementGetResultset(stmt);
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rslt));
 
-        const auto date = OCI_GetDate(rslt, 0);
+        const auto date = OCI_ResultsetGetDate(rslt, 0);
 
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         ASSERT_TRUE(OCI_DateToText(date, OCI_STRING_FORMAT_DATETIME, 512, buffer));
 
         ASSERT_EQ(String(OTEXT("1978-04-13 20:30:15")), String(buffer));
 
-        OCI_ExecuteStmt(stmt, OTEXT("drop table test_date_register"));
+        OCI_StatementExecute(stmt, OTEXT("drop table test_date_register"));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -371,8 +371,8 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        ASSERT_TRUE(OCI_SetFormat(env, OCI_FMT_DATE, OTEXT("DD/MM/YYYY")));
-        ASSERT_EQ(String(OTEXT("DD/MM/YYYY")), String(OCI_GetFormat(env, OCI_FMT_DATE)));
+        ASSERT_TRUE(OCI_EnvironmentSetFormat(env, OCI_FMT_DATE, OTEXT("DD/MM/YYYY")));
+        ASSERT_EQ(String(OTEXT("DD/MM/YYYY")), String(OCI_EnvironmentGetFormat(env, OCI_FMT_DATE)));
 
         auto date = OCI_DateCreate(env);
         ASSERT_NE(nullptr, date);

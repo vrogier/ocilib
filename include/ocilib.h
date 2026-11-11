@@ -54,6 +54,7 @@ extern "C" {
 #include "ocilibc/defines.h"
 #include "ocilibc/types.h"
 #include "ocilibc/api.h"
+#include "ocilibc/compat.h"
 
 #ifdef  __cplusplus
 }

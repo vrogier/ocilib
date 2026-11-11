@@ -29,7 +29,7 @@ namespace ocilib
     {
     }
 
-    inline SodaOptions::SodaOptions(const SodaDb& sdb)
+    inline SodaOptions::SodaOptions(const SodaDatabase& sdb)
     {
         AcquireAllocated(core::Check(OCI_SodaOptionsCreate(sdb)), sdb.GetHandle());
     }

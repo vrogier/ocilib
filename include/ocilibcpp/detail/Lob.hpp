@@ -50,7 +50,7 @@ namespace ocilib
     inline String Lob<String, LobCharacter>::Read(UInt32 length)
     {
         std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(
-            OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
+            OCI_EnvironmentGetCharset(GetEnvironment()))))) * (length + 1)));
 
         UInt32 charCount = length;
         UInt32 byteCount = 0;
@@ -67,7 +67,7 @@ namespace ocilib
     inline String Lob<String, LobNationalCharacter>::Read(UInt32 length)
     {
         std::vector<otext> buffer(static_cast<Size>(core::ComputeCharMaxSize(Environment::CharsetMode(static_cast<Environment::CharsetMode::Type>(core::Check(
-            OCI_GetCharset(GetEnvironment()))))) * (length + 1)));
+            OCI_EnvironmentGetCharset(GetEnvironment()))))) * (length + 1)));
 
         UInt32 charCount = length;
         UInt32 byteCount = 0;

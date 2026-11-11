@@ -21,7 +21,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, conn);
 
         OCI_Int32 anwser = 0;
-        OCI_Immediate(conn, OTEXT("select 42 from dual"), OCI_ARG_INT, &anwser);
+        OCI_ConnectionImmediate(conn, OTEXT("select 42 from dual"), OCI_ARG_INT32, &anwser);
         ASSERT_EQ(42, anwser);
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -149,14 +149,14 @@ namespace TestCApi
 
         const auto conn = OCI_PoolGetConnection(env, pool, OTEXT("mytag"));
         ASSERT_NE(nullptr, conn);
-        ASSERT_TRUE(OCI_SetSessionTag(conn, OTEXT("mytag")));
-        ASSERT_EQ(String(OTEXT("mytag")), String(OCI_GetSessionTag(conn)));
+        ASSERT_TRUE(OCI_ConnectionSetSessionTag(conn, OTEXT("mytag")));
+        ASSERT_EQ(String(OTEXT("mytag")), String(OCI_ConnectionGetSessionTag(conn)));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
         const auto conn2 = OCI_PoolGetConnection(env, pool, OTEXT("mytag"));
         ASSERT_NE(nullptr, conn2);
-        ASSERT_EQ(String(OTEXT("mytag")), String(OCI_GetSessionTag(conn2)));
+        ASSERT_EQ(String(OTEXT("mytag")), String(OCI_ConnectionGetSessionTag(conn2)));
         ASSERT_TRUE(OCI_ConnectionFree(conn2));
 
         ASSERT_TRUE(OCI_PoolFree(env, pool));
@@ -243,7 +243,7 @@ namespace TestCApi
         ASSERT_GE(OCI_PoolGetBusyCount(pool), 0u);
 
         OCI_Int32 answer = 0;
-        OCI_Immediate(conn, OTEXT("select 1 from dual"), OCI_ARG_INT, &answer);
+        OCI_ConnectionImmediate(conn, OTEXT("select 1 from dual"), OCI_ARG_INT32, &answer);
         ASSERT_EQ(1, answer);
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));

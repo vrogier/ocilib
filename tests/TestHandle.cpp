@@ -36,8 +36,8 @@ namespace TestCApi
         OCI_Int32 value = 0x12345678;
         void* data = &value;
 
-        ASSERT_TRUE(OCI_SetUserData(con, data));
-        ASSERT_EQ(data, OCI_GetUserData(con));
+        ASSERT_TRUE(OCI_HandleSetUserData(con, data));
+        ASSERT_EQ(data, OCI_HandleGetUserData(con));
 
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
@@ -59,9 +59,9 @@ namespace TestCApi
     INSTANTIATE_TEST_CASE_P(NullArgs, TestHandleNullArgs,
         ::testing::ValuesIn(NullArgCases
         {
-            { "GetUserData", [] { return nullptr == OCI_GetUserData(nullptr); }, NoNullPointerError }, // handle.c
+            { "GetUserData", [] { return nullptr == OCI_HandleGetUserData(nullptr); }, NoNullPointerError }, // handle.c
             { "HandleGetEnvironment", [] { return nullptr == OCI_HandleGetEnvironment(nullptr); }, NoNullPointerError }, // manual
-            { "SetUserData", [] { return !OCI_SetUserData(nullptr, NullArgBuffer()); }, NoNullPointerError }, // handle.c
+            { "SetUserData", [] { return !OCI_HandleSetUserData(nullptr, NullArgBuffer()); }, NoNullPointerError }, // handle.c
         }),
         &NullArgCaseName);
 

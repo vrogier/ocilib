@@ -26,16 +26,16 @@ int main(void)
 
     /* prepare and execute in 2 steps */
 
-    OCI_Prepare(st, "delete from products where code = 1");
-    OCI_Execute(st);
-    printf("%d row deleted\n", OCI_GetAffectedRows(st));
+    OCI_StatementPrepare(st, "delete from products where code = 1");
+    OCI_StatementExecutePrepared(st);
+    printf("%d row deleted\n", OCI_StatementGetAffectedRows(st));
 
     /* prepare/execute in 1 step */
 
-    OCI_ExecuteStmt(st, "delete from products where code = 2");
-    printf("%d row deleted\n", OCI_GetAffectedRows(st));
+    OCI_StatementExecute(st, "delete from products where code = 2");
+    printf("%d row deleted\n", OCI_StatementGetAffectedRows(st));
 
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
     OCI_StatementFree(st);
     OCI_ConnectionFree(cn);
     OCI_EnvironmentFree(env);

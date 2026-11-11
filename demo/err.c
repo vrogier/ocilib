@@ -9,7 +9,7 @@ void err_handler(OCI_Error *err)
         "sql   : %s\n",
         OCI_ErrorGetCode(err),
         OCI_ErrorGetString(err),
-        OCI_GetSql(OCI_ErrorGetStatement(err))
+        OCI_StatementGetSql(OCI_ErrorGetStatement(err))
     );
 }
 

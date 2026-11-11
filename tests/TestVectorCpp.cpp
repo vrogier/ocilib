@@ -23,7 +23,7 @@ static void CheckColumnFullType
 
     otext buffer[256] = OTEXT("");
 
-    OCI_ColumnGetFullSQLType(col, buffer, 256);
+    OCI_ColumnGetFullSqlType(col, buffer, 256);
 
     ASSERT_EQ(typeName, String(buffer));  
 }

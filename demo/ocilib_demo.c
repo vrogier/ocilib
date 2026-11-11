@@ -173,7 +173,7 @@ OCI_Int32 omain(OCI_Int32 argc, oarg* argv[])
         return EXIT_FAILURE;
     }
 
-    OCI_EnableWarnings(env, TRUE);
+    OCI_EnvironmentEnableWarnings(env, TRUE);
 
     /* CONNECTION TO SERVER ------------------------------------------------- */
 
@@ -245,12 +245,12 @@ void print_version(void)
 {
     print_text("\n>>>>> OCILIB BUILD INFORMATION \n\n");
 
-    if (OCI_GetImportMode(env) == OCI_IMPORT_MODE_LINKAGE)
+    if (OCI_EnvironmentGetImportMode(env) == OCI_IMPORT_MODE_LINKAGE)
         print_text("OCI import mode         : LINKAGE\n");
     else
         print_text("OCI import mode         : RUNTIME\n");
 
-    if (OCI_GetCharset(env) == OCI_CHAR_ANSI)
+    if (OCI_EnvironmentGetCharset(env) == OCI_CHAR_ANSI)
         print_text("char type               : ANSI\n");
     else
         print_text("char type               : WIDE\n");
@@ -262,20 +262,20 @@ void print_version(void)
     print_frmt("OCILIB revision version : %i\n\n", OCILIB_REVISION_VERSION);
 
     /* print all versions */
-    print_frmt("OCI compile     version : %u\n",   OCI_VER_MAJ(OCI_GetOCICompileVersion(env)));
-    print_frmt("OCI runtime     version : %u\n\n", OCI_VER_MAJ(OCI_GetOCIRuntimeVersion(env)));
+    print_frmt("OCI compile     version : %u\n",   OCI_VER_MAJ(OCI_EnvironmentGetOCICompileVersion(env)));
+    print_frmt("OCI runtime     version : %u\n\n", OCI_VER_MAJ(OCI_EnvironmentGetOCIRuntimeVersion(env)));
 
-    print_frmt("Server major    version : %u\n",   OCI_GetServerMajorVersion(cn));
-    print_frmt("Server minor    version : %u\n",   OCI_GetServerMinorVersion(cn));
-    print_frmt("Server revision version : %u\n\n", OCI_GetServerRevisionVersion(cn));
+    print_frmt("Server major    version : %u\n",   OCI_ConnectionGetServerMajorVersion(cn));
+    print_frmt("Server minor    version : %u\n",   OCI_ConnectionGetServerMinorVersion(cn));
+    print_frmt("Server revision version : %u\n\n", OCI_ConnectionGetServerRevisionVersion(cn));
 
-    print_frmt("Connection      version : %u\n\n", OCI_GetVersionConnection(cn));
+    print_frmt("Connection      version : %u\n\n", OCI_ConnectionGetVersion(cn));
 
     print_text("\n>>>>> SERVER VERSION BANNER \n\n");
 
     /* print server string version */
 
-    print_ostr(OCI_GetVersionServer(cn));
+    print_ostr(OCI_ConnectionGetServerVersionString(cn));
 
     print_text("\n\n");
 
@@ -290,9 +290,9 @@ void create_tables(void)
     print_text("\n>>>>> CREATE TABLES FOR DEMO \n\n");
 
     /* create types for the demo */
-    OCI_ExecuteStmt(st, OTEXT("create type type_t as OBJECT (id int, name varchar2(50))"));
+    OCI_StatementExecute(st, OTEXT("create type type_t as OBJECT (id int, name varchar2(50))"));
 
-    OCI_ExecuteStmt(st, OTEXT("create type test_t as object ")
+    OCI_StatementExecute(st, OTEXT("create type test_t as object ")
                     OTEXT("( ")
                     OTEXT("    val_int  number, ")
                     OTEXT("    val_flt  float, ")
@@ -305,25 +305,25 @@ void create_tables(void)
                     OTEXT("    val_raw  raw(10) ")
                     OTEXT(")"));
 
-    OCI_ExecuteStmt(st, OTEXT("create type t_tab1_emp as VARRAY(100) of varchar2(50)"));
+    OCI_StatementExecute(st, OTEXT("create type t_tab1_emp as VARRAY(100) of varchar2(50)"));
 
-    OCI_ExecuteStmt(st, OTEXT("create type t_tab2_emp as table of varchar2(50)"));
+    OCI_StatementExecute(st, OTEXT("create type t_tab2_emp as table of varchar2(50)"));
 
     /* create table for the demo */
-    OCI_ExecuteStmt(st, OTEXT("create table test_fetch(code int, article ")
+    OCI_StatementExecute(st, OTEXT("create table test_fetch(code int, article ")
                         OTEXT("varchar2(30), price float, creation date)"));
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_long_raw(code int, content long raw)"));
+    OCI_StatementExecute(st, OTEXT("create table test_long_raw(code int, content long raw)"));
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_long_str(code int, content long)"));
+    OCI_StatementExecute(st, OTEXT("create table test_long_str(code int, content long)"));
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_lob(code int, content clob)"));
+    OCI_StatementExecute(st, OTEXT("create table test_lob(code int, content clob)"));
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_object(val test_t)"));
+    OCI_StatementExecute(st, OTEXT("create table test_object(val test_t)"));
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_table_obj of type_t"));
+    OCI_StatementExecute(st, OTEXT("create table test_table_obj of type_t"));
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_array ")
+    OCI_StatementExecute(st, OTEXT("create table test_array ")
                         OTEXT("( ")
                         OTEXT("    val_int  number, ")
                         OTEXT("    val_dbl  float, ")
@@ -335,64 +335,64 @@ void create_tables(void)
                         OTEXT(")")
                     );
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_coll_varray ")
+    OCI_StatementExecute(st, OTEXT("create table test_coll_varray ")
                         OTEXT("( ")
                         OTEXT("    departement number, ")
                         OTEXT("    employees   t_tab1_emp ")
                         OTEXT(")")
                     );
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_coll_nested ")
+    OCI_StatementExecute(st, OTEXT("create table test_coll_nested ")
                         OTEXT("( ")
                         OTEXT("    departement number, ")
                         OTEXT("    employees   t_tab2_emp ")
                         OTEXT(") nested table employees store as test_table_emp")
                     );
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_directpath(val_int number(8,4), ")
+    OCI_StatementExecute(st, OTEXT("create table test_directpath(val_int number(8,4), ")
                         OTEXT(" val_str varchar2(30), val_date date)"));
 
-    OCI_ExecuteStmt(st, OTEXT("create type test_num_coll_t as varray(10) of number"));
+    OCI_StatementExecute(st, OTEXT("create type test_num_coll_t as varray(10) of number"));
 
-    OCI_ExecuteStmt(st, OTEXT("create type test_num_t as object (value number)"));
+    OCI_StatementExecute(st, OTEXT("create type test_num_t as object (value number)"));
 
-    OCI_ExecuteStmt(st, OTEXT("create table test_number (value number)"));
+    OCI_StatementExecute(st, OTEXT("create table test_number (value number)"));
 
 
     /* insert data into the demo tables */
-    OCI_ExecuteStmt(st, OTEXT("insert into test_fetch ")
+    OCI_StatementExecute(st, OTEXT("insert into test_fetch ")
                         OTEXT("(code, article, price, creation) ")
                         OTEXT("values (1, 'shoes', 3.14, to_date('1978-12-23', 'YYYY-MM-DD'))"));
 
-    OCI_ExecuteStmt(st, OTEXT("insert into test_fetch ")
+    OCI_StatementExecute(st, OTEXT("insert into test_fetch ")
                         OTEXT("(code, article, price, creation) ")
                         OTEXT("values (2, 'shirt', 5.99, to_date('1999-09-12', 'YYYY-MM-DD'))"));
 
-    OCI_ExecuteStmt(st, OTEXT("insert into test_lob(code,content)  ")
+    OCI_StatementExecute(st, OTEXT("insert into test_lob(code,content)  ")
                         OTEXT("values (1, EMPTY_CLOB())"));
 
-    OCI_ExecuteStmt(st, OTEXT("insert into test_long_str(code,content) ")
+    OCI_StatementExecute(st, OTEXT("insert into test_long_str(code,content) ")
                         OTEXT("values (1, 'Rugby rocks !')"));
 
-    OCI_ExecuteStmt(st, OTEXT("insert into test_coll_varray(departement,employees) ")
+    OCI_StatementExecute(st, OTEXT("insert into test_coll_varray(departement,employees) ")
                         OTEXT("values (1, t_tab1_emp('Peter', 'John', 'Paula', 'Gina'))"));
 
-    OCI_ExecuteStmt(st, OTEXT("insert into test_coll_varray(departement,employees) ")
+    OCI_StatementExecute(st, OTEXT("insert into test_coll_varray(departement,employees) ")
                         OTEXT("values (2, t_tab1_emp('Ben', 'Alice', 'Joel', 'Maria'))"));
 
-    OCI_ExecuteStmt(st, OTEXT("insert into test_coll_nested(departement,employees) ")
+    OCI_StatementExecute(st, OTEXT("insert into test_coll_nested(departement,employees) ")
                         OTEXT("values (1, t_tab2_emp('Vince', 'Richard', 'Rita', 'Sophia'))"));
 
-    OCI_ExecuteStmt(st, OTEXT("insert into test_coll_nested(departement,employees) ")
+    OCI_StatementExecute(st, OTEXT("insert into test_coll_nested(departement,employees) ")
                         OTEXT("values (2, t_tab2_emp('Paul', 'Sarah', 'Robert', 'Zoe'))"));
 
-    OCI_ExecuteStmt(st, OTEXT("insert into test_table_obj values(type_t(1, 'shoes'))"));
-    OCI_ExecuteStmt(st, OTEXT("insert into test_table_obj values(type_t(2, 'pen'))"));
+    OCI_StatementExecute(st, OTEXT("insert into test_table_obj values(type_t(1, 'shoes'))"));
+    OCI_StatementExecute(st, OTEXT("insert into test_table_obj values(type_t(2, 'pen'))"));
 
-    OCI_ExecuteStmt(st, OTEXT("insert into test_number values(3.14)"));
-    OCI_ExecuteStmt(st, OTEXT("insert into test_number values(5.28)"));
+    OCI_StatementExecute(st, OTEXT("insert into test_number values(3.14)"));
+    OCI_StatementExecute(st, OTEXT("insert into test_number values(5.28)"));
 
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -403,24 +403,24 @@ void drop_tables(void)
 {
     print_text("\n>>>>> DROPPING TABLES AND TYPES \n\n");
 
-    OCI_ExecuteStmt(st, OTEXT("drop table test_fetch"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_long_str"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_long_raw"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_lob"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_array"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_object"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_coll_varray"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_coll_nested"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_table_obj"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_directpath"));
-    OCI_ExecuteStmt(st, OTEXT("drop table test_number"));
+    OCI_StatementExecute(st, OTEXT("drop table test_fetch"));
+    OCI_StatementExecute(st, OTEXT("drop table test_long_str"));
+    OCI_StatementExecute(st, OTEXT("drop table test_long_raw"));
+    OCI_StatementExecute(st, OTEXT("drop table test_lob"));
+    OCI_StatementExecute(st, OTEXT("drop table test_array"));
+    OCI_StatementExecute(st, OTEXT("drop table test_object"));
+    OCI_StatementExecute(st, OTEXT("drop table test_coll_varray"));
+    OCI_StatementExecute(st, OTEXT("drop table test_coll_nested"));
+    OCI_StatementExecute(st, OTEXT("drop table test_table_obj"));
+    OCI_StatementExecute(st, OTEXT("drop table test_directpath"));
+    OCI_StatementExecute(st, OTEXT("drop table test_number"));
 
-    OCI_ExecuteStmt(st, OTEXT("drop type  test_t"));
-    OCI_ExecuteStmt(st, OTEXT("drop type  type_t"));
-    OCI_ExecuteStmt(st, OTEXT("drop type  t_tab1_emp"));
-    OCI_ExecuteStmt(st, OTEXT("drop type  t_tab2_emp"));
-    OCI_ExecuteStmt(st, OTEXT("drop type test_num_coll_t"));
-    OCI_ExecuteStmt(st, OTEXT("drop type test_num_t"));
+    OCI_StatementExecute(st, OTEXT("drop type  test_t"));
+    OCI_StatementExecute(st, OTEXT("drop type  type_t"));
+    OCI_StatementExecute(st, OTEXT("drop type  t_tab1_emp"));
+    OCI_StatementExecute(st, OTEXT("drop type  t_tab2_emp"));
+    OCI_StatementExecute(st, OTEXT("drop type test_num_coll_t"));
+    OCI_StatementExecute(st, OTEXT("drop type test_num_t"));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -433,20 +433,20 @@ void test_format(void)
 
     print_text("\n>>>>> TEST FORMATTING \n\n");
 
-    OCI_ExecuteStmtFmt(st, OTEXT("select * from test_fetch where code = %i"), code);
+    OCI_StatementExecuteFormat(st, OTEXT("select * from test_fetch where code = %i"), code);
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        print_frmt("> code : %i", OCI_GetInt(rs, 0));
-        print_text(", action : "); print_ostr(OCI_GetString(rs, 1));
-        print_frmt(", price : %g", OCI_GetDouble(rs,2));
-        print_text(", date : "); print_ostr(OCI_GetString(rs, 3));
+        print_frmt("> code : %i", OCI_ResultsetGetInt32(rs, 0));
+        print_text(", action : "); print_ostr(OCI_ResultsetGetString(rs, 1));
+        print_frmt(", price : %g", OCI_ResultsetGetDouble(rs,2));
+        print_text(", date : "); print_ostr(OCI_ResultsetGetString(rs, 3));
         print_text("\n");
    }
 
-    print_frmt("\n%u row(s) fetched\n", OCI_GetRowCount(rs));
+    print_frmt("\n%u row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 }
 
 
@@ -460,8 +460,8 @@ void test_immediate(void)
 
     print_text("\n>>>>> TEST IMMEDIATE \n\n");
 
-    OCI_Immediate(cn, OTEXT("select code, article from test_fetch where code = 1"),
-                  OCI_ARG_INT, &code,
+    OCI_ConnectionImmediate(cn, OTEXT("select code, article from test_fetch where code = 1"),
+                  OCI_ARG_INT32, &code,
                   OCI_ARG_TEXT, temp);
 
     print_frmt("> code : %i ", code);
@@ -479,7 +479,7 @@ void test_immediate_format(void)
 
     print_text("\n>>>>> TEST IMMEDIATE FORMATTED\n\n");
 
-    OCI_ImmediateFmt(cn, OTEXT("select article from test_fetch where code = %i"),
+    OCI_ConnectionImmediateFormat(cn, OTEXT("select article from test_fetch where code = %i"),
                      code, OCI_ARG_TEXT, temp);
 
     print_text("> article : "); print_ostr(temp);  print_text("\n");
@@ -496,15 +496,15 @@ void test_fetch(void)
     print_text("\n>>>>> SIMPLE TEST FETCH WITH META DATA\n\n");
 
     /* execute query in one go */
-    OCI_ExecuteStmt(st, OTEXT("select * from test_fetch"));
+    OCI_StatementExecute(st, OTEXT("select * from test_fetch"));
 
-    rs = OCI_GetResultset(st);
-    n  = OCI_GetColumnCount(rs);
+    rs = OCI_StatementGetResultset(st);
+    n  = OCI_ResultsetGetColumnCount(rs);
 
     /* print resultset columns info */
     for(i = 0; i < n; i++)
     {
-        OCI_Column *col = OCI_GetColumn(rs, i);
+        OCI_Column *col = OCI_ResultsetGetColumn(rs, i);
 
         print_frmt("> Field : #%i ", i);
         print_text("- Name  : "); print_ostr(OCI_ColumnGetName(col));
@@ -514,16 +514,16 @@ void test_fetch(void)
     print_text("\n");
 
     /* print resultset content */
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        print_frmt("> code : %i", OCI_GetInt(rs, 0));
-        print_text(", action : "); print_ostr(OCI_GetString(rs, 1));
-        print_frmt(", price : %g", OCI_GetDouble(rs,2));
-        print_text(", date : "); print_ostr(OCI_GetString(rs, 3));
+        print_frmt("> code : %i", OCI_ResultsetGetInt32(rs, 0));
+        print_text(", action : "); print_ostr(OCI_ResultsetGetString(rs, 1));
+        print_frmt(", price : %g", OCI_ResultsetGetDouble(rs,2));
+        print_text(", date : "); print_ostr(OCI_ResultsetGetString(rs, 3));
         print_text("\n");
     }
 
-    print_frmt("\n%u row(s) fetched\n", OCI_GetRowCount(rs));
+    print_frmt("\n%u row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -537,23 +537,23 @@ void test_bind1(void)
     print_text("\n>>>>> TEST BINDING \n\n");
 
     /* execute query in three steps */
-    OCI_Prepare(st, OTEXT("select * from test_fetch where code = :code"));
-    OCI_BindInt(st, OTEXT(":code"), &code);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, OTEXT("select * from test_fetch where code = :code"));
+    OCI_StatementBindInt32(st, OTEXT(":code"), &code);
+    OCI_StatementExecutePrepared(st);
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
     /* print resultset content */
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        print_frmt("> code : %i", OCI_GetInt(rs, 0));
-        print_text(", action : "); print_ostr(OCI_GetString(rs, 1));
-        print_frmt(", price : %g", OCI_GetDouble(rs,2));
-        print_text(", date : "); print_ostr(OCI_GetString(rs, 3));
+        print_frmt("> code : %i", OCI_ResultsetGetInt32(rs, 0));
+        print_text(", action : "); print_ostr(OCI_ResultsetGetString(rs, 1));
+        print_frmt(", price : %g", OCI_ResultsetGetDouble(rs,2));
+        print_text(", date : "); print_ostr(OCI_ResultsetGetString(rs, 3));
         print_text("\n");
     }
 
-    print_frmt("\n%u row(s) fetched\n", OCI_GetRowCount(rs));
+    print_frmt("\n%u row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -572,7 +572,7 @@ void test_bind2(void)
 
    /* prepare SQL */
 
-    OCI_Prepare(st, OTEXT("insert into test_array ")
+    OCI_StatementPrepare(st, OTEXT("insert into test_array ")
                     OTEXT("( ")
                     OTEXT("   val_int,  val_dbl, val_flt, val_str, val_date, ")
                     OTEXT("   val_lob, val_file ")
@@ -608,22 +608,22 @@ void test_bind2(void)
 
     /* bind scalar C types arrays */
 
-    OCI_BindInt(st, OTEXT(":val_int"),  &i);
-    OCI_BindDouble(st, OTEXT(":val_dbl"), &dbl);
-    OCI_BindFloat(st, OTEXT(":val_flt"), &flt);
-    OCI_BindString(st, OTEXT(":val_str"), (otext*) temp, 30);
+    OCI_StatementBindInt32(st, OTEXT(":val_int"),  &i);
+    OCI_StatementBindDouble(st, OTEXT(":val_dbl"), &dbl);
+    OCI_StatementBindFloat(st, OTEXT(":val_flt"), &flt);
+    OCI_StatementBindString(st, OTEXT(":val_str"), (otext*) temp, 30);
 
     /* bind oracle types arrays */
 
-    OCI_BindDate(st, OTEXT(":val_date"), date);
-    OCI_BindLob(st, OTEXT(":val_lob"), lob);
-    OCI_BindFile(st, OTEXT(":val_file"), file);
+    OCI_StatementBindDate(st, OTEXT(":val_date"), date);
+    OCI_StatementBindLob(st, OTEXT(":val_lob"), lob);
+    OCI_StatementBindFile(st, OTEXT(":val_file"), file);
 
     /* do insert */
 
-    OCI_Execute(st);
+    OCI_StatementExecutePrepared(st);
 
-    print_frmt("Row inserted : %u\n\n", OCI_GetAffectedRows(st));
+    print_frmt("Row inserted : %u\n\n", OCI_StatementGetAffectedRows(st));
 
     /* free objets */
 
@@ -633,7 +633,7 @@ void test_bind2(void)
 
     /* commit; */
 
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -665,11 +665,11 @@ void test_piecewise_insert(void)
         OCI_Long * lg = OCI_LongCreate(st, OCI_BLONG);
 
         /* execute query in three steps */
-        OCI_Prepare(st,  OTEXT("insert into test_long_raw(code, content) ")
+        OCI_StatementPrepare(st,  OTEXT("insert into test_long_raw(code, content) ")
                          OTEXT("values (1, :data)"));
 
-        OCI_BindLong(st, OTEXT(":data"), lg, n);
-        OCI_Execute(st);
+        OCI_StatementBindLong(st, OTEXT(":data"), lg, n);
+        OCI_StatementExecutePrepared(st);
 
         /* write data into table by chunks of 2048 bytes */
         while ((n = (OCI_Int32) fread(buffer, 1, sizeof(buffer), f)))
@@ -681,7 +681,7 @@ void test_piecewise_insert(void)
         fclose(f);
 
         OCI_LongFree(lg);
-        OCI_Commit(cn);
+        OCI_ConnectionCommit(cn);
     }
 }
 
@@ -697,39 +697,39 @@ void test_piecewise_fetch(void)
     print_text("\n>>>>> TEST PIECEWISE FETCHING\n\n");
 
     /* execute query in one go */
-    OCI_ExecuteStmt(st, OTEXT("select content from test_long_raw ")
+    OCI_StatementExecute(st, OTEXT("select content from test_long_raw ")
                               OTEXT("where code = 1"));
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
     /* read data by chunks of 2048 bytes*/
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        OCI_Long * lg = OCI_GetLong(rs, 0);
+        OCI_Long * lg = OCI_ResultsetGetLong(rs, 0);
 
         while ((n = OCI_LongRead(lg, buffer, sizeof(buffer)))) {}
 
         print_frmt("\n%u bytes read\n", OCI_LongGetSize(lg));
     }
 
-    print_frmt("\n%u row(s) fetched\n", OCI_GetRowCount(rs));
+    print_frmt("\n%u row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 
     print_text("\n>>>>> TEST LONG MAPPED TO STRING\n\n");
 
-    OCI_ExecuteStmt(st, OTEXT("select content from test_long_str ")
+    OCI_StatementExecute(st, OTEXT("select content from test_long_str ")
                         OTEXT("where code = 1"));
-    OCI_SetLongMode(st, OCI_LONG_IMPLICIT);
-    rs = OCI_GetResultset(st);
+    OCI_StatementSetLongMode(st, OCI_LONG_IMPLICIT);
+    rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        const otext *long_str = OCI_GetString(rs, 0);
+        const otext *long_str = OCI_ResultsetGetString(rs, 0);
 
         print_ostr(long_str);
         print_frmt("\n%d bytes read\n", (OCI_Int32) ostrlen(long_str));
     }
 
-    print_frmt("\n%u row(s) fetched\n", OCI_GetRowCount(rs));
+    print_frmt("\n%u row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -741,16 +741,16 @@ void test_lob(void)
 
     print_text("\n>>>>> TEST LOB MANIPULATION\n\n");
 
-    OCI_ExecuteStmt(st, OTEXT("select code, content from test_lob ")
+    OCI_StatementExecute(st, OTEXT("select code, content from test_lob ")
                         OTEXT("where code=1 for update"));
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
         OCI_UInt32 char_count, byte_count;
 
-        OCI_Lob *lob  = OCI_GetLob(rs, 1);
+        OCI_Lob *lob  = OCI_ResultsetGetLob(rs, 1);
 
         char_count = 7;
         byte_count = 0;
@@ -766,14 +766,14 @@ void test_lob(void)
         OCI_LobRead(lob, temp, &char_count, &byte_count);
         temp[char_count] = 0;
 
-        print_frmt("> code    : %i", OCI_GetInt(rs, 0));
+        print_frmt("> code    : %i", OCI_ResultsetGetInt32(rs, 0));
         print_text(", content : "); print_ostr(temp);
         print_text("\n");
     }
 
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 
-    print_frmt("\n%u row(s) fetched\n", OCI_GetRowCount(rs));
+    print_frmt("\n%u row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -784,20 +784,20 @@ void test_nested_table(void)
 {
     print_text("\n>>>>> TEST NESTED TABLE \n\n");
 
-    OCI_ExecuteStmt(st, OTEXT("select article, cursor(select sysdate ")
+    OCI_StatementExecute(st, OTEXT("select article, cursor(select sysdate ")
                         OTEXT("from dual) from test_fetch"));
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        OCI_Statement *st2 = OCI_GetStatement(rs, 1);
-        OCI_Resultset *rs2 = OCI_GetResultset(st2);
+        OCI_Statement *st2 = OCI_ResultsetGetCursor(rs, 1);
+        OCI_Resultset *rs2 = OCI_StatementGetResultset(st2);
 
-        while (OCI_FetchNext(rs2))
+        while (OCI_ResultsetFetchNext(rs2))
         {
-            print_text("> article : "); print_ostr(OCI_GetString(rs, 0));
-            print_text(", date : ");    print_ostr(OCI_GetString(rs2, 0));
+            print_text("> article : "); print_ostr(OCI_ResultsetGetString(rs, 0));
+            print_text(", date : ");    print_ostr(OCI_ResultsetGetString(rs2, 0));
             print_text("\n");
         }
     }
@@ -813,23 +813,23 @@ void test_ref_cursor(void)
 
     print_text("\n>>>>> TEST REF CURSOR \n\n");
 
-    OCI_Prepare(st, OTEXT("begin open :c for select * from test_fetch; end;"));
-    OCI_BindStatement(st, OTEXT(":c"), st2);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, OTEXT("begin open :c for select * from test_fetch; end;"));
+    OCI_StatementBindCursor(st, OTEXT(":c"), st2);
+    OCI_StatementExecutePrepared(st);
 
-    rs = OCI_GetResultset(st2);
+    rs = OCI_StatementGetResultset(st2);
 
     /* print resultset content */
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        print_frmt("> code : %i", OCI_GetInt(rs, 0));
-        print_text(", action : "); print_ostr(OCI_GetString(rs, 1));
-        print_frmt(", price : %g", OCI_GetDouble(rs,2));
-        print_text(", date : "); print_ostr(OCI_GetString(rs, 3));
+        print_frmt("> code : %i", OCI_ResultsetGetInt32(rs, 0));
+        print_text(", action : "); print_ostr(OCI_ResultsetGetString(rs, 1));
+        print_frmt(", price : %g", OCI_ResultsetGetDouble(rs,2));
+        print_text(", date : "); print_ostr(OCI_ResultsetGetString(rs, 3));
         print_text("\n");
     }
 
-    print_frmt("\n%u row(s) fetched\n", OCI_GetRowCount(rs));
+    print_frmt("\n%u row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 
     OCI_StatementFree(st2);
 }
@@ -845,9 +845,9 @@ void test_plsql(void)
 
     print_text("\n>>>>> TEST PL/SQL OUTPUT BIND\n\n");
 
-    OCI_Prepare(st, OTEXT("begin :res := trunc(sysdate+1)-trunc(sysdate-1); end;"));
-    OCI_BindInt(st, OTEXT(":res"), &res);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, OTEXT("begin :res := trunc(sysdate+1)-trunc(sysdate-1); end;"));
+    OCI_StatementBindInt32(st, OTEXT(":res"), &res);
+    OCI_StatementExecutePrepared(st);
 
     print_text("\nPL/SQL : trunc(sysdate+1)-trunc(sysdate-1)\n");
     print_frmt("\nResult : %i\n", res);
@@ -855,7 +855,7 @@ void test_plsql(void)
 #ifndef OCI_CHARSET_ANSI
 
     {
-        OCI_UInt32 version = OCI_GetOCIRuntimeVersion(env);
+        OCI_UInt32 version = OCI_EnvironmentGetOCIRuntimeVersion(env);
 
         /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
 
@@ -869,22 +869,22 @@ void test_plsql(void)
 
     /* server output */
 
-    OCI_ServerEnableOutput(cn, 32000, 5, 255);
+    OCI_ConnectionEnableServerOutput(cn, 32000, 5, 255);
 
-    OCI_ExecuteStmt(st, OTEXT("begin ")
+    OCI_StatementExecute(st, OTEXT("begin ")
                         OTEXT("   dbms_output.put_line('First  line'); ")
                         OTEXT("   dbms_output.put_line('Second line'); ")
                         OTEXT("   dbms_output.put_line('Third  line'); ")
                         OTEXT("end;")
                    );
 
-    while ((p = OCI_ServerGetOutput(cn)))
+    while ((p = OCI_ConnectionGetServerOutput(cn)))
     {
         print_ostr(p);
         print_text("\n");
     }
 
-    OCI_ServerDisableOutput(cn);
+    OCI_ConnectionDisableServerOutput(cn);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -934,7 +934,7 @@ void test_timestamp(void)
 {
 #ifndef OCI_CHARSET_ANSI
 
-    OCI_UInt32 version = OCI_GetOCIRuntimeVersion(env);
+    OCI_UInt32 version = OCI_EnvironmentGetOCIRuntimeVersion(env);
 
     /* Oracle 9i has some troubles with formatting Intervals/timestamps in
        an UTF16 context... */
@@ -943,7 +943,7 @@ void test_timestamp(void)
         return;
 #endif
 
-    if (OCI_GetOCIRuntimeVersion(env) >= OCI_9_0)
+    if (OCI_EnvironmentGetOCIRuntimeVersion(env) >= OCI_9_0)
     {
 
         print_text("\n>>>>> TEST TIMESTAMP\n\n");
@@ -960,7 +960,7 @@ void test_timestamp(void)
         /* intervals raw oci functions have some troubles with Oracle 9i. So let's
            use it for the demo only if we're using 10g or above */
 
-        if (OCI_GetOCIRuntimeVersion(env) >= OCI_10_1)
+        if (OCI_EnvironmentGetOCIRuntimeVersion(env) >= OCI_10_1)
         {
 
             print_text("\n>>>>> TEST INTERVAL \n\n");
@@ -1011,7 +1011,7 @@ void test_describe(void)
         {
             OCI_Column   * col = OCI_TypeInfoGetColumn(tbl, i);
 
-            OCI_ColumnGetFullSQLType(col, str, SIZE_STR);
+            OCI_ColumnGetFullSqlType(col, str, SIZE_STR);
 
 #if defined(OCI_CHARSET_WIDE)
   #if !defined(_WINDOWS)
@@ -1047,7 +1047,7 @@ void test_describe(void)
         {
             OCI_Column *col = OCI_TypeInfoGetColumn(tbl, i);
 
-            OCI_ColumnGetFullSQLType(col, str, SIZE_STR);
+            OCI_ColumnGetFullSqlType(col, str, SIZE_STR);
 
 #if defined(OCI_CHARSET_WIDE)
   #if !defined(_WINDOWS)
@@ -1074,18 +1074,18 @@ void test_returning(void)
 
     print_text("\n>>>>> TEST RETURNING CLAUSE \n\n");
 
-    OCI_Prepare(st, OTEXT("update test_lob set code = code + 1 returning code, content into :i, :l"));
-    OCI_RegisterLob(st, OTEXT(":l"), OCI_CLOB);
-    OCI_RegisterInt(st, OTEXT(":i"));
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, OTEXT("update test_lob set code = code + 1 returning code, content into :i, :l"));
+    OCI_StatementRegisterLob(st, OTEXT(":l"), OCI_CLOB);
+    OCI_StatementRegisterInt32(st, OTEXT(":i"));
+    OCI_StatementExecutePrepared(st);
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
         OCI_UInt32 char_count, byte_count;
 
-        OCI_Lob * lob = OCI_GetLob(rs, 1);
+        OCI_Lob * lob = OCI_ResultsetGetLob(rs, 1);
 
         char_count = 10;
         byte_count = 0;
@@ -1097,14 +1097,14 @@ void test_returning(void)
         OCI_LobRead(lob, temp, &char_count, &byte_count);
         temp[char_count] = 0;
 
-        print_frmt("> code : %i - ", OCI_GetInt(rs, 0));
+        print_frmt("> code : %i - ", OCI_ResultsetGetInt32(rs, 0));
         print_ostr(temp);
         print_text("\n");
    }
 
-    print_frmt("\n%u row(s) fetched\n", OCI_GetRowCount(rs));
+    print_frmt("\n%u row(s) fetched\n", OCI_ResultsetGetRowCount(rs));
 
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1132,7 +1132,7 @@ void test_returning_array(void)
 
     /* prepare SQL */
 
-    OCI_Prepare(st, OTEXT("insert into test_array ")
+    OCI_StatementPrepare(st, OTEXT("insert into test_array ")
                     OTEXT("( ")
                     OTEXT("   val_int,  val_dbl, val_flt, val_str, val_date, ")
                     OTEXT("   val_lob, val_file ")
@@ -1151,33 +1151,33 @@ void test_returning_array(void)
 
     /* Set Array Size */
 
-    OCI_BindArraySetSize(st, SIZE_TAB);
+    OCI_StatementBindArraySetSize(st, SIZE_TAB);
 
     /* bind scalar C types arrays */
 
-    OCI_BindArrayOfInts(st, OTEXT(":val_int"),  tab_int, 0);
-    OCI_BindArrayOfDoubles(st, OTEXT(":val_dbl"), tab_dbl, 0);
-    OCI_BindArrayOfFloats(st, OTEXT(":val_flt"), tab_flt, 0);
-    OCI_BindArrayOfStrings(st, OTEXT(":val_str"), (otext*) tab_str, 30, 0);
+    OCI_StatementBindInt32Array(st, OTEXT(":val_int"),  tab_int, 0);
+    OCI_StatementBindDoubleArray(st, OTEXT(":val_dbl"), tab_dbl, 0);
+    OCI_StatementBindFloatArray(st, OTEXT(":val_flt"), tab_flt, 0);
+    OCI_StatementBindStringArray(st, OTEXT(":val_str"), (otext*) tab_str, 30, 0);
 
     /* bind oracle types arrays */
 
-    OCI_BindArrayOfDates(st, OTEXT(":val_date"), tab_date, 0);
-    OCI_BindArrayOfLobs(st, OTEXT(":val_lob"), tab_lob, OCI_CLOB, 0);
-    OCI_BindArrayOfFiles(st, OTEXT(":val_file"), tab_file, OCI_BFILE, 0);
+    OCI_StatementBindDateArray(st, OTEXT(":val_date"), tab_date, 0);
+    OCI_StatementBindLobArray(st, OTEXT(":val_lob"), tab_lob, OCI_CLOB, 0);
+    OCI_StatementBindFileArray(st, OTEXT(":val_file"), tab_file, OCI_BFILE, 0);
 
     /* register C scalar types output */
 
-    OCI_RegisterInt(st, OTEXT(":out_int"));
-    OCI_RegisterDouble(st, OTEXT(":out_dbl"));
-    OCI_RegisterFloat(st, OTEXT(":out_flt"));
-    OCI_RegisterString(st, OTEXT(":out_str"), 30);
+    OCI_StatementRegisterInt32(st, OTEXT(":out_int"));
+    OCI_StatementRegisterDouble(st, OTEXT(":out_dbl"));
+    OCI_StatementRegisterFloat(st, OTEXT(":out_flt"));
+    OCI_StatementRegisterString(st, OTEXT(":out_str"), 30);
 
     /* bind oracle types outputs */
 
-    OCI_RegisterDate(st, OTEXT(":out_date"));
-    OCI_RegisterLob(st, OTEXT(":out_lob"), OCI_CLOB);
-    OCI_RegisterFile(st, OTEXT(":out_file"), OCI_BFILE);
+    OCI_StatementRegisterDate(st, OTEXT(":out_date"));
+    OCI_StatementRegisterLob(st, OTEXT(":out_lob"), OCI_CLOB);
+    OCI_StatementRegisterFile(st, OTEXT(":out_file"), OCI_BFILE);
 
     /* create objects and set values */
 
@@ -1205,9 +1205,9 @@ void test_returning_array(void)
         OCI_FileSetName(tab_file[i], OTEXT("mydir"), str);
     }
 
-    OCI_Execute(st);
+    OCI_StatementExecutePrepared(st);
 
-    print_frmt("Row inserted : %u\n\n", OCI_GetAffectedRows(st));
+    print_frmt("Row inserted : %u\n\n", OCI_StatementGetAffectedRows(st));
 
     /* free objects */
 
@@ -1220,28 +1220,28 @@ void test_returning_array(void)
        1 row only (DML insert)
     */
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
     i = 1;
 
     while (rs != NULL)
     {
-        while (OCI_FetchNext(rs))
+        while (OCI_ResultsetFetchNext(rs))
         {
             print_frmt("Row # %d-------------------\n", i);
 
-            print_frmt(".... val_int    : %i\n", OCI_GetIntByName(rs, OTEXT(":OUT_INT")));
-            print_frmt(".... val_dbl    : %g\n", OCI_GetDoubleByName(rs, OTEXT(":OUT_DBL")));
-            print_frmt(".... val_flt    : %g\n", OCI_GetFloatByName(rs, OTEXT(":OUT_FLT")));
-            print_text(".... val_str    : "); print_ostr(OCI_GetStringByName(rs, OTEXT(":OUT_STR")));
+            print_frmt(".... val_int    : %i\n", OCI_ResultsetGetInt32ByName(rs, OTEXT(":OUT_INT")));
+            print_frmt(".... val_dbl    : %g\n", OCI_ResultsetGetDoubleByName(rs, OTEXT(":OUT_DBL")));
+            print_frmt(".... val_flt    : %g\n", OCI_ResultsetGetFloatByName(rs, OTEXT(":OUT_FLT")));
+            print_text(".... val_str    : "); print_ostr(OCI_ResultsetGetStringByName(rs, OTEXT(":OUT_STR")));
             print_text("\n");
 
-            date = OCI_GetDateByName(rs, OTEXT(":OUT_DATE"));
+            date = OCI_ResultsetGetDateByName(rs, OTEXT(":OUT_DATE"));
             OCI_DateToText(date, OTEXT("YYYY-MM-DD HH24:MI:SS"), SIZE_STR, str);
             print_text(".... val_date   : "); print_ostr(str);
             print_text("\n");
 
-            lob  = OCI_GetLobByName(rs, OTEXT(":OUT_LOB"));
+            lob  = OCI_ResultsetGetLobByName(rs, OTEXT(":OUT_LOB"));
             {
                 OCI_UInt32 char_count = 100;
                 OCI_UInt32 byte_count = 0;
@@ -1251,7 +1251,7 @@ void test_returning_array(void)
             print_text(".... val_lob    : "); print_ostr(temp);
             print_text("\n");
 
-            file = OCI_GetFileByName(rs, OTEXT(":OUT_FILE"));
+            file = OCI_ResultsetGetFileByName(rs, OTEXT(":OUT_FILE"));
             print_text(".... val_file   : ");
             print_ostr(OCI_FileGetDirectory(file));
             print_text("/");
@@ -1262,7 +1262,7 @@ void test_returning_array(void)
             i++;
         }
 
-        rs = OCI_GetNextResultset(st);
+        rs = OCI_StatementGetNextResultset(st);
     }
 }
 
@@ -1283,7 +1283,7 @@ void test_object_insert(void)
 
     OCI_Object *obj  = OCI_ObjectCreate(OCI_TypeInfoGet(cn, OTEXT("test_t"), OCI_TIF_TYPE));
 
-    OCI_ObjectSetInt(obj, OTEXT("VAL_INT"), 1);
+    OCI_ObjectSetInt32(obj, OTEXT("VAL_INT"), 1);
     OCI_ObjectSetDouble(obj, OTEXT("VAL_DBL"), 3.14);
     OCI_ObjectSetFloat(obj, OTEXT("VAL_FLT"), (OCI_Float) 3.14);
     OCI_ObjectSetString(obj, OTEXT("VAL_STR"), OTEXT("USB KEY 2go"));
@@ -1294,7 +1294,7 @@ void test_object_insert(void)
     OCI_ObjectSetDate(obj, OTEXT("VAL_DATE"), date);
 
     OCI_Object * obj2 = OCI_ObjectCreate(OCI_TypeInfoGet(cn, OTEXT("TYPE_T"), OCI_TIF_TYPE));
-    OCI_ObjectSetInt(obj2, OTEXT("ID"), 1);
+    OCI_ObjectSetInt32(obj2, OTEXT("ID"), 1);
 
     OCI_ObjectSetString(obj2, OTEXT("NAME"), OTEXT("USB KEY 2go"));
     OCI_ObjectSetObject(obj, OTEXT("VAL_OBJ"), obj2);
@@ -1306,13 +1306,13 @@ void test_object_insert(void)
     OCI_FileSetName(file, OTEXT("mydir"), OTEXT("myfile"));
     OCI_ObjectSetFile(obj, OTEXT("VAL_FILE"), file);
 
-    OCI_Prepare(st, OTEXT("insert into test_object values(:obj)"));
-    OCI_BindObject(st, OTEXT(":obj"), obj);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, OTEXT("insert into test_object values(:obj)"));
+    OCI_StatementBindObject(st, OTEXT(":obj"), obj);
+    OCI_StatementExecutePrepared(st);
 
-    print_frmt("\n%u row(s) inserted\n", OCI_GetAffectedRows(st));
+    print_frmt("\n%u row(s) inserted\n", OCI_StatementGetAffectedRows(st));
 
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 
     OCI_DateFree(date);
     OCI_LobFree(lob);
@@ -1331,16 +1331,16 @@ void test_object_fetch(void)
 
     print_text("\n>>>>> TEST OBJECT FETCHING \n\n");
 
-    OCI_ExecuteStmt(st, OTEXT("select val from test_object for update"));
+    OCI_StatementExecute(st, OTEXT("select val from test_object for update"));
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
     /* print resultset content */
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        OCI_Object *obj  = OCI_GetObject(rs, 0);
+        OCI_Object *obj  = OCI_ResultsetGetObject(rs, 0);
 
-        print_frmt("val_int        : %i\n",  OCI_ObjectGetInt(obj, OTEXT("VAL_INT")));
+        print_frmt("val_int        : %i\n",  OCI_ObjectGetInt32(obj, OTEXT("VAL_INT")));
         print_frmt("val_dbl        : %g\n",  OCI_ObjectGetFloat(obj, OTEXT("VAL_DBL")));
         print_frmt("val_flt        : %g\n",  OCI_ObjectGetDouble(obj, OTEXT("VAL_FLT")));
         print_text("val_str        : "); print_ostr(OCI_ObjectGetString(obj, OTEXT("VAL_STR")));
@@ -1381,7 +1381,7 @@ void test_object_fetch(void)
         print_text("\n");
 
         OCI_Object * obj2 = OCI_ObjectGetObject(obj, OTEXT("VAL_OBJ"));
-        print_frmt("val_obj.code   : %i\n", OCI_ObjectGetInt(obj2, OTEXT("ID")));
+        print_frmt("val_obj.code   : %i\n", OCI_ObjectGetInt32(obj2, OTEXT("ID")));
         print_text("val_obj.name   : "); print_ostr(OCI_ObjectGetString(obj2, OTEXT("NAME")));
         print_text("\n");
 
@@ -1389,7 +1389,7 @@ void test_object_fetch(void)
 
     }
 
-    OCI_Commit(cn);
+    OCI_ConnectionCommit(cn);
 }
 
 
@@ -1401,14 +1401,14 @@ void test_object_fetch_string(void)
 {
     print_text("\n>>>>> TEST OBJECT FETCHING AS STRING \n\n");
 
-    OCI_ExecuteStmt(st, OTEXT("select val from test_object"));
+    OCI_StatementExecute(st, OTEXT("select val from test_object"));
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
     /* print resultset content */
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        print_ostr(OCI_GetString(rs, 0));
+        print_ostr(OCI_ResultsetGetString(rs, 0));
         print_text("\n");
     }
 }
@@ -1419,56 +1419,56 @@ void test_object_fetch_string(void)
 
 void test_scrollable_cursor(void)
 {
-    if (OCI_GetVersionConnection(cn) >= OCI_9_0)
+    if (OCI_ConnectionGetVersion(cn) >= OCI_9_0)
     {
         print_text("\n>>>>> TEST SCROLLABLE CURSORS \n\n");
 
-        OCI_SetFetchMode(st, OCI_SFM_SCROLLABLE);
+        OCI_StatementSetFetchMode(st, OCI_SFM_SCROLLABLE);
 
-        OCI_ExecuteStmt(st, OTEXT("select table_name from user_tables where ")
+        OCI_StatementExecute(st, OTEXT("select table_name from user_tables where ")
                             OTEXT("table_name like 'TEST_%' order by table_name"));
 
-        rs = OCI_GetResultset(st);
+        rs = OCI_StatementGetResultset(st);
 
-        if (OCI_FetchLast(rs))
-            print_frmt("... Resultset contains %u rows\n\n", OCI_GetRowCount(rs));
+        if (OCI_ResultsetFetchLast(rs))
+            print_frmt("... Resultset contains %u rows\n\n", OCI_ResultsetGetRowCount(rs));
 
         print_text("... Go to row 1\n");
-        if (OCI_FetchFirst(rs))
+        if (OCI_ResultsetFetchFirst(rs))
         {
-            print_ostr(OCI_GetString(rs, 0));
+            print_ostr(OCI_ResultsetGetString(rs, 0));
             print_text("\n");
         }
 
-        print_frmt("... Enumerate from row 2 to row %u\n", OCI_GetRowCount(rs));
-        while (OCI_FetchNext(rs))
+        print_frmt("... Enumerate from row 2 to row %u\n", OCI_ResultsetGetRowCount(rs));
+        while (OCI_ResultsetFetchNext(rs))
         {
-            print_ostr(OCI_GetString(rs, 0));
+            print_ostr(OCI_ResultsetGetString(rs, 0));
             print_text("\n");
         }
 
-        print_frmt("... Enumerate from row %u back to row 1\n", OCI_GetRowCount(rs)-1);
-        while (OCI_FetchPrev(rs))
+        print_frmt("... Enumerate from row %u back to row 1\n", OCI_ResultsetGetRowCount(rs)-1);
+        while (OCI_ResultsetFetchPrev(rs))
         {
-            print_ostr(OCI_GetString(rs, 0));
+            print_ostr(OCI_ResultsetGetString(rs, 0));
             print_text("\n");
         }
 
         print_text("... Go to the 3th row\n");
-        if (OCI_FetchSeek(rs, OCI_SFD_ABSOLUTE,  3))
+        if (OCI_ResultsetFetchSeek(rs, OCI_SFD_ABSOLUTE,  3))
         {
-            print_ostr(OCI_GetString(rs, 0));
+            print_ostr(OCI_ResultsetGetString(rs, 0));
             print_text("\n");
         }
 
         print_text("... Fetch the next 2 rows\n");
-        while ((OCI_GetCurrentRow(rs) < 5) && OCI_FetchNext(rs))
+        while ((OCI_ResultsetGetCurrentRow(rs) < 5) && OCI_ResultsetFetchNext(rs))
         {
-            print_ostr(OCI_GetString(rs, 0));
+            print_ostr(OCI_ResultsetGetString(rs, 0));
             print_text("\n");
         }
 
-        OCI_SetFetchMode(st, OCI_SFM_DEFAULT);
+        OCI_StatementSetFetchMode(st, OCI_SFM_DEFAULT);
     }
 }
 
@@ -1483,74 +1483,74 @@ void test_collection(void)
     print_text("\n>>>>> TEST VARRAY BINDING \n\n");
 
     OCI_TypeInfo * type = OCI_TypeInfoGet(cn, OTEXT("T_TAB1_EMP"), OCI_TIF_TYPE);
-    OCI_Coll     * coll = OCI_CollCreate(type);
+    OCI_Collection     * coll = OCI_CollectionCreate(type);
 
-    OCI_Prepare(st, OTEXT("begin")
+    OCI_StatementPrepare(st, OTEXT("begin")
                     OTEXT("    select employees into :tab_emp ")
                     OTEXT("    from test_coll_varray ")
                     OTEXT("    where departement = :id; ")
                     OTEXT("end;"));
 
-    OCI_BindColl(st, OTEXT(":tab_emp"), coll);
-    OCI_BindUnsignedInt(st, OTEXT(":id"), &i);
+    OCI_StatementBindCollection(st, OTEXT(":tab_emp"), coll);
+    OCI_StatementBindUInt32(st, OTEXT(":id"), &i);
 
     i = 1;
 
-    OCI_Execute(st);
+    OCI_StatementExecutePrepared(st);
 
-    OCI_Iter     * iter = OCI_IterCreate(coll);
-    OCI_Elem     * elem = OCI_IterGetNext(iter);
+    OCI_Iterator     * iter = OCI_IteratorCreate(coll);
+    OCI_Element     * elem = OCI_IteratorGetNext(iter);
 
     print_frmt("Department ID #%u\n\n", i);
 
     while (elem != NULL)
     {
         print_text("... Employee : ");
-        print_ostr(OCI_ElemGetString(elem));
+        print_ostr(OCI_ElementGetString(elem));
         print_text("\n");
 
-        elem = OCI_IterGetNext(iter);
+        elem = OCI_IteratorGetNext(iter);
     }
 
-    OCI_IterFree(iter);
-    OCI_CollFree(coll);
+    OCI_IteratorFree(iter);
+    OCI_CollectionFree(coll);
 
     print_text("\n>>>>> TEST VARRAY FETCHING WITH ITERATOR \n\n");
 
-    OCI_ExecuteStmt(st, OTEXT("SELECT * from test_coll_varray"));
+    OCI_StatementExecute(st, OTEXT("SELECT * from test_coll_varray"));
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        coll = OCI_GetColl(rs, 1);
+        coll = OCI_ResultsetGetColl(rs, 1);
 
-        iter = OCI_IterCreate(coll);
-        elem = OCI_IterGetNext(iter);
+        iter = OCI_IteratorCreate(coll);
+        elem = OCI_IteratorGetNext(iter);
 
-        print_frmt("\nDepartment ID #%d\n\n", OCI_GetInt(rs, 0));
+        print_frmt("\nDepartment ID #%d\n\n", OCI_ResultsetGetInt32(rs, 0));
 
         while (elem != NULL)
         {
             print_text("... Employee : ");
-            print_ostr(OCI_ElemGetString(elem));
+            print_ostr(OCI_ElementGetString(elem));
             print_text("\n");
 
-            elem = OCI_IterGetNext(iter);
+            elem = OCI_IteratorGetNext(iter);
         }
 
-        OCI_IterFree(iter);
+        OCI_IteratorFree(iter);
     }
 
     print_text("\n>>>>> TEST VARRAY PRINTING \n\n");
 
-    if (OCI_CollToText(coll, &n, NULL))
+    if (OCI_CollectionToText(coll, &n, NULL))
     {
         otext *tmp_str = (otext* ) calloc(n+1, sizeof(otext));
 
         if (tmp_str)
         {
-            OCI_CollToText(coll, &n, tmp_str);
+            OCI_CollectionToText(coll, &n, tmp_str);
             print_ostr(tmp_str);
             print_text("\n");
 
@@ -1560,24 +1560,24 @@ void test_collection(void)
 
     print_text("\n>>>>> TEST NESTED TABLE FETCHING WITH INDEX ACCESS \n\n");
 
-    OCI_ExecuteStmt(st, OTEXT("SELECT * from test_coll_nested"));
+    OCI_StatementExecute(st, OTEXT("SELECT * from test_coll_nested"));
 
-    rs = OCI_GetResultset(st);
+    rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        coll = OCI_GetColl(rs, 1);
+        coll = OCI_ResultsetGetColl(rs, 1);
 
-        print_frmt("\nDepartment ID #%d\n\n", OCI_GetInt(rs, 0));
+        print_frmt("\nDepartment ID #%d\n\n", OCI_ResultsetGetInt32(rs, 0));
 
-        n = OCI_CollGetSize(coll);
+        n = OCI_CollectionGetSize(coll);
 
         for(i = 0; i < n; i++)
         {
-            elem = OCI_CollGetElem(coll, i);
+            elem = OCI_CollectionGetElement(coll, i);
 
             print_text("... Employee : ");
-            print_ostr(OCI_ElemGetString(elem));
+            print_ostr(OCI_ElementGetString(elem));
             print_text("\n");
 
         }
@@ -1590,41 +1590,41 @@ void test_collection(void)
 
 void test_ref(void)
 {
-    OCI_Ref    *ref;
+    OCI_Reference    *ref;
 
     print_text("\n>>>>> TEST REF FETCHING \n\n");
 
-    OCI_ExecuteStmt(st, OTEXT("select ref(e) from test_table_obj e"));
-    rs = OCI_GetResultset(st);
+    OCI_StatementExecute(st, OTEXT("select ref(e) from test_table_obj e"));
+    rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        ref = OCI_GetRef(rs, 0);
+        ref = OCI_ResultsetGetReference(rs, 0);
 
-        OCI_Object * obj = OCI_RefGetObject(ref);
+        OCI_Object * obj = OCI_ReferenceGetObject(ref);
 
-        print_frmt("%i - ", OCI_ObjectGetInt(obj, OTEXT("ID")));
+        print_frmt("%i - ", OCI_ObjectGetInt32(obj, OTEXT("ID")));
         print_ostr(OCI_ObjectGetString(obj, OTEXT("NAME")));
         print_text("\n");
     }
 
     print_text("\n>>>>> TEST REF PL/SQL BINDING \n\n");
 
-    ref = OCI_RefCreate(OCI_TypeInfoGet(cn, OTEXT("type_t"), OCI_TIF_TYPE));
+    ref = OCI_ReferenceCreate(OCI_TypeInfoGet(cn, OTEXT("type_t"), OCI_TIF_TYPE));
 
-    OCI_Prepare(st, OTEXT("begin ")
+    OCI_StatementPrepare(st, OTEXT("begin ")
                     OTEXT("  select ref(e) into :r from test_table_obj e where e.id = 1; ")
                     OTEXT("end; "));
 
-    OCI_BindRef(st, OTEXT(":r"), ref);
-    OCI_Execute(st);
+    OCI_StatementBindReference(st, OTEXT(":r"), ref);
+    OCI_StatementExecutePrepared(st);
 
-    OCI_Object *obj = OCI_RefGetObject(ref);
-    print_frmt("%i - ", OCI_ObjectGetInt(obj, OTEXT("ID")));
+    OCI_Object *obj = OCI_ReferenceGetObject(ref);
+    print_frmt("%i - ", OCI_ObjectGetInt32(obj, OTEXT("ID")));
     print_ostr(OCI_ObjectGetString(obj, OTEXT("NAME")));
     print_text("\n");
 
-    OCI_RefFree(ref);
+    OCI_ReferenceFree(ref);
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1641,7 +1641,7 @@ void test_directpath(void)
       match
    */
 
-   if (OCI_VER_MAJ(OCI_GetOCIRuntimeVersion(env)) == OCI_GetServerMajorVersion(cn))
+   if (OCI_VER_MAJ(OCI_EnvironmentGetOCIRuntimeVersion(env)) == OCI_ConnectionGetServerMajorVersion(cn))
    {
         OCI_Boolean res = TRUE;
 
@@ -1654,41 +1654,41 @@ void test_directpath(void)
 
        /* commit any previous pending modifications */
 
-        OCI_Commit(cn);
+        OCI_ConnectionCommit(cn);
 
         print_text("\n>>>>> TEST DIRECT PATH (10 loads of 100 rows) \n\n");
 
         OCI_TypeInfo * tbl = OCI_TypeInfoGet(cn, OTEXT("test_directpath"), OCI_TIF_TABLE);
-        OCI_DirPath *dp  = OCI_DirPathCreate(tbl, NULL, NUM_COLS, nb_rows);
+        OCI_DirectPath *dp  = OCI_DirectPathCreate(tbl, NULL, NUM_COLS, nb_rows);
 
         /* optional attributes to set */
 
-        res = res && OCI_DirPathSetBufferSize(dp, 64000);
-        res = res && OCI_DirPathSetNoLog(dp, TRUE);
-        res = res && OCI_DirPathSetParallel(dp, TRUE);
+        res = res && OCI_DirectPathSetBufferSize(dp, 64000);
+        res = res && OCI_DirectPathSetNoLog(dp, TRUE);
+        res = res && OCI_DirectPathSetParallel(dp, TRUE);
 
-        if(OCI_GetOCIRuntimeVersion(env) >= OCI_9_2)
+        if(OCI_EnvironmentGetOCIRuntimeVersion(env) >= OCI_9_2)
         {
-            res = res && OCI_DirPathSetCacheSize(dp, 100);
+            res = res && OCI_DirectPathSetCacheSize(dp, 100);
         }
 
         /* describe the target table */
 
-        res = res && OCI_DirPathSetColumn(dp, 0, OTEXT("VAL_INT"),  SIZE_COL1, NULL);
-        res = res && OCI_DirPathSetColumn(dp, 1, OTEXT("VAL_STR"),  SIZE_COL2, NULL);
-        res = res && OCI_DirPathSetColumn(dp, 2, OTEXT("VAL_DATE"), SIZE_COL3, OTEXT("YYYYMMDD"));
+        res = res && OCI_DirectPathSetColumn(dp, 0, OTEXT("VAL_INT"),  SIZE_COL1, NULL);
+        res = res && OCI_DirectPathSetColumn(dp, 1, OTEXT("VAL_STR"),  SIZE_COL2, NULL);
+        res = res && OCI_DirectPathSetColumn(dp, 2, OTEXT("VAL_DATE"), SIZE_COL3, OTEXT("YYYYMMDD"));
 
         /* prepare the load */
 
-        res = res && OCI_DirPathPrepare(dp);
+        res = res && OCI_DirectPathPrepare(dp);
 
         if (res)
         {
-            nb_rows = OCI_DirPathGetMaxRows(dp);          
+            nb_rows = OCI_DirectPathGetMaxRows(dp);          
             
             for (i = 0; i < NB_LOAD ; i++)
             {
-                OCI_DirPathReset(dp);
+                OCI_DirectPathReset(dp);
 
                 for (j = 0; j < nb_rows && res; j++)
                 {
@@ -1700,19 +1700,19 @@ void test_directpath(void)
                                                                      (j%11)+1,
                                                                      (j%23)+1);
 
-                    res = res && OCI_DirPathSetEntry(dp, j, 0, val1, (OCI_UInt32) ostrlen(val1), TRUE);
-                    res = res && OCI_DirPathSetEntry(dp, j, 1, val2, (OCI_UInt32) ostrlen(val2), TRUE);
-                    res = res && OCI_DirPathSetEntry(dp, j, 2, val3, (OCI_UInt32) ostrlen(val3), TRUE);
+                    res = res && OCI_DirectPathSetEntry(dp, j, 0, val1, (OCI_UInt32) ostrlen(val1), TRUE);
+                    res = res && OCI_DirectPathSetEntry(dp, j, 1, val2, (OCI_UInt32) ostrlen(val2), TRUE);
+                    res = res && OCI_DirectPathSetEntry(dp, j, 2, val3, (OCI_UInt32) ostrlen(val3), TRUE);
                 }
 
                /* load data to the server */
 
                 while (res == TRUE)
                 {
-                    state = OCI_DirPathConvert(dp);
+                    state = OCI_DirectPathConvert(dp);
 
                     if ((state == OCI_DPR_FULL) || (state == OCI_DPR_COMPLETE))
-                        res = OCI_DirPathLoad(dp);
+                        res = OCI_DirectPathLoad(dp);
 
                     if (state == OCI_DPR_COMPLETE || state == OCI_DPR_ERROR)
                         break;
@@ -1721,17 +1721,17 @@ void test_directpath(void)
 
             /* commits changes */
 
-            res = res && OCI_DirPathFinish(dp);
+            res = res && OCI_DirectPathFinish(dp);
 
             if (res)
             {
-                print_frmt("%04u row(s) loaded\n", OCI_DirPathGetRowCount(dp));
+                print_frmt("%04u row(s) loaded\n", OCI_DirectPathGetRowCount(dp));
             }
 
             /* free direct path object */
         }
 
-        OCI_DirPathFree(dp);
+        OCI_DirectPathFree(dp);
    }
 }
 
@@ -1745,10 +1745,10 @@ void test_bigint(void)
 
     print_text("\n>>>>> TEST BINDING BIG INT \n\n");
 
-    OCI_Prepare(st, OTEXT("begin :value2 := :value1 * :value1; end;"));
-    OCI_BindBigInt(st, OTEXT(":value1"), &value1);
-    OCI_BindBigInt(st, OTEXT(":value2"), &value2);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, OTEXT("begin :value2 := :value1 * :value1; end;"));
+    OCI_StatementBindInt64(st, OTEXT(":value1"), &value1);
+    OCI_StatementBindInt64(st, OTEXT(":value2"), &value2);
+    OCI_StatementExecutePrepared(st);
 
     printf("\n%lld * %lld = %lld \n", value1, value1, value2);
 }
@@ -1762,8 +1762,8 @@ void test_number()
     OCI_TypeInfo   *tc = NULL;
     OCI_TypeInfo   *to = NULL;
     OCI_Number     *nm = NULL;
-    OCI_Coll       *cl = NULL;
-    OCI_Elem       *el = NULL;
+    OCI_Collection       *cl = NULL;
+    OCI_Element       *el = NULL;
     OCI_Object     *ob = NULL;
     OCI_Number     *no = NULL;
     OCI_Number     *nt = NULL;
@@ -1775,20 +1775,20 @@ void test_number()
 
     tc = OCI_TypeInfoGet(cn, OTEXT("test_num_coll_t"), OCI_TIF_TYPE);
     to = OCI_TypeInfoGet(cn, OTEXT("test_num_t"), OCI_TIF_TYPE);
-    cl = OCI_CollCreate(tc);
+    cl = OCI_CollectionCreate(tc);
     ob = OCI_ObjectCreate(to);
-    el = OCI_ElemCreate(tc);
+    el = OCI_ElementCreate(tc);
     nm = OCI_NumberCreate(env);
     ar = OCI_NumberArrayCreate(env, 5);
 
     // Testing fetching numbers (as number and using implicit conversion number to string)
-    OCI_Prepare(st, OTEXT("select value from test_number"));
-    OCI_Execute(st);
-    rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    OCI_StatementPrepare(st, OTEXT("select value from test_number"));
+    OCI_StatementExecutePrepared(st);
+    rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
-        OCI_Number  *num = OCI_GetNumber(rs, 0);
-        const otext *buf = OCI_GetString(rs, 0);
+        OCI_Number  *num = OCI_ResultsetGetNumber(rs, 0);
+        const otext *buf = OCI_ResultsetGetString(rs, 0);
 
         OCI_NumberToText(num, NULL, SIZE_STR, str);
 
@@ -1799,49 +1799,49 @@ void test_number()
     }
 
     // Testing binding external single number
-    OCI_Prepare(st, OTEXT("begin :1 := :1 *2 ; end;"));
-    OCI_BindNumber(st, OTEXT(":1"), nm);
+    OCI_StatementPrepare(st, OTEXT("begin :1 := :1 *2 ; end;"));
+    OCI_StatementBindNumber(st, OTEXT(":1"), nm);
     OCI_NumberFromText(nm, OTEXT("1234.4321"), NULL);
-    OCI_Execute(st);
+    OCI_StatementExecutePrepared(st);
     OCI_NumberToText(nm, NULL, SIZE_STR, str);
     print_ostr(str);
     print_text("\n");
 
     // Testing binding internal single number
-    OCI_Prepare(st, OTEXT("begin :1 := :1 *2 ; end;"));
-    OCI_SetBindAllocation(st, OCI_BAM_INTERNAL);
-    OCI_BindNumber(st, OTEXT(":1"), NULL);
-    nt = OCI_BindGetData(OCI_GetBind(st, 0));
+    OCI_StatementPrepare(st, OTEXT("begin :1 := :1 *2 ; end;"));
+    OCI_StatementSetBindAllocation(st, OCI_BAM_INTERNAL);
+    OCI_StatementBindNumber(st, OTEXT(":1"), NULL);
+    nt = OCI_BindGetData(OCI_StatementGetBind(st, 0));
     OCI_NumberFromText(nt, OTEXT("1234.4321"), NULL);
-    OCI_Execute(st);
+    OCI_StatementExecutePrepared(st);
     OCI_NumberToText(nt, NULL, SIZE_STR, str);
     print_ostr(str);
     print_text("\n");
-    OCI_SetBindAllocation(st, OCI_BAM_EXTERNAL);
+    OCI_StatementSetBindAllocation(st, OCI_BAM_EXTERNAL);
 
     // Testing registering number for a returning into statement
-    OCI_Prepare(st, OTEXT("update test_number set value  = value *2 returning value into :1"));
-    OCI_RegisterNumber(st, OTEXT(":1"));
-    OCI_Execute(st);
-    rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    OCI_StatementPrepare(st, OTEXT("update test_number set value  = value *2 returning value into :1"));
+    OCI_StatementRegisterNumber(st, OTEXT(":1"));
+    OCI_StatementExecutePrepared(st);
+    rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
-        print_ostr(OCI_GetString(rs, 0));
+        print_ostr(OCI_ResultsetGetString(rs, 0));
         print_text("\n");
     }
 
     // testing Collections
     OCI_NumberFromText(nm, OTEXT("1111.2222"), NULL);
-    OCI_ElemSetNumber(el, nm);
-    OCI_CollAppend(cl, el);
+    OCI_ElementSetNumber(el, nm);
+    OCI_CollectionAppend(cl, el);
     OCI_NumberFromText(nm, OTEXT("3333.4444"), NULL);
-    OCI_ElemSetNumber(el, nm);
-    OCI_CollAppend(cl, el);
+    OCI_ElementSetNumber(el, nm);
+    OCI_CollectionAppend(cl, el);
 
-    for (i = 0, n = OCI_CollGetCount(cl); i < n; i++)
+    for (i = 0, n = OCI_CollectionGetCount(cl); i < n; i++)
     {
-        OCI_Elem   *e = OCI_CollGetElem(cl, i);
-        OCI_Number *num = OCI_ElemGetNumber(e);
+        OCI_Element   *e = OCI_CollectionGetElement(cl, i);
+        OCI_Number *num = OCI_ElementGetNumber(e);
         OCI_NumberToText(num, NULL, SIZE_STR, str);
         print_ostr(str);
         print_text("\n");
@@ -1859,23 +1859,23 @@ void test_number()
     print_text("\n");
 
     // Testing fetching infinite values to string
-    OCI_Prepare(st, OTEXT("SELECT utl_raw.cast_to_number('FF65'), utl_raw.cast_to_number('00') from dual"));
-    OCI_Execute(st);
-    rs = OCI_GetResultset(st);
-    while (OCI_FetchNext(rs))
+    OCI_StatementPrepare(st, OTEXT("SELECT utl_raw.cast_to_number('FF65'), utl_raw.cast_to_number('00') from dual"));
+    OCI_StatementExecutePrepared(st);
+    rs = OCI_StatementGetResultset(st);
+    while (OCI_ResultsetFetchNext(rs))
     {
         print_text("pos infinite = ");
-        print_ostr(OCI_GetString(rs, 0));
+        print_ostr(OCI_ResultsetGetString(rs, 0));
         print_text("\n");
 
         print_text("neg infinite = ");
-        print_ostr(OCI_GetString(rs, 1));
+        print_ostr(OCI_ResultsetGetString(rs, 1));
         print_text("\n");
     }
 
     // Testing formatting
     OCI_NumberFromText(nm, OTEXT("1234.4321"), NULL);
-    OCI_ImmediateFmt(cn, OTEXT("select %n * 2 from dual"), nm, OCI_ARG_OF(nm));
+    OCI_ConnectionImmediateFormat(cn, OTEXT("select %n * 2 from dual"), nm, OCI_ARG_OF(nm));
     OCI_NumberToText(nm, NULL, SIZE_STR, str);
     print_ostr(str);
     print_text("\n");
@@ -1909,7 +1909,7 @@ void test_number()
 
     OCI_NumberArrayFree(ar);
     OCI_NumberFree(nm);
-    OCI_ElemFree(el);
-    OCI_CollFree(cl);
+    OCI_ElementFree(el);
+    OCI_CollectionFree(cl);
     OCI_ObjectFree(ob);
 }

@@ -24,14 +24,14 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        const auto sub = OCI_SubscriptionRegister(conn, OTEXT("TestRegisterSecureModeId"), OCI_CNT_ALL, OnSubscriptionEvent, OCI_SRM_SECURE_NOTIFICATION, 120);
+        const auto sub = OCI_SubscriptionCreate(conn, OTEXT("TestRegisterSecureModeId"), OCI_CNT_ALL, OnSubscriptionEvent, OCI_SRM_SECURE_NOTIFICATION, 120);
         ASSERT_NE(nullptr, sub);
     
         ASSERT_EQ(String(OTEXT("TestRegisterSecureModeId")), String(OCI_SubscriptionGetName(sub)));
         ASSERT_EQ(conn, OCI_SubscriptionGetConnection(sub));
         ASSERT_EQ(120u, OCI_SubscriptionGetTimeout(sub));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestRegisterSecureMode")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select * from TestRegisterSecureMode")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
 
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
@@ -57,7 +57,7 @@ namespace TestCApi
             { "SubscriptionGetConnection", [] { return nullptr == OCI_SubscriptionGetConnection(nullptr); } },
             { "SubscriptionGetName", [] { return nullptr == OCI_SubscriptionGetName(nullptr); } },
             { "SubscriptionGetTimeout", [] { return 0 == OCI_SubscriptionGetTimeout(nullptr); } },
-            { "SubscriptionRegister", [] { return nullptr == OCI_SubscriptionRegister(nullptr, OTEXT("x"), 1, nullptr, 1, 1); } },
+            { "SubscriptionRegister", [] { return nullptr == OCI_SubscriptionCreate(nullptr, OTEXT("x"), 1, nullptr, 1, 1); } },
             { "SubscriptionUnregister", [] { return !OCI_SubscriptionUnregister(nullptr); } },
         }),
         &NullArgCaseName);
@@ -90,7 +90,7 @@ namespace TestCppApi
         ASSERT_FALSE(sub.IsNull());
         ASSERT_TRUE(sub.GetName() == String(OTEXT("TestSubscriptionSecureSubCpp")));
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("select * from TestSubscriptionData")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("select * from TestSubscriptionData")));
         ASSERT_TRUE(OCI_SubscriptionAddStatement(sub, stmt));
 
         sub.Unregister();

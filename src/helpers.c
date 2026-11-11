@@ -210,7 +210,7 @@ OCI_Boolean OcilibFreeObjectFromType
         }
         case OCI_CDT_COLLECTION:
         {
-            res = OcilibCollectionFree((OCI_Coll*)obj);
+            res = OcilibCollectionFree((OCI_Collection*)obj);
             break;
         }
         case OCI_CDT_TIMESTAMP:
@@ -225,7 +225,7 @@ OCI_Boolean OcilibFreeObjectFromType
         }
         case OCI_CDT_REF:
         {
-            res = OcilibReferenceFree((OCI_Ref*)obj);
+            res = OcilibReferenceFree((OCI_Reference*)obj);
             break;
         }
         case OCI_CDT_VECTOR:

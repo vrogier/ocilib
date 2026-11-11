@@ -50,7 +50,7 @@ namespace ocilib
 
         inline void BindsHolder::AddBindObject(BindObject* bindObject)
         {
-            if (core::Check(OCI_IsRebindingAllowed(_statement)))
+            if (core::Check(OCI_StatementIsRebindingAllowed(_statement)))
             {
                 std::vector<BindObject*>::iterator it, it_end;
 

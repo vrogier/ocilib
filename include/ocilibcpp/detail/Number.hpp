@@ -95,8 +95,8 @@ namespace ocilib
     inline void Number::FromString(const String& str, const String& format) const
     {
         core::Check(OCI_NumberFromText(*this, str.c_str(),
-                                       format.empty() ? core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(),
-                                                                                                   FormatNumeric))).c_str() : format.c_str()));
+                                       format.empty() ? core::MakeString(core::Check(OCI_EnvironmentGetFormat(GetEnvironment(),
+                                                                                                              FormatNumeric))).c_str() : format.c_str()));
     }
 
     inline String Number::ToString(const String& format) const
@@ -122,7 +122,7 @@ namespace ocilib
             return OCI_STRING_NULL;
         }
 
-        return ToString(core::MakeString(core::Check(OCI_GetFormat(GetEnvironment(), FormatNumeric))));
+        return ToString(core::MakeString(core::Check(OCI_EnvironmentGetFormat(GetEnvironment(), FormatNumeric))));
     }
 
     inline Number Number::Clone() const

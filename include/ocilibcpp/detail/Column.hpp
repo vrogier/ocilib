@@ -37,7 +37,7 @@ namespace ocilib
 
     inline String Column::GetSQLType() const
     {
-        return core::MakeString(core::Check(OCI_ColumnGetSQLType(*this)));
+        return core::MakeString(core::Check(OCI_ColumnGetSqlType(*this)));
     }
 
     inline String Column::GetFullSQLType() const
@@ -46,7 +46,7 @@ namespace ocilib
 
         std::vector<otext> buffer(static_cast<Size>(size + 1));
 
-        core::Check(OCI_ColumnGetFullSQLType(*this, buffer.data(), size));
+        core::Check(OCI_ColumnGetFullSqlType(*this, buffer.data(), size));
 
         return core::MakeString(static_cast<const otext*>(buffer.data()));
     }

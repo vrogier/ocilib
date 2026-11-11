@@ -149,10 +149,10 @@ OCI_Boolean OcilibSubscriptionDispose
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibSubscriptionRegister
+ * OcilibSubscriptionCreate
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Subscription * OcilibSubscriptionRegister
+OCI_Subscription * OcilibSubscriptionCreate
 (
     OCI_Connection      *con,
     const otext         *name,
@@ -393,7 +393,7 @@ OCI_Boolean OcilibSubscriptionAddStatement
             stmt->con->err
         );
 
-        CHECK(OcilibStatementExecute(stmt));
+        CHECK(OcilibStatementExecutePrepared(stmt));
         CHECK_NULL(OcilibStatementGetResultset(stmt));
     }
 

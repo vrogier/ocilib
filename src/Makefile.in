@@ -155,12 +155,12 @@ am_libocilib_la_OBJECTS = libocilib_la-agent.lo libocilib_la-array.lo \
 	libocilib_la-collection.lo libocilib_la-column.lo \
 	libocilib_la-connection.lo libocilib_la-date.lo \
 	libocilib_la-database.lo libocilib_la-define.lo \
-	libocilib_la-dequeue.lo libocilib_la-dirpath.lo \
+	libocilib_la-dequeue.lo libocilib_la-directpath.lo \
 	libocilib_la-element.lo libocilib_la-enqueue.lo \
 	libocilib_la-environment.lo libocilib_la-error.lo \
 	libocilib_la-event.lo libocilib_la-exception.lo \
 	libocilib_la-file.lo libocilib_la-format.lo \
-	libocilib_la-handle.lo libocilib_la-hash.lo \
+	libocilib_la-handle.lo libocilib_la-hashtable.lo \
 	libocilib_la-helpers.lo libocilib_la-interval.lo \
 	libocilib_la-iterator.lo libocilib_la-json.lo \
 	libocilib_la-jsonnode.lo libocilib_la-list.lo \
@@ -169,9 +169,9 @@ am_libocilib_la_OBJECTS = libocilib_la-agent.lo libocilib_la-array.lo \
 	libocilib_la-number.lo libocilib_la-object.lo \
 	libocilib_la-ocilib.lo libocilib_la-pool.lo \
 	libocilib_la-queue.lo libocilib_la-reference.lo \
-	libocilib_la-resultset.lo libocilib_la-sodacoll.lo \
-	libocilib_la-sodacollcursor.lo libocilib_la-sodadb.lo \
-	libocilib_la-sodadoc.lo libocilib_la-sodadoccursor.lo \
+	libocilib_la-resultset.lo libocilib_la-sodacollection.lo \
+	libocilib_la-sodacollectioncursor.lo libocilib_la-sodadatabase.lo \
+	libocilib_la-sodadocument.lo libocilib_la-sodadocumentcursor.lo \
 	libocilib_la-sodaoptions.lo libocilib_la-statement.lo \
 	libocilib_la-stringutils.lo libocilib_la-subscription.lo \
 	libocilib_la-timestamp.lo libocilib_la-transaction.lo \
@@ -211,7 +211,7 @@ am__depfiles_remade = ./$(DEPDIR)/libocilib_la-agent.Plo \
 	./$(DEPDIR)/libocilib_la-date.Plo \
 	./$(DEPDIR)/libocilib_la-define.Plo \
 	./$(DEPDIR)/libocilib_la-dequeue.Plo \
-	./$(DEPDIR)/libocilib_la-dirpath.Plo \
+	./$(DEPDIR)/libocilib_la-directpath.Plo \
 	./$(DEPDIR)/libocilib_la-element.Plo \
 	./$(DEPDIR)/libocilib_la-enqueue.Plo \
 	./$(DEPDIR)/libocilib_la-environment.Plo \
@@ -221,7 +221,7 @@ am__depfiles_remade = ./$(DEPDIR)/libocilib_la-agent.Plo \
 	./$(DEPDIR)/libocilib_la-file.Plo \
 	./$(DEPDIR)/libocilib_la-format.Plo \
 	./$(DEPDIR)/libocilib_la-handle.Plo \
-	./$(DEPDIR)/libocilib_la-hash.Plo \
+	./$(DEPDIR)/libocilib_la-hashtable.Plo \
 	./$(DEPDIR)/libocilib_la-helpers.Plo \
 	./$(DEPDIR)/libocilib_la-interval.Plo \
 	./$(DEPDIR)/libocilib_la-iterator.Plo \
@@ -240,11 +240,11 @@ am__depfiles_remade = ./$(DEPDIR)/libocilib_la-agent.Plo \
 	./$(DEPDIR)/libocilib_la-queue.Plo \
 	./$(DEPDIR)/libocilib_la-reference.Plo \
 	./$(DEPDIR)/libocilib_la-resultset.Plo \
-	./$(DEPDIR)/libocilib_la-sodacoll.Plo \
-	./$(DEPDIR)/libocilib_la-sodacollcursor.Plo \
-	./$(DEPDIR)/libocilib_la-sodadb.Plo \
-	./$(DEPDIR)/libocilib_la-sodadoc.Plo \
-	./$(DEPDIR)/libocilib_la-sodadoccursor.Plo \
+	./$(DEPDIR)/libocilib_la-sodacollection.Plo \
+	./$(DEPDIR)/libocilib_la-sodacollectioncursor.Plo \
+	./$(DEPDIR)/libocilib_la-sodadatabase.Plo \
+	./$(DEPDIR)/libocilib_la-sodadocument.Plo \
+	./$(DEPDIR)/libocilib_la-sodadocumentcursor.Plo \
 	./$(DEPDIR)/libocilib_la-sodaoptions.Plo \
 	./$(DEPDIR)/libocilib_la-statement.Plo \
 	./$(DEPDIR)/libocilib_la-stringutils.Plo \
@@ -456,7 +456,7 @@ libocilib_la_SOURCES = \
     database.c          \
     define.c            \
     dequeue.c           \
-    dirpath.c           \
+    directpath.c           \
     element.c           \
     enqueue.c           \
     environment.c       \
@@ -466,7 +466,7 @@ libocilib_la_SOURCES = \
     file.c              \
     format.c            \
     handle.c            \
-    hash.c              \
+    hashtable.c              \
     helpers.c           \
     interval.c          \
     iterator.c          \
@@ -485,11 +485,11 @@ libocilib_la_SOURCES = \
     queue.c             \
     reference.c         \
     resultset.c         \
-    sodacoll.c          \
-    sodacollcursor.c    \
-    sodadb.c            \
-    sodadoc.c           \
-    sodadoccursor.c     \
+    sodacollection.c          \
+    sodacollectioncursor.c    \
+    sodadatabase.c            \
+    sodadocument.c           \
+    sodadocumentcursor.c     \
     sodaoptions.c       \
     statement.c         \
     stringutils.c       \
@@ -529,7 +529,7 @@ noinst_HEADERS = \
     define.h        \
     defs.h          \
     dequeue.h       \
-    dirpath.h       \
+    directpath.h       \
     element.h       \
     enqueue.h       \
     environment.h   \
@@ -539,7 +539,7 @@ noinst_HEADERS = \
     file.h          \
     format.h        \
     handle.h        \
-    hash.h          \
+    hashtable.h          \
     helpers.h       \
     import.h        \
     interval.h      \
@@ -560,11 +560,11 @@ noinst_HEADERS = \
     queue.h         \
     reference.h     \
     resultset.h     \
-    sodacoll.h      \
-    sodacollcursor.h\
-    sodadb.h        \
-    sodadoc.h       \
-    sodadoccursor.h \
+    sodacollection.h      \
+    sodacollectioncursor.h\
+    sodadatabase.h        \
+    sodadocument.h       \
+    sodadocumentcursor.h \
     sodaoptions.h   \
     statement.h     \
     stringutils.h   \
@@ -670,7 +670,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-date.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-define.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-dequeue.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-dirpath.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-directpath.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-element.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-enqueue.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-environment.Plo@am__quote@ # am--include-marker
@@ -680,7 +680,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-file.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-format.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-handle.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-hash.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-hashtable.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-helpers.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-interval.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-iterator.Plo@am__quote@ # am--include-marker
@@ -699,11 +699,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-queue.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-reference.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-resultset.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodacoll.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodacollcursor.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodadb.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodadoc.Plo@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodadoccursor.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodacollection.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodacollectioncursor.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodadatabase.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodadocument.Plo@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodadocumentcursor.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-sodaoptions.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-statement.Plo@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/libocilib_la-stringutils.Plo@am__quote@ # am--include-marker
@@ -818,12 +818,12 @@ libocilib_la-dequeue.lo: dequeue.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-dequeue.lo `test -f 'dequeue.c' || echo '$(srcdir)/'`dequeue.c
 
-libocilib_la-dirpath.lo: dirpath.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-dirpath.lo -MD -MP -MF $(DEPDIR)/libocilib_la-dirpath.Tpo -c -o libocilib_la-dirpath.lo `test -f 'dirpath.c' || echo '$(srcdir)/'`dirpath.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-dirpath.Tpo $(DEPDIR)/libocilib_la-dirpath.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='dirpath.c' object='libocilib_la-dirpath.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-directpath.lo: directpath.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-directpath.lo -MD -MP -MF $(DEPDIR)/libocilib_la-dirpath.Tpo -c -o libocilib_la-directpath.lo `test -f 'directpath.c' || echo '$(srcdir)/'`directpath.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-dirpath.Tpo $(DEPDIR)/libocilib_la-directpath.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='directpath.c' object='libocilib_la-directpath.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-dirpath.lo `test -f 'dirpath.c' || echo '$(srcdir)/'`dirpath.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-directpath.lo `test -f 'directpath.c' || echo '$(srcdir)/'`directpath.c
 
 libocilib_la-element.lo: element.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-element.lo -MD -MP -MF $(DEPDIR)/libocilib_la-element.Tpo -c -o libocilib_la-element.lo `test -f 'element.c' || echo '$(srcdir)/'`element.c
@@ -888,12 +888,12 @@ libocilib_la-handle.lo: handle.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-handle.lo `test -f 'handle.c' || echo '$(srcdir)/'`handle.c
 
-libocilib_la-hash.lo: hash.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-hash.lo -MD -MP -MF $(DEPDIR)/libocilib_la-hash.Tpo -c -o libocilib_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-hash.Tpo $(DEPDIR)/libocilib_la-hash.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hash.c' object='libocilib_la-hash.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-hashtable.lo: hashtable.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-hashtable.lo -MD -MP -MF $(DEPDIR)/libocilib_la-hash.Tpo -c -o libocilib_la-hashtable.lo `test -f 'hashtable.c' || echo '$(srcdir)/'`hashtable.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-hash.Tpo $(DEPDIR)/libocilib_la-hashtable.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='hashtable.c' object='libocilib_la-hashtable.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-hash.lo `test -f 'hash.c' || echo '$(srcdir)/'`hash.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-hashtable.lo `test -f 'hashtable.c' || echo '$(srcdir)/'`hashtable.c
 
 libocilib_la-helpers.lo: helpers.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-helpers.lo -MD -MP -MF $(DEPDIR)/libocilib_la-helpers.Tpo -c -o libocilib_la-helpers.lo `test -f 'helpers.c' || echo '$(srcdir)/'`helpers.c
@@ -1021,40 +1021,40 @@ libocilib_la-resultset.lo: resultset.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-resultset.lo `test -f 'resultset.c' || echo '$(srcdir)/'`resultset.c
 
-libocilib_la-sodacoll.lo: sodacoll.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodacoll.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodacoll.Tpo -c -o libocilib_la-sodacoll.lo `test -f 'sodacoll.c' || echo '$(srcdir)/'`sodacoll.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodacoll.Tpo $(DEPDIR)/libocilib_la-sodacoll.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodacoll.c' object='libocilib_la-sodacoll.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-sodacollection.lo: sodacollection.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodacollection.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodacoll.Tpo -c -o libocilib_la-sodacollection.lo `test -f 'sodacollection.c' || echo '$(srcdir)/'`sodacollection.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodacoll.Tpo $(DEPDIR)/libocilib_la-sodacollection.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodacollection.c' object='libocilib_la-sodacollection.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodacoll.lo `test -f 'sodacoll.c' || echo '$(srcdir)/'`sodacoll.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodacollection.lo `test -f 'sodacollection.c' || echo '$(srcdir)/'`sodacollection.c
 
-libocilib_la-sodacollcursor.lo: sodacollcursor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodacollcursor.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodacollcursor.Tpo -c -o libocilib_la-sodacollcursor.lo `test -f 'sodacollcursor.c' || echo '$(srcdir)/'`sodacollcursor.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodacollcursor.Tpo $(DEPDIR)/libocilib_la-sodacollcursor.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodacollcursor.c' object='libocilib_la-sodacollcursor.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-sodacollectioncursor.lo: sodacollectioncursor.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodacollectioncursor.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodacollcursor.Tpo -c -o libocilib_la-sodacollectioncursor.lo `test -f 'sodacollectioncursor.c' || echo '$(srcdir)/'`sodacollectioncursor.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodacollcursor.Tpo $(DEPDIR)/libocilib_la-sodacollectioncursor.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodacollectioncursor.c' object='libocilib_la-sodacollectioncursor.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodacollcursor.lo `test -f 'sodacollcursor.c' || echo '$(srcdir)/'`sodacollcursor.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodacollectioncursor.lo `test -f 'sodacollectioncursor.c' || echo '$(srcdir)/'`sodacollectioncursor.c
 
-libocilib_la-sodadb.lo: sodadb.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodadb.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodadb.Tpo -c -o libocilib_la-sodadb.lo `test -f 'sodadb.c' || echo '$(srcdir)/'`sodadb.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodadb.Tpo $(DEPDIR)/libocilib_la-sodadb.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodadb.c' object='libocilib_la-sodadb.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-sodadatabase.lo: sodadatabase.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodadatabase.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodadb.Tpo -c -o libocilib_la-sodadatabase.lo `test -f 'sodadatabase.c' || echo '$(srcdir)/'`sodadatabase.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodadb.Tpo $(DEPDIR)/libocilib_la-sodadatabase.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodadatabase.c' object='libocilib_la-sodadatabase.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodadb.lo `test -f 'sodadb.c' || echo '$(srcdir)/'`sodadb.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodadatabase.lo `test -f 'sodadatabase.c' || echo '$(srcdir)/'`sodadatabase.c
 
-libocilib_la-sodadoc.lo: sodadoc.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodadoc.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodadoc.Tpo -c -o libocilib_la-sodadoc.lo `test -f 'sodadoc.c' || echo '$(srcdir)/'`sodadoc.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodadoc.Tpo $(DEPDIR)/libocilib_la-sodadoc.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodadoc.c' object='libocilib_la-sodadoc.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-sodadocument.lo: sodadocument.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodadocument.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodadoc.Tpo -c -o libocilib_la-sodadocument.lo `test -f 'sodadocument.c' || echo '$(srcdir)/'`sodadocument.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodadoc.Tpo $(DEPDIR)/libocilib_la-sodadocument.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodadocument.c' object='libocilib_la-sodadocument.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodadoc.lo `test -f 'sodadoc.c' || echo '$(srcdir)/'`sodadoc.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodadocument.lo `test -f 'sodadocument.c' || echo '$(srcdir)/'`sodadocument.c
 
-libocilib_la-sodadoccursor.lo: sodadoccursor.c
-@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodadoccursor.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodadoccursor.Tpo -c -o libocilib_la-sodadoccursor.lo `test -f 'sodadoccursor.c' || echo '$(srcdir)/'`sodadoccursor.c
-@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodadoccursor.Tpo $(DEPDIR)/libocilib_la-sodadoccursor.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodadoccursor.c' object='libocilib_la-sodadoccursor.lo' libtool=yes @AMDEPBACKSLASH@
+libocilib_la-sodadocumentcursor.lo: sodadocumentcursor.c
+@am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodadocumentcursor.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodadoccursor.Tpo -c -o libocilib_la-sodadocumentcursor.lo `test -f 'sodadocumentcursor.c' || echo '$(srcdir)/'`sodadocumentcursor.c
+@am__fastdepCC_TRUE@	$(AM_V_at)$(am__mv) $(DEPDIR)/libocilib_la-sodadoccursor.Tpo $(DEPDIR)/libocilib_la-sodadocumentcursor.Plo
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='sodadocumentcursor.c' object='libocilib_la-sodadocumentcursor.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodadoccursor.lo `test -f 'sodadoccursor.c' || echo '$(srcdir)/'`sodadoccursor.c
+@am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -c -o libocilib_la-sodadocumentcursor.lo `test -f 'sodadocumentcursor.c' || echo '$(srcdir)/'`sodadocumentcursor.c
 
 libocilib_la-sodaoptions.lo: sodaoptions.c
 @am__fastdepCC_TRUE@	$(AM_V_CC)$(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libocilib_la_CFLAGS) $(CFLAGS) -MT libocilib_la-sodaoptions.lo -MD -MP -MF $(DEPDIR)/libocilib_la-sodaoptions.Tpo -c -o libocilib_la-sodaoptions.lo `test -f 'sodaoptions.c' || echo '$(srcdir)/'`sodaoptions.c
@@ -1390,7 +1390,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libocilib_la-date.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-define.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-dequeue.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-dirpath.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-directpath.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-element.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-enqueue.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-environment.Plo
@@ -1400,7 +1400,7 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libocilib_la-file.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-format.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-handle.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-hash.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-hashtable.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-helpers.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-interval.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-iterator.Plo
@@ -1419,11 +1419,11 @@ distclean: distclean-am
 	-rm -f ./$(DEPDIR)/libocilib_la-queue.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-reference.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-resultset.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodacoll.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodacollcursor.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodadb.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodadoc.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodadoccursor.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodacollection.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodacollectioncursor.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodadatabase.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodadocument.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodadocumentcursor.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-sodaoptions.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-statement.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-stringutils.Plo
@@ -1493,7 +1493,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libocilib_la-date.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-define.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-dequeue.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-dirpath.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-directpath.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-element.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-enqueue.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-environment.Plo
@@ -1503,7 +1503,7 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libocilib_la-file.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-format.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-handle.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-hash.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-hashtable.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-helpers.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-interval.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-iterator.Plo
@@ -1522,11 +1522,11 @@ maintainer-clean: maintainer-clean-am
 	-rm -f ./$(DEPDIR)/libocilib_la-queue.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-reference.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-resultset.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodacoll.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodacollcursor.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodadb.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodadoc.Plo
-	-rm -f ./$(DEPDIR)/libocilib_la-sodadoccursor.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodacollection.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodacollectioncursor.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodadatabase.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodadocument.Plo
+	-rm -f ./$(DEPDIR)/libocilib_la-sodadocumentcursor.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-sodaoptions.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-statement.Plo
 	-rm -f ./$(DEPDIR)/libocilib_la-stringutils.Plo

@@ -43,9 +43,9 @@ int main(void)
 
     /* bind for inserting into table */
 
-    OCI_Prepare(st, "insert into files(id, item) values (1, :f)");
-    OCI_BindFile(st, ":f", file);
-    OCI_Execute(st);
+    OCI_StatementPrepare(st, "insert into files(id, item) values (1, :f)");
+    OCI_StatementBindFile(st, ":f", file);
+    OCI_StatementExecutePrepared(st);
 
     /* free local file object */
 
@@ -53,13 +53,13 @@ int main(void)
 
     /* fetch file data from table */
 
-    OCI_ExecuteStmt(st, "select * from files");
+    OCI_StatementExecute(st, "select * from files");
 
-    OCI_Resultset * rs = OCI_GetResultset(st);
+    OCI_Resultset * rs = OCI_StatementGetResultset(st);
 
-    while (OCI_FetchNext(rs))
+    while (OCI_ResultsetFetchNext(rs))
     {
-        file = OCI_GetFile(rs, 1);
+        file = OCI_ResultsetGetFile(rs, 1);
 
         OCI_FileOpen(file);
 

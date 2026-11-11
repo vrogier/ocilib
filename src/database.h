@@ -23,7 +23,7 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL OCI_Boolean OcilibDatabaseSetUserPassword
+OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentSetUserPassword
 (
     OCI_Environment *env,
     const otext    * db,

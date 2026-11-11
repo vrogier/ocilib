@@ -23,14 +23,14 @@ int main(void)
     OCI_Connection * cn = OCI_ConnectionCreate(env, db, usr, pwd, OCI_SESSION_DEFAULT);
     OCI_Statement * st = OCI_StatementCreate(cn);
 
-    OCI_ExecuteStmt(st, "select * from user_tables");
+    OCI_StatementExecute(st, "select * from user_tables");
 
-    OCI_Resultset * rs = OCI_GetResultset(st);
-    n = OCI_GetColumnCount(rs);
+    OCI_Resultset * rs = OCI_StatementGetResultset(st);
+    n = OCI_ResultsetGetColumnCount(rs);
 
     for (i = 0; i < n; i++)
     {
-        OCI_Column *col = OCI_GetColumn(rs, i);
+        OCI_Column *col = OCI_ResultsetGetColumn(rs, i);
 
         printf("Field #%i : name '%s' - size %i\n", i, OCI_ColumnGetName(col), OCI_ColumnGetSize(col));
     }

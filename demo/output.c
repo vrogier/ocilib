@@ -25,18 +25,18 @@ int main(void)
 
     /* server output */
 
-    OCI_ServerEnableOutput(cn, 32000, 5, 255);
+    OCI_ConnectionEnableServerOutput(cn, 32000, 5, 255);
 
     /* pl/sql call */
  
-    OCI_ExecuteStmt(st, "begin "
+    OCI_StatementExecute(st, "begin "
         "   dbms_output.put_line('First  line'); "
         "   dbms_output.put_line('Second line'); "
         "   dbms_output.put_line('Third  line'); "
         "end;"
         );
 
-    while ((p = OCI_ServerGetOutput(cn)))
+    while ((p = OCI_ConnectionGetServerOutput(cn)))
     {
         printf("%s", p);
         printf("\n");

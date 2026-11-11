@@ -132,7 +132,7 @@ namespace ocilib
     template<class T>
     bool CollectionIterator<T>::operator == (const CollectionIterator& other)
     {
-        return _elem._pos == other._elem._pos && (static_cast<OCI_Coll *>(*_elem._coll)) == (static_cast<OCI_Coll *>(*other._elem._coll));
+        return _elem._pos == other._elem._pos && (static_cast<OCI_Collection *>(*_elem._coll)) == (static_cast<OCI_Collection *>(*other._elem._coll));
     }
 
     template<class T>

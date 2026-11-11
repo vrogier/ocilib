@@ -88,9 +88,9 @@ namespace ocilib
     {
         TypeInfo typeInfo = GetTypeInfo();
 
-        OCI_Ref *pRef = OCI_RefCreate(typeInfo);
+        OCI_Reference *pRef = OCI_ReferenceCreate(typeInfo);
 
-        core::Check(OCI_ObjectGetSelfRef(*this, pRef));
+        core::Check(OCI_ObjectGetSelfReference(*this, pRef));
 
         return Reference(pRef, GetHandle());
     }
@@ -110,12 +110,12 @@ namespace ocilib
     inline T Object::Get(const String& name) const
     {
         if      constexpr (std::is_same_v<T, bool>)      { return (core::Check(OCI_ObjectGetBoolean(*this, name.c_str())) == TRUE); }
-        else if constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_ObjectGetShort(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, UInt16>) { return core::Check(OCI_ObjectGetUnsignedShort(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, Int32>)  { return core::Check(OCI_ObjectGetInt(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_ObjectGetUnsignedInt(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_ObjectGetBigInt(*this, name.c_str())); }
-        else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_ObjectGetUnsignedBigInt(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, Int16>)  { return core::Check(OCI_ObjectGetInt16(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, UInt16>) { return core::Check(OCI_ObjectGetUInt16(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, Int32>)  { return core::Check(OCI_ObjectGetInt32(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_ObjectGetUInt32(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_ObjectGetInt64(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_ObjectGetUInt64(*this, name.c_str())); }
         else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_ObjectGetFloat(*this, name.c_str())); }
         else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_ObjectGetDouble(*this, name.c_str())); }
         else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_ObjectGetNumber(*this, name.c_str())), GetHandle()); }
@@ -124,7 +124,7 @@ namespace ocilib
         else if constexpr (std::is_same_v<T, Timestamp>)  { return Timestamp(core::Check(OCI_ObjectGetTimestamp(*this, name.c_str())), GetHandle()); }
         else if constexpr (std::is_same_v<T, Interval>)   { return Interval(core::Check(OCI_ObjectGetInterval(*this, name.c_str())), GetHandle()); }
         else if constexpr (std::is_same_v<T, Object>)     { return Object(core::Check(OCI_ObjectGetObject(*this, name.c_str())), GetHandle()); }
-        else if constexpr (std::is_same_v<T, Reference>)  { return Reference(core::Check(OCI_ObjectGetRef(*this, name.c_str())), GetHandle()); }
+        else if constexpr (std::is_same_v<T, Reference>)  { return Reference(core::Check(OCI_ObjectGetReference(*this, name.c_str())), GetHandle()); }
         else if constexpr (std::is_same_v<T, Clob>)       { return Clob(core::Check(OCI_ObjectGetLob(*this, name.c_str())), GetHandle()); }
         else if constexpr (std::is_same_v<T, NClob>)      { return NClob(core::Check(OCI_ObjectGetLob(*this, name.c_str())), GetHandle()); }
         else if constexpr (std::is_same_v<T, Blob>)       { return Blob(core::Check(OCI_ObjectGetLob(*this, name.c_str())), GetHandle()); }
@@ -152,12 +152,12 @@ namespace ocilib
     inline void Object::Set(const String& name, const T &value)
     {
         if      constexpr (std::is_same_v<T, bool>)      { core::Check(OCI_ObjectSetBoolean(*this, name.c_str(), static_cast<OCI_Boolean>(value))); }
-        else if constexpr (std::is_same_v<T, Int16>)  { core::Check(OCI_ObjectSetShort(*this, name.c_str(), value)); }
-        else if constexpr (std::is_same_v<T, UInt16>) { core::Check(OCI_ObjectSetUnsignedShort(*this, name.c_str(), value)); }
-        else if constexpr (std::is_same_v<T, Int32>)  { core::Check(OCI_ObjectSetInt(*this, name.c_str(), value)); }
-        else if constexpr (std::is_same_v<T, UInt32>) { core::Check(OCI_ObjectSetUnsignedInt(*this, name.c_str(), value)); }
-        else if constexpr (std::is_same_v<T, Int64>)  { core::Check(OCI_ObjectSetBigInt(*this, name.c_str(), value)); }
-        else if constexpr (std::is_same_v<T, UInt64>) { core::Check(OCI_ObjectSetUnsignedBigInt(*this, name.c_str(), value)); }
+        else if constexpr (std::is_same_v<T, Int16>)  { core::Check(OCI_ObjectSetInt16(*this, name.c_str(), value)); }
+        else if constexpr (std::is_same_v<T, UInt16>) { core::Check(OCI_ObjectSetUInt16(*this, name.c_str(), value)); }
+        else if constexpr (std::is_same_v<T, Int32>)  { core::Check(OCI_ObjectSetInt32(*this, name.c_str(), value)); }
+        else if constexpr (std::is_same_v<T, UInt32>) { core::Check(OCI_ObjectSetUInt32(*this, name.c_str(), value)); }
+        else if constexpr (std::is_same_v<T, Int64>)  { core::Check(OCI_ObjectSetInt64(*this, name.c_str(), value)); }
+        else if constexpr (std::is_same_v<T, UInt64>) { core::Check(OCI_ObjectSetUInt64(*this, name.c_str(), value)); }
         else if constexpr (std::is_same_v<T, Float>)      { core::Check(OCI_ObjectSetFloat(*this, name.c_str(), value)); }
         else if constexpr (std::is_same_v<T, Double>)     { core::Check(OCI_ObjectSetDouble(*this, name.c_str(), value)); }
         else if constexpr (std::is_same_v<T, Number>)     { core::Check(OCI_ObjectSetNumber(*this, name.c_str(), value)); }
@@ -166,7 +166,7 @@ namespace ocilib
         else if constexpr (std::is_same_v<T, Timestamp>)  { core::Check(OCI_ObjectSetTimestamp(*this, name.c_str(), value)); }
         else if constexpr (std::is_same_v<T, Interval>)   { core::Check(OCI_ObjectSetInterval(*this, name.c_str(), value)); }
         else if constexpr (std::is_same_v<T, Object>)     { core::Check(OCI_ObjectSetObject(*this, name.c_str(), value)); }
-        else if constexpr (std::is_same_v<T, Reference>)  { core::Check(OCI_ObjectSetRef(*this, name.c_str(), value)); }
+        else if constexpr (std::is_same_v<T, Reference>)  { core::Check(OCI_ObjectSetReference(*this, name.c_str(), value)); }
         else if constexpr (std::is_same_v<T, Clob>)       { core::Check(OCI_ObjectSetLob(*this, name.c_str(), value)); }
         else if constexpr (std::is_same_v<T, NClob>)      { core::Check(OCI_ObjectSetLob(*this, name.c_str(), value)); }
         else if constexpr (std::is_same_v<T, Blob>)       { core::Check(OCI_ObjectSetLob(*this, name.c_str(), value)); }

@@ -20,10 +20,10 @@ namespace TestCApi
         OCI_Int32 tab_int[ARRAY_SIZE];
         otext tab_str[ARRAY_SIZE][STRING_SIZE + 1];
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestExternalArrayInsertArray values(:i, :s)")));
-        ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
-        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":i"), static_cast<OCI_Int32*>(tab_int), 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":s"), reinterpret_cast<otext*>(tab_str), STRING_SIZE, 0));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("insert into TestExternalArrayInsertArray values(:i, :s)")));
+        ASSERT_TRUE(OCI_StatementBindArraySetSize(stmt, ARRAY_SIZE));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32Array(stmt, OTEXT(":i"), static_cast<OCI_Int32*>(tab_int), 0));
+        ASSERT_NE(nullptr, OCI_StatementBindStringArray(stmt, OTEXT(":s"), reinterpret_cast<otext*>(tab_str), STRING_SIZE, 0));
 
         for (OCI_Int32 i = 0; i < ARRAY_SIZE; i++)
         {
@@ -31,9 +31,9 @@ namespace TestCApi
             osprintf(tab_str[i], OTEXT("Name %d"), i + 1);
         }
 
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        ASSERT_EQ(ARRAY_SIZE, OCI_GetAffectedRows(stmt));
+        ASSERT_EQ(ARRAY_SIZE, OCI_StatementGetAffectedRows(stmt));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -59,10 +59,10 @@ namespace TestCApi
         OCI_Int32 tab_int[ARRAY_SIZE];
         otext tab_str[ARRAY_SIZE][STRING_SIZE + 1];
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestExternalArrayInsertArrayError values(:i, :s)")));
-        ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
-        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":i"), static_cast<OCI_Int32*>(tab_int), 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":s"), reinterpret_cast<otext*>(tab_str), STRING_SIZE, 0));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("insert into TestExternalArrayInsertArrayError values(:i, :s)")));
+        ASSERT_TRUE(OCI_StatementBindArraySetSize(stmt, ARRAY_SIZE));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32Array(stmt, OTEXT(":i"), static_cast<OCI_Int32*>(tab_int), 0));
+        ASSERT_NE(nullptr, OCI_StatementBindStringArray(stmt, OTEXT(":s"), reinterpret_cast<otext*>(tab_str), STRING_SIZE, 0));
 
         for (OCI_Int32 i = 0; i < ARRAY_SIZE; i++)
         {
@@ -70,22 +70,22 @@ namespace TestCApi
             osprintf(tab_str[i], OTEXT("Name %d"), i + 1);
         }
 
-        const auto bnd = OCI_GetBind(stmt, 0);
+        const auto bnd = OCI_StatementGetBind(stmt, 0);
         ASSERT_NE(nullptr, bnd);
 
         ASSERT_TRUE(OCI_BindSetNullAtPos(bnd, 3));
 
-        ASSERT_FALSE(OCI_Execute(stmt));
+        ASSERT_FALSE(OCI_StatementExecutePrepared(stmt));
 
-        const auto err = OCI_GetBatchError(stmt);
+        const auto err = OCI_StatementGetBatchError(stmt);
         ASSERT_NE(nullptr, err);
 
         // Row 3 must be in error
         ASSERT_EQ(3, OCI_ErrorGetRow(err));
         // Only 1 error
-        ASSERT_EQ(nullptr, OCI_GetBatchError(stmt));
+        ASSERT_EQ(nullptr, OCI_StatementGetBatchError(stmt));
         // Only 1 error, ARRAY_SIZE - 1 must have been inserted
-        ASSERT_EQ(ARRAY_SIZE - 1, OCI_GetAffectedRows(stmt));
+        ASSERT_EQ(ARRAY_SIZE - 1, OCI_StatementGetAffectedRows(stmt));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -125,9 +125,9 @@ namespace TestCApi
             ASSERT_NE(nullptr, stmt);
             sysdate = OCI_DateCreate(GetEnvironment(nullptr));
             ASSERT_NE(nullptr, sysdate);
-            ASSERT_TRUE(OCI_SetBindAllocation(stmt, OCI_BAM_INTERNAL));
-            ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("insert into TestInternalArrayInsertArray values(:i, :s, :d)")));
-            ASSERT_TRUE(OCI_BindArraySetSize(stmt, ARRAY_SIZE));
+            ASSERT_TRUE(OCI_StatementSetBindAllocation(stmt, OCI_BAM_INTERNAL));
+            ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("insert into TestInternalArrayInsertArray values(:i, :s, :d)")));
+            ASSERT_TRUE(OCI_StatementBindArraySetSize(stmt, ARRAY_SIZE));
         }
 
         void TearDown() override
@@ -140,9 +140,9 @@ namespace TestCApi
 
         void FillArrays()
         {
-            auto tab_int = static_cast<OCI_Int32*>(OCI_BindGetData(OCI_GetBind(stmt, 0)));
-            auto tab_str = static_cast<otext*>(OCI_BindGetData(OCI_GetBind(stmt, 1)));
-            auto tab_date = static_cast<OCI_Date**>(OCI_BindGetData(OCI_GetBind(stmt, 2)));
+            auto tab_int = static_cast<OCI_Int32*>(OCI_BindGetData(OCI_StatementGetBind(stmt, 0)));
+            auto tab_str = static_cast<otext*>(OCI_BindGetData(OCI_StatementGetBind(stmt, 1)));
+            auto tab_date = static_cast<OCI_Date**>(OCI_BindGetData(OCI_StatementGetBind(stmt, 2)));
             for (OCI_Int32 i = 0; i < ARRAY_SIZE; i++)
             {
                 tab_int[i] = i + 1;
@@ -154,47 +154,47 @@ namespace TestCApi
 
     TEST_F(TestArrayInt, BindGetDataOnInternalBinds_ReturnsWritableBuffers)
     {
-        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":i"), NULL, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfDates(stmt, OTEXT(":d"), NULL, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32Array(stmt, OTEXT(":i"), NULL, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindStringArray(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindDateArray(stmt, OTEXT(":d"), NULL, 0));
 
-        EXPECT_NE(nullptr, OCI_BindGetData(OCI_GetBind(stmt, 0)));
-        EXPECT_NE(nullptr, OCI_BindGetData(OCI_GetBind(stmt, 1)));
-        EXPECT_NE(nullptr, OCI_BindGetData(OCI_GetBind(stmt, 2)));
+        EXPECT_NE(nullptr, OCI_BindGetData(OCI_StatementGetBind(stmt, 0)));
+        EXPECT_NE(nullptr, OCI_BindGetData(OCI_StatementGetBind(stmt, 1)));
+        EXPECT_NE(nullptr, OCI_BindGetData(OCI_StatementGetBind(stmt, 2)));
     }
 
     TEST_F(TestArrayInt, ExecuteInsertWithInternalArrays_InsertsAllRows)
     {
-        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":i"), NULL, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfDates(stmt, OTEXT(":d"), NULL, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32Array(stmt, OTEXT(":i"), NULL, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindStringArray(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindDateArray(stmt, OTEXT(":d"), NULL, 0));
         FillArrays();
 
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        EXPECT_EQ(ARRAY_SIZE, OCI_GetAffectedRows(stmt));
+        EXPECT_EQ(ARRAY_SIZE, OCI_StatementGetAffectedRows(stmt));
     }
 
     TEST_F(TestArrayInt, InsertedRows_FetchBackMatchingValues)
     {
-        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":i"), NULL, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfStrings(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfDates(stmt, OTEXT(":d"), NULL, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32Array(stmt, OTEXT(":i"), NULL, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindStringArray(stmt, OTEXT(":s"), NULL, STRING_SIZE, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindDateArray(stmt, OTEXT(":d"), NULL, 0));
         FillArrays();
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        ASSERT_TRUE(OCI_ExecuteStmt(stmt, OTEXT("select * from TestInternalArrayInsertArray")));
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select * from TestInternalArrayInsertArray")));
 
-        const auto rslt = OCI_GetResultset(stmt);
+        const auto rslt = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rslt);
         OCI_Int32 count = 0;
-        while (OCI_FetchNext(rslt))
+        while (OCI_ResultsetFetchNext(rslt))
         {
             count++;
             String str = OTEXT("Name ") + TO_STRING(count);
-            EXPECT_EQ(count, OCI_GetInt(rslt, 0));
-            EXPECT_EQ(str, OCI_GetString(rslt, 1));
-            EXPECT_EQ(0, OCI_DateCompare(sysdate, OCI_GetDate(rslt, 2)));
+            EXPECT_EQ(count, OCI_ResultsetGetInt32(rslt, 0));
+            EXPECT_EQ(str, OCI_ResultsetGetString(rslt, 1));
+            EXPECT_EQ(0, OCI_DateCompare(sysdate, OCI_ResultsetGetDate(rslt, 2)));
         }
         EXPECT_EQ(ARRAY_SIZE, count);
     }

@@ -271,12 +271,12 @@
 
 /* Data Type codes for OCI_ImmediateXXX() calls */
 
-#define OCI_ARG_SHORT                       1
-#define OCI_ARG_USHORT                      2
-#define OCI_ARG_INT                         3
-#define OCI_ARG_UINT                        4
-#define OCI_ARG_BIGINT                      5
-#define OCI_ARG_BIGUINT                     6
+#define OCI_ARG_INT16                       1
+#define OCI_ARG_UINT16                      2
+#define OCI_ARG_INT32                         3
+#define OCI_ARG_UINT32                        4
+#define OCI_ARG_INT64                      5
+#define OCI_ARG_UINT64                     6
 #define OCI_ARG_DOUBLE                      7
 #define OCI_ARG_DATETIME                    8
 #define OCI_ARG_TEXT                        9
@@ -304,7 +304,7 @@
    Expands to 'tag, ptr' where the tag is deduced from the pointer type at
    compile time (C11 _Generic), so a tag/pointer mismatch becomes a compile
    error instead of undefined behavior.
-   Example: OCI_Immediate(con, "select c1, c2 from t",
+   Example: OCI_ConnectionImmediate(con, "select c1, c2 from t",
                           OCI_ARG_OF(&count), OCI_ARG_OF(&name));
    Only OCI_ARG_TEXT_N is not covered: it requires a second argument (the
    buffer capacity) - keep passing it explicitly.
@@ -315,28 +315,28 @@
 
 #ifndef __cplusplus
 
-#define OCI_ARG_OF(ptr) _Generic((ptr),                                  \
-                                 OCI_Int16           * : OCI_ARG_SHORT,  \
-                                 OCI_UInt16  * : OCI_ARG_USHORT,         \
-                                 OCI_Int32             * : OCI_ARG_INT,  \
-                                 OCI_UInt32    * : OCI_ARG_UINT,         \
-                                 OCI_Int64         * : OCI_ARG_BIGINT,   \
-                                 OCI_UInt64        * : OCI_ARG_BIGUINT,  \
-                                 OCI_Double          * : OCI_ARG_DOUBLE, \
-                                 OCI_Float           * : OCI_ARG_FLOAT,  \
-                                 otext           * : OCI_ARG_TEXT,       \
-                                 void            * : OCI_ARG_RAW,        \
-                                 unsigned char   * : OCI_ARG_RAW,        \
-                                 OCI_Number      * : OCI_ARG_NUMBER,     \
-                                 OCI_Date        * : OCI_ARG_DATETIME,   \
-                                 OCI_Lob         * : OCI_ARG_LOB,        \
-                                 OCI_File        * : OCI_ARG_FILE,       \
-                                 OCI_Timestamp   * : OCI_ARG_TIMESTAMP,  \
-                                 OCI_Interval    * : OCI_ARG_INTERVAL,   \
-                                 OCI_Object      * : OCI_ARG_OBJECT,     \
-                                 OCI_Coll        * : OCI_ARG_COLLECTION, \
-                                 OCI_Ref         * : OCI_ARG_REF,        \
-                                 OCI_Vector      * : OCI_ARG_VECTOR,     \
+#define OCI_ARG_OF(ptr) _Generic((ptr),                                        \
+                                 OCI_Int16           * : OCI_ARG_INT16,        \
+                                 OCI_UInt16  * : OCI_ARG_UINT16,               \
+                                 OCI_Int32             * : OCI_ARG_INT32,      \
+                                 OCI_UInt32    * : OCI_ARG_UINT32,             \
+                                 OCI_Int64         * : OCI_ARG_INT64,          \
+                                 OCI_UInt64        * : OCI_ARG_UINT64,         \
+                                 OCI_Double          * : OCI_ARG_DOUBLE,       \
+                                 OCI_Float           * : OCI_ARG_FLOAT,        \
+                                 otext           * : OCI_ARG_TEXT,             \
+                                 void            * : OCI_ARG_RAW,              \
+                                 unsigned char   * : OCI_ARG_RAW,              \
+                                 OCI_Number      * : OCI_ARG_NUMBER,           \
+                                 OCI_Date        * : OCI_ARG_DATETIME,         \
+                                 OCI_Lob         * : OCI_ARG_LOB,              \
+                                 OCI_File        * : OCI_ARG_FILE,             \
+                                 OCI_Timestamp   * : OCI_ARG_TIMESTAMP,        \
+                                 OCI_Interval    * : OCI_ARG_INTERVAL,         \
+                                 OCI_Object      * : OCI_ARG_OBJECT,           \
+                                 OCI_Collection        * : OCI_ARG_COLLECTION, \
+                                 OCI_Reference         * : OCI_ARG_REF,        \
+                                 OCI_Vector      * : OCI_ARG_VECTOR,           \
                                  OCI_Json        * : OCI_ARG_JSON), (ptr)
 
 #endif
@@ -491,16 +491,16 @@
 
 /* External Integer types */
 
-#define OCI_NUM_SHORT                       4
-#define OCI_NUM_INT                         8
-#define OCI_NUM_BIGINT                      16
+#define OCI_NUM_INT16                       4
+#define OCI_NUM_INT32                         8
+#define OCI_NUM_INT64                      16
 #define OCI_NUM_FLOAT                       32
 #define OCI_NUM_DOUBLE                      64
 #define OCI_NUM_NUMBER                      128
 
-#define OCI_NUM_USHORT                      (OCI_NUM_SHORT  | OCI_NUM_UNSIGNED)
-#define OCI_NUM_UINT                        (OCI_NUM_INT    | OCI_NUM_UNSIGNED)
-#define OCI_NUM_BIGUINT                     (OCI_NUM_BIGINT | OCI_NUM_UNSIGNED)
+#define OCI_NUM_UINT16                      (OCI_NUM_INT16  | OCI_NUM_UNSIGNED)
+#define OCI_NUM_UINT32                        (OCI_NUM_INT32    | OCI_NUM_UNSIGNED)
+#define OCI_NUM_UINT64                     (OCI_NUM_INT64 | OCI_NUM_UNSIGNED)
 
 /* timestamp types */
 

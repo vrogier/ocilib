@@ -15,7 +15,7 @@ int pool_worker(void *data)
     OCI_Connection *cn = OCI_PoolGetConnection(OCI_HandleGetEnvironment(data), data, NULL);
     char str[SIZE_STR + 1] = "";
 
-    OCI_Immediate(cn, "select to_char(sysdate, 'YYYYMMDD HH24:MI:SS') from dual", OCI_ARG_TEXT, str);
+    OCI_ConnectionImmediate(cn, "select to_char(sysdate, 'YYYYMMDD HH24:MI:SS') from dual", OCI_ARG_TEXT, str);
 
     printf("%s\n", str);
 

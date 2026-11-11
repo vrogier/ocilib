@@ -23,51 +23,51 @@
 
 #include "types.h"
 
-OCI_SYM_LOCAL OCI_SodaDb * OcilibSodaDbCreate
+OCI_SYM_LOCAL OCI_SodaDatabase * OcilibSodaDatabaseCreate
 (
     OCI_Connection *con
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibSodaDbFree
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaDatabaseFree
 (
-    OCI_SodaDb *sdb
+    OCI_SodaDatabase *sdb
 );
 
-OCI_SYM_LOCAL OCI_Connection * OcilibSodaDbGetConnection
+OCI_SYM_LOCAL OCI_Connection * OcilibSodaDatabaseGetConnection
 (
-    OCI_SodaDb *sdb
+    OCI_SodaDatabase *sdb
 );
 
-OCI_SYM_LOCAL OCI_SodaColl * OcilibSodaDbCreateColl
+OCI_SYM_LOCAL OCI_SodaCollection * OcilibSodaDatabaseCreateCollection
 (
-    OCI_SodaDb  *sdb,
-    const otext *name,
-    const otext *metadata
+    OCI_SodaDatabase *sdb,
+    const otext      *name,
+    const otext      *metadata
 );
 
-OCI_SYM_LOCAL OCI_SodaColl * OcilibSodaDbOpenColl
+OCI_SYM_LOCAL OCI_SodaCollection * OcilibSodaDatabaseOpenCollection
 (
-    OCI_SodaDb  *sdb,
-    const otext *name
+    OCI_SodaDatabase *sdb,
+    const otext      *name
 );
 
-OCI_SYM_LOCAL otext ** OcilibSodaDbGetCollectionNames
+OCI_SYM_LOCAL otext ** OcilibSodaDatabaseGetCollectionNames
 (
-    OCI_SodaDb * sdb,
-    OCI_UInt32 * count
+    OCI_SodaDatabase * sdb,
+    OCI_UInt32       * count
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibSodaDbFreeCollectionNames
+OCI_SYM_LOCAL OCI_Boolean OcilibSodaDatabaseFreeCollectionNames
 (
-    OCI_SodaDb * sdb,
-    otext     ** names,
-    OCI_UInt32   count
+    OCI_SodaDatabase * sdb,
+    otext           ** names,
+    OCI_UInt32         count
 );
 
-OCI_SYM_LOCAL OCI_SodaCollCursor * OcilibSodaDbGetColls
+OCI_SYM_LOCAL OCI_SodaCollectionCursor * OcilibSodaDatabaseGetCollections
 (
-    OCI_SodaDb  *sdb,
-    const otext *startName
+    OCI_SodaDatabase *sdb,
+    const otext      *startName
 );
 
 #endif /* OCILIB_SODADB_H_INCLUDED */

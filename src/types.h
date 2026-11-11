@@ -38,7 +38,7 @@
 
 struct OCI_MemoryBlock
 {
-    OCI_PointerType type; /* type of allocated data */
+    OCI_PointerType type;   /* type of allocated data */
     OCI_Size        size;   /* allocated memory size, header included */
 };
 
@@ -90,8 +90,8 @@ typedef struct OCI_Item OCI_Item;
 #define OCI_HANDLE(HType)       \
         OCI_Environment *env;   \
         HType          *handle; \
-        OCI_PointerType htype;  \
-        void           *usrdata
+        void           *usrdata; \
+        OCI_PointerType htype
 
 #define OCI_DATATYPE(HType) \
         OCI_HANDLE(HType);  \
@@ -194,8 +194,8 @@ typedef struct OCI_DataType OCI_DataType;
 
 struct OCI_ServerOutput
 {
-    OCI_Statement *stmt;           /* pointer to statement object (dbms_output calls) */
-    ub1           *arrbuf;         /* array buffer */
+    OCI_Statement *stmt;         /* pointer to statement object (dbms_output calls) */
+    ub1           *arrbuf;       /* array buffer */
     OCI_UInt32     arrsize;      /* array size */
     OCI_UInt32     cursize;      /* number of filled items in the array */
     OCI_UInt32     curpos;       /* current position in the array */
@@ -222,19 +222,19 @@ struct OCI_TraceInfo
 typedef struct OCI_TraceInfo OCI_TraceInfo;
 
 /*
- * OCI_LocaleStringInfo : Oracle Localized strings
+ * OCI_LocaleInfo : Oracle Localized strings
  *
  */
 
 #define OCI_LSI_COUNT 70
 
-struct OCI_LocaleStringInfo
+struct OCI_LocaleInfo
 {
     OCI_UInt32 code;  /* local string code */
     otext     *str;     /* local string content */
 };
 
-typedef struct OCI_LocaleStringInfo OCI_LocaleStringInfo;
+typedef struct OCI_LocaleInfo OCI_LocaleInfo;
 
 /* ********************************************************************************************* *
  *                             PUBLIC TYPES
@@ -278,28 +278,27 @@ struct OCI_Environment
     OCI_HashTable * sql_funcs;                    /* hash table handle for sql function names */
     mtx_t           mutex;                        /* per-environment recursive mutex (memory
                                                    * counters, locale cache) */
-    otext               *formats[OCI_FMT_COUNT];  /* string conversion default formats */
-    OCI_LocaleStringInfo locale_strings[OCI_LSI_COUNT]; /* per-environment locale string cache */
-    POCI_ERROR           error_handler;           /* user defined error handler */
-    POCI_HA_HANDLER      ha_handler;              /* HA event callback*/
+    otext          *formats[OCI_FMT_COUNT];       /* string conversion default formats */
+    OCI_LocaleInfo  locale_strings[OCI_LSI_COUNT]; /* per-environment locale string cache */
+    POCI_ERROR      error_handler;                /* user defined error handler */
+    POCI_HA_HANDLER ha_handler;                   /* HA event callback*/
 #ifdef OCI_IMPORT_RUNTIME
     LIB_HANDLE lib_handle;                        /* handle of runtime shared library */
 #endif
-    OCI_UInt64  mem_bytes_lib;                      /* allocated bytes by OCILIB */
-    OCI_UInt32  version_compile;                /* OCI version used at compile time */
-    OCI_UInt32  version_runtime;                /* OCI version used at runtime */
+    OCI_UInt64  mem_bytes_lib;                    /* allocated bytes by OCILIB */
+    OCI_UInt32  version_compile;                  /* OCI version used at compile time */
+    OCI_UInt32  version_runtime;                  /* OCI version used at runtime */
     OCI_Charset charset;                          /* charset type */
-    OCI_UInt32  nb_hndlp;                       /* number of OCI handles allocated */
-    OCI_UInt32  nb_descp;                       /* number of OCI descriptors allocated */
-    OCI_UInt32  nb_objinst;                     /* number of OCI objects allocated */
+    OCI_UInt32  nb_hndlp;                         /* number of OCI handles allocated */
+    OCI_UInt32  nb_descp;                         /* number of OCI descriptors allocated */
+    OCI_UInt32  nb_objinst;                       /* number of OCI objects allocated */
     ub4         env_mode;                         /* default environment mode */
-    OCI_Boolean nls_utf8;                             /* is UFT8 enabled for data strings ? */
-    OCI_Boolean use_lob_ub8;                          /* use 64 bits integers for lobs ? */
-    OCI_Boolean use_scrollable_cursors;               /* use Oracle 9i fetch API */
-    OCI_Boolean use_wide_char_conv;                   /* are we on a unix like platform with unicode
-                                                      */
-    OCI_Boolean warnings_on;                          /* warnings enabled ? */
-    OCI_Boolean env_vars[OCI_VARS_COUNT];             /* specific environment variables */
+    OCI_Boolean nls_utf8;                         /* is UFT8 enabled for data strings ? */
+    OCI_Boolean use_lob_ub8;                      /* use 64 bits integers for lobs ? */
+    OCI_Boolean use_scrollable_cursors;           /* use Oracle 9i fetch API */
+    OCI_Boolean use_wide_char_conv;               /* are we on a unix like platform with unicode */
+    OCI_Boolean warnings_on;                      /* warnings enabled ? */
+    OCI_Boolean env_vars[OCI_VARS_COUNT];         /* specific environment variables */
 };
 
 /*
@@ -320,8 +319,8 @@ struct OCI_Pool
     ub4             min;        /* minimum of objects */
     ub4             max;        /* maximum of objects */
     ub4             incr;       /* increment step of objects */
-    ub4             kind;        /* handle type of pool : connection / session */
-    ub4             cache_size;  /* statement cache size */
+    ub4             kind;       /* handle type of pool : connection / session */
+    ub4             cache_size; /* statement cache size */
 };
 
 /*
@@ -354,12 +353,12 @@ struct OCI_Connection
     otext            *domain_name;              /* server domain name */
     OCI_Timestamp    *inst_startup;             /* instance startup timestamp */
     POCI_TAF_HANDLER  taf_handler;              /* failover call back */
-    OCI_Boolean       autocom;                      /* auto commit mode */
-    OCI_Boolean       alloc_handles;                /* do new need to allocate OCI handles ? */
-    OCI_UInt32        nb_files;               /* number of OCI_File opened by the connection */
+    OCI_Boolean       autocom;                  /* auto commit mode */
+    OCI_Boolean       alloc_handles;            /* do new need to allocate OCI handles ? */
+    OCI_UInt32        nb_files;                 /* number of OCI_File opened by the connection */
     OCI_SessionMode   mode;                     /* session mode */
-    OCI_Int32         cstate;                         /* connection state */
-    OCI_UInt32        ver_num;                /* numeric server version */
+    OCI_Int32         cstate;                   /* connection state */
+    OCI_UInt32        ver_num;                  /* numeric server version */
 };
 
 /*
@@ -370,10 +369,10 @@ struct OCI_Connection
 struct OCI_Transaction
 {
     OCI_HANDLE(OCITrans);
-    OCI_Connection     *con;    /* pointer to connection object */
-    OCI_XID             xid;    /* global transaction identifier */
-    OCI_UInt32          timeout; /* timeout */
-    OCI_TransactionMode mode;   /* transaction mode */
+    OCI_Connection     *con;        /* pointer to connection object */
+    OCI_XID             xid;        /* global transaction identifier */
+    OCI_UInt32          timeout;    /* timeout */
+    OCI_TransactionMode mode;       /* transaction mode */
     OCI_Boolean         local;      /* is local transaction ? */
     OCI_Boolean         started;    /* is the transaction currently started ? */
 };
@@ -389,27 +388,27 @@ struct OCI_Column
     OCI_HANDLE(void);
     OCI_TypeInfo   *typinf;           /* user type descriptor */
     OCI_Connection *con;              /* owning connection */
-    ub4             bufsize;          /* element size */
-    OCI_SubType     subtype;          /* Ocilib sub type */
-    OCI_NumericType struct_subtype;   /* Ocilib numeric sub type for OCI_GetStruct() :( */
     /* Oracle infos */
     otext              *name;         /* column name */
+    ub4                 bufsize;      /* element size */
+    OCI_SubType         subtype;      /* Ocilib sub type */
+    OCI_NumericType     struct_subtype; /* Ocilib numeric sub type */
+    OCI_SqlType         datatype;     /* internal datatype */
+    OCI_CharsetForm     csfrm;        /* charset form */
+    OCI_ColumnPropFlags props;        /* column properties */
+    ub4                 collation_id; /* collation id */
+    ub4                 dimension;    /* dimension */
     ub2                 sqlcode;      /* Oracle SQL code */
     ub2                 typecode;     /* Oracle type code */
     ub2                 libcode;      /* Internal translated Oracle SQL code */
     ub2                 size;         /* SQL Size */
     sb2                 prec;         /* SQL precision 1 (number prec, leading prec) */
     sb2                 prec2;        /* SQL precision 2 (fractional prec) */
+    ub2                 charsize;     /* SQL Size in character */
     sb1                 scale;        /* SQL scale */
-    OCI_SqlType         datatype;     /* internal datatype */
     ub1                 nullable;     /* is nullable */
     ub1                 charused;     /* is column size expressed in characters */
-    ub2                 charsize;     /* SQL Size in character */
-    OCI_CharsetForm     csfrm;        /* charset form */
-    ub1                 handletype;   /* oracle handle type */
-    OCI_ColumnPropFlags props;        /* column properties */
-    ub4                 collation_id; /* collation id */
-    ub4                 dimension;    /* dimension */
+        ub1                 handletype;   /* oracle handle type */
     ub1                 json_schema;  /* column has a JSON schema constraint (23ai) */
 };
 
@@ -441,23 +440,23 @@ typedef struct OCI_Buffer OCI_Buffer;
 struct OCI_Bind
 {
     OCI_HANDLE(void);
-    OCI_Statement         *stmt; /* pointer to statement object */
-    void                 **input; /* input values */
-    otext                 *name; /* name of the bind */
-    OCI_TypeInfo         * typinf; /* for object, collection and ref */
-    ub2                   *plrcds; /* PL/SQL tables return codes */
-    OCI_Buffer             buffer; /* place holder */
-    OCI_Boolean            is_array; /* is it an array bind ? */
-    sb4                    size; /* data size */
-    ub4                    nbelem; /* PL/SQL tables number of elements */
-    ub2                    dynpos; /* index of the bind for dynamic binds */
-    ub2                    code; /* SQL datatype code */
-    OCI_SqlType            type; /* internal datatype */
-    OCI_SubType            subtype; /* internal subtype */
-    ub1                    alloc; /* is buffer allocated or mapped to input */
-    OCI_CharsetForm        csfrm; /* charset form */
-    OCI_BindDirection      direction; /* in, out or in/out bind */
-    OCI_BindAllocationMode alloc_mode; /* allocation mode : internal or external */
+    OCI_Statement         *stmt;        /* pointer to statement object */
+    void                 **input;       /* input values */
+    otext                 *name;        /* name of the bind */
+    OCI_TypeInfo         * typinf;      /* for object, collection and ref */
+    ub2                   *plrcds;      /* PL/SQL tables return codes */
+    OCI_Buffer             buffer;      /* place holder */
+    OCI_Boolean            is_array;    /* is it an array bind ? */
+    sb4                    size;        /* data size */
+    ub4                    nbelem;      /* PL/SQL tables number of elements */
+    ub2                    dynpos;      /* index of the bind for dynamic binds */
+    ub2                    code;        /* SQL datatype code */
+    OCI_SqlType            type;        /* internal datatype */
+    OCI_SubType            subtype;     /* internal subtype */
+    ub1                    alloc;       /* is buffer allocated or mapped to input */
+    OCI_CharsetForm        csfrm;       /* charset form */
+    OCI_BindDirection      direction;   /* in, out or in/out bind */
+    OCI_BindAllocationMode alloc_mode;  /* allocation mode : internal or external */
 };
 
 /*
@@ -493,8 +492,8 @@ struct OCI_Resultset
     ub4            row_count;       /* number of rows fetched so far */
     ub4            row_fetched;     /* rows fetched by last call (scrollable) */
     ub4            fetch_size;      /* internal array size */
-    OCI_Boolean    eof;                 /* end of resultset reached ?  */
-    OCI_Boolean    bof;                 /* beginning of resultset reached ?  */
+    OCI_Boolean    eof;             /* end of resultset reached ?  */
+    OCI_Boolean    bof;             /* beginning of resultset reached ?  */
     sword          fetch_status;    /* internal fetch status */
 };
 
@@ -533,39 +532,39 @@ typedef struct OCI_ParseBinds OCI_ParseBinds;
 struct OCI_Statement
 {
     OCI_DATATYPE(OCIStmt);
-    OCI_FetchMode          exec_mode;   /* type of execution */
-    OCI_Resultset        **rsts;        /* pointer to resultset list */
-    OCI_Statement        **stmts;       /* pointer to implicit statement resultset list */
-    OCI_Connection        *con;         /* pointer to connection object */
-    otext                 *sql;         /* SQL statement */
-    otext                 *sql_id;      /* server statement sql id */
-    OCI_Bind             **ubinds;      /* array of user bind objects */
-    OCI_Bind             **rbinds;      /* array of register bind objects */
-    OCI_HashTable         *map;         /* hash table handle for mapping bind name/index */
-    OCI_BatchErrors       *batch;       /* error handling for array DML */
-    OCI_ParseBinds        *parse_binds; /* parse bind info */
-    ub2                    nb_ubinds;   /* number of used user binds */
-    ub2                    nb_rbinds;   /* number of used register binds */
-    ub2                    allocated_ubinds; /* number of allocated user binds */
-    ub2                    allocated_rbinds; /* number of allocated register binds */
+    OCI_FetchMode          exec_mode;       /* type of execution */
+    OCI_Resultset        **rsts;            /* pointer to resultset list */
+    OCI_Statement        **stmts;           /* pointer to implicit statement resultset list */
+    OCI_Connection        *con;             /* pointer to connection object */
+    otext                 *sql;             /* SQL statement */
+    otext                 *sql_id;          /* server statement sql id */
+    OCI_Bind             **ubinds;          /* array of user bind objects */
+    OCI_Bind             **rbinds;          /* array of register bind objects */
+    OCI_HashTable         *map;             /* hash table handle for mapping bind name/index */
+    OCI_BatchErrors       *batch;           /* error handling for array DML */
+    OCI_ParseBinds        *parse_binds;     /* parse bind info */
+    ub2                    nb_ubinds;       /* number of used user binds */
+    ub2                    nb_rbinds;       /* number of used register binds */
+    ub2                    allocated_ubinds;/* number of allocated user binds */
+    ub2                    allocated_rbinds;/* number of allocated register binds */
     OCI_Boolean            bind_array;      /* has array binds ? */
     OCI_Boolean            bind_reuse;      /* rebind data allowed ? */
-    OCI_BindMode           bind_mode;   /* type of binding */
+    OCI_BindMode           bind_mode;       /* type of binding */
     OCI_BindAllocationMode bind_alloc_mode; /* type of bind allocation */
-    ub4                    fetch_size;  /* fetch array size */
-    ub4                    prefetch_size; /* pre-fetch size */
-    ub4                    prefetch_mem; /* pre-fetch memory */
-    ub4                    piece_size;  /* default piece size for dynamic fetchs */
-    OCI_LongMode           long_mode;   /* LONG datatype handling mode */
-    ub1                    status;      /* statement status */
-    OCI_StatementType      type;        /* type of SQL statement */
-    ub4                    nb_iters;    /* current number of iterations for execution */
-    ub4                    nb_iters_init; /* initial number of iterations for execution */
-    ub4                    nb_stmt;     /* number of implicit statements */
-    ub4                    nb_rs;       /* number of resultsets */
-    ub2                    cur_rs;      /* index of the current resultset */
-    ub2                    dynidx;      /* bind index counter for dynamic exec */
-    ub2                    err_pos;     /* error position in sql statement */
+    ub4                    fetch_size;      /* fetch array size */
+    ub4                    prefetch_size;   /* pre-fetch size */
+    ub4                    prefetch_mem;    /* pre-fetch memory */
+    ub4                    piece_size;      /* default piece size for dynamic fetchs */
+    OCI_LongMode           long_mode;       /* LONG datatype handling mode */
+    OCI_StatementType      type;            /* type of SQL statement */
+    ub4                    nb_iters;        /* current number of iterations for execution */
+    ub4                    nb_iters_init;   /* initial number of iterations for execution */
+    ub4                    nb_stmt;         /* number of implicit statements */
+    ub4                    nb_rs;           /* number of resultsets */
+    ub2                    cur_rs;          /* index of the current resultset */
+    ub2                    dynidx;          /* bind index counter for dynamic exec */
+    ub2                    err_pos;         /* error position in sql statement */
+    ub1                    status;          /* statement status */
 };
 
 /*
@@ -578,7 +577,7 @@ struct OCI_Lob
     OCI_DATATYPE(OCILobLocator);
     OCI_LobType     type;           /* type of lob */
     OCI_Connection *con;            /* pointer to connection object */
-    OCI_UInt64      offset;           /* current offset for R/W */
+    OCI_UInt64      offset;         /* current offset for R/W */
 };
 
 /*
@@ -593,7 +592,7 @@ struct OCI_File
     OCI_Connection *con;        /* pointer to connection object */
     otext          *dir;        /* directory name */
     otext          *name;       /* file name */
-    OCI_UInt64      offset;       /* current offset for read */
+    OCI_UInt64      offset;     /* current offset for read */
 };
 
 /*
@@ -685,7 +684,7 @@ struct OCI_Interval
 struct OCI_Json
 {
     OCI_DATATYPE(OCI_JS_HANDLE);
-    OCI_Connection *con;     /* pointer to connection object */
+    OCI_Connection *con;       /* pointer to connection object */
     JsonDomDoc     *jdoc;      /* cached DOM, populated on first access */
 };
 
@@ -719,7 +718,7 @@ struct OCI_Object
     OCI_TypeInfo     *typinf;         /* pointer to type info object */
     void            **objs;           /* array of OCILIB sub objects */
     otext           **tmpbufs;        /* temporary buffer  per column */
-    OCI_UInt32       *tmpsizes;     /* temporary buffer size per column */
+    OCI_UInt32       *tmpsizes;       /* temporary buffer size per column */
     sb2              *tab_ind;        /* indicators for root instance */
     ub2               idx_ind;        /* instance indicator offset / indicator table */
 };
@@ -729,10 +728,10 @@ struct OCI_Object
  *
  */
 
-struct OCI_Elem
+struct OCI_Element
 {
     OCI_DATATYPE(void);
-    OCI_UInt32    tmpsize;     /* temporary buffer size */
+    OCI_UInt32    tmpsize;       /* temporary buffer size */
     void         *obj;           /* OCILIB sub object */
     otext        *tmpbuf;        /* temporary buffer */
     OCI_TypeInfo *typinf;        /* object type information */
@@ -747,7 +746,7 @@ struct OCI_Elem
  *
  */
 
-struct OCI_Coll
+struct OCI_Collection
 {
     OCI_DATATYPE(OCIColl);
 
@@ -755,7 +754,7 @@ struct OCI_Coll
      * OCI_Datatype */
     OCI_Connection *con;         /* pointer to connection object */
     OCI_TypeInfo   *typinf;      /* pointer to type info object */
-    OCI_Elem       *elem;        /* item object */
+    OCI_Element    *elem;        /* item object */
 };
 
 /*
@@ -763,14 +762,14 @@ struct OCI_Coll
  *
  */
 
-struct OCI_Iter
+struct OCI_Iterator
 {
     OCI_HANDLE(OCIIter);
-    OCI_Coll   *coll;            /* pointer to connection object */
-    OCI_Elem   *elem;            /* item object */
-    OCI_Boolean eoc;                 /* end of collection */
-    OCI_Boolean boc;                 /* beginning of collection */
-    OCI_Boolean dirty;               /* indicate if elem is dirty, e.g. not fetched yet */
+    OCI_Collection *coll;            /* pointer to connection object */
+    OCI_Element    *elem;            /* item object */
+    OCI_Boolean     eoc;             /* end of collection */
+    OCI_Boolean     boc;             /* beginning of collection */
+    OCI_Boolean     dirty;           /* indicate if elem is dirty, e.g. not fetched yet */
 };
 
 /*
@@ -778,10 +777,10 @@ struct OCI_Iter
  *
  */
 
-struct OCI_Ref
+struct OCI_Reference
 {
     OCI_DATATYPE(OCIRef);
-    OCI_Boolean     pinned;          /* is the reference pinned */
+    OCI_Boolean     pinned;      /* is the reference pinned */
     OCI_Connection *con;         /* pointer to connection object */
     OCI_TypeInfo   *typinf;      /* pointer to type info object */
     OCI_Object     *obj;         /* Pinned object */
@@ -797,12 +796,12 @@ struct OCI_TypeInfo
     OCI_HANDLE(OCIType);
     OCI_Connection  *con;        /* pointer to connection object */
     OCI_Column      *cols;       /* array of column datatype info */
-    OCI_TypeInfo    *parent_type; /* parent super type for derived type */
+    OCI_TypeInfo    *parent_type;/* parent super type for derived type */
     otext           *name;       /* name of the type info object */
     otext           *schema;     /* owner of the type info object */
-    OCI_Int32       *offsets;          /* cached offsets */
-    OCI_Size         struct_size;   /* cached structure size */
-    OCI_Size         align;        /* cached structure alignment */
+    OCI_Int32       *offsets;    /* cached offsets */
+    OCI_Size         struct_size;/* cached structure size */
+    OCI_Size         align;      /* cached structure alignment */
     OCI_TypeInfoType type;       /* type of type info handle */
     ub2              typecode;   /* Oracle type code */
     ub2              colcode;    /* Oracle collection code */
@@ -836,7 +835,7 @@ typedef struct OCI_DirPathColumn OCI_DirPathColumn;
  *
  */
 
-struct OCI_DirPath
+struct OCI_DirectPath
 {
     OCI_HANDLE(OCIDirPathCtx);
     OCI_Connection     *con;            /* pointer to connection object */
@@ -859,8 +858,8 @@ struct OCI_DirPath
     ub2                 idx_err_col;    /* index of current erred row */
     ub4                 idx_err_row;    /* index of current erred column */
     ub4                 nb_err;         /* number of conversion errors since the last load */
-    OCI_UInt32          res_conv;     /* status of the last conversion */
-    OCI_UInt32          res_load;     /* status of the last load */
+    OCI_UInt32          res_conv;       /* status of the last conversion */
+    OCI_UInt32          res_load;       /* status of the last load */
 };
 
 /*
@@ -876,9 +875,9 @@ struct OCI_Event
     otext            *dbname;          /* database name */
     ub4               op;              /* event object operation */
     OCI_EventType     type;            /* event type */
-    OCI_UInt32        objname_size;  /* altered object name size */
-    OCI_UInt32        rowid_size;    /* altered row id size */
-    OCI_UInt32        dbname_size;   /* database name size */
+    OCI_UInt32        objname_size;    /* altered object name size */
+    OCI_UInt32        rowid_size;      /* altered row id size */
+    OCI_UInt32        dbname_size;     /* database name size */
 };
 
 /*
@@ -897,8 +896,8 @@ struct OCI_Subscription
     otext               *saved_pwd;  /* password for reconnection if needed */
     POCI_NOTIFY          handler;    /* user callback */
     OCI_Event            event;      /* event object for user callback */
-    OCI_SubscriptionType type;     /* notification type */
-    OCI_SubscriptionMode mode;     /* registration mode (OCI_SRM_*) */
+    OCI_SubscriptionType type;       /* notification type */
+    OCI_SubscriptionMode mode;       /* registration mode (OCI_SRM_*) */
     ub4                  timeout;    /* notification timeout */
 };
 
@@ -923,7 +922,7 @@ struct OCI_Agent
  *
  */
 
-struct OCI_Msg
+struct OCI_Message
 {
     OCI_HANDLE(OCIAQMsgProperties);
     OCI_TypeInfo *typinf;              /* pointer to type info object */
@@ -961,7 +960,7 @@ struct OCI_Dequeue
     otext           *name;               /* queue name */
     otext           *pattern;            /* queue name */
     otext           *consumer;           /* consumer name */
-    OCI_Msg         *msg;                /* message retrieved from queue */
+    OCI_Message     *msg;                /* message retrieved from queue */
     OCIAQAgent     **agent_list;         /* array of agents objects */
     OCI_Agent       *agent;              /* pointer to agent object for listen call */
     OCISubscription *subhp;              /* AQ subscription for async dequeueing */
@@ -976,7 +975,7 @@ struct OCI_Dequeue
  * service context of the owning OCI_Connection.
  */
 
-struct OCI_SodaDb
+struct OCI_SodaDatabase
 {
     OCI_HANDLE(void);
     OCI_Connection *con;             /* parent connection (not owned) */
@@ -987,15 +986,15 @@ struct OCI_SodaDb
  *
  */
 
-struct OCI_SodaColl
+struct OCI_SodaCollection
 {
     OCI_HANDLE(OCISodaColl);
-    OCI_SodaDb *sdb;                 /* parent SODA database (not owned) */
-    ub1         content_sql_type;    /* OCI_ATTR_SODA_CTNT_SQL_TYPE */
-    ub1         content_format;      /* OCI_ATTR_SODA_CTNT_FORMAT */
-    OCI_Boolean binary_content;      /* TRUE when content is binary */
-    otext      *name;                /* collection name */
-    otext      *descriptor;          /* collection metadata descriptor */
+    OCI_SodaDatabase *sdb;              /* parent SODA database (not owned) */
+    ub1               content_sql_type; /* OCI_ATTR_SODA_CTNT_SQL_TYPE */
+    ub1               content_format;   /* OCI_ATTR_SODA_CTNT_FORMAT */
+    OCI_Boolean       binary_content;   /* TRUE when content is binary */
+    otext            *name;             /* collection name */
+    otext            *descriptor;       /* collection metadata descriptor */
 };
 
 /*
@@ -1003,21 +1002,21 @@ struct OCI_SodaColl
  *
  */
 
-struct OCI_SodaDoc
+struct OCI_SodaDocument
 {
     OCI_HANDLE(OCISodaDoc);
-    OCI_SodaDb *sdb;                  /* parent SODA database (not owned) */
-    void       *content;              /* cached document content */
-    otext      *content_text;         /* cached content converted to otext */
-    otext      *key;                  /* document key */
-    otext      *version;              /* document version */
-    otext      *created_on;           /* creation timestamp */
-    otext      *last_modified;        /* last modification timestamp */
-    otext      *media_type;           /* document media type */
-    ub4         content_len;          /* cached document content byte length */
-    ub4         content_text_size;    /* size of content_text buffer */
-    OCI_Boolean content_is_json;      /* TRUE when content is an OCIJson descriptor */
-    OCI_Json   *json;                 /* cached JSON wrapper for descriptor content */
+    OCI_SodaDatabase *sdb;              /* parent SODA database (not owned) */
+    void             *content;          /* cached document content */
+    otext            *content_text;     /* cached content converted to otext */
+    otext            *key;              /* document key */
+    otext            *version;          /* document version */
+    otext            *created_on;       /* creation timestamp */
+    otext            *last_modified;    /* last modification timestamp */
+    otext            *media_type;       /* document media type */
+    ub4               content_len;      /* cached document content byte length */
+    ub4               content_text_size;/* size of content_text buffer */
+    OCI_Boolean       content_is_json;  /* TRUE when content is an OCIJson descriptor */
+    OCI_Json         *json;             /* cached JSON wrapper for descriptor content */
 };
 
 /*
@@ -1028,9 +1027,9 @@ struct OCI_SodaDoc
 struct OCI_SodaOptions
 {
     OCI_HANDLE(OCISodaOperationOptions);
-    OCI_SodaDb *sdb;                  /* parent SODA database (not owned) */
-    otext     **keys;                 /* cached keys for multi-key operations */
-    OCI_UInt32  key_count;          /* number of cached keys */
+    OCI_SodaDatabase *sdb;                  /* parent SODA database (not owned) */
+    otext           **keys;                 /* cached keys for multi-key operations */
+    OCI_UInt32        key_count;            /* number of cached keys */
 };
 
 /*
@@ -1038,10 +1037,10 @@ struct OCI_SodaOptions
  *
  */
 
-struct OCI_SodaCollCursor
+struct OCI_SodaCollectionCursor
 {
     OCI_HANDLE(OCISodaCollCursor);
-    OCI_SodaDb *sdb;                  /* parent SODA database (not owned) */
+    OCI_SodaDatabase *sdb;                  /* parent SODA database (not owned) */
 };
 
 /*
@@ -1049,13 +1048,13 @@ struct OCI_SodaCollCursor
  *
  */
 
-struct OCI_SodaDocCursor
+struct OCI_SodaDocumentCursor
 {
     OCI_HANDLE(OCISodaDocCursor);
-    OCI_SodaColl *coll;               /* parent SODA collection (not owned) */
-    OCISodaDoc  **docs;               /* materialized documents (multi-key emulation) */
-    OCI_UInt32    doc_count;        /* number of materialized documents */
-    OCI_UInt32    doc_pos;          /* current position in materialized documents */
+    OCI_SodaCollection *coll;           /* parent SODA collection (not owned) */
+    OCISodaDoc        **docs;           /* materialized documents (multi-key emulation) */
+    OCI_UInt32          doc_count;      /* number of materialized documents */
+    OCI_UInt32          doc_pos;        /* current position in materialized documents */
 };
 
 /*
@@ -1076,17 +1075,17 @@ struct OCI_ShardingKey
 
 struct OCI_Array
 {
-    OCI_Environment *env;            /* owning environment */
-    OCI_Connection  *con;            /* Connection object for type dependent on connections */
+    OCI_Environment *env;           /* owning environment */
+    OCI_Connection  *con;           /* Connection object for type dependent on connections */
     void           **tab_obj;       /* array of pointers to OCILIB objects */
     void            *mem_handle;    /* array OCI handles */
     void            *mem_struct;    /* array of OCILIB objects structures */
-    OCI_UInt32       elem_type;   /* array element type */
-    OCI_UInt32       elem_subtype; /* array element subtype */
-    OCI_UInt32       elem_size;   /* array element handle size */
-    OCI_UInt32       nb_elem;     /* array size of number of elements */
-    OCI_UInt32       struct_size; /* array element size */
-    OCI_UInt32       handle_type; /* array element OCI handle type */
+    OCI_UInt32       elem_type;     /* array element type */
+    OCI_UInt32       elem_subtype;  /* array element subtype */
+    OCI_UInt32       elem_size;     /* array element handle size */
+    OCI_UInt32       nb_elem;       /* array size of number of elements */
+    OCI_UInt32       struct_size;   /* array element size */
+    OCI_UInt32       handle_type;   /* array element OCI handle type */
 };
 
 typedef struct OCI_Array OCI_Array;
@@ -1099,10 +1098,10 @@ typedef struct OCI_Array OCI_Array;
 struct OCI_HashTable
 {
     OCI_HANDLE(void);
-    OCI_HashEntry **items;         /* array of slots */
-    OCI_UInt32      size;        /* size of the slots array */
-    OCI_UInt32      count;       /* number of used slots */
-    OCI_HashType    type;          /* type of data */
+    OCI_HashEntry **items;          /* array of slots */
+    OCI_UInt32      size;           /* size of the slots array */
+    OCI_UInt32      count;          /* number of used slots */
+    OCI_HashType    type;           /* type of data */
 };
 
 /*
@@ -1112,8 +1111,8 @@ struct OCI_HashTable
 
 struct OCI_SQLCmdInfo
 {
-    OCI_SQLCommand code;  /* SQL command code */
-    const otext   *verb; /* SQL command verb */
+    OCI_SQLCommand code;    /* SQL command code */
+    const otext   *verb;    /* SQL command verb */
 };
 
 typedef struct OCI_SQLCmdInfo OCI_SQLCmdInfo;

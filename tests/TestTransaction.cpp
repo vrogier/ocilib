@@ -40,7 +40,7 @@ namespace TestCApi
         ASSERT_EQ(OCI_TRS_NEW | OCI_TRS_READWRITE, OCI_TransactionGetMode(trans));
         ASSERT_EQ(60u, OCI_TransactionGetTimeout(trans));
 
-        (void) OCI_GetTransaction(con);
+        (void) OCI_ConnectionGetTransaction(con);
         (void) OCI_TransactionStart(trans);
         (void) OCI_TransactionStop(trans);
 
@@ -58,7 +58,7 @@ namespace TestCApi
         const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, con);
 
-        ASSERT_TRUE(OCI_SetAutoCommit(con, TRUE));
+        ASSERT_TRUE(OCI_ConnectionSetAutoCommit(con, TRUE));
 
         auto trans = OCI_TransactionCreate(con, 60, OCI_TRS_NEW | OCI_TRS_READWRITE, nullptr);
         ASSERT_NE(nullptr, trans);
@@ -71,7 +71,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_TransactionFree(trans));
 
-        ASSERT_TRUE(OCI_SetAutoCommit(con, FALSE));
+        ASSERT_TRUE(OCI_ConnectionSetAutoCommit(con, FALSE));
         ASSERT_TRUE(OCI_ConnectionFree(con));
 
     }
@@ -126,11 +126,11 @@ namespace TestCApi
            re-attaches, then prepare + forget resolve the branch */
 
         ASSERT_TRUE(OCI_TransactionStart(trans));
-        ASSERT_TRUE(OCI_Immediate(con, OTEXT("insert into TestXaWork values (1)")));
+        ASSERT_TRUE(OCI_ConnectionImmediate(con, OTEXT("insert into TestXaWork values (1)")));
         ASSERT_TRUE(OCI_TransactionStop(trans));
 
         ASSERT_TRUE(OCI_TransactionResume(trans));
-        ASSERT_TRUE(OCI_Immediate(con, OTEXT("insert into TestXaWork values (2)")));
+        ASSERT_TRUE(OCI_ConnectionImmediate(con, OTEXT("insert into TestXaWork values (2)")));
         ASSERT_TRUE(OCI_TransactionPrepare(trans));
 
         /* roll back the prepared branch to resolve it (a two-phase commit
@@ -138,7 +138,7 @@ namespace TestCApi
            exercise forget - it only succeeds on heuristically completed
            branches, which need a DBA commit/rollback force */
 
-        (void) OCI_Rollback(con);
+        (void) OCI_ConnectionRollback(con);
         (void) OCI_TransactionForget(trans);
 
         ASSERT_TRUE(OCI_TransactionFree(trans));

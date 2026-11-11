@@ -59,26 +59,26 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("INSERT INTO TestJson_CApiBind (id, value) VALUES (:id, :j)")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("INSERT INTO TestJson_CApiBind (id, value) VALUES (:id, :j)")));
         OCI_Int32 id = 1;
-        ASSERT_NE(nullptr, OCI_BindInt(stmt, OTEXT(":id"), &id));
-        ASSERT_NE(nullptr, OCI_BindJson(stmt, OTEXT(":j"), json));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32(stmt, OTEXT(":id"), &id));
+        ASSERT_NE(nullptr, OCI_StatementBindJson(stmt, OTEXT(":j"), json));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
         ASSERT_TRUE(OCI_StatementFree(stmt));
 
         const auto stmt2 = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt2);
-        ASSERT_TRUE(OCI_Prepare(stmt2, OTEXT("SELECT value FROM TestJson_CApiBind WHERE id = :id")));
-        ASSERT_NE(nullptr, OCI_BindInt(stmt2, OTEXT(":id"), &id));
-        ASSERT_TRUE(OCI_Execute(stmt2));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt2, OTEXT("SELECT value FROM TestJson_CApiBind WHERE id = :id")));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32(stmt2, OTEXT(":id"), &id));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt2));
 
-        const auto rs = OCI_GetResultset(stmt2);
+        const auto rs = OCI_StatementGetResultset(stmt2);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto fetched = OCI_GetJson(rs, 0);
+        const auto fetched = OCI_ResultsetGetJson(rs, 0);
         ASSERT_NE(nullptr, fetched);
-        const auto fetchedByName = OCI_GetJsonByName(rs, OTEXT("VALUE"));
+        const auto fetchedByName = OCI_ResultsetGetJsonByName(rs, OTEXT("VALUE"));
         ASSERT_NE(nullptr, fetchedByName);
 
         String text = GetJsonText(fetched);
@@ -101,7 +101,7 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("INSERT INTO TestJson_CApiBindArray (id, value) VALUES (:id, :j)")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("INSERT INTO TestJson_CApiBindArray (id, value) VALUES (:id, :j)")));
 
         OCI_Int32 ids[2] = { 1, 2 };
         OCI_Json** jsons = OCI_JsonArrayCreate(conn, 2);
@@ -110,10 +110,10 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonLoadText(jsons[0], OTEXT("{\"a\":1}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
         ASSERT_TRUE(OCI_JsonLoadText(jsons[1], OTEXT("{\"a\":2}"), 0, OCI_JTV_ALLOW_ALL, OCI_JTE_DETECT));
 
-        ASSERT_TRUE(OCI_BindArraySetSize(stmt, 2));
-        ASSERT_NE(nullptr, OCI_BindArrayOfInts(stmt, OTEXT(":id"), ids, 0));
-        ASSERT_NE(nullptr, OCI_BindArrayOfJsons(stmt, OTEXT(":j"), jsons, 0));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_TRUE(OCI_StatementBindArraySetSize(stmt, 2));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32Array(stmt, OTEXT(":id"), ids, 0));
+        ASSERT_NE(nullptr, OCI_StatementBindJsonArray(stmt, OTEXT(":j"), jsons, 0));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_JsonArrayFree(jsons));
@@ -136,18 +136,18 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_Prepare(stmt, OTEXT("UPDATE TestJson_CApiRegister SET value = :j WHERE id = :id RETURNING value INTO :out")));
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("UPDATE TestJson_CApiRegister SET value = :j WHERE id = :id RETURNING value INTO :out")));
         OCI_Int32 id = 1;
-        ASSERT_NE(nullptr, OCI_BindInt(stmt, OTEXT(":id"), &id));
-        ASSERT_NE(nullptr, OCI_BindJson(stmt, OTEXT(":j"), json));
-        ASSERT_TRUE(OCI_RegisterJson(stmt, OTEXT(":out")));
-        ASSERT_TRUE(OCI_Execute(stmt));
+        ASSERT_NE(nullptr, OCI_StatementBindInt32(stmt, OTEXT(":id"), &id));
+        ASSERT_NE(nullptr, OCI_StatementBindJson(stmt, OTEXT(":j"), json));
+        ASSERT_TRUE(OCI_StatementRegisterJson(stmt, OTEXT(":out")));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
 
-        const auto rs = OCI_GetResultset(stmt);
+        const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
-        ASSERT_TRUE(OCI_FetchNext(rs));
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
-        const auto out = OCI_GetJson(rs, 0);
+        const auto out = OCI_ResultsetGetJson(rs, 0);
         ASSERT_NE(nullptr, out);
 
         String text = GetJsonText(out);
