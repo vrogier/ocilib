@@ -76,6 +76,10 @@ extern "C" {
       #define JsonDomGetFieldPos(jd, obj, fname, fnlen) \
               ((jd)->mthds_jznDomDoc->jznDomGetFieldByName((jd), (obj), (fname), (fnlen)))
     #endif
+    #if !defined(JsonDomDocFree)
+      #define JsonDomDocFree(jd) \
+              ((jd)->mthds_jznDomDoc->jznDomDocFree((jd)))
+    #endif
   #endif
 
 #ifdef  __cplusplus
