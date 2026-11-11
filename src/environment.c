@@ -1426,7 +1426,6 @@ OCI_Environment * OcilibEnvironmentCreate
     env->version_compile    = OCI_VERSION_COMPILE;
     env->env_mode           = mode;
     env->charset            = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_MBCS;
-    env->use_wide_char_conv = (IS_WIDE_ENV() && (WCHAR_MAX == WCHAR_4_BYTES));
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
@@ -2173,7 +2172,7 @@ const otext* OcilibEnvironmentGetLocaleString
 
             CHECK_NULL(lsi_str);
 
-            dbstr = OcilibStringGetDBString(env, lsi_str, &dbsize);
+            dbstr = (dbtext *) (lsi_str);
 
             CHECK_NULL(dbstr);
 
@@ -2188,7 +2187,6 @@ const otext* OcilibEnvironmentGetLocaleString
                 (ub2)code
             );
 
-            OcilibStringCopyDBStringToNativeString(env, dbstr, lsi_str, OCI_SIZE_BUFFER_LSI);
 
             /* publish the slot only on success so a failed fill can be retried */
 
@@ -2220,7 +2218,6 @@ const otext* OcilibEnvironmentGetLocaleString
 
         FREE(lsi_str);
 
-        OcilibStringReleaseDBString(env, dbstr);
     );
 }
 

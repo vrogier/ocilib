@@ -464,6 +464,9 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv));
     }
 
+#ifndef OCI_CHARSET_WIDE
+    /* an emulated < 9.2 env is created via OCIEnvCreate, which rejects
+       UTF16 mode on current clients - MBCS-only path */
     TEST(TestInterval, Create_PreClient9_Fails)
     {
         const auto env = GetSpecificEnvironment(nullptr, OCI_8_1);
@@ -474,6 +477,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
+#endif
 
 
     class TestIntervalNullArgs : public ::testing::TestWithParam<NullArgCase> {};

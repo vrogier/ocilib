@@ -726,8 +726,6 @@ OCI_SodaDocument* OcilibSodaCollectionFindOneByKey
     );
 
     OCI_SodaDocument* doc      = NULL;
-    dbtext          * dbkey    = NULL;
-    OCI_Int32         dbkeylen = -1;
     sword             oci_ret  = 0;
     OCISodaDoc      * handle   = NULL;
 
@@ -736,12 +734,10 @@ OCI_SodaDocument* OcilibSodaCollectionFindOneByKey
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
     CHECK_SODA_ENABLED(coll->sdb->con);
 
-    dbkey = OcilibStringGetDBString(coll->sdb->env, key, &dbkeylen);
-
     OCI_CALL(oci_ret, OCISodaFindOneWithKey, coll->sdb->con->handle,
              coll->handle,
-             (const OraText*)dbkey,
-             (ub4)dbkeylen,
+             (const OraText*)(key),
+             (ub4)OcilibStringDBSize(key),
              (ub4)OCILIB_SODA_DOC_FLAGS(coll->sdb),
              &handle,
              coll->sdb->con->err,
@@ -767,7 +763,6 @@ OCI_SodaDocument* OcilibSodaCollectionFindOneByKey
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(coll->sdb->env, dbkey);
 
         if (FAILURE && NULL != doc)
         {
@@ -875,8 +870,6 @@ OCI_UInt64 OcilibSodaCollectionDocumentCountWithFilter
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    dbtext  * dbflt    = NULL;
-    OCI_Int32 dbfltlen = -1;
     ub8       numdocs  = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
@@ -884,16 +877,14 @@ OCI_UInt64 OcilibSodaCollectionDocumentCountWithFilter
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
     CHECK_SODA_ENABLED(coll->sdb->con);
 
-    dbflt = OcilibStringGetDBString(coll->sdb->env, filterSpec, &dbfltlen);
-
     CHECK_OCI
     (
         coll->sdb->con->err,
         OCISodaDocCountWithFilter,
         coll->sdb->con->handle,
         coll->handle,
-        (const OraText*)dbflt,
-        (ub4)dbfltlen,
+        (const OraText*)(filterSpec),
+        (ub4)OcilibStringDBSize(filterSpec),
         &numdocs,
         coll->sdb->con->err,
         OCI_DEFAULT
@@ -901,10 +892,7 @@ OCI_UInt64 OcilibSodaCollectionDocumentCountWithFilter
 
     SET_RETVAL((OCI_UInt64)numdocs);
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(coll->sdb->env, dbflt);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1050,7 +1038,8 @@ OCI_Boolean OcilibSodaCollectionReplaceOneByKey
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
     CHECK_SODA_ENABLED(coll->sdb->con);
 
-    dbkey = OcilibStringGetDBString(coll->sdb->env, key, &dbkeylen);
+    dbkey = (dbtext *) (key);
+    dbkeylen = OcilibStringDBSize(key);
 
     if (refresh)
     {
@@ -1094,10 +1083,7 @@ OCI_Boolean OcilibSodaCollectionReplaceOneByKey
 
     SET_RETVAL((OCI_Boolean)replaced);
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(coll->sdb->env, dbkey);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1204,15 +1190,11 @@ OCI_Boolean OcilibSodaCollectionRemoveOneByKey
     );
 
     boolean   removed  = FALSE;
-    dbtext  * dbkey    = NULL;
-    OCI_Int32 dbkeylen = -1;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, key);
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
     CHECK_SODA_ENABLED(coll->sdb->con);
-
-    dbkey = OcilibStringGetDBString(coll->sdb->env, key, &dbkeylen);
 
     CHECK_OCI
     (
@@ -1220,8 +1202,8 @@ OCI_Boolean OcilibSodaCollectionRemoveOneByKey
         OCISodaRemoveOneWithKey,
         coll->sdb->con->handle,
         coll->handle,
-        (const OraText*)dbkey,
-        (ub4)dbkeylen,
+        (const OraText*)(key),
+        (ub4)OcilibStringDBSize(key),
         &removed,
         coll->sdb->con->err,
         OCI_DEFAULT
@@ -1229,10 +1211,7 @@ OCI_Boolean OcilibSodaCollectionRemoveOneByKey
 
     SET_RETVAL((OCI_Boolean)removed);
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(coll->sdb->env, dbkey);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1354,15 +1333,11 @@ OCI_Boolean OcilibSodaCollectionCreateIndex
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    dbtext   *dbspec = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, indexSpec);
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
     CHECK_SODA_ENABLED(coll->sdb->con);
-
-    dbspec = OcilibStringGetDBString(coll->sdb->env, indexSpec, &dbsize);
 
     CHECK_OCI
     (
@@ -1370,18 +1345,15 @@ OCI_Boolean OcilibSodaCollectionCreateIndex
         OCISodaIndexCreate,
         coll->sdb->con->handle,
         coll->handle,
-        (const OraText*)dbspec,
-        (ub4)dbsize,
+        (const OraText*)(indexSpec),
+        (ub4)OcilibStringDBSize(indexSpec),
         coll->sdb->con->err,
         OCI_SODA_ATOMIC_COMMIT
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(coll->sdb->env, dbspec);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1400,8 +1372,6 @@ OCI_Boolean OcilibSodaCollectionDropIndex
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    dbtext   *dbkey    = NULL;
-    OCI_Int32 dbkeylen = -1;
     boolean   dropped  = FALSE;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
@@ -1409,15 +1379,13 @@ OCI_Boolean OcilibSodaCollectionDropIndex
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
     CHECK_SODA_ENABLED(coll->sdb->con);
 
-    dbkey = OcilibStringGetDBString(coll->sdb->env, name, &dbkeylen);
-
     CHECK_OCI
     (
         coll->sdb->con->err,
         OCISodaIndexDrop,
         coll->sdb->con->handle,
-        (OraText*)dbkey,
-        (ub4)dbkeylen,
+        (OraText*)(name),
+        (ub4)OcilibStringDBSize(name),
         &dropped,
         coll->sdb->con->err,
         OCI_SODA_ATOMIC_COMMIT
@@ -1425,10 +1393,7 @@ OCI_Boolean OcilibSodaCollectionDropIndex
 
     SET_RETVAL((OCI_Boolean)dropped);
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(coll->sdb->env, dbkey);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1539,7 +1504,7 @@ OCI_Boolean OcilibSodaCollectionSave
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

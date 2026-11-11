@@ -228,11 +228,7 @@ void OcilibErrorSet
     err->row         = row;
     err->warnings_on = (NULL != err->env) ? err->env->warnings_on : FALSE;
 
-#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
-    const otext* format = OTEXT("Error occurred at %ls: %ls");
-#else
     const otext* format = OTEXT("Error occurred at %s: %s");
-#endif
 
     const OCI_Size format_len = ostrlen(format);
 

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collections — VARRAY &amp; nested tables — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6" open><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li class="active"><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span><span class="badge badge-demo">demo/coll.c</span><span class="badge badge-demo">demo/coll.cpp</span><a class="badge badge-demo" href="assets/sql/collections.sql">collections.sql</a></div>
+    <h1 id="collections-varray-nested-tables">Collections — VARRAY &amp; nested tables</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>create and fill collections</li>
+<li>bind/fetch collection columns</li>
+<li>get sizes, max sizes and element handles</li>
+</ul>
+<h2 id="the-collection-and-the-element">The collection and the element</h2>
+<p>Oracle has two collection flavors: bounded <code>VARRAY(n)</code> and unbounded nested tables (<code>table of …</code>).</p>
+<p>On the client, a <code>Coll</code> is the container — created <em>from</em> the collection's <code>TypeInfo</code> — and an <code>Elem</code> is a <strong>slot for one element</strong>: you create an element, fill it (scalar setters, or an Object/Coll for structured elements), and append it into the collection.</p>
+<p>Elements pulled out of a collection are owned refs to free; the collection itself is borrowed when fetched.</p>
+<h2 id="setup">Setup</h2>
+<div class="highlight"><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="n">product_t</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">object</span><span class="w"> </span><span class="p">(</span><span class="n">code</span><span class="w"> </span><span class="nb">number</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="n">varchar2</span><span class="p">(</span><span class="mi">50</span><span class="p">));</span>
+<span class="k">create</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="n">product_varray_t</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="n">varray</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">product_t</span><span class="p">;</span>
+<span class="k">create</span><span class="w"> </span><span class="k">type</span><span class="w"> </span><span class="n">t_names</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">varchar2</span><span class="p">(</span><span class="mi">30</span><span class="p">);</span><span class="w">      </span><span class="c1">-- nested table type</span>
+<span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">vendors</span><span class="w"> </span><span class="p">(</span><span class="n">code</span><span class="w"> </span><span class="nb">number</span><span class="p">,</span><span class="w"> </span><span class="n">products</span><span class="w"> </span><span class="n">product_varray_t</span><span class="p">);</span>
+</code></pre></div>
+
+<h2 id="create-fill">Create &amp; fill</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_TypeInfo</span><span class="w"> </span><span class="o">*</span><span class="n">ti</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGet</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"product_varray_t"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_TIF_TYPE</span><span class="p">);</span>
+<span class="n">OCI_Collection</span><span class="w"> </span><span class="o">*</span><span class="n">coll</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_CollectionCreate</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span><span class="w">          </span><span class="cm">/* element type from the TypeInfo */</span>
+
+<span class="n">OCI_Element</span><span class="w"> </span><span class="o">*</span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ElementCreate</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span><span class="w">             </span><span class="cm">/* a product_t element slot      */</span>
+<span class="n">OCI_Object</span><span class="w"> </span><span class="o">*</span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ElementGetObject</span><span class="p">(</span><span class="n">e</span><span class="p">);</span><span class="w">         </span><span class="cm">/* object element → set attrs    */</span>
+<span class="n">OCI_ObjectSetInt32</span><span class="w">   </span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"CODE"</span><span class="p">),</span><span class="w"> </span><span class="mi">123</span><span class="p">);</span>
+<span class="n">OCI_ObjectSetString</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">),</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"usb key"</span><span class="p">));</span>
+<span class="n">OCI_CollectionAppend</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
+<span class="n">OCI_ElementFree</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+
+<span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"insert into vendors values(1, :c)"</span><span class="p">));</span>
+<span class="n">OCI_StatementBindCollection</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":c"</span><span class="p">),</span><span class="w"> </span><span class="n">coll</span><span class="p">);</span>
+<span class="n">OCI_StatementExecutePrepared</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">TypeInfo</span><span class="w"> </span><span class="n">ti</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="s">"product_varray_t"</span><span class="p">,</span><span class="w"> </span><span class="n">TypeInfo</span><span class="o">::</span><span class="n">Type</span><span class="p">);</span>
+<span class="n">Collection</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">coll</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span><span class="w">                  </span><span class="cm">/* element type from the TypeInfo */</span>
+
+<span class="n">Elem</span><span class="w"> </span><span class="nf">e</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span><span class="w">                                   </span><span class="cm">/* a product_t element slot      */</span>
+<span class="n">Object</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">();</span><span class="w">                   </span><span class="cm">/* object element → set attrs    */</span>
+<span class="n">p</span><span class="p">.</span><span class="n">Set</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="w">   </span><span class="p">(</span><span class="s">"CODE"</span><span class="p">,</span><span class="w"> </span><span class="mi">123</span><span class="p">);</span>
+<span class="n">p</span><span class="p">.</span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">,</span><span class="w"> </span><span class="s">"usb key"</span><span class="p">);</span>
+<span class="n">coll</span><span class="p">.</span><span class="n">Append</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+
+<span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"insert into vendors values(1, :c)"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":c"</span><span class="p">,</span><span class="w"> </span><span class="n">coll</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">ExecutePrepared</span><span class="p">();</span>
+</pre></div>
+</div></div>
+<p>Scalar collections (<code>table of varchar2</code>) are simpler — set the element's scalar:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_ElementSetString</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"hello"</span><span class="p">));</span>
+<span class="n">OCI_CollectionAppend</span><span class="p">(</span><span class="n">coll</span><span class="p">,</span><span class="w"> </span><span class="n">e</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">e</span><span class="p">.</span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"hello"</span><span class="p">);</span>
+<span class="n">coll</span><span class="p">.</span><span class="n">Append</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+</pre></div>
+</div></div>
+<h2 id="inspecting">Inspecting</h2>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_CollectionGetSize</code></td>
+<td><code>GetSize()</code></td>
+<td>current element count</td>
+</tr>
+<tr>
+<td><code>OCI_CollectionGetMax</code></td>
+<td><code>GetMax()</code></td>
+<td>capacity (VARRAY bound; 0 = unbounded)</td>
+</tr>
+<tr>
+<td><code>OCI_CollectionGetCount</code></td>
+<td><code>GetCount()</code></td>
+<td>same as size for most cases</td>
+</tr>
+<tr>
+<td><code>OCI_CollectionGetType</code></td>
+<td><code>GetType()</code></td>
+<td>element/collection type info</td>
+</tr>
+<tr>
+<td><code>OCI_CollectionGetTypeInfo</code></td>
+<td><code>GetTypeInfo()</code></td>
+<td>describing TypeInfo</td>
+</tr>
+<tr>
+<td><code>OCI_CollectionGetElement</code></td>
+<td><code>Get&lt;Elem&gt;(i)</code> / typed <code>Get(i)</code></td>
+<td>element at index <code>i</code> (0-based)</td>
+</tr>
+<tr>
+<td><code>OCI_CollectionSetElement</code></td>
+<td><code>Set</code></td>
+<td>replace element <code>i</code></td>
+</tr>
+<tr>
+<td><code>OCI_CollectionClear</code></td>
+<td><code>Clear()</code></td>
+<td>empty it</td>
+</tr>
+<tr>
+<td><code>OCI_CollectionTrim</code></td>
+<td><code>Trim(n)</code></td>
+<td>drop trailing elements</td>
+</tr>
+<tr>
+<td><code>OCI_CollectionDeleteElement</code></td>
+<td><code>DeleteElem(i)</code></td>
+<td>remove element <code>i</code></td>
+</tr>
+<tr>
+<td><code>OCI_CollectionAssign</code></td>
+<td><code>Assign</code></td>
+<td>copy</td>
+</tr>
+<tr>
+<td><code>OCI_CollectionToText</code></td>
+<td><code>ToText()</code></td>
+<td>debug dump</td>
+</tr>
+</tbody>
+</table>
+<h2 id="fetching">Fetching</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Collection</span><span class="w"> </span><span class="o">*</span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ResultsetGetColl</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">                 </span><span class="cm">/* borrowed */</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">OCI_CollectionGetSize</span><span class="p">(</span><span class="n">c</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Element</span><span class="w"> </span><span class="o">*</span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_CollectionGetElement</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ElementGetString</span><span class="p">(</span><span class="n">e</span><span class="p">));</span>
+<span class="w">    </span><span class="n">OCI_ElementFree</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Coll</span><span class="w"> </span><span class="n">c</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Coll</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">                          </span><span class="cm">/* borrowed */</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">UInt32</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">GetSize</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Elem</span><span class="w"> </span><span class="n">e</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">c</span><span class="p">.</span><span class="n">GetElem</span><span class="p">(</span><span class="n">i</span><span class="p">);</span><span class="w">                          </span><span class="cm">/* owned — RAII frees */</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">e</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="the-c-way-typed-collectiont-and-iterators">The C++ way — typed <code>Collection&lt;T&gt;</code> and iterators</h2>
+<p>C++ wraps the collection in <code>Collection&lt;T&gt;</code> — typed on the element type so indexing
+and iteration yield <code>T</code> directly, no element handle to free:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Collection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="n">names</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">n</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">names</span><span class="p">)</span><span class="w">                 </span><span class="cm">/* CollectionIterator — range-for */</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="n">Collection</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">prods</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">p</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">prods</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">p</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"CODE"</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>Collections are array-typed columns — VARRAYs and nested tables:</p>
+<ol>
+<li><strong>Describe the collection type</strong> — <code>TypeInfoGet</code> on the collection type
+   itself.</li>
+<li><strong>Create or fetch</strong> — <code>CollectionCreate</code> for building, <code>Get&lt;Collection&gt;</code>
+   on a fetched column.</li>
+<li><strong>Walk elements</strong> — <code>CollectionGetCount</code>, <code>GetElem</code>/<code>GetElem2</code> per index,
+   <code>CollectionNext</code> to iterate.</li>
+<li><strong>Mutate</strong> — <code>Append</code>, <code>DeleteElem</code>, <code>SetElem</code> for writes; fetched
+   collections are borrowed.</li>
+<li><strong>Bind</strong> — <code>StatementBindColl</code> for passing a collection as a parameter.</li>
+</ol>
+<p>Hints: <code>GetElem</code> returns a borrowed element — <code>GetElem2</code> gives one you can
+modify; <code>CollectionNext</code> is the iteration idiom — <code>Reset</code> rewinds it; and
+VARRAYs are bounded (max size in the type), nested tables aren't —
+<code>CollectionGetMax</code> reports the bound or 0 for unbounded.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Build a <code>table of varchar2</code> of employee names and insert it.</li>
+<li>Fetch a <code>product_varray_t</code> column and print size vs max.</li>
+<li><code>Trim</code> the last two elements and re-insert.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong><code>CollGetElem</code>/<code>GetElem</code> indexes</strong> — 0-based, like everything OCILIB.</li>
+<li><strong>Forgetting <code>ElemFree</code></strong> — elements pulled from a coll are owned refs.</li>
+<li><strong>Nested-table vs VARRAY max</strong> — <code>GetMax</code> is 0 for unbounded nested tables.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>TypeInfo</code> → <code>CollCreate</code> → <code>ElemCreate</code>+fill → <code>CollAppend</code> → <code>BindColl</code>;
+  fetched via <code>GetColl</code> + <code>CollGetElem</code>.</li>
+</ul>
+<p><strong>Next:</strong> iterating collections with <code>OCI_Iterator</code> and nested collections.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="objects-ops.html"><span class="pn-dir">← Previous</span>Object operations</a><a class="pn-link pn-next" href="collections-advanced.html"><span class="pn-dir">Next →</span>Collections advanced</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

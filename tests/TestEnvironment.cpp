@@ -510,6 +510,10 @@ namespace TestCppApi
         EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
     }
 
+#ifndef OCI_CHARSET_WIDE
+    /* the legacy OCIInitialize/OCIEnvInit entry points take no charset
+       argument - a UTF16-mode emulated env cannot be created, so this
+       path is only reachable in an MBCS build */
     TEST(TestEnvironment, Emulated8_0Client_LegacyInit)
     {
         /* non-threaded 8.0 env goes through OCIInitialize + OCIEnvInit
@@ -519,6 +523,7 @@ namespace TestCppApi
         EXPECT_EQ(OCI_8_0, OCI_EnvironmentGetOCIRuntimeVersion(env));
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
+#endif
 
 #ifdef _WIN32
     TEST(TestEnvironment, NlsLangUtf8_WindowsFallback)

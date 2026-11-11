@@ -578,7 +578,8 @@ is no longer supported through OCILIB.
 - **`Environment::CharsetAnsi` → `Environment::CharsetMbcs`** — the `OCI_CHARSET_ANSI`
   build flag is now `OCI_CHARSET_MBCS` (multibyte: ANSI codepages *or* UTF-8).
   `OCI_CHAR_ANSI` maps to `OCI_CHAR_MBCS` via `compat.h`. Windows binaries are
-  `ocilibm`/`ocilibw` and MSBuild configs are `Release - MBCS`.
+  `ocilib`/`ocilibw` (wide is Windows-only — `OCI_CHARSET_WIDE` is a compile-time
+  error elsewhere) and MSBuild configs are `Release - MBCS` / `Release - WIDE`.
 - **Internal header layout changed** (`detail/core/*`, `detail/support/*` reorganized,
   some files removed: `Mutex.hpp`, `Thread.hpp`, `ThreadKey.hpp`, `ManagedBuffer.hpp`,
   `Synchronizable.hpp`, `ConcurrentList.hpp`, `ConcurrentMap.hpp`,

@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Connection strings &amp; session modes — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1" open><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li class="active"><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-beginner">Beginner</span><span class="badge badge-demo">demo/conn.c</span></div>
+    <h1 id="connection-strings-session-modes">Connection strings &amp; session modes</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>pick the right connect-string form for your database</li>
+<li>choose a session mode (ordinary or privileged)</li>
+<li>read back attributes that describe what you connected to</li>
+</ul>
+<h2 id="connect-string-forms">Connect-string forms</h2>
+<p>The connect string answers one question: <strong>where is the database?</strong> The client needs a host, a port and a service identity — and Oracle has offered several syntaxes for that over the years.</p>
+<p>Creating a connection takes that string plus a user name, a password and a session mode:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Connection</span><span class="w"> </span><span class="o">*</span><span class="n">cn</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ConnectionCreate</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">pwd</span><span class="p">,</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">ocilib</span><span class="o">::</span><span class="n">Connection</span><span class="w"> </span><span class="nf">cn</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">user</span><span class="p">,</span><span class="w"> </span><span class="n">pwd</span><span class="p">,</span><span class="w"> </span><span class="n">mode</span><span class="p">);</span>
+</pre></div>
+</div></div>
+<table>
+<thead>
+<tr>
+<th>Form</th>
+<th>Example</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TNS alias</td>
+<td><code>prod</code></td>
+<td>needs <code>tnsnames.ora</code> on <code>TNS_ADMIN</code>/<code>ORACLE_HOME</code></td>
+</tr>
+<tr>
+<td>Easy Connect</td>
+<td><code>dbhost:1521/XEPDB1</code></td>
+<td>no config file needed — best for getting started</td>
+</tr>
+<tr>
+<td>Easy Connect + params</td>
+<td><code>dbhost:1521/XEPDB1?connect_timeout=5</code></td>
+<td>timeouts, retries</td>
+</tr>
+<tr>
+<td>Full descriptor</td>
+<td><code>(DESCRIPTION=(ADDRESS=…)…)</code></td>
+<td>RAC/scan lists, load balancing</td>
+</tr>
+<tr>
+<td>Empty / local</td>
+<td><code>""</code></td>
+<td><code>ORACLE_SID</code>-style local bequeath</td>
+</tr>
+</tbody>
+</table>
+<h2 id="session-modes">Session modes</h2>
+<p>The last argument selects the session's <strong>privilege level</strong> — which Oracle role the connection opens with.</p>
+<p>Normal work uses the default; admin tasks (page 820) need privileged modes:</p>
+<table>
+<thead>
+<tr>
+<th>C enum</th>
+<th>C++ enum</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_SESSION_DEFAULT</code></td>
+<td><code>Environment::SessionDefault</code></td>
+<td>ordinary session</td>
+</tr>
+<tr>
+<td><code>OCI_SESSION_SYSDBA</code></td>
+<td><code>Environment::SessionSysDba</code></td>
+<td>DBA ops incl. database startup/shutdown</td>
+</tr>
+<tr>
+<td><code>OCI_SESSION_SYSOPER</code></td>
+<td><code>Environment::SessionSysOper</code></td>
+<td>limited admin</td>
+</tr>
+<tr>
+<td><code>OCI_SESSION_SYSASM</code></td>
+<td><code>Environment::SessionSysAsm</code></td>
+<td>ASM instance</td>
+</tr>
+<tr>
+<td><code>OCI_SESSION_SYSBKP</code></td>
+<td><code>Environment::SessionSysBkp</code></td>
+<td>backup role</td>
+</tr>
+<tr>
+<td><code>OCI_SESSION_SYSDGD</code></td>
+<td><code>Environment::SessionSysDgD</code></td>
+<td>Data Guard role</td>
+</tr>
+<tr>
+<td><code>OCI_SESSION_SYSKMT</code></td>
+<td><code>Environment::SessionSysKmt</code></td>
+<td>key management</td>
+</tr>
+<tr>
+<td><code>OCI_SESSION_SYSRAC</code></td>
+<td><code>Environment::SessionSysRac</code></td>
+<td>RAC role</td>
+</tr>
+<tr>
+<td><code>OCI_SESSION_PRELIM_AUTH</code></td>
+<td><code>Environment::SessionPreAuth</code></td>
+<td>preliminary auth for <code>STARTUP</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="what-did-you-just-connect-to">What did you just connect to?</h2>
+<p>The connection answers that — a quick sanity check worth doing once:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">printf</span><span class="p">(</span><span class="s">"connected as %s to %s (server %s)</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">       </span><span class="n">OCI_ConnectionGetUserName</span><span class="p">(</span><span class="n">cn</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_ConnectionGetConnectionString</span><span class="p">(</span><span class="n">cn</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_ConnectionGetServerVersionString</span><span class="p">(</span><span class="n">cn</span><span class="p">));</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"connected as "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">con</span><span class="p">.</span><span class="n">GetUserName</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" to "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">con</span><span class="p">.</span><span class="n">GetDbName</span><span class="p">()</span>
+<span class="w">          </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" (server "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">con</span><span class="p">.</span><span class="n">GetServerVersion</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">")</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+</pre></div>
+</div></div>
+<p>The connection exposes a much larger attribute surface — service/instance details, trace fields, the statement cache, timeouts and TAF/HA hooks.</p>
+<p>That's the subject of the next page.</p>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>Connecting is a two-line operation, but the decisions happen before the call:</p>
+<ol>
+<li><strong>Pick the addressing form</strong>: <code>//host:port/service</code> (EZCONNECT, the default),
+   <code>//host:port/service:dedicated</code>, a full TNS alias, or a descriptor string —
+   the syntax decides <em>how</em> Oracle locates the instance, not what OCILIB does
+   with it.</li>
+<li><strong>Choose the connect flavor</strong>: plain <code>Connection</code> for normal work, pooled
+   <code>PoolGetConnection</code> for repeated connects, <code>SYSDBA</code>/<code>SYSOPER</code> only for admin
+   pages.</li>
+<li><strong>Pass the credentials</strong> — <code>OCILIB_DEMO_*</code> env vars in the samples, real ones
+   in your code.</li>
+<li><strong>Check the result</strong> — <code>OCI_ConnectionCreate</code> returns a handle or NULL;
+   <code>OCI_GetLastError</code> explains a refused connect (bad service, bad credentials,
+   unreachable host).</li>
+</ol>
+<p>Hints: the <em>service</em> name is not the SID — <code>/ORCL</code> and <code>//host/orcl</code> mean
+different things on misconfigured servers; connection strings with <code>@</code> and <code>//</code>
+are the most-quoted source of "connects in SQL*Plus but not here"; and a pooled
+handle is returned by <code>PoolGetConnection</code>, not <code>Connection</code> — don't mix the
+lifecycles.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Connect with an Easy Connect string including <code>connect_timeout</code>, print the
+   resolved <code>GetConnectionString</code>.</li>
+<li>On an XE sandbox, connect <code>SYS … as SYSDBA</code> with the SYSDBA session mode and
+   print <code>GetServiceName</code>/<code>GetInstanceName</code>.</li>
+<li>Set module+action trace and find them in <code>v$session</code> columns <code>module</code>/<code>action</code>.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Service vs SID</strong> — <code>dbhost/XEPDB1</code> is a <em>service</em>; SIDs need
+  <code>dbhost:1521:SID</code>-style descriptors.</li>
+<li><strong>Privileged mode on a normal account</strong> — <code>SYSDBA</code> modes fail unless the user
+  actually holds them.</li>
+<li><strong>Assuming default = SYSDBA</strong> — admin paths explicitly opt into privileged modes;
+  everyday connections should stay <code>DEFAULT</code>.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>Connect string forms: TNS alias, Easy Connect (+params), full descriptor, local.</li>
+<li>Session modes select privileges — C <code>OCI_SESSION_*</code> ↔ C++ <code>Environment::Session*</code>.</li>
+<li>Connection attributes read back login, server version, service, trace info.</li>
+</ul>
+<p><strong>Next:</strong> liveness — ping and break.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="quickstart-checklist.html"><span class="pn-dir">← Previous</span>Checkpoint 0 quickstart</a><a class="pn-link pn-next" href="connection-attrs.html"><span class="pn-dir">Next →</span>Connection attributes</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

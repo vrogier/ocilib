@@ -172,6 +172,16 @@
 #define OCI_CHARSET_ANSI
 #endif
 
+/* Wide builds rely on wchar_t being a 2-byte UTF-16 unit — only true on
+   Windows. Anywhere else, wchar_t is 4 bytes (UTF-32) and the build would
+   need a conversion layer that no longer exists: fail loudly instead of
+   silently producing a library with a different ABI than requested. */
+
+#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
+#error "OCI_CHARSET_WIDE is supported on Windows only. " \
+       "On Unix/macOS, build with OCI_CHARSET_MBCS (otext = char, UTF-8/ANSI via NLS_LANG)."
+#endif
+
 /* printf-style format checking for functions taking an otext format string
    followed by variadic arguments. GCC and Clang check the format/argument
    consistency at compile time; MSVC does not support __attribute__ and the
@@ -194,10 +204,18 @@
  * The public API is identical in both flavors: every string parameter and return
  * value uses the portable type 'otext', which maps to char or wchar_t.
  *
+ * The flavors are platform-scoped:
+ *
+ *  - MBCS (otext = char) is available on EVERY platform — it is the only
+ *    flavor shipped for Unix and macOS.
+ *  - Wide (otext = wchar_t) is a WINDOWS-ONLY flavor, because it relies on
+ *    wchar_t being a 2-byte UTF-16 unit. Defining OCI_CHARSET_WIDE on a
+ *    non-Windows platform is a compile-time error.
+ *
  * The two flavors differ in which encoding OCI itself is initialized with, and
  * therefore which encoding your application strings must use:
  *
- * @par Option OCI_CHARSET_MBCS — the "MBCS" build (default)
+ * @par Option OCI_CHARSET_MBCS — the "MBCS" build (default, all platforms)
  *
  *  - otext    -->    char
  *  - OTEXT(x) -->    x
@@ -215,7 +233,7 @@
  * end: SQL text, object names, fetched data and bound values are all UTF-8
  * between your application and Oracle.
  *
- * @par Option OCI_CHARSET_WIDE — the "wide" build
+ * @par Option OCI_CHARSET_WIDE — the "wide" build (Windows only)
  *
  *  - otext    -->    wchar_t
  *  - OTEXT(x) -->    L ## x
@@ -225,15 +243,8 @@
  * for both the charset and the national charset. OCI's Unicode mode uses a
  * fixed-length 2-byte UTF-16 encoding internally.
  *
- * OCILIB bridges wchar_t and that fixed UTF-16 encoding automatically:
- *
- *  - On Windows, wchar_t is 2 bytes and already UTF-16: otext buffers are
- *    passed to and received from Oracle directly, with no conversion.
- *  - On most Unix systems, wchar_t is 4 bytes (UTF-32): OCILIB transparently
- *    converts every string between UTF-16 and UTF-32 — temporary buffers for
- *    statements and object names on the way in, in-place buffer expansion for
- *    fetched and bound strings on the way out. This costs no extra allocation
- *    and is invisible to the application.
+ * On Windows, wchar_t is 2 bytes and already UTF-16: otext buffers are passed
+ * to and received from Oracle directly, with no conversion at all.
  *
  * @warning
  * In wide builds, UTF-16 is used for ALL OCI string traffic — including SQL
@@ -251,7 +262,8 @@
  * @par Choosing a flavor
  *
  *  - Pick OCI_CHARSET_MBCS when your application works in char/UTF-8 —
- *    the common choice on Unix and for portable code.
+ *    the common choice on Unix and for portable code, and the only choice
+ *    off Windows.
  *  - Pick OCI_CHARSET_WIDE when your application is natively wchar_t —
  *    typically Windows UNICODE/_UNICODE programs.
  *

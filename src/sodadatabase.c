@@ -134,10 +134,6 @@ OCI_SodaCollection * OcilibSodaDatabaseCreateCollection
     );
 
     OCI_SodaCollection *coll     = NULL;
-    dbtext             *dbstr    = NULL;
-    dbtext             *dbmta    = NULL;
-    OCI_Int32           dbsize   = -1;
-    OCI_Int32           dbmtalen = -1;
 
     CHECK_PTR(OCI_IPC_SODA_DB, sdb);
     CHECK_PTR(OCI_IPC_STRING, name);
@@ -146,18 +142,15 @@ OCI_SodaCollection * OcilibSodaDatabaseCreateCollection
     ALLOC_HANDLE(OCI_IPC_SODA_COLL, coll);
     coll->sdb = sdb;
 
-    dbstr = OcilibStringGetDBString(sdb->env, name, &dbsize);
-    dbmta = OcilibStringGetDBString(sdb->env, metadata, &dbmtalen);
-
     CHECK_OCI
     (
         sdb->con->err,
         OCISodaCollCreateWithMetadata,
         sdb->con->handle,
-        (const OraText*)dbstr,
-        (ub4)dbsize,
-        (OraText*)dbmta,
-        (ub4)dbmtalen,
+        (const OraText*)(name),
+        (ub4)OcilibStringDBSize(name),
+        (OraText*)(metadata),
+        (ub4)OcilibStringDBSize(metadata),
         &coll->handle,
         sdb->con->err,
         (ub4)OCI_DEFAULT
@@ -169,8 +162,6 @@ OCI_SodaCollection * OcilibSodaDatabaseCreateCollection
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(sdb->env, dbstr);
-        OcilibStringReleaseDBString(sdb->env, dbmta);
 
         if (FAILURE && NULL != coll)
         {
@@ -198,8 +189,6 @@ OCI_SodaCollection * OcilibSodaDatabaseOpenCollection
     );
 
     OCI_SodaCollection *coll   = NULL;
-    dbtext             *dbstr  = NULL;
-    OCI_Int32           dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_DB, sdb);
     CHECK_PTR(OCI_IPC_STRING, name);
@@ -208,14 +197,12 @@ OCI_SodaCollection * OcilibSodaDatabaseOpenCollection
     ALLOC_HANDLE(OCI_IPC_SODA_COLL, coll);
     coll->sdb = sdb;
 
-    dbstr = OcilibStringGetDBString(sdb->env, name, &dbsize);
-
     {
         sword oci_ret = sdb->con->env->api->OCISodaCollOpen
                         (
                             sdb->con->handle,
-                            (const OraText*)dbstr,
-                            (ub4)dbsize,
+                            (const OraText*)(name),
+                            (ub4)OcilibStringDBSize(name),
                             &coll->handle,
                             sdb->con->err,
                             OCI_DEFAULT
@@ -241,7 +228,6 @@ OCI_SodaCollection * OcilibSodaDatabaseOpenCollection
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(sdb->env, dbstr);
 
         if (FAILURE && NULL != coll)
         {
@@ -280,8 +266,8 @@ OCI_SodaCollectionCursor * OcilibSodaDatabaseGetCollections
 
     if (NULL != startName)
     {
-        dbsize = -1;
-        dbstr  = OcilibStringGetDBString(sdb->env, startName, &dbsize);
+        dbstr = (dbtext *) (startName);
+        dbsize = OcilibStringDBSize(startName);
     }
 
     CHECK_OCI
@@ -302,7 +288,6 @@ OCI_SodaCollectionCursor * OcilibSodaDatabaseGetCollections
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(sdb->env, dbstr);
 
         if (FAILURE && NULL != cursor)
         {

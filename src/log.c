@@ -20,6 +20,8 @@
 
 #include "log.h"
 
+#include "stringutils.h"
+
 #include <ctype.h>
 #include <limits.h>
 #include <stdarg.h>
@@ -30,12 +32,6 @@
 
 #ifndef _WINDOWS
   #include <sys/time.h>
-#endif
-
-#if defined(OCI_CHARSET_WIDE) && (WCHAR_MAX == 0xFFFF)
-#define OCILIB_LOG_UTF16 1
-#else
-#define OCILIB_LOG_UTF16 0
 #endif
 
 /* Native (otext) formatted output helpers. In MBCS builds otext is char,
@@ -143,31 +139,6 @@ OCI_Boolean OcilibLogStrEquals
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibLogMbcsToNative
- * --------------------------------------------------------------------------------------------- */
-
-static void OcilibLogMbcsToNative
-(
-    const char *src,
-    otext      *dst,
-    OCI_Int32   max_chars
-)
-{
-    OCI_Int32 i = 0;
-
-    if (src && dst)
-    {
-        while (i < max_chars && src[i])
-        {
-            dst[i] = (otext) (unsigned char) src[i];
-            i++;
-        }
-
-        dst[i] = 0;
-    }
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OcilibLogGetTime
  * --------------------------------------------------------------------------------------------- */
 
@@ -226,134 +197,6 @@ static void OcilibLogGetTime
     else
     {
         *year = *month = *day = *hour = *min = *sec = 0;
-    }
-
-#endif
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibLogCodepointToUTF8
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Int32 OcilibLogCodepointToUTF8
-(
-    OCI_UInt32 code,
-    char      *dst,
-    OCI_Int32  dst_size
-)
-{
-    if (code < 0x80)
-    {
-        if (dst_size < 1) return 0;
-        dst[0] = (char) code;
-        return 1;
-    }
-
-    if (code < 0x800)
-    {
-        if (dst_size < 2) return 0;
-        dst[0] = (char) (0xC0 | (code >> 6));
-        dst[1] = (char) (0x80 | (code & 0x3F));
-        return 2;
-    }
-
-    if (code < 0x10000)
-    {
-        if (dst_size < 3) return 0;
-        dst[0] = (char) (0xE0 | (code >> 12));
-        dst[1] = (char) (0x80 | ((code >> 6) & 0x3F));
-        dst[2] = (char) (0x80 | (code & 0x3F));
-        return 3;
-    }
-
-    if (code < 0x110000)
-    {
-        if (dst_size < 4) return 0;
-        dst[0] = (char) (0xF0 | (code >> 18));
-        dst[1] = (char) (0x80 | ((code >> 12) & 0x3F));
-        dst[2] = (char) (0x80 | ((code >> 6) & 0x3F));
-        dst[3] = (char) (0x80 | (code & 0x3F));
-        return 4;
-    }
-
-    return 0;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibLogNativeToUTF8
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Int32 OcilibLogNativeToUTF8
-(
-    const otext *src,
-    char        *dst,
-    OCI_Int32    dst_size
-)
-{
-    if (!src || !dst || dst_size <= 0)
-    {
-        return 0;
-    }
-
-#ifdef OCI_CHARSET_MBCS
-
-    {
-        OCI_Int32 len = (OCI_Int32) strlen(src);
-
-        if (len > dst_size - 1)
-        {
-            len = dst_size - 1;
-        }
-
-        memcpy(dst, src, (OCI_Size) len);
-        dst[len] = 0;
-
-        return len;
-    }
-
-#else
-
-    {
-        OCI_Int32 i   = 0;
-        OCI_Int32 pos = 0;
-
-        while (src[i] != 0 && pos + 4 < dst_size)
-        {
-            OCI_UInt32 code;
-
-  #if OCILIB_LOG_UTF16
-            code = (OCI_UInt32) (OCI_UInt16) src[i];
-
-            if (code >= 0xD800 && code <= 0xDBFF)
-            {
-                const OCI_UInt32 low = (OCI_UInt32) (OCI_UInt16) src[i + 1];
-
-                if (low >= 0xDC00 && low <= 0xDFFF)
-                {
-                    code = 0x10000 + ((code - 0xD800) << 10) + (low - 0xDC00);
-                    i++;
-                }
-            }
-  #else
-            code = (OCI_UInt32) src[i];
-  #endif
-
-            {
-                const OCI_Int32 n = OcilibLogCodepointToUTF8(code, dst + pos, dst_size - pos);
-
-                if (n == 0)
-                {
-                    break;
-                }
-
-                pos += n;
-            }
-            i++;
-        }
-
-        dst[pos] = 0;
-
-        return pos;
     }
 
 #endif
@@ -503,7 +346,7 @@ static OCI_Boolean OcilibLogInitializeUnlocked(void)
 
         if (output_str && output_str[0])
         {
-            OcilibLogMbcsToNative(output_str, OcilibLogger.output_path, OCI_SIZE_BUFFER);
+            OcilibStringMbcsToNative(output_str, OcilibLogger.output_path, OCI_SIZE_BUFFER);
 
             if (OcilibLogStrEquals(output_str, "STDERR"))
             {
@@ -620,20 +463,20 @@ void OcilibLogWrite
 
     OcilibLogGetTime(&year, &month, &day, &hour, &min, &sec, &msec);
 
-    OcilibLogMbcsToNative(OcilibLogGetLevelName(level),        level_text, OCILIB_LOG_COUNT(level_text));
-    OcilibLogMbcsToNative(OcilibLogGetCategoryName(category),  cat_text,   OCILIB_LOG_COUNT(cat_text));
+    OcilibStringMbcsToNative(OcilibLogGetLevelName(level),        level_text, OCILIB_LOG_COUNT(level_text));
+    OcilibStringMbcsToNative(OcilibLogGetCategoryName(category),  cat_text,   OCILIB_LOG_COUNT(cat_text));
     if (step && step[0])
     {
         char step_buf[32];
 
         snprintf(step_buf, sizeof(step_buf), "%s ", step);
-        OcilibLogMbcsToNative(step_buf, step_text, OCILIB_LOG_COUNT(step_text));
+        OcilibStringMbcsToNative(step_buf, step_text, OCILIB_LOG_COUNT(step_text));
     }
     else
     {
         step_text[0] = 0;
     }
-    OcilibLogMbcsToNative(function ? function : "",            func_text,  OCILIB_LOG_COUNT(func_text));
+    OcilibStringMbcsToNative(function ? function : "",            func_text,  OCILIB_LOG_COUNT(func_text));
 
     OcilibLogSnprintf(prefix, OCILIB_LOG_COUNT(prefix),
                       OTEXT("%04d-%02d-%02d %02d:%02d:%02d.%03d [%s] [%s] %s%s%s"),

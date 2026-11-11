@@ -456,6 +456,9 @@ namespace TestCApi
 
     INSTANTIATE_TEST_CASE_P(TestTimestamp, TestTimestamp, ::testing::ValuesIn(TimestampTypes));
 
+#ifndef OCI_CHARSET_WIDE
+    /* an emulated < 9.2 env is created via OCIEnvCreate, which rejects
+       UTF16 mode on current clients - MBCS-only path */
     TEST(TestTimestamp, Create_PreClient9_Fails)
     {
         /* timestamps/intervals need 9i+ descriptors - creation must fail below */
@@ -468,6 +471,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
+#endif
 
 
     class TestTimestampNullArgs : public ::testing::TestWithParam<NullArgCase> {};

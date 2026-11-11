@@ -36,7 +36,7 @@
                                                             \
         CHECK(OcilibJsonNodeSetValue(node, otype, &value)); \
         SET_SUCCESS();                                      \
-        CLEANUP_AND_EXIT_FUNC();                            \
+        EXIT_FUNC();                            \
 
 
 #define OCL_JSON_NODE_NUMBER_GETTER(otype)                 \
@@ -49,7 +49,7 @@
         CHECK_PTR(OCI_IPC_VOID, value);                    \
         CHECK(OcilibJsonNodeGetValue(node, otype, value)); \
         SET_SUCCESS();                                     \
-        CLEANUP_AND_EXIT_FUNC();
+        EXIT_FUNC();
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
@@ -91,11 +91,10 @@ static void JsonNodeCacheStr
                                             src_len + 1, sizeof(otext), TRUE);
     if (NULL != node->str)
     {
-#if defined(OCI_CHARSET_WIDE)
-        OcilibStringMbcsToNative(src, node->str, (OCI_Int32) src_len);
-#else
-        memcpy(node->str, src, src_len);
-#endif
+        /* JZN oratext payloads are UTF-8 bytes whatever the environment
+           charset — decode them properly on wide builds */
+
+        OcilibStringUTF8ToNative((const char *) src, src_len, node->str, src_len + 1);
     }
 }
 
@@ -111,7 +110,7 @@ static void JsonNodeDropCachedStr
     }
 }
 
-static oratext * JsonNodeGetAnsiString
+static oratext * JsonNodeGetMbcsString
 (
     OCI_Environment *env,
     const otext     *value,
@@ -120,14 +119,14 @@ static oratext * JsonNodeGetAnsiString
 )
 {
     OCI_Int32 dbsize = (length > 0) ? (OCI_Int32)(length * sizeof(otext)) : -1;
-    dbtext   *dbstr  = OcilibStringGetDBAnsiString(env, value, &dbsize);
+    char     *mbstr  = OcilibStringGetDBMbcsString(env, value, &dbsize);
 
     if (NULL != ora_len)
     {
-        *ora_len = (OCI_Size) dbsize / sizeof(dbtext);
+        *ora_len = (OCI_Size) dbsize;
     }
 
-    return (oratext *) dbstr;
+    return (oratext *) mbstr;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -335,7 +334,7 @@ OCI_Boolean OcilibJsonNodeFree
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -469,7 +468,7 @@ OCI_JsonType OcilibJsonNodeGetType
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -555,7 +554,7 @@ OCI_Boolean OcilibJsonNodeIsNull
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -592,7 +591,7 @@ OCI_UInt32 OcilibJsonNodeGetFieldCount
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -683,7 +682,7 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByName
     CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    orakey = JsonNodeGetAnsiString(node->json->env, name, 0, &ora_len);
+    orakey = JsonNodeGetMbcsString(node->json->env, name, 0, &ora_len);
 
     CHECK_NULL(orakey);
 
@@ -720,7 +719,7 @@ OCI_JsonNode * OcilibJsonNodeGetFieldByName
     CLEANUP_AND_EXIT_FUNC
     (
 
-        OcilibStringReleaseDBAnsiString(node->json->env, (dbtext *) orakey);
+        OcilibStringReleaseDBMbcsString(node->json->env, (char *) orakey);
 
         if (FAILURE && NULL != field)
         {
@@ -835,7 +834,7 @@ OCI_UInt32 OcilibJsonNodeGetItemCount
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -980,11 +979,14 @@ OCI_Number * OcilibJsonNodeGetNumber
         otstr = (otext *) OcilibMemoryAlloc(node->json->env, OCI_IPC_VOID,
                                             (OCI_Size) sval.len_jznScalarVal + 1, sizeof(otext), FALSE);
         CHECK_NULL(otstr);
-        OcilibStringMbcsToNative(sval.val_jznScalarVal, otstr, (OCI_Int32) sval.len_jznScalarVal);
+        OcilibStringMbcsToNative((const char *) sval.val_jznScalarVal, otstr,
+                                 (OCI_Size) sval.len_jznScalarVal);
         otstr[sval.len_jznScalarVal] = 0;
 
-        dbstr = OcilibStringGetDBString(node->json->env, otstr, &dbsize);
-        dbfmt = OcilibStringGetDBString(node->json->env, fmt, &fmtsize);
+        dbstr = (dbtext *) (otstr);
+        dbsize = OcilibStringDBSize(otstr);
+        dbfmt = (dbtext *) (fmt);
+        fmtsize = OcilibStringDBSize(fmt);
 
         CHECK_NULL(dbstr);
         CHECK_NULL(dbfmt);
@@ -1008,8 +1010,6 @@ OCI_Number * OcilibJsonNodeGetNumber
     CLEANUP_AND_EXIT_FUNC
     (
         FREE(otstr);
-        OcilibStringReleaseDBString(node->json->env, dbstr);
-        OcilibStringReleaseDBString(node->json->env, dbfmt);
 
         if (FAILURE && NULL != value)
         {
@@ -1074,7 +1074,7 @@ OCI_Boolean OcilibJsonNodeGetBoolean
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1126,7 +1126,7 @@ const void * OcilibJsonNodeGetBinary
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1595,7 +1595,7 @@ OCI_JsonNode * OcilibJsonNodeCreateString
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
     CHECK_JSON_DOC(json);
 
-    orastr = JsonNodeGetAnsiString(json->env, value, length, &ora_len);
+    orastr = JsonNodeGetMbcsString(json->env, value, length, &ora_len);
 
     CHECK_NULL(orastr);
 
@@ -1624,7 +1624,7 @@ OCI_JsonNode * OcilibJsonNodeCreateString
     CLEANUP_AND_EXIT_FUNC
     (
 
-        OcilibStringReleaseDBAnsiString(json->env, (dbtext *) orastr);
+        OcilibStringReleaseDBMbcsString(json->env, (char *) orastr);
 
         if (FAILURE && NULL != node)
         {
@@ -1837,7 +1837,7 @@ OCI_Boolean OcilibJsonNodeSetString
     CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_STRING) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    orastr = JsonNodeGetAnsiString(node->json->env, value, length, &ora_len);
+    orastr = JsonNodeGetMbcsString(node->json->env, value, length, &ora_len);
 
     CHECK_NULL(orastr);
 
@@ -1865,7 +1865,7 @@ OCI_Boolean OcilibJsonNodeSetString
     CLEANUP_AND_EXIT_FUNC
     (
 
-        OcilibStringReleaseDBAnsiString(node->json->env, (dbtext *) orastr);
+        OcilibStringReleaseDBMbcsString(node->json->env, (char *) orastr);
     );
 }
 
@@ -1913,7 +1913,7 @@ OCI_Boolean OcilibJsonNodeSetNumber
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1962,7 +1962,7 @@ OCI_Boolean OcilibJsonNodeSetBoolean
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2016,7 +2016,7 @@ OCI_Boolean OcilibJsonNodeSetBinary
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2063,7 +2063,7 @@ OCI_Boolean OcilibJsonNodeSetNull
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2097,7 +2097,7 @@ OCI_Boolean OcilibJsonNodeSetField
     if (obj->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
     CHECK_COMPAT(value->json == obj->json);
 
-    orakey = JsonNodeGetAnsiString(obj->json->env, name, 0, &ora_len);
+    orakey = JsonNodeGetMbcsString(obj->json->env, name, 0, &ora_len);
 
     CHECK_NULL(orakey);
 
@@ -2117,7 +2117,7 @@ OCI_Boolean OcilibJsonNodeSetField
     CLEANUP_AND_EXIT_FUNC
     (
 
-        OcilibStringReleaseDBAnsiString(obj->json->env, (dbtext *) orakey);
+        OcilibStringReleaseDBMbcsString(obj->json->env, (char *) orakey);
     );
 }
 
@@ -2163,7 +2163,7 @@ OCI_Boolean OcilibJsonNodeSetItem
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2204,7 +2204,7 @@ OCI_Boolean OcilibJsonNodeAppendItem
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2402,7 +2402,7 @@ OCI_Boolean OcilibJsonNodeSetDate
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2442,7 +2442,7 @@ OCI_Boolean OcilibJsonNodeSetTimestamp
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2482,7 +2482,7 @@ OCI_Boolean OcilibJsonNodeSetInterval
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2530,7 +2530,7 @@ OCI_Boolean OcilibJsonNodeInsertItem
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2569,7 +2569,7 @@ OCI_Boolean OcilibJsonNodeRemoveItem
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -2600,7 +2600,7 @@ OCI_Boolean OcilibJsonNodeHasField
     CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    orakey = JsonNodeGetAnsiString(node->json->env, name, 0, &ora_len);
+    orakey = JsonNodeGetMbcsString(node->json->env, name, 0, &ora_len);
 
     CHECK_NULL(orakey);
 
@@ -2622,7 +2622,7 @@ OCI_Boolean OcilibJsonNodeHasField
     CLEANUP_AND_EXIT_FUNC
     (
 
-        OcilibStringReleaseDBAnsiString(node->json->env, (dbtext *) orakey);
+        OcilibStringReleaseDBMbcsString(node->json->env, (char *) orakey);
     );
 }
 
@@ -2654,7 +2654,7 @@ OCI_Boolean OcilibJsonNodeRemoveField
     CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    orakey = JsonNodeGetAnsiString(node->json->env, name, 0, &ora_len);
+    orakey = JsonNodeGetMbcsString(node->json->env, name, 0, &ora_len);
 
     CHECK_NULL(orakey);
 
@@ -2672,7 +2672,7 @@ OCI_Boolean OcilibJsonNodeRemoveField
     CLEANUP_AND_EXIT_FUNC
     (
 
-        OcilibStringReleaseDBAnsiString(node->json->env, (dbtext *) orakey);
+        OcilibStringReleaseDBMbcsString(node->json->env, (char *) orakey);
     );
 }
 
@@ -3446,7 +3446,7 @@ OCI_UInt32 OcilibJsonNodeRemoveItems
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3468,8 +3468,8 @@ OCI_Boolean OcilibJsonNodeRenameField
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    dbtext   *dbold      = NULL;
-    dbtext   *dbnew      = NULL;
+    char     *dbold      = NULL;
+    char     *dbnew      = NULL;
     OCI_Int32 dbold_size = -1;
     OCI_Int32 dbnew_size = -1;
 
@@ -3482,16 +3482,16 @@ OCI_Boolean OcilibJsonNodeRenameField
     CHECK_JSON_DOC(node->json);
     if (node->type != OCI_JNT_OBJECT) { THROW_NO_ARGS(OcilibExceptionTypeNotCompatible); }
 
-    dbold = OcilibStringGetDBAnsiString(node->json->env, old_name, &dbold_size);
+    dbold = OcilibStringGetDBMbcsString(node->json->env, old_name, &dbold_size);
     CHECK_NULL(dbold);
 
-    dbnew = OcilibStringGetDBAnsiString(node->json->env, new_name, &dbnew_size);
+    dbnew = OcilibStringGetDBMbcsString(node->json->env, new_name, &dbnew_size);
     CHECK_NULL(dbnew);
 
     CHECK_JSON(node->json->jdoc,
                0 == JsonDomRenameField(node->json->jdoc, (jznDomObject *)node->handle,
-                                       (oratext *) dbold, (ub2) ((OCI_UInt32) dbold_size / sizeof(dbtext)),
-                                       (oratext *) dbnew, (ub2) ((OCI_UInt32) dbnew_size / sizeof(dbtext))));
+                                       (oratext *) dbold, (ub2) dbold_size,
+                                       (oratext *) dbnew, (ub2) dbnew_size));
 
     SET_SUCCESS();
 #else
@@ -3503,8 +3503,8 @@ OCI_Boolean OcilibJsonNodeRenameField
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBAnsiString(node->json->env, dbold);
-        OcilibStringReleaseDBAnsiString(node->json->env, dbnew);
+        OcilibStringReleaseDBMbcsString(node->json->env, dbold);
+        OcilibStringReleaseDBMbcsString(node->json->env, dbnew);
     );
 }
 
@@ -3551,7 +3551,7 @@ OCI_Boolean OcilibJsonNodeEquals
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -3604,7 +3604,7 @@ OCI_Boolean OcilibJsonNodeAssign
     CHECK(FALSE);
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

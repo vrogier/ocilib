@@ -334,9 +334,8 @@ AC_DEFUN([OCILIB_OPTIONS],
   [  --with-oracle-import=(linkage|runtime)],
   [  ac_oracle_import=$withval ], [ ac_oracle_import="linkage" ])
 
-  AC_ARG_WITH(oracle_charset,
-  [  --with-oracle-charset=(mbcs|wide)],
-  [  ac_oracle_charset=$withval ], [ ac_oracle_charset="mbcs" ])
+  dnl OCILIB_CHARSET is no longer an option: builds are always MBCS on
+  dnl Unix/macOS (wide/UTF-16 builds are supported on Windows only).
 
   OCILIB_IMPORT="OCI_IMPORT_LINKAGE"
   OCILIB_CHARSET="OCI_CHARSET_MBCS"
@@ -349,19 +348,7 @@ AC_DEFUN([OCILIB_OPTIONS],
     AC_MSG_ERROR([Invalid argument ($ac_oracle_import) for --with-oracle-import.])
   fi
 
-  if test x"$ac_oracle_charset" = x"mbcs"; then
-    OCILIB_CHARSET="OCI_CHARSET_MBCS"
-  elif test x"$ac_oracle_charset" = x"ansi" ; then 
-    OCILIB_CHARSET="OCI_CHARSET_MBCS"
-  elif test x"$ac_oracle_charset" = x"unicode" ; then 
-    OCILIB_CHARSET="OCI_CHARSET_WIDE"
-  elif test x"$ac_oracle_charset" = x"wide" ; then 
-    OCILIB_CHARSET="OCI_CHARSET_WIDE"
-  else
-    AC_MSG_ERROR([Invalid argument ($ac_oracle_charset) for --with-oracle-charset.])
-  fi
-
-  AC_MSG_RESULT([import: $ac_oracle_import, charset = $ac_oracle_charset ])
+  AC_MSG_RESULT([import: $ac_oracle_import])
 
   AC_SUBST(OCILIB_IMPORT)
   AC_SUBST(OCILIB_CHARSET)

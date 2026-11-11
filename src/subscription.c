@@ -169,8 +169,6 @@ OCI_Subscription * OcilibSubscriptionCreate
     );
 
     ub4       attr   = 0;
-    OCI_Int32 dbsize = -1;
-    dbtext   *dbstr  = NULL;
 
     OCI_Subscription* sub = NULL;
 
@@ -227,12 +225,10 @@ OCI_Subscription * OcilibSubscriptionCreate
 
     /* name  */
 
-    dbstr = OcilibStringGetDBString(sub->con->env, sub->name, &dbsize);
-
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SUBSCRIPTION, OCI_ATTR_SUBSCR_NAME,
-        sub->handle, dbstr, dbsize,
+        sub->handle, (sub->name), OcilibStringDBSize(sub->name),
         sub->con->err
     );
 
@@ -325,7 +321,6 @@ OCI_Subscription * OcilibSubscriptionCreate
     (
         if (FAILURE)
         {
-            OcilibStringReleaseDBString(sub->con->env, dbstr);
             OcilibSubscriptionUnregister(sub);
             sub = NULL;
         }

@@ -393,13 +393,9 @@ OCI_Boolean OcilibIntervalFromString
         /* context */ OCI_IPC_INTERVAL, itv
     );
 
-    dbtext   *dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv);
     CHECK_PTR(OCI_IPC_STRING,   str);
-
-    dbstr = OcilibStringGetDBString(itv->env, str, &dbsize);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -408,7 +404,7 @@ OCI_Boolean OcilibIntervalFromString
         itv->env->err,
         OCIIntervalFromText,
         (dvoid *) itv->env->handle, itv->env->err,
-        (OraText *) dbstr, (OCI_Size) dbsize,
+        (OraText *) (str), (OCI_Size) OcilibStringDBSize(str),
         itv->handle
     );
 
@@ -416,10 +412,7 @@ OCI_Boolean OcilibIntervalFromString
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(itv->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -452,7 +445,7 @@ OCI_Boolean OcilibIntervalToString
 
     str[0] = 0;
 
-    dbstr = OcilibStringGetDBString(itv->env, str, &dbsize);
+    dbstr = (dbtext *) (str);
 
     len = (OCI_Size) dbsize;
 
@@ -478,7 +471,6 @@ OCI_Boolean OcilibIntervalToString
 
     dbsize = (OCI_Int32)len;
 
-    OcilibStringCopyDBStringToNativeString(itv->env, dbstr, str, dbcharcount(dbsize));
 
     /* set null string terminator */
 
@@ -486,10 +478,7 @@ OCI_Boolean OcilibIntervalToString
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(itv->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -508,13 +497,9 @@ OCI_Boolean OcilibIntervalFromTimeZone
         /* context */ OCI_IPC_INTERVAL, itv
     );
 
-    dbtext   *dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv);
     CHECK_PTR(OCI_IPC_STRING,   str);
-
-    dbstr = OcilibStringGetDBString(itv->env, str, &dbsize);
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
@@ -523,18 +508,15 @@ OCI_Boolean OcilibIntervalFromTimeZone
         itv->env->err,
         OCIIntervalFromTZ,
         (dvoid *) itv->env->handle, itv->env->err,
-        (CONST OraText *) dbstr,
-        (OCI_Size) dbsize, itv->handle
+        (CONST OraText *) (str),
+        (OCI_Size) OcilibStringDBSize(str), itv->handle
     );
 
     SET_SUCCESS();
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(itv->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

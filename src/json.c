@@ -227,7 +227,7 @@ OCI_Boolean OcilibJsonFree
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -298,7 +298,8 @@ OCI_Boolean OcilibJsonLoadText
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    dbstr = OcilibStringGetDBString(json->con->env, json_text, &dbsize);
+    dbstr = (dbtext *) (json_text);
+    dbsize = (0 == length ? OcilibStringDBSize(json_text) : dbsize);
 
     CHECK_NULL(dbstr);
 
@@ -330,13 +331,7 @@ OCI_Boolean OcilibJsonLoadText
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        if (NULL != dbstr)
-        {
-            OcilibStringReleaseDBString(json->con->env, dbstr);
-        }
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -386,7 +381,7 @@ OCI_Boolean OcilibJsonLoadBinary
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -575,7 +570,7 @@ OCI_Boolean OcilibJsonToBinary
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -704,7 +699,7 @@ OCI_Boolean OcilibJsonSetMutable
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -748,7 +743,7 @@ OCI_Boolean OcilibJsonIsMutable
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -886,7 +881,7 @@ OCI_Boolean OcilibJsonSetRoot
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

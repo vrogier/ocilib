@@ -145,10 +145,10 @@ OCI_Boolean OcilibFileGetInfo
     /* retrieve name */
 
     dbsize1 = (OCI_Int32) OCI_SIZE_DIRECTORY  * (OCI_Int32) sizeof(otext);
-    dbstr1  = OcilibStringGetDBString(file->con->env, file->dir, &dbsize1);
+    dbstr1 = (dbtext *) (file->dir);
 
     dbsize2 = (OCI_Int32) OCI_SIZE_FILENAME  * (OCI_Int32) sizeof(otext);
-    dbstr2  = OcilibStringGetDBString(file->con->env, file->name, &dbsize2);
+    dbstr2 = (dbtext *) (file->name);
 
     usize1 = (ub2) dbsize1;
     usize2 = (ub2) dbsize2;
@@ -165,16 +165,10 @@ OCI_Boolean OcilibFileGetInfo
     dbsize1 = (OCI_Int32) usize1;
     dbsize2 = (OCI_Int32) usize2;
 
-    OcilibStringCopyDBStringToNativeString(file->con->env, dbstr1, file->dir,  dbcharcount(dbsize1));
-    OcilibStringCopyDBStringToNativeString(file->con->env, dbstr2, file->name, dbcharcount(dbsize2));
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(file->con->env, dbstr1);
-        OcilibStringReleaseDBString(file->con->env, dbstr2);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -573,15 +567,8 @@ OCI_Boolean OcilibFileSetName
         /* context */ OCI_IPC_FILE, file
     );
 
-    dbtext   *dbstr1  = NULL;
-    dbtext   *dbstr2  = NULL;
-    OCI_Int32 dbsize1 = -1;
-    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_FILE, file);
-
-    dbstr1 = OcilibStringGetDBString(file->con->env, dir,  &dbsize1);
-    dbstr2 = OcilibStringGetDBString(file->con->env, name, &dbsize2);
 
     CHECK_OCI
     (
@@ -590,19 +577,15 @@ OCI_Boolean OcilibFileSetName
         file->con->env->handle,
         file->con->err,
         &file->handle,
-        (OraText *) dbstr1, (ub2) dbsize1,
-        (OraText *) dbstr2, (ub2) dbsize2
+        (OraText *) (dir), (ub2) OcilibStringDBSize(dir),
+        (OraText *) (name), (ub2) OcilibStringDBSize(name)
     );
 
     CHECK(OcilibFileGetInfo(file));
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(file->con->env, dbstr1);
-        OcilibStringReleaseDBString(file->con->env, dbstr2);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

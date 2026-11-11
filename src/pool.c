@@ -146,13 +146,11 @@ OCI_Pool * OcilibPoolCreate
         /* context */ OCI_IPC_ENVIRONMENT, env
     );
 
-    dbtext *dbstr      = NULL;
     dbtext* dbstr_name = NULL;
     dbtext* dbstr_db   = NULL;
     dbtext* dbstr_user = NULL;
     dbtext* dbstr_pwd  = NULL;
 
-    OCI_Int32 dbsize      = -1;
     OCI_Int32 dbsize_name = -1;
     OCI_Int32 dbsize_db   = -1;
     OCI_Int32 dbsize_user = -1;
@@ -230,18 +228,12 @@ OCI_Pool * OcilibPoolCreate
             (
                 driver_version,
                 osizeof(driver_version) - (OCI_Size)1,
-    #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
-                OTEXT("%ls : %d.%d.%d"),
-    #else
                 OTEXT("%s : %d.%d.%d"),
-    #endif
                 OCILIB_DRIVER_NAME,
                 OCILIB_MAJOR_VERSION,
                 OCILIB_MINOR_VERSION,
                 OCILIB_REVISION_VERSION
             );
-
-            dbstr = OcilibStringGetDBString(pool->env, driver_version, &dbsize);
 
             /* allocate authentication handle */
 
@@ -256,7 +248,7 @@ OCI_Pool * OcilibPoolCreate
             CHECK_ATTRIB_SET
             (
                 OCI_HTYPE_AUTHINFO, OCI_ATTR_DRIVER_NAME,
-                pool->authp, dbstr, dbsize,
+                pool->authp, (driver_version), OcilibStringDBSize(driver_version),
                 pool->err
             );
 
@@ -275,9 +267,12 @@ OCI_Pool * OcilibPoolCreate
 
         /* create the pool */
 
-        dbstr_db   = OcilibStringGetDBString(pool->env, pool->db,   &dbsize_db);
-        dbstr_user = OcilibStringGetDBString(pool->env, pool->user, &dbsize_user);
-        dbstr_pwd  = OcilibStringGetDBString(pool->env, pool->pwd,  &dbsize_pwd);
+        dbstr_db = (dbtext *) (pool->db);
+        dbsize_db = OcilibStringDBSize(pool->db);
+        dbstr_user = (dbtext *) (pool->user);
+        dbsize_user = OcilibStringDBSize(pool->user);
+        dbstr_pwd = (dbtext *) (pool->pwd);
+        dbsize_pwd = OcilibStringDBSize(pool->pwd);
 
         if (OCI_HTYPE_CPOOL == pool->kind)
         {
@@ -357,10 +352,6 @@ OCI_Pool * OcilibPoolCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(pool->env, dbstr);
-        OcilibStringReleaseDBString(pool->env, dbstr_db);
-        OcilibStringReleaseDBString(pool->env, dbstr_user);
-        OcilibStringReleaseDBString(pool->env, dbstr_pwd);
 
         if (FAILURE)
         {

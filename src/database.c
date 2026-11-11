@@ -57,8 +57,6 @@ OCI_Boolean OcilibDatabaseStartup
 
     OCIAdmin* adm = NULL;
 
-    dbtext  * dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
 #endif
 
@@ -82,12 +80,10 @@ OCI_Boolean OcilibDatabaseStartup
 
             /* set client file if provided */
 
-            dbstr = OcilibStringGetDBString(env, spfile, &dbsize);
-
             CHECK_ATTRIB_SET
             (
                 OCI_HTYPE_ADMIN, OCI_ATTR_ADMIN_PFILE,
-                adm, dbstr, dbsize,
+                adm, (dbtext *) (spfile), OcilibStringDBSize(spfile),
                 env->err
             );
         }
@@ -134,7 +130,6 @@ OCI_Boolean OcilibDatabaseStartup
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(env, dbstr);
 
         if (NULL != stmt)
         {

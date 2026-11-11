@@ -169,12 +169,6 @@ OCI_TypeInfo * OcilibTypeInfoGet
     otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
     OCI_Size  max_chars = sizeof(buffer) / sizeof(otext) - 1;
-    dbtext  * dbstr1    = NULL;
-    OCI_Int32 dbsize1   = -1;
-    dbtext  * dbstr2    = NULL;
-    OCI_Int32 dbsize2   = -1;
-    dbtext  * dbstr3    = NULL;
-    OCI_Int32 dbsize3   = -1;
     sb4       pbsp      = 1;
 
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
@@ -269,8 +263,6 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
         ostrncat(str, typinf->name, max_chars);
 
-        dbstr1 = OcilibStringGetDBString(typinf->con->env, str, &dbsize1);
-
         /* set public scope to include synonyms */
 
         CHECK_ATTRIB_SET
@@ -282,8 +274,8 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
         /* describe call */
 
-        dvoid *describe_obj  = (dvoid*) dbstr1;
-        ub4    describe_size = (ub4) dbsize1;
+        dvoid *describe_obj  = (dvoid*) (str);
+        ub4    describe_size = (ub4) OcilibStringDBSize(str);
         ub1    describe_type = OCI_OTYPE_NAME;
 
         if (OCI_TIF_TYPE == type)
@@ -298,16 +290,13 @@ OCI_TypeInfo * OcilibTypeInfoGet
             /* OCITypeByName() does not support package level types (PL/SQL records and
                PL/SQL index by tables). When it fails, fall back to describing the object */
 
-            dbstr2 = OcilibStringGetDBString(typinf->con->env, typinf->schema, &dbsize2);
-            dbstr3 = OcilibStringGetDBString(typinf->con->env, typinf->name, &dbsize3);
-
             OCI_CALL
             (
                 ret,
                 OCITypeByName,
                 con->env->handle, con->err, con->handle,
-                (CONST text*) dbstr2, (ub4) dbsize2,
-                (CONST text*) dbstr3, (ub4) dbsize3,
+                (CONST text*) (typinf->schema), (ub4) OcilibStringDBSize(typinf->schema),
+                (CONST text*) (typinf->name), (ub4) OcilibStringDBSize(typinf->name),
                 (text*)0, 0,
                 OCI_DURATION_SESSION, OCI_TYPEGET_ALL,
                 &tdo
@@ -635,9 +624,6 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(con->env, dbstr1);
-        OcilibStringReleaseDBString(con->env, dbstr2);
-        OcilibStringReleaseDBString(con->env, dbstr3);
 
         /* free temporary strings */
 

@@ -1687,11 +1687,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
         case SQLT_AFC:
         {
 
-#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
-            const otext *fmt = OTEXT("%lsCHAR(%i%ls)");
-#else
             const otext *fmt = OTEXT("%sCHAR(%i%s)");
-#endif
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, fmt,
                                                    SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
                                                    (OCI_Int32) (col->charused ? col->charsize : col->size),
@@ -1702,11 +1698,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
         case SQLT_STR:
         case SQLT_CHR:
         {
-#if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
-            const otext *fmt = OTEXT("%lsVARCHAR(%i%ls)");
-#else
             const otext *fmt = OTEXT("%sVARCHAR(%i%s)");
-#endif
 
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, fmt, SQLCS_NCHAR == col->csfrm ? OTEXT("N") : OTEXT(""),
                                                    (OCI_Int32) (col->charused ? col->charsize : col->size),
@@ -1941,11 +1933,7 @@ OCI_UInt32 OcilibColumnGetFullSqlType
                 OcilibStringFormat(str_dim, OCI_SIZE_FORMAT, OTEXT("%i"), col->dimension);
             }
 
-  #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
-            const otext *fmt = OTEXT("VECTOR(%ls, %ls)");
-  #else
             const otext *fmt = OTEXT("VECTOR(%s, %s)");
-  #endif
 
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, fmt, str_dim, str_fmt);
 

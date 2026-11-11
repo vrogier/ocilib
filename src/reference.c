@@ -459,7 +459,7 @@ OCI_Boolean OcilibReferenceToText
     if (IS_WIDE_ENV())
     {
         /* need to convert temporary MBCS buffer to Native in wide strings mode */
-        OcilibStringMbcsToNative(dbstr, str, (OCI_Int32) char_count);
+        OcilibStringMbcsToNative((const char *) dbstr, str, (OCI_Size) char_count);
     }
 
     /* set null string terminator */

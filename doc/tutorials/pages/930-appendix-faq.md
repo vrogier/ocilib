@@ -38,7 +38,7 @@ part: 10
 
 | Symptom | Cause |
 |---------|-------|
-| `LNK2019 OCI_*` | wrong import lib: `ocilibm.lib` (MBCS) vs `ocilibw.lib` (wide) |
+| `LNK2019 OCI_*` | wrong import lib: `ocilib.lib` (MBCS) vs `ocilibw.lib` (wide) |
 | `undefined reference to OCI_*` | missing `-locilib` / wrong lib dir |
 | `ocilib.h not found` | include path — repo `include/` or install `include/` |
 | Garbled strings | MBCS app ↔ wide lib mismatch — rebuild matching |

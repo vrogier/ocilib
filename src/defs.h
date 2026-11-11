@@ -383,9 +383,6 @@ typedef OCI_UInt16 dbtext;
 
 #define OCI_DEFAUT_STMT_CACHE_SIZE     20
 
-#define WCHAR_2_BYTES   0xFFFF
-#define WCHAR_4_BYTES   0x7FFFFFFF
-
 #define SCALE_FLOAT     (-127)
 
 #define OCI_VARS_COUNT 1

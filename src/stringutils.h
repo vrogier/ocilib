@@ -53,56 +53,79 @@ OCI_SYM_LOCAL void OcilibStringTranslate
     OCI_Size  size_char_out
 );
 
-#define OcilibStringMbcsToNative(s, d, l) \
-        OcilibStringTranslate((void *) (s), (void *) (d), l, sizeof(char),   sizeof(otext))
-
-#define OcilibStringNativeToMbcs(s, d, l) \
-        OcilibStringTranslate((void *) (s), (void *) (d), l, sizeof(otext),  sizeof(char))
-
-#define OcilibStringUTF16ToUTF32(s, d, l) \
-        OcilibStringTranslate((void *) (s), (void *) (d), l, sizeof(OCI_Int16),  sizeof(OCI_Int32))
-
-#define OcilibStringUTF32ToUTF16(s, d, l) \
-        OcilibStringTranslate((void *) (s), (void *) (d), l, sizeof(OCI_Int32),    sizeof(OCI_Int16))
-
 #define OcilibStringOracleToNative(s, d, l) \
         OcilibStringTranslate((void *) (s), (void *) (d), l, sizeof(dbtext), sizeof(otext))
 
 #define OcilibStringRawCopy(s, d, l) \
         OcilibStringTranslate((void *) (s), (void *) (d), l, sizeof(otext),  sizeof(otext))
 
-OCI_SYM_LOCAL dbtext * OcilibStringGetDBString
+/* OcilibStringMbcsToNative / OcilibStringNativeToMbcs
+ *
+ * Byte-level MBCS <-> native otext conversion: on MBCS builds a bounded
+ * copy, on wide builds per-element widen/narrow (session charset / ASCII
+ * semantics — NOT a UTF-8 codec). 'count' bounds the number of source
+ * elements read; the destination must hold count + 1 elements and is always
+ * NUL-terminated. Returns the number of elements written. */
+
+OCI_SYM_LOCAL OCI_Size OcilibStringMbcsToNative
 (
-    OCI_Environment *env,
-    const otext     *src,
-    OCI_Int32       *size
+    const char* src,
+    otext     * dst,
+    OCI_Size    count
 );
 
-OCI_SYM_LOCAL dbtext* OcilibStringGetDBAnsiString
+OCI_SYM_LOCAL OCI_Size OcilibStringNativeToMbcs
+(
+    const otext* src,
+    char       * dst,
+    OCI_Size     count
+);
+
+/* OcilibStringUTF8ToNative / OcilibStringNativeToUTF8
+ *
+ * Shared UTF-8 <-> otext codec pair for OCI data streams that are byte
+ * oriented whatever the environment charset (JZN/JSON). On MBCS builds
+ * these are bounded copies; on (Windows) wide builds they perform real
+ * UTF-8 <-> UTF-16 transcoding, including surrogate pairs.
+ *
+ * 'src_len' is the input length in elements (bytes for UTF-8 input, otext
+ * for native input; (OCI_Size)-1 means NUL-terminated). 'dst_cap' is the
+ * output capacity in elements including the terminating NUL; the result is
+ * always NUL-terminated when dst_cap > 0. Both return the number of output
+ * elements produced or required — pass dst == NULL for a sizing query. */
+
+OCI_SYM_LOCAL OCI_Size OcilibStringUTF8ToNative
+(
+    const char* src,
+    OCI_Size    src_len,
+    otext     * dst,
+    OCI_Size    dst_cap
+);
+
+OCI_SYM_LOCAL OCI_Size OcilibStringNativeToUTF8
+(
+    const otext* src,
+    OCI_Size     src_len,
+    char       * dst,
+    OCI_Size     dst_cap
+);
+
+OCI_SYM_LOCAL OCI_Int32 OcilibStringDBSize
+(
+    const otext * src
+);
+
+OCI_SYM_LOCAL char* OcilibStringGetDBMbcsString
 (
     OCI_Environment* env,
     const otext    * src,
     OCI_Int32      * size
 );
 
-OCI_SYM_LOCAL void OcilibStringReleaseDBAnsiString
+OCI_SYM_LOCAL void OcilibStringReleaseDBMbcsString
 (
     OCI_Environment* env,
-    dbtext         * str
-);
-
-OCI_SYM_LOCAL void OcilibStringReleaseDBString
-(
-    OCI_Environment *env,
-    dbtext          *str
-);
-
-OCI_SYM_LOCAL OCI_Int32 OcilibStringCopyDBStringToNativeString
-(
-    OCI_Environment *env,
-    const dbtext    *src,
-    otext           *dst,
-    OCI_Int32        len
+    char           * str
 );
 
 OCI_SYM_LOCAL otext * OcilibStringDuplicateFromDBString

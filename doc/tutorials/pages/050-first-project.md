@@ -83,8 +83,8 @@ g++  -std=c++17 app.cpp $(pkg-config --cflags --libs ocilib) -o app
 
 ```powershell
 # Windows (x64 MBCS build of ocilib)
-cl /std:c17   /I include app.c   /link lib64\ocilibm.lib
-cl /std:c++17 /I include app.cpp /link lib64\ocilibm.lib
+cl /std:c17   /I include app.c   /link lib64\ocilib.lib
+cl /std:c++17 /I include app.cpp /link lib64\ocilib.lib
 ```
 
 ```cmake
@@ -92,7 +92,7 @@ cl /std:c++17 /I include app.cpp /link lib64\ocilibm.lib
 cmake_minimum_required(VERSION 3.20)
 project(ocilib_app C CXX)
 
-find_library(OCILIB_LIB NAMES ocilibm ocilib
+find_library(OCILIB_LIB NAMES ocilib ocilib
              PATHS ${OCILIB_ROOT}/lib64 /usr/local/lib)
 find_path(OCILIB_INC NAMES ocilib.h
           PATHS ${OCILIB_ROOT}/include /usr/local/include)
@@ -129,7 +129,7 @@ Plain `const char*` literals happen to compile on MBCS builds, and C++ samples a
 
 ## Common pitfalls
 
-- **Linking the wrong lib name on Windows** — `ocilibm.lib` (MBCS) vs `ocilibw.lib`
+- **Linking the wrong lib name on Windows** — `ocilib.lib` (MBCS) vs `ocilibw.lib`
   (wide); they are not interchangeable.
 - **`fatal error: ocilib.h: No such file`** — include dir missing; point at the repo's
   `include/` or the install `include/`.
@@ -139,7 +139,7 @@ Plain `const char*` literals happen to compile on MBCS builds, and C++ samples a
 ## Recap
 
 - One include, one env object, try/catch (C++) or NULL check (C).
-- `pkg-config --cflags --libs ocilib` on Linux; `ocilibm.lib`/`ocilibw.lib` on Windows.
+- `pkg-config --cflags --libs ocilib` on Linux; `ocilib.lib`/`ocilibw.lib` on Windows.
 - `otext`/`OTEXT()`/`ocilib::String` keep your code charset-agnostic.
 
 **Next:** make the environment actually *do* something — error handlers and env flags.

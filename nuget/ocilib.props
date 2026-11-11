@@ -38,13 +38,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x86'">
     <Link>
-      <AdditionalDependencies>ocilibm.lib;$(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ocilib.lib;$(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x64'">
     <Link>
-      <AdditionalDependencies>ocilibm.lib;$(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ocilib.lib;$(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

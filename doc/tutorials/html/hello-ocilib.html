@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The environment — init, flags &amp; error handler — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0" open><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="charsets.html">Charset builds</a></li><li class="active"><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-beginner">Beginner</span></div>
+    <h1 id="the-environment-init-flags-error-handler">The environment — init, flags &amp; error handler</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>create and destroy the environment correctly</li>
+<li>write an error handler and understand when it fires</li>
+<li>pick the right environment flags for your application</li>
+<li>point OCILIB at a non-standard Oracle client location</li>
+</ul>
+<h2 id="the-environment">The environment</h2>
+<p>The <strong>environment</strong> is OCILIB's root object — the context in which everything else
+exists. Creating it does three jobs at once:</p>
+<ul>
+<li>it <strong>loads the Oracle client</strong> (<code>oci.dll</code> / <code>libclntsh.so</code>) and prepares OCILIB's
+  session with it;</li>
+<li>it <strong>owns the error channel</strong> — your error callback lives here, and every failing
+  call on any child handle reports through it;</li>
+<li>it is the <strong>parent of all other objects</strong> — connections, pools, datatypes… every
+  handle belongs to exactly one environment.</li>
+</ul>
+<p>Think of it as "the library, initialized": nothing works until it exists, and freeing it ends the program's relationship with Oracle.</p>
+<p>One per program is the norm; v5 allows several (independent islands), but handles never cross environments.</p>
+<p>Creating it takes three inputs — your error callback, an optional path to the
+Oracle client, and a set of flags:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Environment</span><span class="w"> </span><span class="o">*</span><span class="n">OCI_EnvironmentCreate</span>
+<span class="p">(</span>
+<span class="w">    </span><span class="n">POCI_ERROR</span><span class="w">       </span><span class="n">handler</span><span class="p">,</span><span class="w">   </span><span class="cm">/* your error callback (may be NULL) */</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">otext</span><span class="w">      </span><span class="o">*</span><span class="n">libpath</span><span class="p">,</span><span class="w">   </span><span class="cm">/* Oracle client path (may be NULL) */</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">int</span><span class="w">      </span><span class="n">mode</span><span class="w">       </span><span class="cm">/* environment flags */</span>
+<span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">ocilib</span><span class="o">::</span><span class="n">Environment</span><span class="w"> </span><span class="nf">env</span><span class="p">(</span><span class="n">mode</span><span class="p">);</span><span class="w">            </span><span class="cm">/* flags + optional libpath ctor arg */</span>
+<span class="n">ocilib</span><span class="o">::</span><span class="n">Environment</span><span class="w"> </span><span class="nf">env</span><span class="p">(</span><span class="n">mode</span><span class="p">,</span><span class="w"> </span><span class="n">libpath</span><span class="p">);</span>
+</pre></div>
+</div></div>
+<ul>
+<li><strong><code>handler</code></strong> — a function of type <code>void (*)(OCI_Error *err)</code> called on every error.
+  C++ has no callback: failures arrive as <code>ocilib::Exception</code>.</li>
+<li><strong><code>libpath</code></strong> — directory or file where the Oracle client library lives; empty means
+  "search the usual places" (<code>PATH</code>, <code>LD_LIBRARY_PATH</code>, registry on Windows).</li>
+<li><strong><code>mode</code></strong> — a bit mask of environment flags:</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>C enum</th>
+<th>C++ enum</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_ENV_DEFAULT</code></td>
+<td><code>Environment::Default</code></td>
+<td>plain single-threaded app</td>
+</tr>
+<tr>
+<td><code>OCI_ENV_THREADED</code></td>
+<td><code>Environment::Threaded</code></td>
+<td>app uses multiple threads (Part 5)</td>
+</tr>
+<tr>
+<td><code>OCI_ENV_EVENTS</code></td>
+<td><code>Environment::Events</code></td>
+<td>subscriptions/HA events (Part 7)</td>
+</tr>
+</tbody>
+</table>
+<p>Destroying the environment releases everything — do it <strong>once</strong>, <strong>last</strong>, after
+every child handle is gone. In C++ destruction is automatic; in C it's explicit:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_EnvironmentFree</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="cm">/* nothing — env's destructor runs at end of scope */</span>
+</pre></div>
+</div></div>
+<h2 id="the-error-handler-minimal-and-realistic">The error handler, minimal and realistic</h2>
+<p>The handler receives a filled error object — its fields are the subject of the next
+page. For now, printing the message is plenty:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"ocilib.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+
+<span class="k">static</span><span class="w"> </span><span class="kt">void</span><span class="w"> </span><span class="nf">err_handler</span><span class="p">(</span><span class="n">OCI_Error</span><span class="w"> </span><span class="o">*</span><span class="n">err</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"[ocilib] %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ErrorGetString</span><span class="p">(</span><span class="n">err</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Environment</span><span class="w"> </span><span class="o">*</span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_EnvironmentCreate</span><span class="p">(</span><span class="n">err_handler</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span>
+<span class="w">                                                 </span><span class="n">OCI_ENV_DEFAULT</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="o">!</span><span class="n">env</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">fprintf</span><span class="p">(</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="s">"Cannot initialize OCILIB — is the Oracle client on PATH?</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_FAILURE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"OCILIB environment ready.</span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_EnvironmentFree</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"ocilib.hpp"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+
+<span class="k">using</span><span class="w"> </span><span class="k">namespace</span><span class="w"> </span><span class="nn">ocilib</span><span class="p">;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">try</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">Environment</span><span class="w"> </span><span class="n">env</span><span class="p">(</span><span class="n">Environment</span><span class="o">::</span><span class="n">Default</span><span class="p">);</span><span class="w">   </span><span class="cm">/* RAII — no free, no handler */</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"OCILIB environment ready.</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ex</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cerr</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"Cannot initialize OCILIB: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ex</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_FAILURE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<div class="highlight"><pre><span></span><code><span class="go">OCILIB environment ready.</span>
+</code></pre></div>
+
+<div class="admonition note">
+<p class="admonition-title">C++ has no error callback</p>
+<p>The C++ layer converts every failure into <code>ocilib::Exception</code> — that <em>is</em> the
+error channel, so the <code>Environment</code> takes only flags and an optional lib path.</p>
+</div>
+<h2 id="when-does-the-handler-fire">When does the handler fire?</h2>
+<p>On <strong>every</strong> failed public call — connection failures, SQL syntax errors, constraint violations, and even <em>warnings</em> once you enable them on the environment (next page shows the severity/category fields).</p>
+<p>A handler that prints is great for learning; real apps usually log and let last-error polling carry details to the call site.</p>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>Every OCILIB program — hello-world or production — runs the same five steps:</p>
+<ol>
+<li><strong>Create the environment</strong> — <code>OCI_EnvironmentCreate(handler, NULL, flags)</code>
+   or <code>Environment env;</code> in C++. Nothing works without it.</li>
+<li><strong>Connect</strong> — <code>OCI_ConnectionCreate</code> with db string, user, password.</li>
+<li><strong>Do work</strong> — statements, fetches, binds; this is where your code lives.</li>
+<li><strong>Disconnect</strong> — <code>OCI_ConnectionFree</code> releases the session.</li>
+<li><strong>Free the environment</strong> — last, after every child handle is gone.</li>
+</ol>
+<p>Hints: order matters — environment first, free last, children in between;
+the C++ <code>Environment</code> is RAII — the ctor/dtor bracket the same calls; and the
+error handler you register at step 1 is what <code>OCI_GetLastError</code> consults
+throughout — write it before you need it.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Pass a bogus <code>libpath</code> — observe the environment creation fail cleanly.</li>
+<li>In C, pass <code>NULL</code> as the handler and poll the last error after a failed call:
+   the same error is still retrievable.</li>
+<li>Skim <code>demo/err.c</code>, <code>demo/err_ctx.c</code>, <code>demo/err_warning.c</code> — three complete
+   error-handling demos matching this page.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Calling anything before the environment exists</strong> — every call fails until it does.</li>
+<li><strong>Two environments, one program</strong> — allowed since v5, but each owns its handles;
+  mixing handles across environments fails fast. Keep one env unless you have a reason.</li>
+<li><strong>Forgetting the threaded flag</strong> in a multithreaded app — undefined behavior; see
+  the threading page in Part 5.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>Create the environment first, free it last — <code>Environment</code> RAII in C++.</li>
+<li>Flags: <code>Default</code> / <code>Threaded</code> / <code>Events</code>; <code>libpath</code> only for exotic client layouts.</li>
+<li>Errors arrive through your C callback or as C++ exceptions — same information.</li>
+</ul>
+<p><strong>Next:</strong> put it to work — open your first connection.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="charsets.html"><span class="pn-dir">← Previous</span>Charset builds</a><a class="pn-link pn-next" href="first-connection.html"><span class="pn-dir">Next →</span>Your first connection</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

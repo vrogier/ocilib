@@ -9,7 +9,7 @@ Built on Oracle Call Interface (OCI), it combines broad feature coverage with fa
 
 Use its modern C and C++ APIs to build applications ranging from everyday SQL clients to systems that rely on Oracle's advanced data and availability features.
 
-OCILIB supports MBCS and wide (UTF-16) applications, adapts to the Oracle client available at runtime, and runs across major platforms.
+OCILIB supports MBCS applications on all platforms and wide (UTF-16) applications on Windows, adapts to the Oracle client available at runtime, and runs across major platforms.
 
  @section Version Version information
  
@@ -21,7 +21,7 @@ Core:
 
  - Cross-platform C API (ISO C11), with 32-bit and 64-bit support
  - Modern C++ API (C++17), header-only, with iterators usable with standard algorithms
- - MBCS and wide builds, including UTF-8 (MBCS) and UTF-16 (wide) strings
+ - MBCS builds on all platforms (UTF-8 or ANSI via NLS_LANG); wide UTF-16 builds on Windows
  - Automatic adaptation to the runtime Oracle client version
  - Runtime loading of Oracle client libraries
  - SQL and PL/SQL, including blocks, cursors, index-by tables, and nested tables

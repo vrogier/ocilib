@@ -1252,19 +1252,10 @@ const otext * OcilibObjectGetString
 
         if (value && ind && (OCI_IND_NULL != *ind))
         {
-            if (obj->con->env->use_wide_char_conv)
-            {
-                str = OcilibStringFromStringPtr(obj->con->env, obj->con->env->handle, *value,
-                                                &obj->tmpbufs[index],
-                                                &obj->tmpsizes[index]);
-            }
-            else
-            {
-                oratext *ocistr;
+            oratext *ocistr;
 
-                OCI_CALL(ocistr, OCIStringPtr, obj->con->env->handle, *value);
-                str = (otext *) ocistr;
-            }
+            OCI_CALL(ocistr, OCIStringPtr, obj->con->env->handle, *value);
+            str = (otext *) ocistr;
         }
     }
     else

@@ -488,12 +488,6 @@ OCI_Boolean OcilibLobRead
     else
     {
         lob->offset += (OCI_UInt64) (*char_count);
-
-        if (!IS_UTF8_ENV() && lob->con->env->use_wide_char_conv)
-        {
-            OcilibStringUTF16ToUTF32(buffer, buffer, (OCI_Int32) (*char_count));
-            (*byte_count) = (ub4) (*char_count) * (ub4) sizeof(otext);
-        }
     }
 
     SET_SUCCESS();
@@ -564,7 +558,7 @@ OCI_Boolean OcilibLobWrite
             }
         }
 
-        obuf = OcilibStringGetDBString(lob->con->env, (otext *) buffer, (OCI_Int32 *) byte_count);
+        obuf = (dbtext *) buffer;
     }
     else
     {
@@ -645,7 +639,6 @@ OCI_Boolean OcilibLobWrite
     (
         if (obuf != buffer)
         {
-            OcilibStringReleaseDBString(lob->con->env, (dbtext*)obuf);
         }
     );
 }
@@ -1045,7 +1038,7 @@ OCI_Boolean OcilibLobAppend
             }
         }
 
-        obuf = OcilibStringGetDBString(lob->con->env, (const otext *) buffer, (OCI_Int32 *) byte_count);
+        obuf = (dbtext *) buffer;
     }
     else
     {
@@ -1127,7 +1120,6 @@ OCI_Boolean OcilibLobAppend
     (
         if (obuf != buffer)
         {
-            OcilibStringReleaseDBString(lob->con->env, (dbtext*)obuf);
         }
     );
 }

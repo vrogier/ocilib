@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Exact numbers — OCI_Number — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2" open><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li class="active"><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span><span class="badge badge-demo">demo/number.c</span></div>
+    <h1 id="exact-numbers-the-number-object">Exact numbers — the <code>Number</code> object</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>decide when <code>double</code> isn't good enough and <code>Number</code> is</li>
+<li>convert between <code>Number</code> and C types/text</li>
+<li>do exact decimal arithmetic</li>
+</ul>
+<h2 id="in-context-why-number-is-not-a-double">In context — why NUMBER is not a double</h2>
+<p>Oracle <code>NUMBER</code> is packed decimal, not binary floating point: up to 38
+significant decimal digits stored digit-by-digit, which means <code>0.1 + 0.2</code>
+returns exactly <code>0.3</code> and money computations never drift. A C <code>double</code> holds ~15
+significant digits in binary — the moment you fetch a 38-digit NUMBER into one,
+you have silently rounded. That is the gap <code>OCI_Number</code> exists to fill: it is a
+descriptor holding the exact decimal, with conversions to/from C scalars and
+exact arithmetic that never leaves decimal space.</p>
+<p>OCILIB exposes NUMBER at two levels, and choosing between them is the real
+skill. For everyday magnitudes — employee numbers, quantities, percentages —
+bind and fetch the native scalar (<code>OCI_Int32</code>, <code>OCI_Double</code>, …): the getter is
+cheaper and the code is simpler. Reach for <code>OCI_Number</code> when precision is the
+point: monetary aggregates, high-precision scientific values, anything that
+must round-trip through the database unchanged. <code>GetValue</code>/<code>SetValue</code> convert
+between the descriptor and C scalars with explicit <code>OCI_NUM_*</code> type tags, and
+overflow is a <em>failure you must check</em> — a 38-digit column does not fit in an
+<code>OCI_Int32</code>, and the API returns FALSE rather than truncate.</p>
+<p>The C++ layer wraps the same descriptor as <code>ocilib::Number</code>: <code>SetValue&lt;T&gt;</code>/
+<code>GetValue&lt;T&gt;</code> map the tag for you at compile time, and arithmetic operators
+(<code>+=</code>, <code>*=</code>…) call the same exact-decimal OCILIB functions — so the choice of
+scalar-vs-object in C++ is identical, it just reads more idiomatically.</p>
+<h2 id="the-number-object">The Number object</h2>
+<p>Oracle <code>NUMBER</code> stores up to <strong>38 significant decimal digits</strong> — <code>double</code> holds ~15.</p>
+<p>Money, high-precision measurements, big counters: that's what <code>Number</code> keeps exact.</p>
+<p>But <code>Number</code> isn't the only way to read a <code>NUMBER</code> column — it's the <em>exact</em> way.
+For everyday values, plain scalar C/C++ types are simpler and faster:</p>
+<table>
+<thead>
+<tr>
+<th>Scalar C type</th>
+<th>C getter</th>
+<th>C++</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_Int16</code>/<code>OCI_UInt16</code></td>
+<td><code>OCI_ResultsetGetInt16</code>/<code>GetUInt16</code></td>
+<td><code>Get&lt;Int16&gt;</code>/<code>Get&lt;UInt16&gt;</code></td>
+</tr>
+<tr>
+<td><code>OCI_Int32</code>/<code>OCI_UInt32</code></td>
+<td><code>OCI_ResultsetGetInt32</code>/<code>GetUInt32</code></td>
+<td><code>Get&lt;Int32&gt;</code>/<code>Get&lt;UInt32&gt;</code></td>
+</tr>
+<tr>
+<td><code>OCI_Int64</code>/<code>OCI_UInt64</code></td>
+<td><code>OCI_ResultsetGetInt64</code>/<code>GetUInt64</code></td>
+<td><code>Get&lt;Int64&gt;</code>/<code>Get&lt;UInt64&gt;</code></td>
+</tr>
+<tr>
+<td><code>OCI_Float</code>/<code>OCI_Double</code></td>
+<td><code>OCI_ResultsetGetFloat</code>/<code>GetDouble</code></td>
+<td><code>Get&lt;Float&gt;</code>/<code>Get&lt;Double&gt;</code></td>
+</tr>
+<tr>
+<td>exact decimal</td>
+<td><code>OCI_ResultsetGetNumber</code></td>
+<td><code>Get&lt;Number&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>Scalar binds mirror getters one-to-one: <code>OCI_StatementBindInt32</code>, <code>Bind(":n", v)</code>…
+Overflow <strong>truncates</strong> — a 38-digit <code>NUMBER</code> won't fit an <code>OCI_Int32</code>. Reach for
+<code>OCI_Number</code>/<code>Number</code> when precision is the point; reach for scalars the rest
+of the time.</p>
+<p>It's an environment-created datatype handle like <code>Date</code>, carrying one exact decimal value you can convert, compare and compute on.</p>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_NumberCreate</code></td>
+<td><code>Number</code> ctor (<code>env</code>)</td>
+<td>lifecycle</td>
+</tr>
+<tr>
+<td><code>OCI_NumberFree</code></td>
+<td>— (RAII)</td>
+<td>release</td>
+</tr>
+<tr>
+<td><code>OCI_NumberArrayCreate</code> / <code>OCI_NumberArrayFree</code></td>
+<td>—</td>
+<td>bulk arrays</td>
+</tr>
+<tr>
+<td><code>OCI_NumberAssign</code></td>
+<td><code>Assign</code> / <code>operator=</code></td>
+<td>copy</td>
+</tr>
+<tr>
+<td><code>OCI_NumberCompare</code></td>
+<td><code>Compare</code></td>
+<td>exact compare</td>
+</tr>
+<tr>
+<td><code>OCI_NumberFromText</code></td>
+<td><code>FromText</code></td>
+<td>parse with format model</td>
+</tr>
+<tr>
+<td><code>OCI_NumberToText</code></td>
+<td><code>ToText</code></td>
+<td>render with format model</td>
+</tr>
+<tr>
+<td><code>OCI_NumberSetValue</code></td>
+<td><code>SetValue&lt;T&gt;</code></td>
+<td>C numeric → Number</td>
+</tr>
+<tr>
+<td><code>OCI_NumberGetValue</code></td>
+<td><code>GetValue&lt;T&gt;</code></td>
+<td>Number → C numeric</td>
+</tr>
+<tr>
+<td><code>OCI_NumberAdd</code></td>
+<td><code>Add</code></td>
+<td>exact arithmetic</td>
+</tr>
+<tr>
+<td><code>OCI_NumberSub</code></td>
+<td><code>Sub</code></td>
+<td>exact arithmetic</td>
+</tr>
+<tr>
+<td><code>OCI_NumberMultiply</code></td>
+<td><code>Multiply</code></td>
+<td>exact arithmetic</td>
+</tr>
+<tr>
+<td><code>OCI_NumberDivide</code></td>
+<td><code>Divide</code></td>
+<td>exact arithmetic</td>
+</tr>
+</tbody>
+</table>
+<h2 id="conversions">Conversions</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Number</span><span class="w"> </span><span class="o">*</span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_NumberCreate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+
+<span class="n">OCI_NumberFromText</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"123456789.123456789"</span><span class="p">),</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"999999999.999999999"</span><span class="p">));</span>
+
+<span class="n">OCI_NumberSetValue</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_DOUBLE</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">dval</span><span class="p">);</span><span class="w">       </span><span class="cm">/* C → Number   */</span>
+<span class="n">OCI_NumberGetValue</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_INT64</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">bval</span><span class="p">);</span><span class="w">       </span><span class="cm">/* Number → C   */</span>
+
+<span class="n">otext</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+<span class="n">OCI_NumberToText</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"999999999.999999999"</span><span class="p">),</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">),</span><span class="w"> </span><span class="n">buf</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Number</span><span class="w"> </span><span class="nf">n</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+
+<span class="n">n</span><span class="p">.</span><span class="n">FromText</span><span class="p">(</span><span class="s">"123456789.123456789"</span><span class="p">,</span><span class="w"> </span><span class="s">"999999999.999999999"</span><span class="p">);</span>
+
+<span class="n">n</span><span class="p">.</span><span class="n">SetValue</span><span class="p">(</span><span class="n">dval</span><span class="p">);</span><span class="w">                                </span><span class="cm">/* C → Number   */</span>
+<span class="n">Int64</span><span class="w"> </span><span class="n">bval</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">GetValue</span><span class="o">&lt;</span><span class="n">Int64</span><span class="o">&gt;</span><span class="p">();</span><span class="w">                </span><span class="cm">/* Number → C   */</span>
+
+<span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">.</span><span class="n">ToText</span><span class="p">(</span><span class="s">"999999999.999999999"</span><span class="p">);</span>
+</pre></div>
+</div></div>
+<h2 id="arithmetic">Arithmetic</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Number</span><span class="w"> </span><span class="o">*</span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_NumberCreate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="n">OCI_NumberAssign</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">n1</span><span class="p">);</span>
+<span class="n">OCI_NumberAdd</span><span class="w">     </span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_NUMBER</span><span class="p">,</span><span class="w"> </span><span class="n">n2</span><span class="p">);</span><span class="w">          </span><span class="cm">/* r += n2 — exact, no float error */</span>
+<span class="n">OCI_NumberMultiply</span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_NUMBER</span><span class="p">,</span><span class="w"> </span><span class="n">n3</span><span class="p">);</span>
+<span class="n">OCI_NumberDivide</span><span class="w">  </span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_NUMBER</span><span class="p">,</span><span class="w"> </span><span class="n">n4</span><span class="p">);</span>
+<span class="n">OCI_NumberSub</span><span class="w">     </span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_NUMBER</span><span class="p">,</span><span class="w"> </span><span class="n">n5</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Number</span><span class="w"> </span><span class="nf">r</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="n">r</span><span class="p">.</span><span class="n">Assign</span><span class="p">(</span><span class="n">n1</span><span class="p">);</span>
+<span class="n">r</span><span class="p">.</span><span class="n">Add</span><span class="w">     </span><span class="p">(</span><span class="n">n2</span><span class="p">);</span><span class="w">                     </span><span class="cm">/* r += n2 — exact, no float error */</span>
+<span class="n">r</span><span class="p">.</span><span class="n">Multiply</span><span class="p">(</span><span class="n">n3</span><span class="p">);</span>
+<span class="n">r</span><span class="p">.</span><span class="n">Divide</span><span class="w">  </span><span class="p">(</span><span class="n">n4</span><span class="p">);</span>
+<span class="n">r</span><span class="p">.</span><span class="n">Sub</span><span class="w">     </span><span class="p">(</span><span class="n">n5</span><span class="p">);</span>
+</pre></div>
+</div></div>
+<h2 id="binding-fetching">Binding &amp; fetching</h2>
+<ul>
+<li>A fetched exact <code>NUMBER</code> column gives a borrowed <code>Number</code> (<code>OCI_ResultsetGetNumber</code> /
+  <code>Get&lt;Number&gt;</code>).</li>
+<li>Bind one with the number bind (<code>OCI_StatementBindNumber</code> / <code>Bind(":n", n)</code>).</li>
+<li><code>GetNumeric&lt;T&gt;</code> on <code>JsonNode</code> accepts <code>Number</code> too (v5 JSON).</li>
+</ul>
+<h2 id="scenario-exact-money-arithmetic">Scenario — exact money arithmetic</h2>
+<p><code>double</code> money drifts; <code>Number</code> doesn't. Compute <code>total = qty * price</code> with full
+decimal precision:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Number</span><span class="w"> </span><span class="o">*</span><span class="n">qty</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_NumberCreate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="n">OCI_Number</span><span class="w"> </span><span class="o">*</span><span class="n">price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_NumberCreate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="n">OCI_Number</span><span class="w"> </span><span class="o">*</span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_NumberCreate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+
+<span class="n">OCI_NumberFromText</span><span class="p">(</span><span class="n">qty</span><span class="p">,</span><span class="w">   </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"3"</span><span class="p">),</span><span class="w">        </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"9"</span><span class="p">));</span>
+<span class="n">OCI_NumberFromText</span><span class="p">(</span><span class="n">price</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"19.99"</span><span class="p">),</span><span class="w">    </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"99D99"</span><span class="p">));</span>
+<span class="n">OCI_NumberAssign</span><span class="w">  </span><span class="p">(</span><span class="n">total</span><span class="p">,</span><span class="w"> </span><span class="n">qty</span><span class="p">);</span>
+<span class="n">OCI_NumberMultiply</span><span class="p">(</span><span class="n">total</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_NUMBER</span><span class="p">,</span><span class="w"> </span><span class="n">price</span><span class="p">);</span><span class="w">   </span><span class="cm">/* 59.97 exact */</span>
+
+<span class="n">otext</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+<span class="n">OCI_NumberToText</span><span class="p">(</span><span class="n">total</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"999D99"</span><span class="p">),</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">),</span><span class="w"> </span><span class="n">buf</span><span class="p">);</span><span class="w">   </span><span class="cm">/* "59.97" */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Number</span><span class="w"> </span><span class="nf">qty</span><span class="p">(</span><span class="n">env</span><span class="p">),</span><span class="w"> </span><span class="n">price</span><span class="p">(</span><span class="n">env</span><span class="p">),</span><span class="w"> </span><span class="n">total</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+
+<span class="n">qty</span><span class="p">.</span><span class="n">FromText</span><span class="p">(</span><span class="s">"3"</span><span class="p">,</span><span class="w"> </span><span class="s">"9"</span><span class="p">);</span>
+<span class="n">price</span><span class="p">.</span><span class="n">FromText</span><span class="p">(</span><span class="s">"19.99"</span><span class="p">,</span><span class="w"> </span><span class="s">"99D99"</span><span class="p">);</span>
+<span class="n">total</span><span class="p">.</span><span class="n">Assign</span><span class="p">(</span><span class="n">qty</span><span class="p">);</span>
+<span class="n">total</span><span class="p">.</span><span class="n">Multiply</span><span class="p">(</span><span class="n">price</span><span class="p">);</span><span class="w">                                   </span><span class="cm">/* 59.97 exact */</span>
+
+<span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">total</span><span class="p">.</span><span class="n">ToText</span><span class="p">(</span><span class="s">"999D99"</span><span class="p">);</span><span class="w">                       </span><span class="cm">/* "59.97"      */</span>
+</pre></div>
+</div></div>
+<h2 id="scenario-bind-scalars-without-a-number-object">Scenario — bind scalars without a Number object</h2>
+<p>For normal magnitudes you don't need <code>Number</code> at all — bind the C scalar directly:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Int32</span><span class="w"> </span><span class="n">qty</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="n">OCI_Double</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.075</span><span class="p">;</span>
+
+<span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span>
+<span class="w">    </span><span class="s">"update invoices set qty = :q, tax = :r where id = :i"</span><span class="p">));</span>
+<span class="n">OCI_StatementBindInt32</span><span class="w"> </span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":q"</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">qty</span><span class="p">);</span>
+<span class="n">OCI_StatementBindDouble</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":r"</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">rate</span><span class="p">);</span>
+<span class="n">OCI_StatementBindInt32</span><span class="w"> </span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":i"</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">inv_id</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Int32</span><span class="w">  </span><span class="n">qty</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="mi">3</span><span class="p">;</span>
+<span class="n">Double</span><span class="w"> </span><span class="n">rate</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mf">0.075</span><span class="p">;</span>
+
+<span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"update invoices set qty = :q, tax = :r where id = :i"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":q"</span><span class="p">,</span><span class="w"> </span><span class="n">qty</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":r"</span><span class="p">,</span><span class="w"> </span><span class="n">rate</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":i"</span><span class="p">,</span><span class="w"> </span><span class="n">inv_id</span><span class="p">);</span>
+</pre></div>
+</div></div>
+<h2 id="scenario-38-digit-safety-check">Scenario — 38-digit safety check</h2>
+<p>When a <code>NUMBER</code> column can exceed a scalar's range, fetch as <code>Number</code> and compare
+before converting:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Number</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ResultsetGetNumber</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">       </span><span class="cm">/* borrowed, exact   */</span>
+
+<span class="n">OCI_Int64</span><span class="w"> </span><span class="n">as_i64</span><span class="p">;</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_NumberGetValue</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_NUM_INT64</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">as_i64</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* fits — use as_i64 */</span>
+<span class="p">}</span>
+<span class="k">else</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* &gt; int64 range — keep as Number or format via ToText */</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Number</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Number</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">                        </span><span class="cm">/* borrowed, exact   */</span>
+<span class="k">try</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Int64</span><span class="w"> </span><span class="n">as_i64</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">GetValue</span><span class="o">&lt;</span><span class="n">Int64</span><span class="o">&gt;</span><span class="p">();</span><span class="w">              </span><span class="cm">/* throws on overflow */</span>
+<span class="p">}</span>
+<span class="k">catch</span><span class="w"> </span><span class="p">(...)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* &gt; int64 range — keep as Number or format via ToText */</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>Number handling starts with a fork in the road:</p>
+<ol>
+<li><strong>Decide: scalar or <code>Number</code>?</strong> Employee numbers, counts, percentages →
+   scalar getters/binds, done. Money, high precision, must-round-trip →
+   <code>OCI_Number</code>.</li>
+<li><strong>If scalar</strong>: <code>Get&lt;T&gt;</code>/<code>StatementBind&lt;Int32|Double|…&gt;</code> — that is the whole
+   story; stop here.</li>
+<li><strong>If <code>Number</code></strong>: create on the environment, then fill from text
+   (<code>FromText</code> + format model) or from a C scalar (<code>SetValue</code> + <code>OCI_NUM_*</code> tag).</li>
+<li><strong>Arithmetic mutates in place</strong> — this is the trap: <code>Add</code>/<code>Sub</code>/<code>Multiply</code>/
+   <code>Divide</code> modify the <em>target</em> descriptor. <code>Assign</code> a copy first if you still
+   need the original.</li>
+<li><strong>Get the value out</strong> with <code>GetValue</code> + a <code>OCI_NUM_*</code> tag — and check the
+   return: a 38-digit column doesn't fit <code>OCI_NUM_INT32</code> and OCILIB fails
+   rather than truncate. <code>ToText</code> with a format model is the safe last resort.</li>
+</ol>
+<p>Hints: <code>FromText</code> format models use Oracle number format characters
+(<code>999D99</code>, <code>99G990</code>), not <code>printf</code>; the C++ <code>Number</code> does the same through
+operators and templates — the underlying descriptor is identical.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Sum <code>sal</code> over all employees in <code>OCI_Number</code> vs <code>double</code> — print both, watch
+   float drift on big values.</li>
+<li>Round-trip <code>123456789012345678901234567890.123</code> through C <code>double</code> — it breaks;
+   through <code>OCI_Number</code> — it survives.</li>
+<li>Compute <code>(sal * 1.075)</code> exactly and insert the result.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong><code>GetValue</code> overflow</strong> — converting a 38-digit NUMBER to <code>OCI_NUM_INT32</code> truncates;
+  use <code>BIGINT</code>/<code>NUMBER</code>.</li>
+<li><strong>Forgetting format for <code>ToText</code></strong> — format model controls digits/decimal sep.</li>
+<li><strong>Using Number for simple ints</strong> — overkill; <code>OCI_ResultsetGetInt32</code> is fine for normal ranges.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>OCI_Number</code> = Oracle's exact 38-digit decimal in C — converts, compares, and does
+  exact arithmetic.</li>
+</ul>
+<p><strong>Next:</strong> <code>RAW</code> data and <code>OCI_StatementBindRaw</code>.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="intervals.html"><span class="pn-dir">← Previous</span>Intervals</a><a class="pn-link pn-next" href="raw.html"><span class="pn-dir">Next →</span>RAW</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

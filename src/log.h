@@ -69,18 +69,4 @@ OCI_SYM_LOCAL OCI_Boolean OcilibLogStrEquals
     const char *name
 );
 
-OCI_SYM_LOCAL OCI_Int32 OcilibLogCodepointToUTF8
-(
-    OCI_UInt32 code,
-    char      *dst,
-    OCI_Int32  dst_size
-);
-
-OCI_SYM_LOCAL OCI_Int32 OcilibLogNativeToUTF8
-(
-    const otext *src,
-    char        *dst,
-    OCI_Int32    dst_size
-);
-
 #endif    /* OCILIB_LOG_H_INCLUDED */

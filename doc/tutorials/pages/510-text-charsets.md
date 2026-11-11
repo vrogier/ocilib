@@ -22,7 +22,7 @@ Oracle keeps two character sets per database: the **database charset** (used by
 form* flag saying which world they live in — that is the `OCI_CSF_*` value you
 can read off a column or force on a bind.
 
-On the client side OCILIB compiles in two flavors — MBCS (`ocilibm`, `otext` =
+On the client side OCILIB compiles in two flavors — MBCS (`ocilib`, `otext` =
 `char`) and wide (`ocilibw`, `otext` = wide) — and converts to/from the
 server's encoding for you. The `otext`/`OTEXT()` abstraction is what lets the
 same source build against both: your literal adapts to whichever `otext` is.
@@ -181,7 +181,7 @@ String v = rs.Get<String>(0);
 
 When you work with text in OCILIB, the order of decisions is usually this:
 
-1. **Pick your build flavor first.** MBCS (`ocilibm`) vs wide (`ocilibw`)
+1. **Pick your build flavor first.** MBCS (`ocilib`) vs wide (`ocilibw`)
    decides what `otext` is — you cannot mix libraries, so this choice is made
    once, at link time.
 2. **Write every SQL literal and string through `OTEXT(...)`** (or `String` in
@@ -202,7 +202,7 @@ zero-copy borrow of text the row still owns.
 
 ## Try it yourself
 
-1. Build the same source against `ocilibm` (MBCS) and `ocilibw` (wide) — `OTEXT`
+1. Build the same source against `ocilib` (MBCS) and `ocilibw` (wide) — `OTEXT`
    is what makes it work.
 2. Set a custom date format and watch the string getters' output change.
 3. Check the environment's charset value on your build.

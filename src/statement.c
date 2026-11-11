@@ -617,19 +617,6 @@ static OCI_Boolean OcilibStatementBindCheck
             }
         }
 
-        /* String binds that may required conversion on systems where wchar_t is UTF32 */
-        else if (OCI_CDT_TEXT == bnd->type)
-        {
-            if (bnd->stmt->con->env->use_wide_char_conv)
-            {
-                const OCI_Int32 max_chars  = dbcharcount(bnd->size);
-                const OCI_Size  src_offset = (OCI_Size) index * (OCI_Size) max_chars * sizeof(otext);
-                const OCI_Size  dst_offset = (OCI_Size) index * (OCI_Size) max_chars * sizeof(dbtext);
-
-                OcilibStringUTF32ToUTF16(src + src_offset, dst + dst_offset, max_chars - 1);
-            }
-        }
-
         /* otherwise we have an ocilib handle based type */
         else
         {
@@ -767,18 +754,6 @@ static OCI_Boolean OcilibStatementBindUpdate
         }
     }
 
-    /* String binds that may required conversion on systems where wchar_t is UTF32 */
-    else if (OCI_CDT_TEXT == bnd->type)
-    {
-        if (bnd->stmt->con->env->use_wide_char_conv)
-        {
-            const OCI_Int32 max_chars  = dbcharcount(bnd->size);
-            const OCI_Size  src_offset = (OCI_Size) index * (OCI_Size) max_chars * sizeof(dbtext);
-            const OCI_Size  dst_offset = (OCI_Size) index * (OCI_Size) max_chars * sizeof(otext);
-
-            OcilibStringUTF16ToUTF32(src + src_offset, dst + dst_offset, max_chars - 1);
-        }
-    }
     else if (OCI_CDT_OBJECT == bnd->type)
     {
         /* update object indicator with bind object indicator pointer */
@@ -1427,7 +1402,7 @@ static OCI_Boolean OcilibStatementBatchErrorInit
                 otext     buffer[512];
                 OCI_Int32 err_size = osizeof(buffer);
 
-                dbtext * err_msg = OcilibStringGetDBString(stmt->con->env, buffer, &err_size);
+                dbtext * err_msg = (dbtext *) (buffer);
 
                 sword rethndl;
 
@@ -1450,7 +1425,6 @@ static OCI_Boolean OcilibStatementBatchErrorInit
                     (OCI_UInt32)(row + 1)
                 );
 
-                OcilibStringReleaseDBString(stmt->con->env, err_msg);
             }
         }
     }
@@ -1497,7 +1471,8 @@ OCI_Boolean OcilibStatementPrepareInternal
 
     OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO, OTEXT("handle=[%p]sql=[%s]"), stmt, sql ? sql : OTEXT(""));
 
-    dbstr = OcilibStringGetDBString(stmt->con->env, stmt->sql, &dbsize);
+    dbstr = (dbtext *) (stmt->sql);
+    dbsize = OcilibStringDBSize(stmt->sql);
 
     if (stmt->con->env->version_runtime < OCI_9_2)
     {
@@ -1563,10 +1538,7 @@ OCI_Boolean OcilibStatementPrepareInternal
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(stmt->con->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

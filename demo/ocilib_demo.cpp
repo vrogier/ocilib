@@ -25,7 +25,7 @@
 #if defined(OCI_CHARSET_WIDE)
 #pragma comment(lib, "ocilibw.lib")
 #elif defined(OCI_CHARSET_MBCS)
-#pragma comment(lib, "ocilibm.lib")
+#pragma comment(lib, "ocilib.lib")
 #endif
 
 #endif
@@ -67,7 +67,7 @@ const OCI_Int32 DirPathColumnCount = 3;
 #if defined(OCI_CHARSET_WIDE)
 #define OCI_SHARED_LIB                   "ocilibw.dll"
 #else
-#define OCI_SHARED_LIB                   "ocilibm.dll"
+#define OCI_SHARED_LIB                   "ocilib.dll"
 #endif
 #elif defined(__APPLE__)
 #define OCI_SHARED_LIB                   "libocilib.dylib"

@@ -305,7 +305,8 @@ OCI_Boolean OcilibConnectionAttach
 
         if (con->env->version_runtime >= OCI_9_0 && con->pool)
         {
-            dbstr = OcilibStringGetDBString(con->env, con->pool->name, &dbsize);
+            dbstr = (dbtext *) (con->pool->name);
+            dbsize = OcilibStringDBSize(con->pool->name);
             cmode = OCI_CPOOL;
         }
         else
@@ -313,7 +314,8 @@ OCI_Boolean OcilibConnectionAttach
 #endif
 
         {
-            dbstr = OcilibStringGetDBString(con->env, con->db, &dbsize);
+            dbstr = (dbtext *) (con->db);
+            dbsize = OcilibStringDBSize(con->db);
         }
 
         CHECK_OCI
@@ -331,10 +333,7 @@ OCI_Boolean OcilibConnectionAttach
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(con->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -428,9 +427,12 @@ static OCI_Boolean OcilibConnectionLogonRegular
 
     if (IS_STRING_VALID(new_pwd))
     {
-        dbstr1 = OcilibStringGetDBString(con->env, con->user, &dbsize1);
-        dbstr2 = OcilibStringGetDBString(con->env, con->pwd, &dbsize2);
-        dbstr3 = OcilibStringGetDBString(con->env, new_pwd, &dbsize3);
+        dbstr1 = (dbtext *) (con->user);
+        dbsize1 = OcilibStringDBSize(con->user);
+        dbstr2 = (dbtext *) (con->pwd);
+        dbsize2 = OcilibStringDBSize(con->pwd);
+        dbstr3 = (dbtext *) (new_pwd);
+        dbsize3 = OcilibStringDBSize(new_pwd);
 
         CHECK_ATTRIB_SET
         (
@@ -465,8 +467,8 @@ static OCI_Boolean OcilibConnectionLogonRegular
 
         if (IS_STRING_VALID(con->user))
         {
-            dbsize1 = -1;
-            dbstr1  = OcilibStringGetDBString(con->env, con->user, &dbsize1);
+            dbstr1 = (dbtext *) (con->user);
+            dbsize1 = OcilibStringDBSize(con->user);
 
             CHECK_ATTRIB_SET
             (
@@ -480,8 +482,8 @@ static OCI_Boolean OcilibConnectionLogonRegular
 
         if (IS_STRING_VALID(con->pwd))
         {
-            dbsize2 = -1;
-            dbstr2  = OcilibStringGetDBString(con->env, con->pwd, &dbsize2);
+            dbstr2 = (dbtext *) (con->pwd);
+            dbsize2 = OcilibStringDBSize(con->pwd);
 
             CHECK_ATTRIB_SET
             (
@@ -503,19 +505,15 @@ static OCI_Boolean OcilibConnectionLogonRegular
             (
                 driver_version,
                 osizeof(driver_version) - (OCI_Size)1,
-  #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
-                OTEXT("%ls : %d.%d.%d"),
-  #else
                 OTEXT("%s : %d.%d.%d"),
-  #endif
                 OCILIB_DRIVER_NAME,
                 OCILIB_MAJOR_VERSION,
                 OCILIB_MINOR_VERSION,
                 OCILIB_REVISION_VERSION
             );
 
-            dbsize3 = -1;
-            dbstr3  = OcilibStringGetDBString(con->env, driver_version, &dbsize3);
+            dbstr3 = (dbtext *) (driver_version);
+            dbsize3 = OcilibStringDBSize(driver_version);
 
             CHECK_ATTRIB_SET
             (
@@ -580,9 +578,6 @@ static OCI_Boolean OcilibConnectionLogonRegular
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(con->env, dbstr1);
-        OcilibStringReleaseDBString(con->env, dbstr2);
-        OcilibStringReleaseDBString(con->env, dbstr3);
 
         if (FAILURE && NULL != con)
         {
@@ -637,10 +632,6 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
     ub4       sess_mode = OCI_DEFAULT;
     OCI_Int32 dbsize    = -1;
     dbtext   *dbstr     = NULL;
-    OCI_Int32 dbusrsize = -1;
-    dbtext   *dbusr     = NULL;
-    OCI_Int32 dbpwdsize = -1;
-    dbtext   *dbpwd     = NULL;
     OCI_Int32 dbtagsize = 0;
     dbtext   *dbtag     = NULL;
     OraText  *dbret     = NULL;
@@ -686,24 +677,24 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
     {
         if (IS_STRING_VALID(con->user))
         {
-            dbusr = OcilibStringGetDBString(con->env, con->user, &dbusrsize);
+
 
             CHECK_ATTRIB_SET
             (
                 OCI_HTYPE_AUTHINFO, OCI_ATTR_USERNAME,
-                authp, dbusr, dbusrsize,
+                authp, (con->user), OcilibStringDBSize(con->user),
                 con->err
             );
         }
 
         if (IS_STRING_VALID(con->pwd))
         {
-            dbpwd = OcilibStringGetDBString(con->env, con->pwd, &dbpwdsize);
+
 
             CHECK_ATTRIB_SET
             (
                 OCI_HTYPE_AUTHINFO, OCI_ATTR_PASSWORD,
-                authp, dbpwd, dbpwdsize,
+                authp, (con->pwd), OcilibStringDBSize(con->pwd),
                 con->err
             );
         }
@@ -723,8 +714,8 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
 
     if (NULL != con->pool)
     {
-        dbsize = -1;
-        dbstr  = OcilibStringGetDBString(con->env, con->pool->name, &dbsize);
+        dbstr = (dbtext *) (con->pool->name);
+        dbsize = OcilibStringDBSize(con->pool->name);
 
         if (OCI_HTYPE_SPOOL == con->pool->kind)
         {
@@ -732,8 +723,8 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
 
             if (IS_STRING_VALID(tag))
             {
-                dbtagsize = -1;
-                dbtag     = OcilibStringGetDBString(con->env, tag, &dbtagsize);
+                dbtag = (dbtext *) (tag);
+                dbtagsize = OcilibStringDBSize(tag);
             }
         }
         else
@@ -750,8 +741,8 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
             sess_mode |= OCI_SESSGET_STMTCACHE;
         }
 
-        dbsize = -1;
-        dbstr  = OcilibStringGetDBString(con->env, con->db, &dbsize);
+        dbstr = (dbtext *) (con->db);
+        dbsize = OcilibStringDBSize(con->db);
     }
 
     CHECK_OCI
@@ -799,10 +790,6 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(con->env, dbstr);
-        OcilibStringReleaseDBString(con->env, dbusr);
-        OcilibStringReleaseDBString(con->env, dbpwd);
-        OcilibStringReleaseDBString(con->env, dbtag);
 
         if (NULL != authp)
         {
@@ -977,8 +964,8 @@ static OCI_Boolean OcilibConnectionLogoffSessionPool
 
         if (NULL != con->pool && NULL != con->sess_tag && ( OCI_HTYPE_SPOOL == con->pool->kind))
         {
-            dbsize = -1;
-            dbstr  = OcilibStringGetDBString(con->env, con->sess_tag, &dbsize);
+            dbstr = (dbtext *) (con->sess_tag);
+            dbsize = OcilibStringDBSize(con->sess_tag);
             mode   = OCI_SESSRLS_RETAG;
         }
 
@@ -1000,10 +987,7 @@ static OCI_Boolean OcilibConnectionLogoffSessionPool
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(con->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1563,20 +1547,8 @@ OCI_Boolean OcilibConnectionSetPassword
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    OCI_Int32 dbsize1 = -1;
-    OCI_Int32 dbsize2 = -1;
-    OCI_Int32 dbsize3 = -1;
-
-    dbtext* dbstr1 = NULL;
-    dbtext* dbstr2 = NULL;
-    dbtext* dbstr3 = NULL;
-
     CHECK_PTR(OCI_IPC_CONNECTION, con);
     CHECK_PTR(OCI_IPC_STRING,     password);
-
-    dbstr1 = OcilibStringGetDBString(con->env, con->user, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(con->env, con->pwd, &dbsize2);
-    dbstr3 = OcilibStringGetDBString(con->env, password, &dbsize3);
 
     if (OCI_CONN_LOGGED != con->cstate)
     {
@@ -1589,9 +1561,9 @@ OCI_Boolean OcilibConnectionSetPassword
             con->err,
             OCIPasswordChange,
             con->handle, con->err,
-            (OraText *) dbstr1, (ub4) dbsize1,
-            (OraText *) dbstr2, (ub4) dbsize2,
-            (OraText *) dbstr3, (ub4) dbsize3,
+            (OraText *) (con->user), (ub4) OcilibStringDBSize(con->user),
+            (OraText *) (con->pwd), (ub4) OcilibStringDBSize(con->pwd),
+            (OraText *) (password), (ub4) OcilibStringDBSize(password),
             OCI_DEFAULT
         );
 
@@ -1603,12 +1575,7 @@ OCI_Boolean OcilibConnectionSetPassword
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(con->env, dbstr1);
-        OcilibStringReleaseDBString(con->env, dbstr2);
-        OcilibStringReleaseDBString(con->env, dbstr3);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -1658,7 +1625,7 @@ const otext * OcilibConnectionGetServerVersionString
 
         ALLOC_DATA(OCI_IPC_STRING, con->ver_str, OCI_SIZE_BUFFER + 1);
 
-        dbstr = OcilibStringGetDBString(con->env, con->ver_str, &dbsize);
+        dbstr = (dbtext *) (con->ver_str);
 
 #if OCI_VERSION_COMPILE >= OCI_18_1
 
@@ -1689,7 +1656,6 @@ const otext * OcilibConnectionGetServerVersionString
             );
         }
 
-        OcilibStringCopyDBStringToNativeString(con->env, dbstr, con->ver_str, dbcharcount(dbsize));
 
 #if OCI_VERSION_COMPILE >= OCI_18_1
 
@@ -1737,7 +1703,6 @@ const otext * OcilibConnectionGetServerVersionString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(con->env, dbstr);
 
         if (FAILURE)
         {
@@ -2203,8 +2168,8 @@ OCI_Boolean OcilibConnectionSetTrace
     {
         if (NULL != str)
         {
-            dbsize = -1;
-            dbstr  = OcilibStringGetDBString(con->env, str, &dbsize);
+            dbstr = (dbtext *) (str);
+            dbsize = OcilibStringDBSize(str);
         }
 
         CHECK_ATTRIB_SET
@@ -2219,10 +2184,7 @@ OCI_Boolean OcilibConnectionSetTrace
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(con->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

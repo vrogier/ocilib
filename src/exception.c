@@ -425,14 +425,13 @@ void OcilibExceptionOCI
         OCI_Int32         err_size                = (OCI_Int32)OCI_SIZE_BUFFER* (OCI_Int32)sizeof(otext);
         const OCI_Boolean warning                 = OCI_SUCCESS_WITH_INFO == call_ret;
 
-        dbtext * err_msg = OcilibStringGetDBString(ctx->env, buffer, &err_size);
+        dbtext * err_msg = (dbtext *) (buffer);
 
         buffer[0] = 0;
 
         ctx->env->api->OCIErrorGet((dvoid *)oci_err, (ub4)1, (OraText *)NULL, &err_code,
                                    (OraText *)err_msg, (ub4)err_size, (ub4)OCI_HTYPE_ERROR);
 
-        OcilibStringCopyDBStringToNativeString(ctx->env, err_msg, buffer, dbcharcount(err_size));
 
         if (err_code == 0 && err_msg[0] == 0)
         {
@@ -479,7 +478,6 @@ void OcilibExceptionOCI
             0
         );
 
-        OcilibStringReleaseDBString(ctx->env, err_msg);
 
         OcilibExceptionCallHandler(err);
     }

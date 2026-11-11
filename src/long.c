@@ -233,7 +233,7 @@ OCI_UInt32 OcilibLongWrite
     if (OCI_CLONG == lg->type)
     {
         len *= (OCI_UInt32) sizeof(otext);
-        obuf = OcilibStringGetDBString(lg->handle->con->env, (const otext *) buffer, (OCI_Int32 *) &len);
+        obuf = (dbtext *) buffer;
     }
     else
     {
@@ -314,7 +314,6 @@ OCI_UInt32 OcilibLongWrite
     (
         if (NULL != lg && OCI_CLONG == lg->type)
         {
-            OcilibStringReleaseDBString(lg->handle->con->env, (dbtext*)obuf);
         }
     );
 }
@@ -391,11 +390,6 @@ OCI_SYM_LOCAL OCI_Boolean OcilibLongFinalizeDynamicFetch
             const OCI_Int32 len = (OCI_Int32)(lg->size / sizeof(dbtext));
 
             ((dbtext*)lg->buffer)[len] = 0;
-
-            if (lg->handle->con->env->use_wide_char_conv)
-            {
-                OcilibStringUTF16ToUTF32(lg->buffer, lg->buffer, len);
-            }
         }
     }
 

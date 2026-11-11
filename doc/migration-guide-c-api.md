@@ -46,7 +46,8 @@ For the C++ layer (`ocilib.hpp`), see `migration-guide-cpp-api.md`.
 | 13 | `compat.h` recreated with v4→v5 aliases — v3-era macros are gone | Low–Medium |
 | 14 | `OCI_GetAllocatedBytes` removed; use `OCI_GetStats(env, OCI_UST_BYTES)` | Trivial |
 | 15 | New typed typedefs replace bare `unsigned int` parameters | None (source-compatible) |
-| 16 | Charset build flag `OCI_CHARSET_ANSI` → `OCI_CHARSET_MBCS` (binaries `ociliba` → `ocilibm`, configs `Release - ANSI` → `Release - MBCS`, `--with-oracle-charset=mbcs`) | Trivial (old names still work) |
+| 16 | Charset build flag `OCI_CHARSET_ANSI` → `OCI_CHARSET_MBCS` (binaries `ociliba`/`ocilibm` → `ocilib` for MBCS, `ocilibw` for wide; configs `Release - ANSI` → `Release - MBCS`) | Trivial (old names still work) |
+| 17 | `OCI_CHARSET_WIDE` is now **Windows-only** — it is a compile-time error on Unix/macOS, and `configure --with-oracle-charset` is removed (Unix builds are always MBCS) | High if you built OCILIB wide on Unix (switch to MBCS + `NLS_LANG=…AL32UTF8`) |
 
 **Overall estimate:** a typical application (connect → statement → fetch) migrates in
 **under an hour** — mostly mechanical edits caught by the compiler. Applications that
@@ -630,9 +631,15 @@ codepages *and* UTF-8 (whatever `NLS_LANG` configures). Mapped for you:
 | `OCI_CHARSET_ANSI` (build macro) | `OCI_CHARSET_MBCS` (mapped in `platform.h`; the flag stays *defined* on MBCS builds so `#ifdef`s keep working) |
 | `OCI_CHAR_ANSI` | `OCI_CHAR_MBCS` (via `compat.h`) |
 | `ocilib::Environment::CharsetAnsi` | `CharsetMbcs` (no alias — update switch/case labels) |
-| `--with-oracle-charset=ansi` | `=mbcs` (`ansi` still accepted) |
+| `--with-oracle-charset` | **removed** — Unix builds are always MBCS |
 | `Release - ANSI` MSBuild config | `Release - MBCS` |
-| `ociliba.dll`/`.lib` | `ocilibm.dll`/`.lib` |
+| `ociliba.dll`/`.lib`, `ocilibm.dll`/`.lib` | `ocilib.dll`/`.lib` (MBCS), `ocilibw.dll`/`.lib` (wide) |
+
+**Wide builds are Windows-only in v5.** `OCI_CHARSET_WIDE` relies on `wchar_t`
+being a 2-byte UTF-16 unit, which is only true on Windows; on Unix/macOS the
+build now fails at compile time with a clear `#error`. If you ran OCILIB wide
+on Unix, switch to `OCI_CHARSET_MBCS` and set `NLS_LANG=….AL32UTF8` — your
+`char*` strings then carry UTF-8 end to end.
 
 The **v3-era** backward-compatibility macros that the old file contained are gone
 — rename each usage to its modern equivalent:

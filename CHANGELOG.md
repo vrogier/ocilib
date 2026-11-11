@@ -109,7 +109,12 @@
 - Fixed-width public integer typedefs have been added: `OCI_Int16`/`OCI_UInt16`, `OCI_Int32`/`OCI_UInt32`, `OCI_Int64`/`OCI_UInt64` (the canonical C type of each width on all platforms) and `OCI_Size` for byte sizes and buffer lengths. The public API and the whole codebase now use them in place of bare `int`/`unsigned int`/`short`/`unsigned short`/`size_t`.
   - `OCI_Float`/`OCI_Double` are the single/double precision floating point types, used throughout the API in place of bare `float`/`double`.
   - `big_int`/`big_uint` remain available as compatibility typedefs for `OCI_Int64`/`OCI_UInt64` in `platform.h`.
-- The charset build flag `OCI_CHARSET_ANSI` has been renamed `OCI_CHARSET_MBCS` ("ANSI" was misleading — the build covers ANSI codepages *and* UTF-8). `OCI_CHAR_ANSI` → `OCI_CHAR_MBCS`, `ocilib::Environment::CharsetAnsi` → `CharsetMbcs`, `--with-oracle-charset=ansi` → `=mbcs` (`ansi` still accepted), the MSBuild `Release - ANSI` configurations are now `Release - MBCS`, and the Windows binaries are `ocilibm`/`ocilibw`. Old C names are mapped for source compatibility (`platform.h`/`compat.h`); the `CharsetAnsi` enum value was removed.
+- The charset build flag `OCI_CHARSET_ANSI` has been renamed `OCI_CHARSET_MBCS` ("ANSI" was misleading — the build covers ANSI codepages *and* UTF-8). `OCI_CHAR_ANSI` → `OCI_CHAR_MBCS`, `ocilib::Environment::CharsetAnsi` → `CharsetMbcs`, `--with-oracle-charset=ansi` → `=mbcs` (`ansi` still accepted), the MSBuild `Release - ANSI` configurations are now `Release - MBCS`, and the Windows binaries are `ocilib` (MBCS) / `ocilibw` (wide). Old C names are mapped for source compatibility (`platform.h`/`compat.h`); the `CharsetAnsi` enum value was removed.
+- Charset builds are now platform-scoped:
+  - `OCI_CHARSET_WIDE` is supported on **Windows only** — defining it on a non-Windows platform is a compile-time error (`#error` in `platform.h`). The Unix UTF-16↔UTF-32 conversion layer (4-byte `wchar_t`) has been removed entirely.
+  - Unix/macOS ships MBCS only: `configure --with-oracle-charset=wide`/`unicode` is rejected with a clear error; `mbcs`/`ansi` remain accepted.
+  - On Windows both binaries remain: `ocilib.dll` (MBCS, renamed from `ocilibm.dll`) and `ocilibw.dll` (wide).
+  - JZN/JSON byte-string paths on wide builds now transcode through a real UTF-8↔UTF-16 codec instead of byte-level widening.
 - `OCI_Initialize()` and `OCI_Cleanup()` have been removed; use `OCI_EnvironmentCreate()` and `OCI_EnvironmentFree()`.
 - The following constructors and functions now take an explicit `OCI_Environment*` first argument:
   - `OCI_ConnectionCreate()`, `OCI_PoolCreate()`, `OCI_PoolGetConnection()`, `OCI_PoolFree()`

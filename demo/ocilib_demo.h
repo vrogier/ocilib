@@ -79,7 +79,7 @@ typedef struct test_t
   #if defined(OCI_CHARSET_WIDE)
       #pragma comment(lib, "ocilibw.lib")
   #elif defined(OCI_CHARSET_MBCS)
-      #pragma comment(lib, "ocilibm.lib")
+      #pragma comment(lib, "ocilib.lib")
   #endif
 
 #endif

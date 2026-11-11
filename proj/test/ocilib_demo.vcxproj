@@ -198,7 +198,7 @@
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Command>xcopy  /Y /R ..\..\lib32\ocilibm.dll "$(TargetDir)"</Command>
+      <Command>xcopy  /Y /R ..\..\lib32\ocilib.dll "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release MBCS|x64'">
@@ -251,7 +251,7 @@
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Command>xcopy  /Y /R ..\..\lib64\ocilibm.dll "$(TargetDir)"</Command>
+      <Command>xcopy  /Y /R ..\..\lib64\ocilib.dll "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug MBCS|Win32'">
@@ -305,7 +305,7 @@
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Command>xcopy /Y /R  ..\..\lib32\ocilibm.dll "$(TargetDir)"</Command>
+      <Command>xcopy /Y /R  ..\..\lib32\ocilib.dll "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug MBCS|x64'">
@@ -359,7 +359,7 @@
       <OutputFile>$(TargetDir)$(TargetName).bsc</OutputFile>
     </Bscmake>
     <PostBuildEvent>
-      <Command>xcopy  /Y /R ..\..\lib64\ocilibm.dll "$(TargetDir)"</Command>
+      <Command>xcopy  /Y /R ..\..\lib64\ocilib.dll "$(TargetDir)"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release WIDE|Win32'">

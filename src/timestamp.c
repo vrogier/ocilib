@@ -562,8 +562,10 @@ OCI_Boolean OcilibTimestampFromString
         CHECK_NULL(fmt);
     }
 
-    dbstr1 = OcilibStringGetDBString(tmsp->env, str, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(tmsp->env, fmt, &dbsize2);
+    dbstr1 = (dbtext *) (str);
+    dbsize1 = OcilibStringDBSize(str);
+    dbstr2 = (dbtext *) (fmt);
+    dbsize2 = OcilibStringDBSize(fmt);
 
     CHECK_OCI
     (
@@ -587,11 +589,7 @@ OCI_Boolean OcilibTimestampFromString
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(tmsp->env, dbstr1);
-        OcilibStringReleaseDBString(tmsp->env, dbstr2);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -634,8 +632,9 @@ OCI_Boolean OcilibTimestampToString
         fmt = OcilibEnvironmentGetFormat(tmsp->env, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
-    dbstr1 = OcilibStringGetDBString(tmsp->env, str, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(tmsp->env, fmt, &dbsize2);
+    dbstr1 = (dbtext *) (str);
+    dbstr2 = (dbtext *) (fmt);
+    dbsize2 = OcilibStringDBSize(fmt);
 
     CHECK_OCI
     (
@@ -648,7 +647,6 @@ OCI_Boolean OcilibTimestampToString
         (ub4*) &dbsize1, (OraText *) dbstr1
     );
 
-    OcilibStringCopyDBStringToNativeString(tmsp->env, dbstr1, str, dbcharcount(dbsize1));
 
     /* set null string terminator */
 
@@ -666,11 +664,7 @@ OCI_Boolean OcilibTimestampToString
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(tmsp->env, dbstr1);
-        OcilibStringReleaseDBString(tmsp->env, dbstr2);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -846,7 +840,7 @@ OCI_Boolean OcilibTimestampGetTimeZoneName
 
 #if OCI_VERSION_COMPILE >= OCI_9_0
 
-    dbstr = OcilibStringGetDBString(tmsp->env, str, &dbsize);
+    dbstr = (dbtext *) (str);
 
     CHECK_OCI
     (
@@ -857,7 +851,6 @@ OCI_Boolean OcilibTimestampGetTimeZoneName
         (ub4*) &dbsize
     );
 
-    OcilibStringCopyDBStringToNativeString(tmsp->env, dbstr, str, dbcharcount(dbsize));
 
     /* set null string terminator */
 
@@ -874,10 +867,7 @@ OCI_Boolean OcilibTimestampGetTimeZoneName
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(tmsp->env, dbstr)
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

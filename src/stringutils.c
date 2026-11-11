@@ -184,44 +184,6 @@ OCI_Boolean OcilibStringRequestBuffer
  * OcilibStringTranslate
  * --------------------------------------------------------------------------------------------- */
 
-#define STRING_CVT_EXPAND(type_src, type_dst, char_count)           \
-                                                                    \
-        const OCI_Int32 len = char_count;                           \
-        unsigned type_src* str1 = (unsigned type_src*)src;          \
-        unsigned type_dst* str2 = (unsigned type_dst*)dst;          \
-                                                                    \
-        if (*str1 == 0)                                             \
-        {                                                           \
-            return;                                                 \
-        }                                                           \
-                                                                    \
-        while (char_count--)                                        \
-        {                                                           \
-            str2[char_count] = (unsigned type_dst)str1[char_count]; \
-        }                                                           \
-                                                                    \
-        str2[len] = 0;                                              \
-
-#define STRING_CVT_PACK(type_src, type_dst, char_count)    \
-                                                           \
-        const OCI_Int32 len = char_count;                  \
-        unsigned type_src* str1 = (unsigned type_src*)src; \
-        unsigned type_dst* str2 = (unsigned type_dst*)dst; \
-        OCI_Int32          i    = 0;                       \
-                                                           \
-        if (*str1 == 0)                                    \
-        {                                                  \
-            return;                                        \
-        }                                                  \
-                                                           \
-        while (i < char_count)                             \
-        {                                                  \
-            str2[i] = (unsigned type_dst)str1[i];          \
-            i++;                                           \
-        }                                                  \
-                                                           \
-        str2[len] = 0;
-
 void OcilibStringTranslate
 (
     void    * src,
@@ -231,92 +193,430 @@ void OcilibStringTranslate
     OCI_Size  size_char_out
 )
 {
-    if (!src || !dst)
+    /* All remaining callers copy between element types of the same size:
+       otext and dbtext are identical on every supported build (char on MBCS,
+       2-byte wchar_t on Windows wide). Element-size expansion/packing only
+       existed for 4-byte wchar_t Unix builds, which are no longer supported. */
+
+    OCI_NOT_USED(size_char_in);
+
+    if (!src || !dst || 0 == size_char_out)
     {
         return;
     }
 
-    /* raw string packing/expansion without charset conversion */
-
-    if (size_char_out > size_char_in)
-    {
-        /* expand string */
-
-        if ((size_char_in == sizeof(OCI_Int16)) && (size_char_out == sizeof(OCI_Int32)))
-        {
-            /* 2 => 4 bytes */
-
-            STRING_CVT_EXPAND(short, int, char_count);
-        }
-        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(OCI_Int16)))
-        {
-            /* 1 => 2 bytes */
-
-            STRING_CVT_EXPAND(char, short, char_count);
-        }
-        else if ((size_char_in == sizeof(char)) && (size_char_out == sizeof(OCI_Int32)))
-        {
-            /* 1 => 4 bytes */
-
-            STRING_CVT_EXPAND(char, int, char_count);
-        }
-    }
-    else if (size_char_out < size_char_in)
-    {
-        /* pack string */
-
-        if ((size_char_in == sizeof(OCI_Int32)) && (size_char_out == sizeof(OCI_Int16)))
-        {
-            /* 4 => 2 bytes */
-
-            STRING_CVT_PACK(int, short, char_count);
-        }
-        else if ((size_char_in == sizeof(OCI_Int16)) && (size_char_out == sizeof(char)))
-        {
-            /* 2 => 1 bytes */
-
-            STRING_CVT_PACK(short, char, char_count);
-
-        }
-        else if ((size_char_in == sizeof(OCI_Int32)) && (size_char_out == sizeof(char)))
-        {
-            /* 4 => 1 bytes */
-
-            STRING_CVT_PACK(int, char, char_count);
-        }
-    }
-    else if (src != dst)
+    if (src != dst)
     {
         memcpy(dst, src, (OCI_Size) char_count * size_char_out);
-
-        if (size_char_out == sizeof(char))
-        {
-            ((char*)dst)[char_count] = 0;
-        }
-        else if (size_char_out == sizeof(OCI_Int16))
-        {
-            ((OCI_Int16*)dst)[char_count] = 0;
-        }
-        else if (size_char_out == sizeof(OCI_Int32))
-        {
-            ((OCI_Int32*)dst)[char_count] = 0;
-        }
     }
+
+    memset((char*)dst + ((OCI_Size) char_count * size_char_out), 0, size_char_out);
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStringGetDBString
+ * OcilibStringMbcsToNative
  * --------------------------------------------------------------------------------------------- */
 
-dbtext* OcilibStringGetDBString
+OCI_Size OcilibStringMbcsToNative
+(
+    const char* src,
+    otext     * dst,
+    OCI_Size    count
+)
+{
+    /* Copies up to 'count' bytes of the MBCS source into 'dst', stopping at
+       the source NUL. Widens bytes one-to-one (session charset / ASCII
+       semantics — this is NOT a UTF-8 decoder, see OcilibStringUTF8ToNative).
+       'dst' must have room for count + 1 elements and is always
+       NUL-terminated. */
+
+    OCI_Size len = 0;
+
+    if (NULL == src || NULL == dst)
+    {
+        return 0;
+    }
+
+    {
+        const OCI_Size src_len = strlen(src);
+
+        len = (src_len < count) ? src_len : count;
+    }
+
+#ifdef OCI_CHARSET_WIDE
+
+    /* expand backwards so that an in-place widening (src == dst) does not
+       clobber bytes still to be read */
+
+    for (OCI_Size i = len; i > 0; i--)
+    {
+        dst[i - 1] = (otext) (unsigned char) src[i - 1];
+    }
+
+#else
+
+    memcpy(dst, src, len);
+
+#endif
+
+    dst[len] = 0;
+
+    return len;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStringNativeToMbcs
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Size OcilibStringNativeToMbcs
+(
+    const otext* src,
+    char       * dst,
+    OCI_Size     count
+)
+{
+    /* Mirrors OcilibStringMbcsToNative: narrows up to 'count' otext elements
+       to single bytes (values above 0xFF are truncated). 'dst' must have room
+       for count + 1 bytes and is always NUL-terminated. */
+
+    OCI_Size i = 0;
+
+    if (NULL == src || NULL == dst)
+    {
+        return 0;
+    }
+
+#ifdef OCI_CHARSET_WIDE
+
+    while (i < count && src[i])
+    {
+        dst[i] = (char) src[i];
+        i++;
+    }
+
+#else
+
+    {
+        OCI_Size len = strlen(src);
+
+        if (len > count)
+        {
+            len = count;
+        }
+
+        memcpy(dst, src, len);
+        i = len;
+    }
+
+#endif
+
+    dst[i] = 0;
+
+    return i;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStringCodepointToUTF8
+ * --------------------------------------------------------------------------------------------- */
+
+static OCI_Int32 OcilibStringCodepointToUTF8
+(
+    OCI_UInt32 code,
+    char      *dst,
+    OCI_Int32  dst_size
+)
+{
+    if (code < 0x80)
+    {
+        if (dst_size < 1) return 0;
+        dst[0] = (char) code;
+        return 1;
+    }
+
+    if (code < 0x800)
+    {
+        if (dst_size < 2) return 0;
+        dst[0] = (char) (0xC0 | (code >> 6));
+        dst[1] = (char) (0x80 | (code & 0x3F));
+        return 2;
+    }
+
+    if (code < 0x10000)
+    {
+        if (dst_size < 3) return 0;
+        dst[0] = (char) (0xE0 | (code >> 12));
+        dst[1] = (char) (0x80 | ((code >> 6) & 0x3F));
+        dst[2] = (char) (0x80 | (code & 0x3F));
+        return 3;
+    }
+
+    if (code < 0x110000)
+    {
+        if (dst_size < 4) return 0;
+        dst[0] = (char) (0xF0 | (code >> 18));
+        dst[1] = (char) (0x80 | ((code >> 12) & 0x3F));
+        dst[2] = (char) (0x80 | ((code >> 6) & 0x3F));
+        dst[3] = (char) (0x80 | (code & 0x3F));
+        return 4;
+    }
+
+    return 0;
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStringUTF8ToNative
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Size OcilibStringUTF8ToNative
+(
+    const char* src,
+    OCI_Size    src_len,
+    otext     * dst,
+    OCI_Size    dst_cap
+)
+{
+    /* Decodes src_len bytes of UTF-8 input into 'dst' (capacity dst_cap
+       elements including the NUL). Returns the number of otext elements
+       produced or required; pass dst == NULL for a sizing query. */
+
+    if (NULL == src)
+    {
+        return 0;
+    }
+
+#ifndef OCI_CHARSET_WIDE
+
+    {
+        OCI_Size len = src_len;
+
+        if (NULL != dst && dst_cap > 0)
+        {
+            if (len >= dst_cap)
+            {
+                len = dst_cap - 1;
+            }
+
+            memcpy(dst, src, len);
+            dst[len] = 0;
+        }
+
+        return src_len;
+    }
+
+#else
+
+    OCI_Size in  = 0;
+    OCI_Size out = 0;
+
+    while (in < src_len)
+    {
+        const unsigned char c = (unsigned char) src[in];
+        OCI_UInt32 code;
+        OCI_Size   seq;
+
+        if (c < 0x80)
+        {
+            code = c;
+            seq  = 1;
+        }
+        else if ((c & 0xE0) == 0xC0 && in + 1 < src_len)
+        {
+            code = ((OCI_UInt32)(c & 0x1F) << 6)
+                 |  (OCI_UInt32)(src[in + 1] & 0x3F);
+            seq  = 2;
+        }
+        else if ((c & 0xF0) == 0xE0 && in + 2 < src_len)
+        {
+            code = ((OCI_UInt32)(c & 0x0F) << 12)
+                 | ((OCI_UInt32)(src[in + 1] & 0x3F) << 6)
+                 |  (OCI_UInt32)(src[in + 2] & 0x3F);
+            seq  = 3;
+        }
+        else if ((c & 0xF8) == 0xF0 && in + 3 < src_len)
+        {
+            code = ((OCI_UInt32)(c & 0x07) << 18)
+                 | ((OCI_UInt32)(src[in + 1] & 0x3F) << 12)
+                 | ((OCI_UInt32)(src[in + 2] & 0x3F) << 6)
+                 |  (OCI_UInt32)(src[in + 3] & 0x3F);
+            seq  = 4;
+        }
+        else
+        {
+            /* malformed byte: emit U+FFFD and skip one byte */
+
+            code = 0xFFFD;
+            seq  = 1;
+        }
+
+        if (code >= 0x10000)
+        {
+            /* surrogate pair: needs two UTF-16 units */
+
+            if (dst && out + 1 < dst_cap)
+            {
+                code -= 0x10000;
+                dst[out]     = (otext) (0xD800 + (code >> 10));
+                dst[out + 1] = (otext) (0xDC00 + (code & 0x3FF));
+            }
+
+            out += 2;
+        }
+        else
+        {
+            if (dst && out < dst_cap)
+            {
+                dst[out] = (otext) code;
+            }
+
+            out += 1;
+        }
+
+        in += seq;
+    }
+
+    if (dst && dst_cap > 0)
+    {
+        dst[out < dst_cap ? out : dst_cap - 1] = 0;
+    }
+
+    return out;
+
+#endif
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStringNativeToUTF8
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Size OcilibStringNativeToUTF8
+(
+    const otext* src,
+    OCI_Size     src_len,
+    char       * dst,
+    OCI_Size     dst_cap
+)
+{
+    /* Converts src_len otext elements (src_len == (OCI_Size)-1 for
+       NUL-terminated input) to UTF-8 in 'dst' (capacity dst_cap bytes
+       including the NUL). Returns bytes produced or required; pass
+       dst == NULL for a sizing query. */
+
+    if (NULL == src)
+    {
+        return 0;
+    }
+
+    if ((OCI_Size) -1 == src_len)
+    {
+        src_len = ostrlen(src);
+    }
+
+#ifndef OCI_CHARSET_WIDE
+
+    {
+        OCI_Size len = src_len;
+
+        if (NULL != dst && dst_cap > 0)
+        {
+            if (len >= dst_cap)
+            {
+                len = dst_cap - 1;
+            }
+
+            memcpy(dst, src, len);
+            dst[len] = 0;
+        }
+
+        return src_len;
+    }
+
+#else
+
+    OCI_Size in  = 0;
+    OCI_Size out = 0;
+
+    while (in < src_len)
+    {
+        OCI_UInt32 code = (OCI_UInt32) src[in];
+
+        if (code >= 0xD800 && code <= 0xDBFF && in + 1 < src_len)
+        {
+            const OCI_UInt32 low = (OCI_UInt32) src[in + 1];
+
+            if (low >= 0xDC00 && low <= 0xDFFF)
+            {
+                code = 0x10000 + ((code - 0xD800) << 10) + (low - 0xDC00);
+                in++;
+            }
+        }
+
+        {
+            OCI_Int32 n = 0;
+
+            if (dst && out < dst_cap)
+            {
+                n = OcilibStringCodepointToUTF8(code, dst + out, (OCI_Int32) (dst_cap - out));
+            }
+
+            if (0 == n)
+            {
+                /* sizing pass or output full: count worst case */
+
+                n = (OCI_Int32)(code < 0x80 ? 1 : code < 0x800 ? 2 : code < 0x10000 ? 3 : 4);
+            }
+
+            out += (OCI_Size) n;
+        }
+
+        in++;
+    }
+
+    if (dst && dst_cap > 0)
+    {
+        dst[out < dst_cap ? out : dst_cap - 1] = 0;
+    }
+
+    return out;
+
+#endif
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStringDBSize
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Int32 OcilibStringDBSize
+(
+    const otext * src
+)
+{
+    /* Byte size of a NUL-terminated otext string passed to an OCI call
+       taking a dbtext argument — otext and dbtext are the same type on
+       every supported build. */
+
+    return NULL == src ? 0 : (OCI_Int32) (ostrlen(src) * sizeof(dbtext));
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibStringGetDBMbcsString
+ * --------------------------------------------------------------------------------------------- */
+
+char* OcilibStringGetDBMbcsString
 (
     OCI_Environment* env,
     const otext    * src,
     OCI_Int32      * size
 )
 {
-    dbtext  * dst = NULL;
-    OCI_Int32 len = 0;
+    /* Returns a byte string for OCI entry points that take oratext data in a
+       byte-oriented encoding regardless of the environment charset (e.g.
+       JZN/JSON, which exchanges UTF-8). On MBCS builds this is a borrowed
+       pointer to the input; on wide builds the input is transcoded to UTF-8
+       in a freshly allocated buffer that must be released with
+       OcilibStringReleaseDBMbcsString(). '*size' receives the byte count. */
+
+    char    * dst = NULL;
+    OCI_Size  len = 0;
 
     if (!src)
     {
@@ -326,132 +626,50 @@ dbtext* OcilibStringGetDBString
 
     if (*size == -1)
     {
-        COMPUTE_LENGTH(otext, src, len);
+        len = ostrlen(src);
     }
     else
     {
-        len = (OCI_Int32)((OCI_Int32)(*size) / (OCI_Int32)sizeof(otext));
-    }
-
-    if (env && env->use_wide_char_conv)
-    {
-        dst = (dbtext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(dbtext),
-                                         (OCI_Size)(len + 1), FALSE);
-
-        if (NULL != dst)
-        {
-            OcilibStringUTF32ToUTF16(src, dst, len);
-        }
-    }
-    else
-    {
-        dst = (dbtext*)src;
-    }
-
-    *size = (OCI_Size)len * sizeof(dbtext);
-
-    return dst;
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibStringReleaseDBString
- * --------------------------------------------------------------------------------------------- */
-
-void OcilibStringReleaseDBString
-(
-    OCI_Environment* env,
-    dbtext         * str
-)
-{
-    if (env && env->use_wide_char_conv && NULL != str)
-    {
-        OcilibMemoryFree(env, str);
-    }
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibStringGetDBAnsiString
- * --------------------------------------------------------------------------------------------- */
-
-dbtext* OcilibStringGetDBAnsiString
-(
-    OCI_Environment* env,
-    const otext    * src,
-    OCI_Int32      * size
-)
-{
-    dbtext  * dst = NULL;
-    OCI_Int32 len = 0;
-
-    if (!src)
-    {
-        *size = 0;
-        return dst;
-    }
-
-    if (*size == -1)
-    {
-        COMPUTE_LENGTH(otext, src, len);
-    }
-    else
-    {
-        len = (OCI_Int32)((OCI_Int32)(*size) / (OCI_Int32)sizeof(otext));
+        len = (OCI_Size)(*size) / sizeof(otext);
     }
 
     if (env && env->charset == OCI_CHAR_WIDE)
     {
-        dst = (dbtext*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(dbtext),
-                                         (OCI_Size)(len + 1), FALSE);
+        const OCI_Size bytes = OcilibStringNativeToUTF8(src, len, NULL, 0);
+
+        dst = (char*)OcilibMemoryAlloc(env, OCI_IPC_STRING, sizeof(char),
+                                       bytes + 1, FALSE);
 
         if (NULL != dst)
         {
-            OcilibStringNativeToMbcs(src, dst, len);
+            OcilibStringNativeToUTF8(src, len, dst, bytes + 1);
         }
+
+        *size = (OCI_Int32) bytes;
     }
     else
     {
-        dst = (dbtext*)src;
+        dst   = (char*)src;
+        *size = (OCI_Int32)(len * sizeof(char));
     }
-
-    *size = (OCI_Size)len * sizeof(dbtext);
 
     return dst;
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStringReleaseDBAnsiString
+ * OcilibStringReleaseDBMbcsString
  * --------------------------------------------------------------------------------------------- */
 
-void OcilibStringReleaseDBAnsiString
+void OcilibStringReleaseDBMbcsString
 (
     OCI_Environment* env,
-    dbtext         * str
+    char           * str
 )
 {
     if (env && env->charset == OCI_CHAR_WIDE && NULL != str)
     {
         OcilibMemoryFree(env, str);
     }
-}
-
-/* --------------------------------------------------------------------------------------------- *
- * OcilibStringCopyDBStringToNativeString
- * --------------------------------------------------------------------------------------------- */
-
-OCI_Int32 OcilibStringCopyDBStringToNativeString
-(
-    OCI_Environment* env,
-    const dbtext   * src,
-    otext          * dst,
-    OCI_Int32        len
-)
-{
-    if (env && env->use_wide_char_conv)
-    {
-        OcilibStringUTF16ToUTF32((void*)src, (void*)dst, len);
-    }
-
-    return len;
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -469,14 +687,7 @@ otext* OcilibStringDuplicateFromDBString
 
     if (NULL != dst)
     {
-        if (env->use_wide_char_conv)
-        {
-            OcilibStringUTF16ToUTF32((void*)src, (void*)dst, len);
-        }
-        else
-        {
-            OcilibStringRawCopy((void*)src, (void*)dst, len);
-        }
+        OcilibStringRawCopy((void*)src, (void*)dst, len);
     }
 
     dst[len] = 0;
@@ -522,14 +733,7 @@ otext* OcilibStringFromStringPtr
         {
             *buffer_size = (OCI_UInt32)((length + 1) * sizeof(otext));
 
-            if (libenv && libenv->use_wide_char_conv)
-            {
-                OcilibStringUTF16ToUTF32((void*)tmp, (void*)*buffer, (OCI_Int32)length);
-            }
-            else
-            {
-                OcilibStringRawCopy((void*)tmp, (void*)*buffer, (OCI_Int32)length);
-            }
+            OcilibStringRawCopy((void*)tmp, (void*)*buffer, (OCI_Int32)length);
         }
     }
 
@@ -555,26 +759,19 @@ OCI_Boolean OcilibStringToStringPtr
         /* context */ OCI_IPC_ENVIRONMENT, libenv
     );
 
-    dbtext  * dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_STRING, value);
-
-    dbstr = OcilibStringGetDBString(libenv, value, &dbsize);
 
     CHECK_OCI
     (
         err,
         OCIStringAssignText,
-        envh, err, (oratext*)dbstr, (ub4)dbsize, str
+        envh, err, (oratext*)(value), (ub4)OcilibStringDBSize(value), str
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(libenv, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -672,9 +869,14 @@ OCI_Boolean OcilibStringGetAttribute
 
         if (OcilibStringRequestBuffer(con->env, str, size, (OCI_UInt32) len))
         {
-            OcilibStringTranslate(dbstr, *str, (OCI_Int32) len,
-                                  is_ansi ? sizeof(char) : sizeof(dbtext),
-                                  sizeof(otext));
+            if (is_ansi)
+            {
+                OcilibStringMbcsToNative((const char*)dbstr, *str, (OCI_Size) len);
+            }
+            else
+            {
+                OcilibStringOracleToNative(dbstr, *str, (OCI_Int32) len);
+            }
         }
 
         CHECK_NULL(*str);
@@ -714,7 +916,8 @@ OCI_Boolean OcilibStringSetAttribute
 
     CHECK_PTR(OCI_IPC_CONNECTION, con);
 
-    dbstr = OcilibStringGetDBString(con->env, value, &dbsize);
+    dbstr = (dbtext *) (value);
+    dbsize = OcilibStringDBSize(value);
 
     if (dbsize == -1)
     {
@@ -738,10 +941,7 @@ OCI_Boolean OcilibStringSetAttribute
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(con->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -171,8 +171,6 @@ OCI_Boolean OcilibShardingKeyAddString
         /* context */ OCI_IPC_SHARDING_KEY, skey
     );
 
-    OCI_Int32 dbsize = -1;
-    dbtext   *dbstr  = NULL;
 
     CHECK_PTR(OCI_IPC_SHARDING_KEY, skey);
     CHECK_PTR(OCI_IPC_STRING,       value);
@@ -180,16 +178,14 @@ OCI_Boolean OcilibShardingKeyAddString
 
 #if OCI_VERSION_COMPILE >= OCI_12_2
 
-    dbstr = OcilibStringGetDBString(skey->env, value, &dbsize);
-
     CHECK_OCI
     (
         skey->env->err,
         OCIShardingKeyColumnAdd,
         skey->handle,
         skey->env->err,
-        dbstr,
-        (ub4)dbsize,
+        (dbtext *) (value),
+        (ub4)OcilibStringDBSize(value),
         (ub2)SQLT_STR,
         OCI_DEFAULT
     );
@@ -204,10 +200,7 @@ OCI_Boolean OcilibShardingKeyAddString
 
 #endif
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(skey->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

@@ -99,8 +99,8 @@
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release - WIDE|Win32'">..\..\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release - MBCS|x64'">..\..\include;$(IncludePath)</IncludePath>
     <IncludePath Condition="'$(Configuration)|$(Platform)'=='Release - WIDE|x64'">..\..\include;$(IncludePath)</IncludePath>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release - MBCS|Win32'">ocilibm</TargetName>
-    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release - MBCS|x64'">ocilibm</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release - MBCS|Win32'">ocilib</TargetName>
+    <TargetName Condition="'$(Configuration)|$(Platform)'=='Release - MBCS|x64'">ocilib</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release - WIDE|Win32'">ocilibw</TargetName>
     <TargetName Condition="'$(Configuration)|$(Platform)'=='Release - WIDE|x64'">ocilibw</TargetName>
   </PropertyGroup>
@@ -129,7 +129,7 @@
     <Link>
       <RegisterOutput>false</RegisterOutput>
       <ShowProgress>NotSet</ShowProgress>
-      <OutputFile>$(TargetDir)\ocilibm.dll</OutputFile>
+      <OutputFile>$(TargetDir)\ocilib.dll</OutputFile>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ManifestFile>
       </ManifestFile>
@@ -146,7 +146,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(TargetDir)\ocilibm.lib</ImportLibrary>
+      <ImportLibrary>$(TargetDir)\ocilib.lib</ImportLibrary>
       <TargetMachine>MachineX86</TargetMachine>
       <ProgramDatabaseFile>.\..\..\lib32\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>
@@ -183,7 +183,7 @@
     <Link>
       <RegisterOutput>false</RegisterOutput>
       <ShowProgress>NotSet</ShowProgress>
-      <OutputFile>$(TargetDir)\ocilibm.dll</OutputFile>
+      <OutputFile>$(TargetDir)\ocilib.dll</OutputFile>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ManifestFile>
       </ManifestFile>
@@ -200,7 +200,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <ImportLibrary>$(TargetDir)\ocilibm.lib</ImportLibrary>
+      <ImportLibrary>$(TargetDir)\ocilib.lib</ImportLibrary>
       <TargetMachine>MachineX64</TargetMachine>
       <ProgramDatabaseFile>.\..\..\lib64\$(TargetName).pdb</ProgramDatabaseFile>
     </Link>

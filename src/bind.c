@@ -101,11 +101,6 @@ static OCI_Boolean OcilibBindAllocateInternalData
             case OCI_CDT_TEXT:
             {
                 struct_size = (OCI_UInt32) bnd->size;
-
-                if (bnd->stmt->con->env->use_wide_char_conv)
-                {
-                    elem_size = (OCI_UInt32) bnd->size * (OCI_UInt32)(sizeof(otext) / sizeof(dbtext));
-                }
                 break;
             }
             case OCI_CDT_LOB:
@@ -207,18 +202,8 @@ static OCI_Boolean OcilibBindAllocateInternalData
             }
             case OCI_CDT_TEXT:
             {
-                if (bnd->stmt->con->env->use_wide_char_conv)
-                {
-                    bnd->buffer.data = (void**)arr->mem_handle;
-                    bnd->input       = (void**)arr->mem_struct;
-                    bnd->alloc       = TRUE;
-                }
-                else
-                {
-                    bnd->buffer.data = (void**)arr->mem_struct;
-                    bnd->input       = (void**)bnd->buffer.data;
-                }
-
+                bnd->buffer.data = (void**)arr->mem_struct;
+                bnd->input       = (void**)bnd->buffer.data;
                 break;
             }
             case OCI_CDT_RAW:
@@ -285,18 +270,8 @@ static OCI_Boolean OcilibBindAllocateInternalData
             }
             case OCI_CDT_TEXT:
             {
-                if (bnd->stmt->con->env->use_wide_char_conv)
-                {
-                    bnd->buffer.data = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_STRING,
-                                                                 (OCI_Size) bnd->size * (sizeof(otext) / sizeof(dbtext)), 1, TRUE);
-                    bnd->input = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_STRING, (OCI_Size) bnd->size, 1, TRUE);
-                    bnd->alloc = TRUE;
-                }
-                else
-                {
-                    bnd->buffer.data = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_STRING, (OCI_Size) bnd->size, 1, TRUE);
-                    bnd->input       = (void**)bnd->buffer.data;
-                }
+                bnd->buffer.data = (void**)OcilibMemoryAlloc(bnd->stmt->con->env,OCI_IPC_STRING, (OCI_Size) bnd->size, 1, TRUE);
+                bnd->input       = (void**)bnd->buffer.data;
                 break;
             }
             case OCI_CDT_LOB:
@@ -472,7 +447,7 @@ static OCI_Boolean OcilibBindAllocateBuffers
                 (OCI_CDT_LONG    != bnd->type)  &&
                 (OCI_CDT_BOOLEAN != bnd->type)  &&
                 (OCI_CDT_NUMERIC != bnd->type || SQLT_VNU == bnd->code) &&
-                (OCI_CDT_TEXT    != bnd->type || bnd->stmt->con->env->use_wide_char_conv)
+                (OCI_CDT_TEXT    != bnd->type)
                 && (OCI_CDT_JSON != bnd->type || bnd->is_array)
                 )
             {
@@ -617,8 +592,6 @@ static OCI_Boolean OcilibBindPerformBinding
         /* context */ OCI_IPC_BIND, bnd
     );
 
-    dbtext  * dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_BIND, bnd);
 
@@ -645,7 +618,7 @@ static OCI_Boolean OcilibBindPerformBinding
     }
     else
     {
-        dbstr = OcilibStringGetDBString(bnd->stmt->con->env, bnd->name, &dbsize);
+
 
         CHECK_OCI
         (
@@ -654,8 +627,8 @@ static OCI_Boolean OcilibBindPerformBinding
             bnd->stmt->handle,
             (OCIBind **)&bnd->buffer.handle,
             bnd->stmt->con->err,
-            (OraText *)dbstr,
-            (sb4)dbsize,
+            (OraText *)(bnd->name),
+            (sb4)OcilibStringDBSize(bnd->name),
             (void *)bnd->buffer.data,
             bnd->size,
             bnd->code,
@@ -703,10 +676,7 @@ static OCI_Boolean OcilibBindPerformBinding
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(bnd->stmt->con->env, dbstr);
-    );
+    EXIT_FUNC();
 
 }
 

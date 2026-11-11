@@ -315,14 +315,6 @@ OCI_DirectPath * OcilibDirectPathCreate
         /* context */ OCI_IPC_TYPE_INFO, typinf
     );
 
-    dbtext* dbstr1 = NULL;
-    dbtext* dbstr2 = NULL;
-    dbtext* dbstr3 = NULL;
-
-    OCI_Int32 dbsize1 = -1;
-    OCI_Int32 dbsize2 = -1;
-    OCI_Int32 dbsize3 = -1;
-
     OCI_DirectPath* dp = NULL;
 
     CHECK_PTR(OCI_IPC_TYPE_INFO, typinf);
@@ -358,12 +350,10 @@ OCI_DirectPath * OcilibDirectPathCreate
 
     /* set table name attribute */
 
-    dbstr1 = OcilibStringGetDBString(dp->con->env, dp->typinf->name, &dbsize1);
-
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_NAME,
-        dp->handle, dbstr1, dbsize1,
+        dp->handle, (dp->typinf->name), OcilibStringDBSize(dp->typinf->name),
         typinf->con->err
     );
 
@@ -371,12 +361,12 @@ OCI_DirectPath * OcilibDirectPathCreate
 
     if (IS_STRING_VALID(dp->typinf->schema))
     {
-        dbstr2 = OcilibStringGetDBString(dp->con->env, dp->typinf->schema, &dbsize2);
+
 
         CHECK_ATTRIB_SET
         (
             OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SCHEMA_NAME,
-            dp->handle, dbstr2, dbsize2,
+            dp->handle, (dp->typinf->schema), OcilibStringDBSize(dp->typinf->schema),
             typinf->con->err
         );
     }
@@ -385,12 +375,12 @@ OCI_DirectPath * OcilibDirectPathCreate
 
     if (IS_STRING_VALID(partition))
     {
-        dbstr3 = OcilibStringGetDBString(dp->con->env, partition, &dbsize3);
+
 
         CHECK_ATTRIB_SET
         (
             OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SUB_NAME,
-            dp->handle, dbstr3, dbsize3,
+            dp->handle, (dbtext *) (partition), OcilibStringDBSize(partition),
             typinf->con->err
         );
     }
@@ -424,9 +414,6 @@ OCI_DirectPath * OcilibDirectPathCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(typinf->con->env, dbstr1);
-        OcilibStringReleaseDBString(typinf->con->env, dbstr2);
-        OcilibStringReleaseDBString(typinf->con->env, dbstr3);
 
         if (FAILURE)
         {
@@ -505,10 +492,6 @@ OCI_Boolean OcilibDirectPathSetColumn
     OCI_Column        *col     = NULL;
     OCIParam          *hattr   = NULL;
     OCIParam          *hlist   = NULL;
-    dbtext            *dbstr1  = NULL;
-    OCI_Int32          dbsize1 = -1;
-    dbtext            *dbstr2  = NULL;
-    OCI_Int32          dbsize2 = -1;
 
     ub2 i = 0;
 
@@ -646,12 +629,10 @@ OCI_Boolean OcilibDirectPathSetColumn
 
     /* set column name */
 
-    dbstr1 = OcilibStringGetDBString(dp->con->env, name, &dbsize1);
-
     CHECK_ATTRIB_SET
     (
         OCI_DTYPE_PARAM, OCI_ATTR_NAME,
-        hattr, dbstr1, dbsize1,
+        hattr, (dbtext *) (name), OcilibStringDBSize(name),
         dp->typinf->con->err
     );
 
@@ -715,12 +696,12 @@ OCI_Boolean OcilibDirectPathSetColumn
 
     if (dpcol->format && dpcol->format[0] && (OCI_DDT_NUMBER != dpcol->type))
     {
-        dbstr2 = OcilibStringGetDBString(dp->con->env, dpcol->format, &dbsize2);
+
 
         CHECK_ATTRIB_SET
         (
             OCI_DTYPE_PARAM, OCI_ATTR_DATEFORMAT,
-            hattr, dbstr2, dbsize2,
+            hattr, (dpcol->format), OcilibStringDBSize(dpcol->format),
             dp->typinf->con->err
         );
     }
@@ -743,8 +724,6 @@ OCI_Boolean OcilibDirectPathSetColumn
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dp->con->env, dbstr1);
-        OcilibStringReleaseDBString(dp->con->env, dbstr2);
 
         if (NULL != hattr)
         {
@@ -920,20 +899,13 @@ OCI_Boolean OcilibDirectPathSetEntry
 
         ub1 *data = ((ub1 *) dpcol->data) + (OCI_Size) (row * dpcol->bufsize);
 
-        /* we need to pack the buffer if wchar_t is 4 bytes */
-
-        if (OCI_DDT_TEXT == dpcol->type && dp->con->env->use_wide_char_conv)
-        {
-            size = (OCI_UInt32) ocharcount(size);
-            OcilibStringUTF32ToUTF16(value, data, (OCI_Int32) size);
-        }
-        else if (OCI_DDT_OTHERS == dpcol->type && IS_WIDE_ENV())
+        if (OCI_DDT_OTHERS == dpcol->type && IS_WIDE_ENV())
         {
             /* input Unicode numeric values causes oracle conversion error.
                so, let's convert them to MBCS */
 
             size = (OCI_UInt32) ocharcount(size);
-            OcilibStringNativeToMbcs(value, data, (OCI_Int32) size);
+            OcilibStringNativeToMbcs(value, (char *) data, (OCI_Int32) size);
         }
         else if (OCI_DDT_NUMBER == dpcol->type)
         {
@@ -1357,27 +1329,20 @@ OCI_Boolean OcilibDirectPathSetDateFormat
         /* context */ OCI_IPC_DIRPATH, dp
     );
 
-    dbtext   *dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_DIRPATH, dp);
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED);
 
-    dbstr = OcilibStringGetDBString(dp->con->env, format, &dbsize);
-
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_DATEFORMAT,
-        dp->handle, dbstr, dbsize,
+        dp->handle, (dbtext *) (format), OcilibStringDBSize(format),
         dp->typinf->con->err
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(dp->con->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

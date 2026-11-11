@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LOBs — basics — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2" open><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li class="active"><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span><span class="badge badge-demo">demo/lob.c</span><a class="badge badge-demo" href="assets/sql/lob.sql">lob.sql</a></div>
+    <h1 id="lobs-basics">LOBs — basics</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>create and bind <code>CLOB</code>/<code>BLOB</code>/<code>NCLOB</code> locators</li>
+<li>read and write LOB content in chunks</li>
+<li>tell temporary LOBs from column locators</li>
+</ul>
+<h2 id="in-context-locators-not-payloads">In context — locators, not payloads</h2>
+<p>A <code>CLOB</code>/<code>BLOB</code>/<code>NCLOB</code> column does not store its content in the row — the row
+holds a <strong>locator</strong>, a pointer to data Oracle manages elsewhere (in-line up to
+~4 KB, then out-of-line in a LOB segment). <code>OCI_Lob</code> wraps that locator: every
+<code>Read</code>/<code>Write</code> you issue is a round-trip asking the server to move a chunk
+through the pointer. That is why LOB code is written as chunked I/O loops rather
+than "give me the whole string" — the handle is a cursor over content, not the
+content.</p>
+<p>Two locator kinds exist. <strong>Persistent</strong> locators come from a fetched column and
+refer to stored data; they are borrowed — you never free them, and changes go
+through the row. <strong>Temporary</strong> locators come from <code>OCI_LobCreate</code>: a scratch LOB
+living on the server until you free it, useful as a staging area before a bind
+or a copy. Keeping that distinction straight — fetched = borrowed/persistent,
+created = owned/temporary — is most of what LOB code gets wrong.</p>
+<p>The units trip people too: <code>CLOB</code>/<code>NCLOB</code> count in <em>characters</em>, <code>BLOB</code> in
+<em>bytes</em>, and every length/offset/counter in the API follows the locator's unit.
+<code>OCI_LobWrite</code>/<code>OCI_LobRead</code> therefore take <em>two</em> in/out counters — char count
+and byte count — because on a wide build a CLOB's char count and byte count
+differ by the <code>otext</code> width; pass the buffer sized for the <em>byte</em> count.</p>
+<h2 id="concepts">Concepts</h2>
+<p>A <code>Lob</code> is a <strong>locator</strong> — a pointer to content living in the database (or a temporary server-side LOB), created on the connection by LOB subtype.</p>
+<p>Operations are chunked I/O over it:</p>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_LobCreate</code></td>
+<td><code>Lob</code> ctor (<code>con</code>, <code>Lob::Blob</code>/<code>Clob</code>/<code>NClob</code>)</td>
+<td>locator</td>
+</tr>
+<tr>
+<td><code>OCI_LobFree</code></td>
+<td>— (RAII)</td>
+<td>release</td>
+</tr>
+<tr>
+<td><code>OCI_LobWrite</code></td>
+<td><code>Write</code></td>
+<td>write chunk (CLOB chars / BLOB bytes)</td>
+</tr>
+<tr>
+<td><code>OCI_LobRead</code></td>
+<td><code>Read</code></td>
+<td>read chunk — <code>len</code> in/out</td>
+</tr>
+<tr>
+<td><code>OCI_LobGetLength</code></td>
+<td><code>GetLength()</code></td>
+<td>content length</td>
+</tr>
+<tr>
+<td><code>OCI_LobGetType</code></td>
+<td><code>GetType()</code></td>
+<td>BLOB vs CLOB vs NCLOB</td>
+</tr>
+<tr>
+<td><code>OCI_LobIsTemporary</code></td>
+<td><code>IsTemporary()</code></td>
+<td>temp vs persistent</td>
+</tr>
+<tr>
+<td><code>OCI_LobSeek</code></td>
+<td><code>Seek</code></td>
+<td>position for partial I/O</td>
+</tr>
+<tr>
+<td><code>OCI_LobGetOffset</code></td>
+<td><code>GetOffset()</code></td>
+<td>current position</td>
+</tr>
+</tbody>
+</table>
+<h2 id="writing-a-clob">Writing a CLOB</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Lob</span><span class="w"> </span><span class="o">*</span><span class="n">clob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_LobCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_CLOB</span><span class="p">);</span>
+<span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">nch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">len</span><span class="p">,</span><span class="w"> </span><span class="n">nby</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">len</span><span class="p">;</span>
+<span class="n">OCI_LobWrite</span><span class="p">(</span><span class="n">clob</span><span class="p">,</span><span class="w"> </span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nch</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nby</span><span class="p">);</span><span class="w"> </span><span class="cm">/* otext data for CLOB */</span>
+
+<span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"insert into articles(id, body) values(:i, :b)"</span><span class="p">));</span>
+<span class="n">OCI_StatementBindLob</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":b"</span><span class="p">),</span><span class="w"> </span><span class="n">clob</span><span class="p">);</span>
+<span class="n">OCI_StatementExecutePrepared</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="n">OCI_LobFree</span><span class="p">(</span><span class="n">clob</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Lob</span><span class="w"> </span><span class="nf">clob</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="n">Lob</span><span class="o">::</span><span class="n">Clob</span><span class="p">);</span>
+<span class="n">clob</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="n">text</span><span class="p">,</span><span class="w"> </span><span class="n">len</span><span class="p">);</span><span class="w">                  </span><span class="cm">/* otext data for CLOB */</span>
+
+<span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"insert into articles(id, body) values(:i, :b)"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":b"</span><span class="p">,</span><span class="w"> </span><span class="n">clob</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">ExecutePrepared</span><span class="p">();</span>
+</pre></div>
+</div></div>
+<h2 id="reading-one-back">Reading one back</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_StatementExecute</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"select body from articles where id = :i"</span><span class="p">));</span>
+<span class="cm">/* bind :i, execute, fetch */</span>
+<span class="n">OCI_Lob</span><span class="w"> </span><span class="o">*</span><span class="n">clob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ResultsetGetLob</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">      </span><span class="cm">/* borrowed locator */</span>
+
+<span class="n">otext</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">4096</span><span class="p">];</span>
+<span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">nch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">otext</span><span class="p">);</span>
+<span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">nby</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_LobRead</span><span class="p">(</span><span class="n">clob</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nch</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nby</span><span class="p">))</span><span class="w">      </span><span class="cm">/* n = chars/bytes actually read */</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="cm">/* consume n units of buf */</span>
+<span class="w">    </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span><span class="s">"select body from articles where id = :i"</span><span class="p">);</span>
+<span class="cm">/* bind :i, execute, fetch */</span>
+<span class="n">Lob</span><span class="w"> </span><span class="n">clob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Lob</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w"> </span><span class="cm">/* borrowed locator */</span>
+
+<span class="cm">/* C++ Read(n) reads n units at the current offset — loop for chunks  */</span>
+<span class="n">String</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clob</span><span class="p">.</span><span class="n">Read</span><span class="p">(</span><span class="n">clob</span><span class="p">.</span><span class="n">GetLength</span><span class="p">());</span><span class="w">    </span><span class="cm">/* whole content        */</span>
+<span class="cm">/* or chunked: */</span>
+<span class="n">UInt32</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(;</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">clob</span><span class="p">.</span><span class="n">GetLength</span><span class="p">();</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="mi">4096</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">clob</span><span class="p">.</span><span class="n">Seek</span><span class="p">(</span><span class="n">SeekSet</span><span class="p">,</span><span class="w"> </span><span class="n">off</span><span class="p">);</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">chunk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">clob</span><span class="p">.</span><span class="n">Read</span><span class="p">(</span><span class="mi">4096</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<div class="admonition note">
+<p class="admonition-title">Char vs byte semantics</p>
+<p><code>CLOB</code>/<code>NCLOB</code> counts are in <strong>characters</strong>; <code>BLOB</code> in <strong>bytes</strong>. On wide builds
+CLOB buffers are UTF-16 <code>otext</code>.</p>
+</div>
+<h2 id="temporary-lobs">Temporary LOBs</h2>
+<p><code>OCI_LobCreate</code>d locators are <em>temporary</em> — they live until freed. You bind them like
+column values; persistent LOBs come back from <code>OCI_ResultsetGetLob</code> and are borrowed.</p>
+<p>C++: <code>Lob l(con, Lob::Clob)</code> / <code>rs.Get&lt;Lob&gt;(i)</code>; <code>l.Write(buf)</code>, <code>l.Read(buf)</code>,
+<code>l.GetLength()</code>.</p>
+<h2 id="scenario-the-three-basic-writes">Scenario — the three basic writes</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Lob</span><span class="w"> </span><span class="o">*</span><span class="n">lob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_LobCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_BLOB</span><span class="p">);</span>
+
+<span class="cm">/* 1. sequential build — write chunk after chunk                      */</span>
+<span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">chunk</span><span class="p">);</span>
+<span class="n">OCI_LobWrite</span><span class="p">(</span><span class="n">lob</span><span class="p">,</span><span class="w"> </span><span class="n">chunk</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>
+
+<span class="cm">/* 2. append — same as write-at-end, explicit                         */</span>
+<span class="n">OCI_LobAppend</span><span class="p">(</span><span class="n">lob</span><span class="p">,</span><span class="w"> </span><span class="n">tail_bytes</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">n</span><span class="p">);</span>
+
+<span class="cm">/* 3. partial write — seek then overwrite a slice                     */</span>
+<span class="n">OCI_LobSeek</span><span class="p">(</span><span class="n">lob</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_UInt64</span><span class="p">)</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_SEEK_SET</span><span class="p">);</span>
+<span class="n">OCI_UInt64</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_LobGetOffset</span><span class="p">(</span><span class="n">lob</span><span class="p">);</span><span class="w">       </span><span class="cm">/* = 1024                */</span>
+<span class="n">OCI_LobWrite</span><span class="p">(</span><span class="n">lob</span><span class="p">,</span><span class="w"> </span><span class="n">patch</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">n</span><span class="p">);</span><span class="w">             </span><span class="cm">/* overwrites 1024..     */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Lob</span><span class="w"> </span><span class="nf">lob</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="n">Lob</span><span class="o">::</span><span class="n">Blob</span><span class="p">);</span>
+<span class="n">Raw</span><span class="w"> </span><span class="n">chunk</span><span class="p">{</span><span class="w"> </span><span class="cm">/* … */</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">tail_bytes</span><span class="p">{</span><span class="w"> </span><span class="cm">/* … */</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="n">patch</span><span class="p">{</span><span class="w"> </span><span class="cm">/* … */</span><span class="w"> </span><span class="p">};</span>
+
+<span class="cm">/* 1. sequential build — write chunk after chunk                      */</span>
+<span class="n">lob</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="n">chunk</span><span class="p">);</span>
+
+<span class="cm">/* 2. append — same as write-at-end, explicit                         */</span>
+<span class="n">lob</span><span class="p">.</span><span class="n">Append</span><span class="p">(</span><span class="n">tail_bytes</span><span class="p">);</span>
+
+<span class="cm">/* 3. partial write — seek then overwrite a slice                     */</span>
+<span class="n">lob</span><span class="p">.</span><span class="n">Seek</span><span class="p">(</span><span class="n">SeekSet</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">);</span>
+<span class="n">UInt64</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lob</span><span class="p">.</span><span class="n">GetOffset</span><span class="p">();</span><span class="w">                 </span><span class="cm">/* = 1024                */</span>
+<span class="n">lob</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="n">patch</span><span class="p">);</span><span class="w">                             </span><span class="cm">/* overwrites 1024..     */</span>
+</pre></div>
+</div></div>
+<h2 id="scenario-streaming-read-until-eof">Scenario — streaming read until EOF</h2>
+<p><code>OCI_LobRead</code> is your iterator — each call advances the internal offset; FALSE
+means end-of-content:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Lob</span><span class="w"> </span><span class="o">*</span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ResultsetGetLob</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">        </span><span class="cm">/* borrowed           */</span>
+
+<span class="n">OCI_UInt64</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="n">otext</span><span class="w">      </span><span class="n">buf</span><span class="p">[</span><span class="mi">8192</span><span class="p">];</span>
+<span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">nch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8192</span><span class="p">,</span><span class="w"> </span><span class="n">nby</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_LobRead</span><span class="p">(</span><span class="n">body</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nch</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nby</span><span class="p">)</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="n">nch</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">total</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">nch</span><span class="p">;</span><span class="w">                                </span><span class="cm">/* chars for CLOB      */</span>
+<span class="w">    </span><span class="n">nch</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8192</span><span class="p">;</span>
+<span class="w">    </span><span class="n">nby</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">);</span><span class="w">                         </span><span class="cm">/* refill capacities   */</span>
+<span class="p">}</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"streamed %llu of %u chars</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">       </span><span class="p">(</span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">long</span><span class="w"> </span><span class="kt">long</span><span class="p">)</span><span class="w"> </span><span class="n">total</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_LobGetLength</span><span class="p">(</span><span class="n">body</span><span class="p">));</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Lob</span><span class="w"> </span><span class="n">body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Lob</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">        </span><span class="cm">/* borrowed           */</span>
+
+<span class="n">UInt64</span><span class="w"> </span><span class="n">total</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">UInt64</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">body</span><span class="p">.</span><span class="n">GetLength</span><span class="p">();</span><span class="w"> </span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">body</span><span class="p">.</span><span class="n">Seek</span><span class="p">(</span><span class="n">SeekSet</span><span class="p">,</span><span class="w"> </span><span class="n">off</span><span class="p">);</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">chunk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">body</span><span class="p">.</span><span class="n">Read</span><span class="p">(</span><span class="mi">8192</span><span class="p">);</span><span class="w">              </span><span class="cm">/* up to 8192 units    */</span>
+<span class="w">    </span><span class="n">total</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">chunk</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="w">    </span><span class="n">off</span><span class="w">   </span><span class="o">+=</span><span class="w"> </span><span class="n">chunk</span><span class="p">.</span><span class="n">size</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="scenario-append-an-existing-lob-to-another">Scenario — append an existing LOB to another</h2>
+<p>Server-side append copies content without a single client round-trip — see
+<code>OCI_LobAppendLob</code> on the next page.</p>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>LOB code always reduces to the same loop — learn it once:</p>
+<ol>
+<li><strong>Get a locator</strong>: <code>OCI_ResultsetGetLob</code> on a fetched row (borrowed,
+   persistent) or <code>OCI_LobCreate</code> (owned, temporary) for staging.</li>
+<li><strong>Ask its size</strong> with <code>GetLength</code> — in <em>chars</em> for CLOB/NCLOB, <em>bytes</em> for
+   BLOB. That unit follows every offset and counter you touch.</li>
+<li><strong>Move data in chunks</strong>: <code>Read</code> in a loop until it returns FALSE (each call
+   advances the internal offset), <code>Write</code>/<code>Append</code> the same way — both take
+   the in/out char+byte counters.</li>
+<li><strong><code>Seek</code> for random access</strong>, then <code>GetOffset</code> to know where you are.</li>
+<li><strong>Bind the locator</strong> into INSERT/UPDATE; <strong>free only what you created</strong> —
+   fetched locators die with their row.</li>
+</ol>
+<p>Hints: <code>EMPTY_CLOB()</code>/<code>EMPTY_BLOB()</code> columns are <em>not</em> NULL and <em>not</em> data —
+check <code>GetLength</code>, not just null-ness; on wide builds a CLOB's byte count and
+char count differ by <code>sizeof(otext)</code>, which is exactly why the API hands you
+both counters; and when writes get chatty, the next page's buffering family is
+the answer.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Insert a 1 MB text file into a CLOB in 64 KB chunks.</li>
+<li>Fetch it back and verify <code>GetLength</code> matches.</li>
+<li>Use <code>OCI_LobSeek</code> to patch a value mid-LOB.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Freeing a fetched locator</strong> — <code>OCI_ResultsetGetLob</code> returns borrowed; only <code>Create</code>d ones
+  are freed.</li>
+<li><strong>Reading past <code>GetLength</code></strong> — <code>LobRead</code> returns FALSE at EOF; rely on it.</li>
+<li><strong><code>empty_clob()</code> columns</strong> — Oracle's <code>EMPTY_CLOB()</code> is <em>not</em> NULL and <em>not</em> data.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>OCI_Lob</code> = locator; chunked <code>Read</code>/<code>Write</code>, <code>GetLength</code>, byte vs char counts.</li>
+</ul>
+<p><strong>Next:</strong> LOB advanced — append, copy, buffering, remote lobs.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="vectors.html"><span class="pn-dir">← Previous</span>AI vectors 23ai</a><a class="pn-link pn-next" href="lobs-advanced.html"><span class="pn-dir">Next →</span>LOBs advanced</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

@@ -12,7 +12,6 @@ part: 10
 |--------|--------|
 | `--with-oracle-import=(linkage\|runtime)` | link `-lclntsh` vs `dlopen` at run time |
 | `--with-oracle-headers-path=` / `--with-oracle-lib-path=` | OCI headers/library paths (linkage mode) |
-| `--with-oracle-charset=(mbcs\|wide)` | `otext` = char vs UTF-16 |
 | `--enable-static` / `--enable-shared` | library flavor(s) |
 | `--enable-warnings=(no\|yes\|paranoid)` | dev diagnostics level |
 | `--enable-werror` | warnings as errors (CI only — never ship) |
@@ -23,14 +22,14 @@ part: 10
 
 | Define | Meaning |
 |--------|---------|
-| `OCI_CHARSET_MBCS` / `OCI_CHARSET_WIDE` | string flavor of this build |
+| `OCI_CHARSET_MBCS` / `OCI_CHARSET_WIDE` | string flavor of this build — `WIDE` is Windows-only (`#error` elsewhere) |
 | `OCI_IMPORT_LINKAGE` / `OCI_IMPORT_RUNTIME` | OCI loading mode |
 | `OCILIB_MAJOR/MINOR/REVISION_VERSION` | library version (platform.h) |
 
 ## Windows configurations
 
 `proj/dll/ocilib_dll.sln` — `Release - MBCS`/`Release - WIDE` × `Win32`/`x64`
-→ `lib32|64\ocilibm|w.{dll,lib}` + `.pdb`.
+→ `lib32|64\ocilib.{dll,lib}` (MBCS) / `ocilibw.{dll,lib}` (wide) + `.pdb`.
 
 ## Environment flags (`OCI_EnvironmentCreate` mode)
 

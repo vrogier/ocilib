@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>REF CURSORs — resultsets as PL/SQL outputs — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4" open><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li class="active"><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span><span class="badge badge-demo">demo/cursor.c</span><span class="badge badge-demo">demo/cursor.cpp</span></div>
+    <h1 id="ref-cursors-resultsets-as-plsql-outputs">REF CURSORs — resultsets as PL/SQL outputs</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>receive a <code>REF CURSOR</code> OUT parameter as a fetchable resultset</li>
+<li>read <em>nested cursors</em> inside a SELECT</li>
+<li>tell the two cursor sources apart: a cursor <em>parameter</em> vs a cursor <em>column</em></li>
+</ul>
+<h2 id="the-cursor-statement">The cursor statement</h2>
+<p>A <code>REF CURSOR</code> is Oracle's way of returning a resultset <em>through a parameter</em>.</p>
+<p>On the client side it materializes as a second <strong>statement</strong> — you bind a prepared statement into the <code>:cur</code> placeholder, execute, and fetch its resultset like any SELECT.</p>
+<p>Two different API calls feed you cursors, and confusing them is the classic mistake:</p>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ equivalent</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_StatementBindCursor</code></td>
+<td><code>Bind(":n", stmt)</code></td>
+<td>binds a statement as an OUT cursor parameter</td>
+</tr>
+<tr>
+<td><code>OCI_ResultsetGetCursor</code></td>
+<td><code>Get&lt;Statement&gt;(i)</code></td>
+<td>fetches a <code>CURSOR</code> <strong>column</strong> as a nested statement</td>
+</tr>
+<tr>
+<td><code>OCI_BindGetStatement</code></td>
+<td><code>BindInfo::GetStatement()</code></td>
+<td>recovers the bound statement from a bind object</td>
+</tr>
+</tbody>
+</table>
+<h2 id="setup">Setup</h2>
+<div class="highlight"><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">replace</span><span class="w"> </span><span class="k">procedure</span><span class="w"> </span><span class="n">get_emps</span><span class="p">(</span><span class="n">p_deptno</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="nb">number</span><span class="p">,</span><span class="w"> </span><span class="n">p_cur</span><span class="w"> </span><span class="k">out</span><span class="w"> </span><span class="n">sys_refcursor</span><span class="p">)</span><span class="w"> </span><span class="k">is</span>
+<span class="k">begin</span>
+<span class="w">    </span><span class="k">open</span><span class="w"> </span><span class="n">p_cur</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="k">select</span><span class="w"> </span><span class="n">empno</span><span class="p">,</span><span class="w"> </span><span class="n">ename</span><span class="p">,</span><span class="w"> </span><span class="n">sal</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">employees</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">deptno</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">p_deptno</span><span class="p">;</span>
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</code></pre></div>
+
+<h2 id="binding-a-cursor-out">Binding a cursor OUT</h2>
+<p>A cursor parameter binds to a <strong>statement handle</strong> — after execute, that statement
+carries the cursor's resultset:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Statement</span><span class="w"> </span><span class="o">*</span><span class="n">cur_st</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span><span class="w">   </span><span class="cm">/* the cursor lands here   */</span>
+
+<span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"begin get_emps(:d, :cur); end;"</span><span class="p">));</span>
+<span class="n">OCI_StatementBindInt32</span><span class="w">      </span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":d"</span><span class="p">),</span><span class="w">  </span><span class="o">&amp;</span><span class="n">deptno</span><span class="p">);</span>
+<span class="n">OCI_StatementBindCursor</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":cur"</span><span class="p">),</span><span class="w"> </span><span class="n">cur_st</span><span class="p">);</span><span class="w">      </span><span class="cm">/* declares OUT ref cursor */</span>
+<span class="n">OCI_StatementExecutePrepared</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+
+<span class="n">OCI_Resultset</span><span class="w"> </span><span class="o">*</span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementGetResultset</span><span class="p">(</span><span class="n">cur_st</span><span class="p">);</span><span class="w">      </span><span class="cm">/* fetch like any select   */</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_ResultsetFetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%d %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ResultsetGetInt32</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_ResultsetGetString</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="n">OCI_StatementFree</span><span class="p">(</span><span class="n">cur_st</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Statement</span><span class="w"> </span><span class="nf">cur</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"begin get_emps(:d, :cur); end;"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":d"</span><span class="p">,</span><span class="w"> </span><span class="n">deptno</span><span class="p">,</span><span class="w"> </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">In</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">BindStatement</span><span class="p">(</span><span class="s">":cur"</span><span class="p">,</span><span class="w"> </span><span class="n">cur</span><span class="p">);</span><span class="w">                     </span><span class="cm">/* OUT cursor */</span>
+<span class="n">st</span><span class="p">.</span><span class="n">ExecutePrepared</span><span class="p">();</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">row</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">cur</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Rows</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="nested-cursors-inside-select">Nested cursors inside SELECT</h2>
+<p>Oracle can return a <code>CURSOR(…)</code> <em>column</em> — each row carries its own resultset, and
+the statement-getter yields a nested statement you fetch through:</p>
+<div class="highlight"><pre><span></span><code><span class="k">select</span><span class="w"> </span><span class="n">rownum</span><span class="p">,</span><span class="w"> </span><span class="k">cursor</span><span class="p">(</span><span class="k">select</span><span class="w"> </span><span class="n">ename</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">employees</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="n">deptno</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">deptno</span><span class="p">)</span>
+<span class="w">  </span><span class="k">from</span><span class="w"> </span><span class="n">departments</span><span class="w"> </span><span class="n">d</span>
+</code></pre></div>
+
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_ResultsetFetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Statement</span><span class="w"> </span><span class="o">*</span><span class="n">inner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ResultsetGetCursor</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">   </span><span class="cm">/* cursor column → stmt  */</span>
+<span class="w">    </span><span class="n">OCI_Resultset</span><span class="w"> </span><span class="o">*</span><span class="n">rs2</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementGetResultset</span><span class="p">(</span><span class="n">inner</span><span class="p">);</span><span class="w">    </span><span class="cm">/* borrowed both         */</span>
+<span class="w">    </span><span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_ResultsetFetchNext</span><span class="p">(</span><span class="n">rs2</span><span class="p">))</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">"  %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ResultsetGetString</span><span class="p">(</span><span class="n">rs2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">));</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">row</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Rows</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Statement</span><span class="w"> </span><span class="n">inner</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Statement</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="k">auto</span><span class="w"> </span><span class="o">&amp;&amp;</span><span class="n">r2</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">inner</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Rows</span><span class="p">())</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"  "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">r2</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>Ref cursors are PL/SQL's way of returning a resultset:</p>
+<ol>
+<li><strong>Declare a <code>SYS_REFCURSOR</code> OUT param</strong> in the PL/SQL signature — the
+   stored proc opens it, you fetch it.</li>
+<li><strong>Bind the placeholder</strong> — <code>StatementBindStatement</code> binds an <code>OCI_Statement</code>
+   as the cursor slot (yes, a statement bound into another statement).</li>
+<li><strong>Execute</strong> — the block opens the cursor; your bound statement now holds
+   the resultset.</li>
+<li><strong>Fetch it</strong> — <code>GetResultset</code> on the <em>bound</em> statement walks the rows like
+   any SELECT.</li>
+</ol>
+<p>Hints: the bound <code>OCI_Statement</code> becomes a live cursor after execute — you
+fetch it, you don't prepare it; <code>SYS_REFCURSOR</code> is the generic type — a
+typed <code>REF CURSOR</code> works the same; and you can chain cursors — one PL/SQL
+call can return several resultsets via several OUT binds.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Call <code>get_emps</code> for each <code>deptno</code> in <code>departments</code> — reuse <code>cur_st</code> between calls.</li>
+<li>Select a nested <code>CURSOR</code> of employees per department and print an indented tree.</li>
+<li>Try <code>OCI_ResultsetGetCursorByName(rs, OTEXT("MYCURSOR"))</code> on an aliased cursor column.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Freeing the cursor statement early</strong> — the resultset dies with it; fetch first.</li>
+<li><strong>Rebinding the same cursor statement twice</strong> — free/re-create (or let the API
+  reset) when calling the proc repeatedly.</li>
+<li><strong>Confusing the two sources</strong> — a cursor <em>bind</em> (parameter) vs a cursor <em>column</em>
+  (nested statement from a row): see the table above.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>Bind-a-statement = OUT ref-cursor parameter; fetch its resultset.</li>
+<li>A <code>CURSOR</code> column in a resultset yields a nested statement via the statement getter.</li>
+</ul>
+<p><strong>Next:</strong> implicit resultsets — multiple resultsets without ref cursor params.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="plsql-out-params.html"><span class="pn-dir">← Previous</span>Procedures &amp; OUT params</a><a class="pn-link pn-next" href="implicit-resultsets.html"><span class="pn-dir">Next →</span>Implicit resultsets (12c+)</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

@@ -157,7 +157,6 @@ static void OcilibSodaOptionsFreeKeysArray
     {
         for (i = 0; i < count; i++)
         {
-            OcilibStringReleaseDBString(env, (dbtext*)keys[i]);
         }
 
         OcilibMemoryFree(env, keys);
@@ -185,32 +184,25 @@ OCI_Boolean OcilibSodaOptionsSetKeyAttr
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
 
-    dbtext   *dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, key);
     CHECK_PTR(OCI_IPC_SODA_DB, options->sdb);
     CHECK_SODA_ENABLED(options->sdb->con);
 
-    dbstr = OcilibStringGetDBString(options->sdb->env, key, &dbsize);
-
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SODA_OPER_OPTIONS,
         OCI_ATTR_SODA_KEY,
         options->handle,
-        (void*)dbstr,
-        (ub4)dbsize,
+        (void*)(key),
+        (ub4)OcilibStringDBSize(key),
         options->sdb->con->err
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(options->sdb->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -327,32 +319,25 @@ OCI_Boolean OcilibSodaOptionsSetVersion
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
 
-    dbtext   *dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, version);
     CHECK_PTR(OCI_IPC_SODA_DB, options->sdb);
     CHECK_SODA_ENABLED(options->sdb->con);
 
-    dbstr = OcilibStringGetDBString(options->sdb->env, version, &dbsize);
-
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SODA_OPER_OPTIONS,
         OCI_ATTR_SODA_VERSION,
         options->handle,
-        (void*)dbstr,
-        (ub4)dbsize,
+        (void*)(version),
+        (ub4)OcilibStringDBSize(version),
         options->sdb->con->err
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(options->sdb->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -371,32 +356,25 @@ OCI_Boolean OcilibSodaOptionsSetFilter
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
 
-    dbtext   *dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, filterSpec);
     CHECK_PTR(OCI_IPC_SODA_DB, options->sdb);
     CHECK_SODA_ENABLED(options->sdb->con);
 
-    dbstr = OcilibStringGetDBString(options->sdb->env, filterSpec, &dbsize);
-
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SODA_OPER_OPTIONS,
         OCI_ATTR_SODA_FILTER,
         options->handle,
-        (void*)dbstr,
-        (ub4)dbsize,
+        (void*)(filterSpec),
+        (ub4)OcilibStringDBSize(filterSpec),
         options->sdb->con->err
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(options->sdb->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -526,8 +504,6 @@ OCI_Boolean OcilibSodaOptionsSetHint
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
 
-    dbtext   *dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, hint);
@@ -543,24 +519,19 @@ OCI_Boolean OcilibSodaOptionsSetHint
         THROW(OcilibExceptionNotAvailable, OCI_FEATURE_SODA);
     }
 
-    dbstr = OcilibStringGetDBString(options->sdb->env, hint, &dbsize);
-
     CHECK_ATTRIB_SET
     (
         OCI_HTYPE_SODA_OPER_OPTIONS,
         OCI_ATTR_SODA_HINT,
         options->handle,
-        (void*)dbstr,
-        (ub4)dbsize,
+        (void*)(hint),
+        (ub4)OcilibStringDBSize(hint),
         options->sdb->con->err
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(options->sdb->env, dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

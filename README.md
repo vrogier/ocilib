@@ -15,7 +15,7 @@ coverage with fast, reliable database access and a consistent programming experi
 Use its modern C and C++ APIs to build applications ranging from everyday SQL clients to systems
 that rely on Oracle's advanced data and availability features.
 
-OCILIB supports MBCS and wide (UTF-16) applications, adapts to the Oracle client available at runtime, and runs across major platforms.
+OCILIB supports MBCS applications on all platforms and wide (UTF-16) applications on Windows, adapts to the Oracle client available at runtime, and runs across major platforms.
 
 ## 2. License
 
@@ -30,7 +30,7 @@ specialized Oracle services and advanced data types such as SODA and the VECTOR 
 |---|---|
 | Cross-platform C API (ISO C11), with 32-bit and 64-bit support | 8.0 |
 | Modern C++ API (C++17), header-only, with iterators usable with standard algorithms | 8.0 |
-| MBCS and wide builds, including UTF-8 (MBCS) and UTF-16 (wide) strings | 8.0 |
+| MBCS builds on all platforms (UTF-8 or ANSI via `NLS_LANG`); wide UTF-16 builds on Windows | 8.0 |
 | Automatic adaptation to the runtime Oracle client version | 8.0 |
 | Runtime loading of Oracle client libraries | 8.0 |
 | SQL and PL/SQL, including blocks, cursors, index-by tables, and nested tables | 8.0 |
@@ -131,8 +131,8 @@ Alternatively, using the zip release archive:
 
 - unzip the archive
 - copy ocilib\include\ocilib.h to any place located in your include’s path
-- copy ocilib\lib32|64\ocilib[x].lib to any place located in your libraries path
-- copy ocilib\lib32|64\ocilib[x].dll to any place located in your windows path
+- copy ocilib\lib32|64\ocilib.lib (MBCS) or ocilibw.lib (wide) to any place located in your libraries path
+- copy the matching ocilib.dll / ocilibw.dll to any place located in your windows path
 
 ### GNU (Unix / Linux) platforms
 
@@ -149,7 +149,6 @@ Make sure Oracle and OCILIB libraries paths are defined in your shared library e
 | Option | Values | Default | Description |
 |---|---|---|---|
 | `--with-oracle-import` | `linkage`, `runtime` | `linkage` | `linkage` links directly against `libclntsh`; `runtime` loads the OCI library dynamically at runtime |
-| `--with-oracle-charset` | `mbcs`, `wide`/`unicode` | `mbcs` | MBCS vs wide (`OCI_CHARSET_MBCS`/`OCI_CHARSET_WIDE`) build |
 | `--with-oracle-home` | path | - | Oracle installation root (sets headers and library paths) |
 | `--with-oracle-headers-path` | path | - | Location of OCI public headers (instant client `sdk/include`) |
 | `--with-oracle-lib-path` | path | - | Location of the OCI shared library (instant client lib dir) |
@@ -173,7 +172,7 @@ Visual Studio projects are provided under `proj/`:
 - `proj/test` — unit test project (`tests/ocilib_tests.vcxproj`)
 - demo projects under `proj/` for each `demo/*.c` / `demo/*.cpp` sample
 
-Open the project or solution matching your Visual Studio version and build the desired configuration (`Release - MBCS` / `Release - WIDE`).
+Open the project or solution matching your Visual Studio version and build the desired configuration (`Release - MBCS` produces `ocilib.dll`, `Release - WIDE` produces `ocilibw.dll`).
 
 ### GNU (Unix / Linux)
 

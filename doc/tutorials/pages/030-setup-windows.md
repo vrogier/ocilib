@@ -32,9 +32,9 @@ The repo ships prebuilt binaries in `lib32\` and `lib64\`:
 
 | File | Charset | Arch |
 |------|---------|------|
-| `lib64\ocilibm.dll` + `.lib` | MBCS (`char`) | x64 |
+| `lib64\ocilib.dll` + `.lib` | MBCS (`char`) | x64 |
 | `lib64\ocilibw.dll` + `.lib` | Wide (UTF-16) | x64 |
-| `lib32\ocilibm.dll` / `ocilibw.dll` | same, 32-bit | x86 |
+| `lib32\ocilib.dll` / `ocilibw.dll` | same, 32-bit | x86 |
 
 Wire them into a `.vcxproj` manually:
 
@@ -44,14 +44,14 @@ Wire them into a `.vcxproj` manually:
   <LibraryPath>$(OcilibRoot)lib64;$(LibraryPath)</LibraryPath>
 </PropertyGroup>
 <ItemDefinitionGroup>
-  <Link><AdditionalDependencies>ocilibm.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+  <Link><AdditionalDependencies>ocilib.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
 </ItemDefinitionGroup>
 ```
 
-Plus `ocilibm.dll` (or `ocilibw.dll`) next to your `.exe` — that's the whole setup.
+Plus `ocilib.dll` (or `ocilibw.dll`) next to your `.exe` — that's the whole setup.
 
 !!! tip "MBCS or wide?"
-    `ocilibm*` = `char` strings, `ocilibw*` = UTF-16 (`otext` = `unsigned short`).
+    `ocilib.dll` = `char` strings, `ocilibw.dll` = UTF-16 (`otext` = `wchar_t`).
     Pick **MBCS** unless you specifically want wide strings — samples assume MBCS.
 
 ## Option C — build from source (uncommon)
@@ -86,7 +86,7 @@ Outputs land in `lib32\`/`lib64\` exactly like the shipped ones.
 
 - **Missing `oci.dll`** — NuGet ships OCILIB, not the Oracle client; Instant Client
   must be on `PATH`.
-- **Mixing `ocilibm`/`ocilibw`** — import lib must match your intended charset.
+- **Mixing `ocilib`/`ocilibw`** — import lib must match your intended charset.
 - **32/64-bit mixup** — app bitness must match the Instant Client's.
 
 ## Recap

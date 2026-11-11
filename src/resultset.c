@@ -320,43 +320,6 @@ OCI_Resultset * OcilibResultsetCreate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibResultsetExpandStrings
- * --------------------------------------------------------------------------------------------- */
-
-static OCI_Boolean OcilibResultsetExpandStrings
-(
-    OCI_Resultset *rs
-)
-{
-    ENTER_FUNC
-    (
-        /* returns */ OCI_Boolean, FALSE,
-        /* context */ OCI_IPC_RESULTSET, rs
-    );
-
-    CHECK_PTR(OCI_IPC_RESULTSET, rs);
-
-    for (ub4 i = 0; i < rs->nb_defs; i++)
-    {
-        OCI_Define *def = &rs->defs[i];
-
-        if (OCI_CDT_TEXT == def->col.datatype)
-        {
-            for (OCI_Int32 j = (OCI_Int32) (def->buf.count-1); j >= 0; j--)
-            {
-                ub1 * tmpbuf = ((ub1*) def->buf.data) + ((OCI_Size) def->col.bufsize * (OCI_Size) j);
-
-                OcilibStringUTF16ToUTF32(tmpbuf, tmpbuf, (OCI_Int32)(def->col.bufsize / sizeof(otext)) - 1);
-            }
-        }
-    }
-
-    SET_SUCCESS();
-
-    EXIT_FUNC();
-}
-
-/* --------------------------------------------------------------------------------------------- *
  * OcilibResultFinalizeDynamicFetch
  * --------------------------------------------------------------------------------------------- */
 
@@ -502,13 +465,6 @@ static OCI_Boolean OcilibResultsetFetchData
 
     /* finalize dynamic fetch */
     CHECK(OcilibResultFinalizeDynamicFetch(rs));
-
-    /* check string buffer for wide builds that need buffer expansion */
-
-    if (rs->stmt->con->env->use_wide_char_conv)
-    {
-        CHECK(OcilibResultsetExpandStrings(rs));
-    }
 
     /* update internal fetch status and variables */
 
@@ -911,16 +867,6 @@ OCI_Boolean OcilibResultsetFetchNext
     else
     {
         /* for resultset from returning into clause */
-
-        if (rs->row_abs == 0)
-        {
-            /* check string buffer once for wide build */
-
-            if (rs->stmt->con->env->use_wide_char_conv)
-            {
-                OcilibResultsetExpandStrings(rs);
-            }
-        }
 
         if (rs->row_abs >= rs->row_count)
         {
@@ -1690,7 +1636,8 @@ const otext * OcilibResultsetGetString
                         /* ROWIDs hex strings are always returned by OCI client as MBCS strings,
                            we need to expand them to native wide character strings */
 
-                        OcilibStringMbcsToNative(def->buf.tmpbuf, def->buf.tmpbuf, rowid_length);
+                        OcilibStringMbcsToNative((const char *) def->buf.tmpbuf, def->buf.tmpbuf,
+                                                 (OCI_Size) rowid_length);
                     }
 
                     result = def->buf.tmpbuf;

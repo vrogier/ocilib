@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Diagnostics — logging in depth — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0" open><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li class="active"><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-beginner">Beginner</span></div>
+    <h1 id="diagnostics-logging-in-depth">Diagnostics — logging in depth</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>switch on OCILIB's structured logging without touching your code</li>
+<li>choose the right level and categories for what you're debugging</li>
+<li>read every field of a log line and trace calls from ENTER to LEAVE</li>
+</ul>
+<h2 id="concepts">Concepts</h2>
+<p>OCILIB emits <strong>structured, opt-in logging</strong> — turned on and steered entirely through environment variables, read once when the environment is created.</p>
+<p>No code changes, no rebuild, and it applies identically to C and C++ programs (it lives below the language API).</p>
+<p>Three variables configure everything:</p>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Values</th>
+<th>Default</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCILIB_LOG</code></td>
+<td><code>ERROR</code> | <code>WARN</code> | <code>INFO</code> | <code>DEBUG</code> | <code>TRACE</code></td>
+<td>off</td>
+</tr>
+<tr>
+<td><code>OCILIB_LOG_CATEGORIES</code></td>
+<td><code>LIB</code>, <code>MEM</code>, <code>OCI</code>, <code>ALL</code> — comma-separated list</td>
+<td><code>ALL</code></td>
+</tr>
+<tr>
+<td><code>OCILIB_LOG_OUTPUT</code></td>
+<td>a file path | <code>STDERR</code> | <code>STDOUT</code></td>
+<td><code>stderr</code></td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">OCILIB_LOG</span><span class="o">=</span>DEBUG
+<span class="nb">export</span><span class="w"> </span><span class="nv">OCILIB_LOG_CATEGORIES</span><span class="o">=</span>LIB,OCI
+<span class="nb">export</span><span class="w"> </span><span class="nv">OCILIB_LOG_OUTPUT</span><span class="o">=</span>/tmp/ocilib.log
+./my_app
+</code></pre></div>
+
+<h2 id="levels-cumulative-from-quiet-to-everything">Levels — cumulative, from quiet to everything</h2>
+<p>A level shows itself <strong>plus every lower level</strong> — <code>INFO</code> also prints warnings and
+errors, <code>TRACE</code> prints all of it:</p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>What it shows</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ERROR</code></td>
+<td>OCILIB exceptions and memory-leak reports</td>
+</tr>
+<tr>
+<td><code>WARN</code></td>
+<td>OCI exception warnings</td>
+</tr>
+<tr>
+<td><code>INFO</code></td>
+<td>connect/disconnect, statements prepared/executed, successful database operations</td>
+</tr>
+<tr>
+<td><code>DEBUG</code></td>
+<td>other non-critical diagnostics — execute results and details</td>
+</tr>
+<tr>
+<td><code>TRACE</code></td>
+<td><code>ENTER</code>/<code>LEAVE</code> call tracing plus the deepest diagnostics — the most verbose</td>
+</tr>
+</tbody>
+</table>
+<p>Pick the <em>smallest</em> level that answers your question: <code>INFO</code> for "did it connect?",
+<code>DEBUG</code> for "what did the calls return?", <code>TRACE</code> for "show me the whole flow".</p>
+<h2 id="categories-which-subsystem-reports">Categories — which subsystem reports</h2>
+<p>Categories filter <em>what</em> logs; they're a bitmask combined as a comma list in
+<code>OCILIB_LOG_CATEGORIES</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LIB</code></td>
+<td>OCILIB's own diagnostics: exceptions, connect/prepare/execute, and the API <code>ENTER</code>/<code>LEAVE</code> call trace</td>
+</tr>
+<tr>
+<td><code>MEM</code></td>
+<td>memory + handle allocations and frees, and memory-leak reports</td>
+</tr>
+<tr>
+<td><code>OCI</code></td>
+<td><code>ENTER</code>/<code>LEAVE</code> trace of the <strong>raw OCI calls</strong> OCILIB issues (<code>env-&gt;api-&gt;*</code>) — see exactly which Oracle calls happen under each API call</td>
+</tr>
+<tr>
+<td><code>ALL</code></td>
+<td><code>LIB</code> + <code>MEM</code> + <code>OCI</code></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">One deliberate exception</p>
+<p>Error retrieval itself (<code>OCIErrorGet</code>) is never traced — it runs inside error
+handling, so logging it would recurse.</p>
+</div>
+<h2 id="anatomy-of-a-log-line">Anatomy of a log line</h2>
+<p>Every line follows one shape:</p>
+<div class="highlight"><pre><span></span><code>YYYY-MM-DD HH:MM:SS.mmm  [LVL]  [CAT]  [step]  fn: message
+└─ timestamp           └─3-char level└─category└─ENTER/LEAVE (call-trace only)
+</code></pre></div>
+
+<p><code>[LVL]</code> is <code>ERR</code>, <code>WRN</code>, <code>INF</code>, <code>DBG</code> or <code>TRC</code>; <code>[step]</code> appears only on call-trace
+lines and is either <code>ENTER</code> or <code>LEAVE</code> — the two bookends of a call.</p>
+<h2 id="full-example-tracing-a-connection">Full example — tracing a connection</h2>
+<p>Take the smallest possible program — create the environment, connect, free
+everything:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"ocilib.h"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdio.h&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;stdlib.h&gt;</span>
+
+<span class="kt">void</span><span class="w"> </span><span class="nf">err_handler</span><span class="p">(</span><span class="n">OCI_Error</span><span class="w"> </span><span class="o">*</span><span class="n">err</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ErrorGetString</span><span class="p">(</span><span class="n">err</span><span class="p">));</span>
+<span class="p">}</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Environment</span><span class="w"> </span><span class="o">*</span><span class="n">env</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_EnvironmentCreate</span><span class="p">(</span><span class="n">err_handler</span><span class="p">,</span><span class="w"> </span><span class="nb">NULL</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ENV_DEFAULT</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_Connection</span><span class="w">  </span><span class="o">*</span><span class="n">cn</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ConnectionCreate</span><span class="p">(</span><span class="n">env</span><span class="p">,</span>
+<span class="w">        </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_DB"</span><span class="p">),</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_USR"</span><span class="p">),</span>
+<span class="w">        </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_PWD"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_SESSION_DEFAULT</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"connected: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">cn</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">"yes"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">"no"</span><span class="p">);</span>
+
+<span class="w">    </span><span class="n">OCI_ConnectionFree</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_EnvironmentFree</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">"ocilib.hpp"</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;cstdlib&gt;</span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;iostream&gt;</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">()</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="k">try</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">ocilib</span><span class="o">::</span><span class="n">Environment</span><span class="w"> </span><span class="n">env</span><span class="p">;</span>
+<span class="w">        </span><span class="n">ocilib</span><span class="o">::</span><span class="n">Connection</span><span class="w">  </span><span class="n">con</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="w"> </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_DB"</span><span class="p">),</span>
+<span class="w">                                     </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_USR"</span><span class="p">),</span>
+<span class="w">                                     </span><span class="n">getenv</span><span class="p">(</span><span class="s">"OCILIB_DEMO_PWD"</span><span class="p">));</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"connected: yes</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">catch</span><span class="w"> </span><span class="p">(</span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">exception</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ex</span><span class="p">)</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">ex</span><span class="p">.</span><span class="n">what</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">endl</span><span class="p">;</span>
+<span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_FAILURE</span><span class="p">;</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="n">EXIT_SUCCESS</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<p>Run it with tracing on:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">OCILIB_LOG</span><span class="o">=</span>TRACE
+<span class="nb">export</span><span class="w"> </span><span class="nv">OCILIB_LOG_CATEGORIES</span><span class="o">=</span>ALL
+./connect_demo<span class="w">            </span><span class="c1"># log goes to stderr</span>
+</code></pre></div>
+
+<p>and the log tells the whole internal story — your API call opening (<code>ENTER</code>), the
+raw Oracle calls it makes underneath (<code>OCI</code> category), the allocations behind the
+scenes (<code>MEM</code>), and the call closing (<code>LEAVE</code>) with its return value:</p>
+<div class="highlight"><pre><span></span><code><span class="go">2026-11-07 10:12:03.411 [TRC] [LIB] ENTER OcilibConnectionCreate</span>
+<span class="go">2026-11-07 10:12:03.412 [DBG] [MEM] OcilibMemoryAlloc: bytes=27 type=7</span>
+<span class="go">2026-11-07 10:12:03.418 [TRC] [OCI] ENTER OCIServerAttach</span>
+<span class="go">2026-11-07 10:12:03.530 [TRC] [OCI] LEAVE OCIServerAttach (ret=0000000000000000)</span>
+<span class="go">2026-11-07 10:12:03.531 [INF] [LIB] OcilibConnectionCreateInternal: handle=0000000000484510 connected to FREEPDB1</span>
+<span class="go">2026-11-07 10:12:03.531 [TRC] [LIB] LEAVE OcilibConnectionCreate (ret=0000000000484510)</span>
+<span class="go">2026-11-07 10:12:03.540 [TRC] [LIB] ENTER OcilibConnectionFree</span>
+<span class="go">2026-11-07 10:12:03.545 [TRC] [LIB] LEAVE OcilibConnectionFree (ret=1)</span>
+</code></pre></div>
+
+<p>Read traces as <strong>matched ENTER/LEAVE pairs</strong>: the calls between an <code>ENTER</code> and its <code>LEAVE</code> are what that call did internally — including which OCI primitives it used and what they returned.</p>
+<p>A <code>LEAVE (ret=…)</code> showing an error return is where a failure surfaced.</p>
+<h2 id="picking-the-right-mix">Picking the right mix</h2>
+<table>
+<thead>
+<tr>
+<th>Problem</th>
+<th>Recommended</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"It won't connect"</td>
+<td><code>INFO</code> + <code>LIB</code> — see the connect call and its params</td>
+</tr>
+<tr>
+<td>"Which OCI call fails?"</td>
+<td><code>DEBUG</code> or <code>TRACE</code> + <code>OCI</code> — raw <code>env-&gt;api-&gt;*</code> ENTER/LEAVE lines</td>
+</tr>
+<tr>
+<td>"Handle/memory leak?"</td>
+<td><code>WARN</code> or higher + <code>MEM</code> — alloc/free + leak reports</td>
+</tr>
+<tr>
+<td>"Trace my whole session"</td>
+<td><code>TRACE</code> + <code>ALL</code> — every API and OCI call, ENTER/LEAVE paired</td>
+</tr>
+</tbody>
+</table>
+<h2 id="using-it-well">Using it well</h2>
+<ul>
+<li><strong>File output for runs, stderr for REPL</strong> — <code>OCILIB_LOG_OUTPUT=/tmp/ocilib.log</code>
+  keeps program output readable while preserving the trace.</li>
+<li><strong>Errors appear in context</strong> — the same errors your handler sees show up in the
+  <code>LIB</code> stream, surrounded by the calls that led to them.</li>
+<li><strong>Pair with server-side traces</strong> (page 120) — client-side <code>ENTER</code>/<code>LEAVE</code> call
+  flow <em>and</em> <code>V$SESSION</code> module/action visibility in the same session.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Set them before startup</p>
+<p>Logging is environment-variable driven — the variables are read once at
+environment creation, so set them before the program starts.</p>
+</div>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>OCILIB logging is a per-environment diagnostic channel:</p>
+<ol>
+<li><strong>Enable it</strong> — <code>OCI_EnableTrace</code>/<code>OCI_TraceSet*</code> on the environment with
+   the flags for what you want traced.</li>
+<li><strong>Run your code</strong> — every OCI call, duration, and SQL gets logged.</li>
+<li><strong>Read it</strong> — log callback or file, per <code>TraceSetOut</code>.</li>
+<li><strong>Disable for production</strong> — tracing is verbose and slow; it's a debug
+   tool, not a monitoring feature.</li>
+</ol>
+<p>Hints: trace flags compose — OR them for SQL + timing + errors together;
+the output format is designed for diffing — two runs, one flag difference,
+diff the logs; and tracing is the fastest way to see <em>what OCILIB actually
+sent</em> — invaluable when your SQL works in SQL*Plus but not here.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Run your connection sample with <code>OCILIB_LOG=TRACE</code> — follow the
+   create→connect→free pairs from ENTER to LEAVE.</li>
+<li>Introduce a bad password and read the <code>ERR</code> line <em>in context</em> of the calls
+   around it.</li>
+<li>Filter to <code>OCI</code> only and count the real Oracle calls a single connect makes —
+   you'll see where the round-trips are.</li>
+<li>Deliberately leak a handle and confirm <code>MEM</code> reports it at environment free.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Leaving <code>TRACE</code> on in production</strong> — it's for debugging; scope it with levels
+  and categories instead of disabling it.</li>
+<li><strong>Setting the variables after startup</strong> — they're read once at environment
+  creation; export before launching.</li>
+<li><strong>Expecting output on <code>stdout</code> by default</strong> — it goes to <code>stderr</code>; redirect or
+  set <code>OCILIB_LOG_OUTPUT</code>.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>OCILIB_LOG</code> + <code>OCILIB_LOG_CATEGORIES</code> + <code>OCILIB_LOG_OUTPUT</code> = structured tracing
+  with zero code.</li>
+<li>Levels stack <code>ERROR→TRACE</code>; categories pick <code>LIB</code> (API), <code>MEM</code> (memory) or <code>OCI</code>
+  (raw Oracle calls); every line is <code>[LVL] [CAT] [step] fn: message</code>.</li>
+</ul>
+<p><strong>Next:</strong> a checklist for the classic "it doesn't even start" problems.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="error-handling.html"><span class="pn-dir">← Previous</span>Error handling in depth</a><a class="pn-link pn-next" href="quickstart-checklist.html"><span class="pn-dir">Next →</span>Checkpoint 0 quickstart</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

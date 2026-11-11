@@ -185,7 +185,8 @@ OCI_SodaDocument* OcilibSodaDocumentInitialize
     {
         if (NULL != key)
         {
-            dbkey = OcilibStringGetDBString(sdb->env, key, &dbkeylen);
+            dbkey = (dbtext *) (key);
+            dbkeylen = OcilibStringDBSize(key);
         }
 
         /* an empty key must not be passed to OCISodaDocCreateWithKey() : */
@@ -269,7 +270,6 @@ OCI_SodaDocument* OcilibSodaDocumentInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(sdb->env, dbkey);
 
         if (NULL != src)
         {
@@ -666,5 +666,5 @@ OCI_Boolean OcilibSodaDocumentGetIsJson
         SET_SUCCESS();
     }
 
-    CLEANUP_AND_EXIT_FUNC();
+    EXIT_FUNC();
 }

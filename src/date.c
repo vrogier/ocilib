@@ -415,10 +415,6 @@ OCI_Boolean OcilibDateFromString
         /* context */ OCI_IPC_DATE, date
     );
 
-    dbtext   *dbstr1  = NULL;
-    dbtext   *dbstr2  = NULL;
-    OCI_Int32 dbsize1 = -1;
-    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, str);
@@ -429,27 +425,20 @@ OCI_Boolean OcilibDateFromString
         CHECK_NULL(fmt);
     }
 
-    dbstr1 = OcilibStringGetDBString(date->env,str, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(date->env,fmt, &dbsize2);
-
     CHECK_OCI
     (
         date->env->err,
         OCIDateFromText,
         date->env->err,
-        (oratext *) dbstr1, (ub4) dbsize1,
-        (oratext *) dbstr2, (ub1) dbsize2,
+        (oratext *) (str), (ub4) OcilibStringDBSize(str),
+        (oratext *) (fmt), (ub1) OcilibStringDBSize(fmt),
         (oratext *) NULL,  (ub4) 0,
         date->handle
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(date->env,dbstr1);
-        OcilibStringReleaseDBString(date->env,dbstr2);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -592,29 +581,22 @@ OCI_Boolean OcilibDateNextDay
         /* context */ OCI_IPC_DATE, date
     );
 
-    dbtext   *dbstr  = NULL;
-    OCI_Int32 dbsize = -1;
 
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, day);
-
-    dbstr = OcilibStringGetDBString(date->env,day, &dbsize);
 
     CHECK_OCI
     (
         date->env->err,
         OCIDateNextDay,
         date->env->err, date->handle,
-        (oratext *) dbstr, (ub4) dbsize,
+        (oratext *) (day), (ub4) OcilibStringDBSize(day),
         date->handle
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(date->env,dbstr);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -737,9 +719,7 @@ OCI_Boolean OcilibDateToString
     );
 
     dbtext   *dbstr1  = NULL;
-    dbtext   *dbstr2  = NULL;
     OCI_Int32 dbsize1 = size * (OCI_Int32) sizeof(otext);
-    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, str);
@@ -754,19 +734,18 @@ OCI_Boolean OcilibDateToString
         CHECK_NULL(fmt);
     }
 
-    dbstr1 = OcilibStringGetDBString(date->env,str, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(date->env,fmt, &dbsize2);
+    dbstr1 = (dbtext *) (str);
+
 
     CHECK_OCI
     (
         date->env->err,
         OCIDateToText,
-        date->env->err, date->handle, (oratext *) dbstr2,
-        (ub1) dbsize2, (oratext *) NULL, (ub4) 0,
+        date->env->err, date->handle, (oratext *) (fmt),
+        (ub1) OcilibStringDBSize(fmt), (oratext *) NULL, (ub4) 0,
         (ub4*) &dbsize1, (oratext *) dbstr1
     );
 
-    OcilibStringCopyDBStringToNativeString(date->env, dbstr1, str, dbcharcount(dbsize1));
 
     /* set null string terminator */
 
@@ -774,11 +753,7 @@ OCI_Boolean OcilibDateToString
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(date->env,dbstr1);
-        OcilibStringReleaseDBString(date->env,dbstr2);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -798,35 +773,24 @@ OCI_Boolean OcilibDateZoneToZone
         /* context */ OCI_IPC_DATE, date
     );
 
-    dbtext   *dbstr1  = NULL;
-    dbtext   *dbstr2  = NULL;
-    OCI_Int32 dbsize1 = -1;
-    OCI_Int32 dbsize2 = -1;
 
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, zone1);
     CHECK_PTR(OCI_IPC_STRING, zone2);
-
-    dbstr1 = OcilibStringGetDBString(date->env,zone1, &dbsize1);
-    dbstr2 = OcilibStringGetDBString(date->env,zone2, &dbsize2);
 
     CHECK_OCI
     (
         date->env->err,
         OCIDateZoneToZone,
         date->env->err, date->handle,
-        (oratext *) dbstr1, (ub4) dbsize1,
-        (oratext *) dbstr2, (ub4) dbsize2,
+        (oratext *) (zone1), (ub4) OcilibStringDBSize(zone1),
+        (oratext *) (zone2), (ub4) OcilibStringDBSize(zone2),
         date->handle
     );
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(date->env,dbstr1);
-        OcilibStringReleaseDBString(date->env,dbstr2);
-    );
+    EXIT_FUNC();
 }
 
 /* --------------------------------------------------------------------------------------------- *

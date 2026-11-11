@@ -254,7 +254,8 @@ OCI_Message * OcilibDequeueGetMessage
 
     /* dequeue message */
 
-    dbstr = OcilibStringGetDBString(dequeue->typinf->con->env,dequeue->name, &dbsize);
+    dbstr = (dbtext *) (dequeue->name);
+    dbsize = OcilibStringDBSize(dequeue->name);
 
     if (OCI_UNKNOWN != dequeue->typinf->typecode && NULL != dequeue->msg->obj)
     {
@@ -357,7 +358,6 @@ OCI_Message * OcilibDequeueGetMessage
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(dequeue->typinf->con->env,dbstr);
 
         FREE(mbcs_queue_name);
     );
@@ -1001,7 +1001,8 @@ OCI_Boolean OcilibDequeueSubscribe
                 *str = (otext) otoupper(*str);
             }
 
-            dbstr = OcilibStringGetDBString(dequeue->typinf->con->env,buffer, &dbsize);
+            dbstr = (dbtext *) (buffer);
+            dbsize = OcilibStringDBSize(buffer);
 
             CHECK_ATTRIB_SET
             (
@@ -1010,7 +1011,6 @@ OCI_Boolean OcilibDequeueSubscribe
                 dequeue->typinf->con->err
             );
 
-            OcilibStringReleaseDBString(dequeue->typinf->con->env, dbstr);
             dbstr = NULL;
         }
 
@@ -1077,7 +1077,6 @@ OCI_Boolean OcilibDequeueSubscribe
 
         if (con != NULL)
         {
-            OcilibStringReleaseDBString(con->env, dbstr);
         }
 
         if (FAILURE && NULL != dequeues)

@@ -159,7 +159,8 @@ OCI_Boolean OcilibEnqueuePut
 
     /* enqueue message */
 
-    dbstr = OcilibStringGetDBString(enqueue->typinf->con->env,enqueue->name, &dbsize);
+    dbstr = (dbtext *) (enqueue->name);
+    dbsize = OcilibStringDBSize(enqueue->name);
 
     /* OCIAQEnq() parameter  'queue_name' is supposed to be either MBCS or UTF16 depending on the
     * environment. It appears that whatever mode is used, OCIAQEnq() only takes MBCS strings !
@@ -221,7 +222,6 @@ OCI_Boolean OcilibEnqueuePut
 
     CLEANUP_AND_EXIT_FUNC
     (
-        OcilibStringReleaseDBString(enqueue->typinf->con->env, dbstr);
 
         FREE(mbcs_queue_name);
     );

@@ -92,8 +92,8 @@ namespace TestCApi
 
     /* --- public-API coverage of the dropped OcilibLog* internals:
        OCI_Trace / OCI_GetLastError / OCILIB_LOG* env vars drive
-       OcilibLogWrite / OcilibLogOpenFile / OcilibLogNativeToUTF8 /
-       OcilibLogLevelName / OcilibLogCategoryName / OcilibLogCodepointToUTF8
+       OcilibLogWrite / OcilibLogOpenFile /
+       OcilibLogLevelName / OcilibLogCategoryName
        through the public surface --- */
 
     TEST(TestLog, TraceWritesToLog)
@@ -125,8 +125,7 @@ namespace TestCApi
 
         ReinitLogger("DEBUG", nullptr, "STDERR");
 
-        /* an error + OCI_GetLastError -> OcilibLogWrite / OcilibLogNativeToUTF8
-           / OcilibLogCodepointToUTF8 arms */
+        /* an error + OCI_GetLastError -> OcilibLogWrite arms */
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD_WRONG, OCI_SESSION_DEFAULT);
         ASSERT_EQ(nullptr, conn);
         ASSERT_NE(nullptr, OCI_GetLastError());

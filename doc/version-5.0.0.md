@@ -243,6 +243,13 @@ The following items require code changes when upgrading from v4.x to v5.0.0:
    - `OCI_Int64`/`OCI_UInt64` are `long long`/`unsigned long long` — identical to the former `big_int`/`big_uint` on every platform — and now always exist (the 32-bit fallback branch is gone).
    - `big_int`/`big_uint` remain available as compatibility typedefs; new code should use `OCI_Int64`/`OCI_UInt64`.
 
+13. **Charset builds are platform-scoped**
+   - `OCI_CHARSET_WIDE` is supported on **Windows only** — `platform.h` emits a compile-time `#error` when it is defined on any other platform. The Unix UTF-16↔UTF-32 conversion layer (4-byte `wchar_t`) is removed entirely.
+   - Unix/macOS ships MBCS only: `configure --with-oracle-charset` is removed — there is no charset choice left on non-Windows platforms.
+   - On Windows both binaries remain: `ocilib.dll` (MBCS — renamed from `ocilibm.dll`) and `ocilibw.dll` (wide).
+   - Unix-wide users should move to `OCI_CHARSET_MBCS` with `NLS_LANG=….AL32UTF8` — `char*` strings then carry UTF-8 end to end.
+   - JZN/JSON byte-string paths on wide builds now transcode through a shared UTF-8↔UTF-16 codec instead of byte-level widening.
+
 ---
 
 ## 9. Unit tests

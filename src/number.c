@@ -297,12 +297,6 @@ OCI_Boolean OcilibNumberFromStringInternal
 
     OCIError *err = env ? env->err : NULL;
 
-    dbtext* dbstr1 = NULL;
-    dbtext* dbstr2 = NULL;
-
-    OCI_Int32 dbsize1 = -1;
-    OCI_Int32 dbsize2 = -1;
-
     CHECK_PTR(OCI_IPC_VOID, in_value);
     CHECK_PTR(OCI_IPC_VOID, out_value);
 
@@ -376,17 +370,14 @@ OCI_Boolean OcilibNumberFromStringInternal
                 CHECK_NULL(fmt);
             }
 
-            dbstr1 = OcilibStringGetDBString(env, in_value, &dbsize1);
-            dbstr2 = OcilibStringGetDBString(env, fmt, &dbsize2);
-
             memset(&number, 0, sizeof(number));
 
             CHECK_OCI
             (
                 err,
                 OCINumberFromText,
-                err, (oratext *) dbstr1, (ub4) dbsize1, (oratext *) dbstr2,
-                (ub4) dbsize2, (oratext *) NULL,  (ub4) 0, (OCINumber *) &number
+                err, (oratext *) (in_value), (ub4) OcilibStringDBSize(in_value), (oratext *) (fmt),
+                (ub4) OcilibStringDBSize(fmt), (oratext *) NULL,  (ub4) 0, (OCINumber *) &number
             );
 
             CHECK(OcilibNumberTranslateValue(env, &number, OCI_NUM_NUMBER, out_value, type));
@@ -395,11 +386,7 @@ OCI_Boolean OcilibNumberFromStringInternal
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(env, dbstr1);
-        OcilibStringReleaseDBString(env, dbstr2);
-    );
+    EXIT_FUNC();
 }
 
 #if defined(__GNUC__)
@@ -432,9 +419,7 @@ OCI_Boolean OcilibNumberToStringInternal
     );
 
     dbtext  * dbstr1  = NULL;
-    dbtext  * dbstr2  = NULL;
     OCI_Int32 dbsize1 = out_value_size * (OCI_Int32)sizeof(otext);
-    OCI_Int32 dbsize2 = -1;
 
     OCIError* err = env ? env->err : NULL;
 
@@ -533,19 +518,18 @@ OCI_Boolean OcilibNumberToStringInternal
                 CHECK_NULL(fmt);
             }
 
-            dbstr1 = OcilibStringGetDBString(env, out_value, &dbsize1);
-            dbstr2 = OcilibStringGetDBString(env, fmt, &dbsize2);
+            dbstr1 = (dbtext *) (out_value);
+
 
             CHECK_OCI
             (
                 err,
                 OCINumberToText,
-                err, (OCINumber *)number, (oratext *)dbstr2,
-                (ub4)dbsize2, (oratext *)NULL, (ub4)0,
+                err, (OCINumber *)number, (oratext *)(fmt),
+                (ub4)OcilibStringDBSize(fmt), (oratext *)NULL, (ub4)0,
                 (ub4 *)&dbsize1, (oratext *)dbstr1
             );
 
-            OcilibStringCopyDBStringToNativeString(env, dbstr1, out_value, dbcharcount(dbsize1));
 
             out_value_size = (dbsize1 / (OCI_Int32) sizeof(dbtext));
         }
@@ -564,11 +548,7 @@ OCI_Boolean OcilibNumberToStringInternal
 
     SET_SUCCESS();
 
-    CLEANUP_AND_EXIT_FUNC
-    (
-        OcilibStringReleaseDBString(env, dbstr2);
-        OcilibStringReleaseDBString(env, dbstr1);
-    );
+    EXIT_FUNC();
 }
 
 #if defined(__GNUC__)

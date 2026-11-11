@@ -13,9 +13,18 @@ level: beginner
 - understand why the MBCS ("ANSI") build also handles UTF-8
 - pick the right flavor for your platform and application
 
-## In context — one API, two compiled flavors
+## In context — one API, platform-scoped flavors
 
-OCILIB ships in two compile-time flavors. Every string in the public API —
+OCILIB compiles in two flavors — but where each one *ships* depends on the
+platform:
+
+- **MBCS** (`OCI_CHARSET_MBCS`, `otext` = `char`) — available **everywhere**;
+  the only flavor shipped for Unix and macOS.
+- **Wide** (`OCI_CHARSET_WIDE`, `otext` = `wchar_t`) — **Windows only**,
+  because it relies on `wchar_t` being a 2-byte UTF-16 unit. Defining it
+  anywhere else is a compile-time error.
+
+Every string in the public API —
 SQL text, object names, connection strings, fetched `VARCHAR2` data — uses the
 portable type `otext`, which maps to a different C type in each flavor:
 
@@ -27,7 +36,7 @@ portable type `otext`, which maps to a different C type in each flavor:
 The API surface is identical — same functions, same handles. What changes is
 the encoding OCI itself runs in, and therefore the encoding your strings must
 be in. That is a build-time property of the *library binary*: on Windows the
-prebuilt DLLs are even named differently (`ocilibm.dll` vs `ocilibw.dll`).
+prebuilt DLLs are even named differently (`ocilib.dll` vs `ocilibw.dll`).
 
 ## The MBCS build — formerly "ANSI"
 
@@ -52,14 +61,15 @@ Wide builds ignore `NLS_LANG` entirely. OCILIB calls `OCIEnvNlsCreate` with
 Unicode mode, a fixed-length 2-byte UTF-16 encoding. All string traffic —
 including statement text and object names — goes through it.
 
-`wchar_t` is where platforms diverge, and OCILIB absorbs the difference:
+The wide build exists because Windows `wchar_t` is a 2-byte UTF-16 unit —
+exactly what OCI's UTF-16 mode speaks. `otext` buffers go to and from Oracle
+with **zero conversion**.
 
-- **Windows** — `wchar_t` is 2 bytes, already UTF-16. `otext` buffers go to and
-  from Oracle with **zero conversion**.
-- **Unix** — `wchar_t` is 4 bytes (UTF-32). OCILIB transparently converts every
-  string between UTF-16 and UTF-32 — temporary buffers for statements and
-  names going in, in-place buffer expansion for fetched/bound strings coming
-  out. No extra allocations, invisible to you.
+On Unix `wchar_t` is 4 bytes (UTF-32), which is why earlier OCILIB versions
+carried a whole UTF-16↔UTF-32 conversion layer. In v5 that layer is gone and
+the wide build is Windows-only — on Unix you run the MBCS build with a UTF-8
+`NLS_LANG` and get the same Unicode coverage in `char*`. Trying to compile
+with `OCI_CHARSET_WIDE` off Windows stops the build with a clear `#error`.
 
 !!! warning "Database charset caveat"
     In wide builds, UTF-16 is used for **all** OCI string traffic regardless
@@ -71,7 +81,7 @@ including statement text and object names — goes through it.
 
 - **Application uses `char*`/`std::string`, runs on Unix, or wants UTF-8** →
   `OCI_CHARSET_MBCS` (set `NLS_LANG=….AL32UTF8` for UTF-8).
-- **Application is natively `wchar_t`/`std::wstring`** — typically Windows
+- **Application is natively `wchar_t`/`std::wstring` on Windows** — typically
   `UNICODE`/`_UNICODE` projects → `OCI_CHARSET_WIDE`.
 - **Prebuilt OCILIB binary already picked for you?** Match it: the macro in
   your build must equal the one OCILIB was compiled with. Mixing them breaks
@@ -87,8 +97,8 @@ tutorials do this everywhere.
 Charset choice happens once, at build time:
 
 1. **Decide** — `char*`/UTF-8 world → MBCS build; `wchar_t` world → wide.
-2. **Configure** — `--with-oracle-charset=mbcs|wide` (autotools),
-   `-DOCI_CHARSET_MULTIBYTE|WIDE` in your own project, or pick `ocilibm`/`ocilibw`.
+2. **Configure** — on Unix autotools always emits MBCS;
+   on Windows `-DOCI_CHARSET_MBCS|WIDE` or pick `ocilib`/`ocilibw`.
 3. **(MBCS only) set `NLS_LANG`** — to the Oracle charset matching your
    strings; `AL32UTF8` for UTF-8.
 4. **Write portable code** — `OTEXT()` literals in C, `String` in C++, and the
@@ -121,8 +131,8 @@ the [strings & charsets page](text-charsets.html).
 
 ## Recap
 
-- Two builds, one API: MBCS = `char` — ANSI codepages *or* UTF-8
-  via `NLS_LANG`. Wide = `wchar_t`, OCI pinned to UTF-16 with automatic
-  UTF-16↔UTF-32 conversion on 4-byte-`wchar_t` platforms.
+- One API, platform-scoped builds: MBCS = `char` — ANSI codepages *or* UTF-8
+  via `NLS_LANG`, and the only flavor off Windows. Wide = `wchar_t`,
+  OCI pinned to UTF-16, Windows only.
 
 **Next:** [Hello OCILIB](hello-ocilib.html) — your first program.

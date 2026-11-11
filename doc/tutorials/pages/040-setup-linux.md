@@ -9,7 +9,7 @@ level: beginner
 **Objectives** — by the end of this page you will be able to:
 
 - build and install OCILIB with autotools
-- choose linkage vs runtime Oracle import, MBCS vs wide charset, static vs shared
+- choose linkage vs runtime Oracle import, static vs shared (Unix builds are always MBCS)
 - link your program with `-locilib` or pkg-config
 
 ## The short version
@@ -32,7 +32,6 @@ not in the standard locations.
 |--------|--------|-------|
 | `--with-oracle-import` | `linkage` \| `runtime` | **`linkage` is the default** (needs Instant Client + SDK at build time). `runtime` is opt-in: OCILIB `dlopen`s `libclntsh.so` itself — builds with **no Oracle SDK** (headers vendored in `src/oci/`). |
 | `--with-oci-include` / `--with-oci-lib` | paths | for `linkage` in non-standard locations |
-| `--with-oracle-charset` | `mbcs` \| `wide` | `mbcs` = `char` (start here); `wide` = UTF-16 |
 | `--enable-static` / `--enable-shared` | yes/no | shared is default |
 | `--enable-warnings` | `no`/`yes`/`paranoid` | dev diagnostics |
 
@@ -76,8 +75,9 @@ export LD_LIBRARY_PATH=/usr/local/lib:/opt/oracle/instantclient_23_x
   `LD_LIBRARY_PATH` missing.
 - **`configure: OCI headers not found`** — `linkage` without SDK paths; switch to
   `runtime`.
-- **Charset mismatch** — `wide` lib + `char` code compiles but strings garble;
-  `otext`/`OTEXT()` keeps your source compatible with both.
+- **Charset mismatch** — on Windows, a `wide` lib + `char` code compiles but
+  strings garble; `otext`/`OTEXT()` keeps your source compatible with both.
+  Off Windows there is only the MBCS build, so this can't happen.
 
 ## Recap
 

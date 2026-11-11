@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BFILEs — OCI_File — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Anatomy of a program</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Developing on Linux</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2" open><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li class="active"><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span><span class="badge badge-demo">demo/file.c</span><a class="badge badge-demo" href="assets/sql/file.sql">file.sql</a></div>
+    <h1 id="bfiles-oci_file">BFILEs — <code>OCI_File</code></h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>reference server files through DIRECTORY objects</li>
+<li>open, check, read and close <code>OCI_File</code> handles</li>
+<li>bind BFILEs into columns</li>
+</ul>
+<h2 id="in-context-the-database-as-a-filesystem-index">In context — the database as a filesystem index</h2>
+<p><code>BFILE</code> solves a different problem than LOB: the content never enters the
+database. The column stores only a <em>(DIRECTORY object, filename)</em> pair — a
+pointer to a file on the <strong>server's</strong> filesystem — and Oracle opens and reads
+the real file each time you access it. Choose BFILE when the data must live as
+files (media libraries, document stores shared with other tools, read-only
+reference data loaded by <code>LOAD DATA</code> style pipelines); choose LOB when you want
+transactional, backed-up, database-managed content.</p>
+<p>The <code>DIRECTORY</code> object is also the security boundary: it maps a database-level
+name to an OS path, and access is controlled by <code>GRANT READ/WRITE ON DIRECTORY</code>
+— the client never sees the server's path. That is why every BFILE workflow
+starts on the server side (<code>CREATE DIRECTORY</code> + <code>GRANT</code>) before any <code>OCI_File</code>
+call can succeed.</p>
+<p>On the OCILIB side <code>OCI_File</code> is a connection handle you fill with the
+directory+name pair (<code>SetName</code>) — DIRECTORY names are stored upper-cased by
+Oracle, so the literal you pass should be too. <code>Exists</code>/<code>GetSize</code>/<code>Read</code> then
+round-trip to the server — and here the asymmetry bites: paths resolve on the
+<em>database host</em>, not the client, so <code>OCI_FileExists</code> asks "is that file there
+for you?" not "is it on my disk?". <code>OCI_LobCopyFromFile</code> closes the loop by
+pulling BFILE content into a real LOB server-side — the migration path out of
+external storage.</p>
+<h2 id="concepts">Concepts</h2>
+<p>A <code>BFILE</code> column doesn't store bytes — it stores a <strong>pointer to a file on the
+server's filesystem</strong> (<code>DIRECTORY</code> object + filename). <code>OCI_File</code> is the client-side
+handle.</p>
+<div class="highlight"><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="n">directory</span><span class="w"> </span><span class="n">media_dir</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="s1">'/u01/media'</span><span class="p">;</span>
+<span class="k">grant</span><span class="w"> </span><span class="k">read</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">directory</span><span class="w"> </span><span class="n">media_dir</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">scott</span><span class="p">;</span>
+</code></pre></div>
+
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_FileCreate</code></td>
+<td><code>File</code> ctor (<code>con</code>, <code>File::BFile</code>)</td>
+<td>lifecycle</td>
+</tr>
+<tr>
+<td><code>OCI_FileFree</code></td>
+<td>— (RAII)</td>
+<td>release</td>
+</tr>
+<tr>
+<td><code>OCI_FileArrayCreate</code></td>
+<td>—</td>
+<td>bulk arrays</td>
+</tr>
+<tr>
+<td><code>OCI_FileSetName</code></td>
+<td><code>SetInfos</code> / <code>SetName</code></td>
+<td>DIRECTORY + filename</td>
+</tr>
+<tr>
+<td><code>OCI_FileGetName</code></td>
+<td><code>GetName()</code></td>
+<td>filename</td>
+</tr>
+<tr>
+<td><code>OCI_FileGetDirectory</code></td>
+<td><code>GetDirectory()</code></td>
+<td>DIRECTORY</td>
+</tr>
+<tr>
+<td><code>OCI_FileExists</code></td>
+<td><code>Exists()</code></td>
+<td>presence</td>
+</tr>
+<tr>
+<td><code>OCI_FileGetSize</code></td>
+<td><code>GetLength()</code></td>
+<td>byte length</td>
+</tr>
+<tr>
+<td><code>OCI_FileOpen</code> / <code>OCI_FileClose</code> / <code>OCI_FileIsOpen</code></td>
+<td>I/O session</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OCI_FileRead(f, buf, len)</code> → n / <code>OCI_FileSeek</code> / <code>OCI_FileGetOffset</code></td>
+<td>read bytes</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OCI_FileAssign</code> / <code>OCI_FileIsEqual</code></td>
+<td>copy / compare locators</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OCI_StatementBindFile</code> / <code>OCI_ResultsetGetFile</code></td>
+<td>bind / fetch</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="pointing-at-a-file">Pointing at a file</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_File</span><span class="w"> </span><span class="o">*</span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_FileCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_BFILE</span><span class="p">);</span>
+<span class="n">OCI_FileSetName</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"MEDIA_DIR"</span><span class="p">),</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"report.pdf"</span><span class="p">));</span><span class="w">   </span><span class="cm">/* DIRECTORY is upper-cased */</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_FileExists</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"size: %u</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_FileGetSize</span><span class="p">(</span><span class="n">f</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">File</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="n">File</span><span class="o">::</span><span class="n">BFile</span><span class="p">);</span>
+<span class="n">f</span><span class="p">.</span><span class="n">SetName</span><span class="p">(</span><span class="s">"MEDIA_DIR"</span><span class="p">,</span><span class="w"> </span><span class="s">"report.pdf"</span><span class="p">);</span><span class="w">          </span><span class="cm">/* DIRECTORY is upper-cased */</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Exists</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"size: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">GetLength</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="reading">Reading</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_FileOpen</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">8192</span><span class="p">];</span>
+<span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">n</span><span class="p">;</span>
+<span class="k">while</span><span class="w"> </span><span class="p">((</span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_FileRead</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">)))</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w">   </span><span class="cm">/* returns bytes */</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">fwrite</span><span class="p">(</span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">stdout</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">OCI_FileClose</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">.</span><span class="n">Open</span><span class="p">();</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(;;)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Raw</span><span class="w"> </span><span class="n">chunk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Read</span><span class="p">(</span><span class="mi">8192</span><span class="p">);</span><span class="w">            </span><span class="cm">/* returns bytes actually read */</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">chunk</span><span class="p">.</span><span class="n">empty</span><span class="p">())</span><span class="w"> </span><span class="k">break</span><span class="p">;</span>
+<span class="w">    </span><span class="n">fwrite</span><span class="p">(</span><span class="n">chunk</span><span class="p">.</span><span class="n">data</span><span class="p">(),</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="n">chunk</span><span class="p">.</span><span class="n">size</span><span class="p">(),</span><span class="w"> </span><span class="n">stdout</span><span class="p">);</span>
+<span class="p">}</span>
+<span class="n">f</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+</pre></div>
+</div></div>
+<p><code>OCI_FileSeek(f, offset, OCI_SEEK_SET/…)</code> — random access for big files.</p>
+<h2 id="storing-the-pointer">Storing the pointer</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"insert into documents(id, content) values(:i, :f)"</span><span class="p">));</span>
+<span class="n">OCI_StatementBindFile</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":f"</span><span class="p">),</span><span class="w"> </span><span class="n">f</span><span class="p">);</span><span class="w">      </span><span class="cm">/* stores dir+name pointer */</span>
+<span class="n">OCI_StatementExecutePrepared</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"insert into documents(id, content) values(:i, :f)"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":f"</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">);</span><span class="w">                                 </span><span class="cm">/* stores dir+name pointer */</span>
+<span class="n">st</span><span class="p">.</span><span class="n">ExecutePrepared</span><span class="p">();</span>
+</pre></div>
+</div></div>
+<p>A fetched BFILE column gives a borrowed <code>File</code> (<code>OCI_ResultsetGetFile</code> / <code>Get&lt;File&gt;</code>).</p>
+<h2 id="scenario-fetch-inspect-and-read-a-column-bfile">Scenario — fetch, inspect and read a column BFILE</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_StatementExecute</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"select content from documents where id = :i"</span><span class="p">));</span>
+<span class="n">OCI_ResultsetFetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">);</span>
+
+<span class="n">OCI_File</span><span class="w"> </span><span class="o">*</span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ResultsetGetFile</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">            </span><span class="cm">/* borrowed      */</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%s/%s — %u bytes</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">       </span><span class="n">OCI_FileGetDirectory</span><span class="p">(</span><span class="n">f</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_FileGetName</span><span class="p">(</span><span class="n">f</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_FileGetSize</span><span class="p">(</span><span class="n">f</span><span class="p">));</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_FileExists</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_FileOpen</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="w">    </span><span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">4096</span><span class="p">];</span>
+<span class="w">    </span><span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_FileRead</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">));</span><span class="w">   </span><span class="cm">/* first chunk */</span>
+<span class="w">    </span><span class="n">OCI_FileClose</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">st</span><span class="p">.</span><span class="n">Execute</span><span class="p">(</span><span class="s">"select content from documents where id = :i"</span><span class="p">);</span>
+<span class="n">rs</span><span class="p">.</span><span class="n">Next</span><span class="p">();</span>
+
+<span class="n">File</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">File</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">                              </span><span class="cm">/* borrowed      */</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">GetDirectory</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">'/'</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">GetName</span><span class="p">()</span>
+<span class="w">          </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" — "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">GetLength</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" bytes</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Exists</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">f</span><span class="p">.</span><span class="n">Open</span><span class="p">();</span>
+<span class="w">    </span><span class="n">Raw</span><span class="w"> </span><span class="n">chunk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Read</span><span class="p">(</span><span class="mi">4096</span><span class="p">);</span><span class="w">                          </span><span class="cm">/* first chunk */</span>
+<span class="w">    </span><span class="n">f</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="scenario-import-a-bfile-into-a-lob-column">Scenario — import a BFILE into a LOB column</h2>
+<p>"External file → real BLOB" is the classic migration: point the <code>File</code>, then copy
+server-side via <code>OCI_LobCopyFromFile</code> — no client round-trip for the bytes:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_File</span><span class="w"> </span><span class="o">*</span><span class="n">f</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_FileCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_BFILE</span><span class="p">);</span>
+<span class="n">OCI_FileSetName</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"MEDIA_DIR"</span><span class="p">),</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"report.pdf"</span><span class="p">));</span>
+
+<span class="n">OCI_Lob</span><span class="w"> </span><span class="o">*</span><span class="n">blob</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_LobCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_BLOB</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_FileExists</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_FileOpen</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="w">    </span><span class="n">OCI_LobCopyFromFile</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span>
+<span class="w">                        </span><span class="p">(</span><span class="n">OCI_UInt64</span><span class="p">)</span><span class="w"> </span><span class="n">OCI_FileGetSize</span><span class="p">(</span><span class="n">f</span><span class="p">));</span>
+<span class="w">    </span><span class="n">OCI_FileClose</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">File</span><span class="w"> </span><span class="nf">f</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="n">File</span><span class="o">::</span><span class="n">BFile</span><span class="p">);</span>
+<span class="n">f</span><span class="p">.</span><span class="n">SetName</span><span class="p">(</span><span class="s">"MEDIA_DIR"</span><span class="p">,</span><span class="w"> </span><span class="s">"report.pdf"</span><span class="p">);</span>
+
+<span class="n">Lob</span><span class="w"> </span><span class="nf">blob</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="n">Lob</span><span class="o">::</span><span class="n">Blob</span><span class="p">);</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">f</span><span class="p">.</span><span class="n">Exists</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">f</span><span class="p">.</span><span class="n">Open</span><span class="p">();</span>
+<span class="w">    </span><span class="cm">/* no C++ CopyFromFile — call the C API on the raw handles */</span>
+<span class="w">    </span><span class="n">OCI_LobCopyFromFile</span><span class="p">(</span><span class="n">blob</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_UInt64</span><span class="p">)</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">GetLength</span><span class="p">());</span>
+<span class="w">    </span><span class="n">f</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="scenario-random-access-on-a-big-file">Scenario — random access on a big file</h2>
+<p><code>Seek</code> + <code>GetOffset</code> give you random access without reading the whole file:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_FileOpen</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+<span class="n">OCI_FileSeek</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_UInt64</span><span class="p">)</span><span class="w"> </span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_SEEK_SET</span><span class="p">);</span><span class="w">   </span><span class="cm">/* 1 MiB mark  */</span>
+<span class="kt">unsigned</span><span class="w"> </span><span class="kt">char</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">1024</span><span class="p">];</span>
+<span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_FileRead</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="n">buf</span><span class="p">,</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">));</span><span class="w">        </span><span class="cm">/* 1 KiB there */</span>
+<span class="n">OCI_FileClose</span><span class="p">(</span><span class="n">f</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">f</span><span class="p">.</span><span class="n">Open</span><span class="p">();</span>
+<span class="n">f</span><span class="p">.</span><span class="n">Seek</span><span class="p">(</span><span class="n">SeekSet</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="o">*</span><span class="mi">1024</span><span class="p">);</span><span class="w">                              </span><span class="cm">/* 1 MiB mark  */</span>
+<span class="n">Raw</span><span class="w"> </span><span class="n">chunk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">.</span><span class="n">Read</span><span class="p">(</span><span class="mi">1024</span><span class="p">);</span><span class="w">                                </span><span class="cm">/* 1 KiB there */</span>
+<span class="n">f</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span>
+</pre></div>
+</div></div>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>BFILE work always starts on the server — the client cannot fix a missing
+DIRECTORY or grant:</p>
+<ol>
+<li><strong>Server side first</strong>: <code>CREATE DIRECTORY x AS '/path'</code> + <code>GRANT READ</code> — both
+   require DBA rights; without them every <code>OCI_File</code> call fails.</li>
+<li><strong>Point at the file</strong>: <code>FileCreate</code> + <code>SetName</code> with the DIRECTORY name
+   <em>upper-cased</em> — Oracle stores it that way, and lowercase names silently
+   fail <code>Exists</code>.</li>
+<li><strong>Probe before opening</strong>: <code>Exists</code> → <code>GetSize</code> — remember both are server
+   round-trips asking "is that file there <em>for you</em>?", on the database host.</li>
+<li><strong>Read</strong>: <code>Open</code>, <code>Read</code>/<code>Seek</code> in the usual chunked loop, <code>Close</code>. A
+   fetched BFILE column gives the same object, borrowed.</li>
+<li><strong>Store or import</strong>: bind the locator into a BFILE column to keep it as an
+   external pointer, or <code>LobCopyFromFile</code> to pull the content into a real LOB
+   server-side — the standard migration path.</li>
+</ol>
+<p>Hints: never <code>Free</code> a fetched <code>File</code>; <code>GetDirectory</code>/<code>GetName</code> read back what
+the locator points at — handy when logging which file a row uses; and a BFILE
+read is a filesystem read on the server, not a network file transfer.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Create a DIRECTORY + grant, point an <code>OCI_File</code> at a real file, verify <code>Exists</code>.</li>
+<li>Read a binary file and hash it; bind it into a BFILE column; fetch and re-hash.</li>
+<li><code>Seek</code> halfway through a large file and dump 1 KB.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>File exists on client, not server</strong> — BFILE paths resolve on the <em>database</em> host.</li>
+<li><strong>Missing DIRECTORY grant</strong> — <code>ORA-22285</code>/permission errors.</li>
+<li><strong>Lowercase directory name</strong> — Oracle stores DIRECTORY names upper-case.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>OCI_File</code> = DIRECTORY+name pointer; <code>SetName</code> → <code>Exists</code> → <code>Open</code> → <code>Read</code>/<code>Seek</code>
+  → <code>Close</code>; bind into BFILE columns.</li>
+</ul>
+<p><strong>Next:</strong> <code>SYS.XMLTYPE</code> values.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="lobs-advanced.html"><span class="pn-dir">← Previous</span>LOBs advanced</a><a class="pn-link pn-next" href="xmltype.html"><span class="pn-dir">Next →</span>XMLType</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

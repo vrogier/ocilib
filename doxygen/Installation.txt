@@ -28,12 +28,16 @@
  *
  * => Oracle charset modes
  *
- * - OCI_CHARSET_MBCS: MBCS strings with char* (default). Despite the
- *   name, this covers single-byte ANSI codepages AND UTF-8 — the encoding is
- *   whatever the Oracle client's NLS_LANG specifies (e.g. AL32UTF8).
- * - OCI_CHARSET_WIDE: wide strings with wchar_t*. OCILIB initializes OCI in
- *   UTF-16 mode on all platforms and converts automatically between UTF-16
- *   and wchar_t (UTF-32) on systems where wchar_t is 4 bytes.
+ * - OCI_CHARSET_MBCS: MBCS strings with char* (default, all platforms).
+ *   Despite the name, this covers single-byte ANSI codepages AND UTF-8 —
+ *   the encoding is whatever the Oracle client's NLS_LANG specifies
+ *   (e.g. AL32UTF8).
+ * - OCI_CHARSET_WIDE: wide strings with wchar_t* — Windows only, where
+ *   wchar_t is already a 2-byte UTF-16 unit so OCILIB passes it to OCI's
+ *   UTF-16 mode with no conversion. Defining it on a non-Windows platform
+ *   is a compile-time error (on Unix/macOS, wchar_t is 4-byte UTF-32 and
+ *   the conversion layer no longer exists — use the MBCS build with a
+ *   UTF-8 NLS_LANG instead).
  *
  * => Calling convention
  *
@@ -71,7 +75,6 @@
  * List of available options:
  *
  *  - --with-oracle-import=(linkage|runtime)
- *  - --with-oracle-charset=(MBCS|wide)
  *  - --with-oracle-home=(custom oracle regular client directory)
  *  - --with-oracle-headers-path=(oracle header files directory)
  *  - --with-oracle-lib-path=(oracle shared lib directory)
@@ -133,7 +136,7 @@
  * - Copy ocilib/lib[32|64]/ocilib[x].lib to a folder listed in the linker libraries folders
  * - Copy ocilib/lib[32|64]/ocilib[x].dll to a folder included in the PATH environment variable
  *
- * [x] is the compiled version of OCILIB ('a' -> MBCS (ANSI codepage or UTF-8), 'w' -> wide character, e.g. UTF-16 on Windows)
+ * [x] is the compiled version of OCILIB (empty -> MBCS (ANSI codepage or UTF-8), 'w' -> wide character, UTF-16 on Windows)
  *
  * To use OCILIB in a project :
  *
