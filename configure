@@ -672,6 +672,9 @@ LT_CURRENT
 LT_RELEASE
 OCILIB_TESTS
 OCILIB_DEMO_SOURCES
+OCILIB_TUTORIALS_SQL
+OCILIB_TUTORIALS_ASSETS
+OCILIB_TUTORIALS
 OCILIB_DOCS
 OCILIB_PREFIX
 OCILIB_IMPORT
@@ -14780,11 +14783,23 @@ printf "%s\n" "$OCILIB_PREFIX" >&6; }
   doc_files=`(cd ${srcdir:-.}/doc/html && ls -1 *.html *.css *.png)`
   OCILIB_DOCS=`echo $doc_files | sed 's,$, ,g'`
 
+  tut_files=`(cd ${srcdir:-.}/doc/tutorials/html && ls -1 *.html 2>/dev/null | sed 's,^,html/,')`
+  OCILIB_TUTORIALS=`echo $tut_files | sed 's,$, ,g'`
+
+  tut_asset_files=`(cd ${srcdir:-.}/doc/tutorials/html/assets && ls -1 *.css *.js 2>/dev/null | sed 's,^,html/assets/,')`
+  OCILIB_TUTORIALS_ASSETS=`echo $tut_asset_files | sed 's,$, ,g'`
+
+  tut_sql_files=`(cd ${srcdir:-.}/doc/tutorials/html/assets/sql && ls -1 *.sql 2>/dev/null | sed 's,^,html/assets/sql/,')`
+  OCILIB_TUTORIALS_SQL=`echo $tut_sql_files | sed 's,$, ,g'`
+
   demo_sources_files=`(cd ${srcdir:-.}/demo && ls -1 *.c *.h *.cpp *.sql)`
   OCILIB_DEMO_SOURCES=`echo $demo_sources_files | sed 's,$, ,g'`
 
-  tests_files=`(cd ${srcdir:-.}/tests && ls -1 *.h *.cpp *.c)`
+  tests_files=`(cd ${srcdir:-.}/tests && ls -1 *.h *.cpp)`
   OCILIB_TESTS=`echo $tests_files | sed 's,$, ,g'`
+
+
+
 
 
 
@@ -15078,7 +15093,7 @@ printf "%s\n" "$ac_ocilib_ld" >&6; }
 
 
 
-ac_config_files="$ac_config_files README ocilib.pc Makefile src/Makefile doc/html/Makefile demo/Makefile demo/Makefile_demo demo/Makefile_demo_cpp tests/Makefile tests/Makefile_tests"
+ac_config_files="$ac_config_files ocilib.pc Makefile src/Makefile doc/html/Makefile doc/tutorials/Makefile demo/Makefile demo/Makefile_demo demo/Makefile_demo_cpp tests/Makefile tests/Makefile_tests"
 
 
 cat >confcache <<\_ACEOF
@@ -16091,11 +16106,11 @@ do
     "config.h") CONFIG_HEADERS="$CONFIG_HEADERS config.h" ;;
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
-    "README") CONFIG_FILES="$CONFIG_FILES README" ;;
     "ocilib.pc") CONFIG_FILES="$CONFIG_FILES ocilib.pc" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "doc/html/Makefile") CONFIG_FILES="$CONFIG_FILES doc/html/Makefile" ;;
+    "doc/tutorials/Makefile") CONFIG_FILES="$CONFIG_FILES doc/tutorials/Makefile" ;;
     "demo/Makefile") CONFIG_FILES="$CONFIG_FILES demo/Makefile" ;;
     "demo/Makefile_demo") CONFIG_FILES="$CONFIG_FILES demo/Makefile_demo" ;;
     "demo/Makefile_demo_cpp") CONFIG_FILES="$CONFIG_FILES demo/Makefile_demo_cpp" ;;
