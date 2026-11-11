@@ -1,6 +1,8 @@
 #include "ocilib_tests.h"
 #include "NullArgs.h"
+#include <cstdlib>
 #include <filesystem>
+#include <string>
 
 namespace TestCApi
 {
@@ -281,17 +283,27 @@ namespace TestCApi
         for (int i = 0; i < 128; i++) OcilibLogCleanup();
     }
 
+    static void SetLogEnvVar(const char* name, const char* value)
+    {
+    #ifdef _WINDOWS
+        _putenv((std::string(name) + "=" + (value ? value : "")).c_str());
+    #else
+        if (value) setenv(name, value, 1);
+        else       unsetenv(name);
+    #endif
+    }
+
     static void LogCycle(const char* level, const char* categories, const char* output)
     {
-        _putenv("OCILIB_LOG=");
-        _putenv("OCILIB_LOG_CATEGORIES=");
-        _putenv("OCILIB_LOG_OUTPUT=");
+        SetLogEnvVar("OCILIB_LOG", nullptr);
+        SetLogEnvVar("OCILIB_LOG_CATEGORIES", nullptr);
+        SetLogEnvVar("OCILIB_LOG_OUTPUT", nullptr);
 
         DrainLogRefCount();
 
-        _putenv((std::string("OCILIB_LOG=") + level).c_str());
-        _putenv((std::string("OCILIB_LOG_CATEGORIES=") + categories).c_str());
-        _putenv((std::string("OCILIB_LOG_OUTPUT=") + output).c_str());
+        SetLogEnvVar("OCILIB_LOG", level);
+        SetLogEnvVar("OCILIB_LOG_CATEGORIES", categories);
+        SetLogEnvVar("OCILIB_LOG_OUTPUT", output);
 
         ASSERT_TRUE(OcilibLogInitialize());
 
@@ -301,9 +313,9 @@ namespace TestCApi
 
         OcilibLogCleanup();   /* ref_count 0 + initialized → fclose + reset */
 
-        _putenv("OCILIB_LOG=");
-        _putenv("OCILIB_LOG_CATEGORIES=");
-        _putenv("OCILIB_LOG_OUTPUT=");
+        SetLogEnvVar("OCILIB_LOG", nullptr);
+        SetLogEnvVar("OCILIB_LOG_CATEGORIES", nullptr);
+        SetLogEnvVar("OCILIB_LOG_OUTPUT", nullptr);
     }
 
     TEST(TestError, LogWrite_CoversWritePathAndCleanup)
