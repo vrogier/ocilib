@@ -396,7 +396,7 @@ OCI_Boolean OcilibLobRead
 
     if (OCI_BLOB != lob->type)
     {
-        if (IS_WIDE_CHAR_ENV())
+        if (IS_WIDE_ENV())
         {
             csid = OCI_UTF16ID;
         }
@@ -529,7 +529,7 @@ OCI_Boolean OcilibLobWrite
 
     if (OCI_BLOB != lob->type)
     {
-        if (IS_WIDE_CHAR_ENV())
+        if (IS_WIDE_ENV())
         {
             csid = OCI_UTF16ID;
         }
@@ -1010,7 +1010,7 @@ OCI_Boolean OcilibLobAppend
 
     if (OCI_BLOB != lob->type)
     {
-        if (IS_WIDE_CHAR_ENV())
+        if (IS_WIDE_ENV())
         {
             csid = OCI_UTF16ID;
         }

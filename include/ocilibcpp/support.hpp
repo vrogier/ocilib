@@ -149,7 +149,7 @@ namespace ocilib
         template<class T>
         class BindObjectAdaptor : public BindObject
         {
-        friend class Statement;
+        friend class ocilib::Statement;
 
         public:
 
@@ -178,7 +178,7 @@ namespace ocilib
         template<class T>
         class BindTypeAdaptor : public BindObject
         {
-        friend class Statement;
+        friend class ocilib::Statement;
 
         public:
 

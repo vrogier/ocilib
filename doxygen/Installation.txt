@@ -28,8 +28,12 @@
  *
  * => Oracle charset modes
  *
- * - OCI_CHARSET_ANSI: ANSI or UTF-8 strings with char* (default)
- * - OCI_CHARSET_WIDE: wide strings with wchar_t*
+ * - OCI_CHARSET_MBCS: MBCS strings with char* (default). Despite the
+ *   name, this covers single-byte ANSI codepages AND UTF-8 — the encoding is
+ *   whatever the Oracle client's NLS_LANG specifies (e.g. AL32UTF8).
+ * - OCI_CHARSET_WIDE: wide strings with wchar_t*. OCILIB initializes OCI in
+ *   UTF-16 mode on all platforms and converts automatically between UTF-16
+ *   and wchar_t (UTF-32) on systems where wchar_t is 4 bytes.
  *
  * => Calling convention
  *
@@ -67,7 +71,7 @@
  * List of available options:
  *
  *  - --with-oracle-import=(linkage|runtime)
- *  - --with-oracle-charset=(ansi|wide)
+ *  - --with-oracle-charset=(MBCS|wide)
  *  - --with-oracle-home=(custom oracle regular client directory)
  *  - --with-oracle-headers-path=(oracle header files directory)
  *  - --with-oracle-lib-path=(oracle shared lib directory)
@@ -109,7 +113,7 @@
  * - Add the flag -I$USER_LIBS/include to your compiler
  * - Define OCILIB modes:
  *    - OCI import  mode (-DOCI_IMPORT_LINKAGE | -DOCI_IMPORT_RUNTIME)
- *    - OCI charset mode (-DOCI_CHARSET_ANSI   | -DOCI_CHARSET_WIDE)
+ *    - OCI charset mode (-DOCI_CHARSET_MBCS | -DOCI_CHARSET_WIDE)
  * - Add the flag -L/$ORACLE_HOME/[lib|lib32|lib64] -lclntsh to the linker
  * - Add the flag -L$USER_LIBS/lib -locilib to the linker
  *
@@ -129,13 +133,13 @@
  * - Copy ocilib/lib[32|64]/ocilib[x].lib to a folder listed in the linker libraries folders
  * - Copy ocilib/lib[32|64]/ocilib[x].dll to a folder included in the PATH environment variable
  *
- * [x] is the compiled version of OCILIB ('a' -> ANSI / UTF-8, 'w' -> wide character, e.g. UTF-16 on Windows)
+ * [x] is the compiled version of OCILIB ('a' -> MBCS (ANSI codepage or UTF-8), 'w' -> wide character, e.g. UTF-16 on Windows)
  *
  * To use OCILIB in a project :
  *
  * - include "ocilib.h" in your application
  * - define the calling convention (OCI_API) as __stdcall
- * - define the charset mode (OCI_CHARSET_ANSI | OCI_CHARSET_WIDE)
+ * - define the charset mode (OCI_CHARSET_MBCS | OCI_CHARSET_WIDE)
  *
  *
  * Note for recompiling OCILIB:

@@ -24,8 +24,8 @@
 
 #if defined(OCI_CHARSET_WIDE)
 #pragma comment(lib, "ocilibw.lib")
-#elif defined(OCI_CHARSET_ANSI)
-#pragma comment(lib, "ociliba.lib")
+#elif defined(OCI_CHARSET_MBCS)
+#pragma comment(lib, "ocilibm.lib")
 #endif
 
 #endif
@@ -67,7 +67,7 @@ const OCI_Int32 DirPathColumnCount = 3;
 #if defined(OCI_CHARSET_WIDE)
 #define OCI_SHARED_LIB                   "ocilibw.dll"
 #else
-#define OCI_SHARED_LIB                   "ociliba.dll"
+#define OCI_SHARED_LIB                   "ocilibm.dll"
 #endif
 #elif defined(__APPLE__)
 #define OCI_SHARED_LIB                   "libocilib.dylib"
@@ -348,8 +348,8 @@ void print_version(void)
     else
         ocout << otext("OCI import mode         : RUNTIME\n");
 
-    if (env.GetCharset() == Environment::CharsetAnsi)
-        ocout << otext("Charset type            : ANSI\n");
+    if (env.GetCharset() == Environment::CharsetMbcs)
+        ocout << otext("Charset type            : MBCS\n");
     else
         ocout << otext("Charset type            : WIDE\n");
 
@@ -865,7 +865,7 @@ void test_plsql(void)
     ocout << otext("PL/SQL : trunc(sysdate+1)-trunc(sysdate-1)") << oendl;
     ocout << otext("Result : ") << res << oendl;
 
-#ifndef OCI_CHARSET_ANSI
+#ifndef OCI_CHARSET_MBCS
     /* Oracle 8i has some troubles with SERVER OUTPUT in unicode */
     if (env.GetRuntimeVersion() < Oracle9iR1)
         return;
@@ -922,7 +922,7 @@ void test_timestamp(void)
 {
     OCI_UInt32 version = env.GetRuntimeVersion();
 
-#ifndef OCI_CHARSET_ANSI
+#ifndef OCI_CHARSET_MBCS
     /* Oracle 9i has some troubles with formatting Intervals/timestamps in
     an UTF16 context... */
 

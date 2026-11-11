@@ -400,7 +400,7 @@ namespace TestCppApi
         try { options.SetHint(OTEXT("index(OCILIB_SODA_CPP_BULK)")); } catch (const Exception&) {}
 
         /* ListIndexes / GetDataGuide covered in the C BulkSaveIndexAndMeta and
-           the ANSI-guarded IndexCreateDropList tests — index ops aren't
+           the MBCS-guarded IndexCreateDropList tests — index ops aren't
            callable here: CreateIndex errors (ORA-40671) and IndexDrop SEGVs
            inside the Oracle client in UNICODE builds */
 
@@ -408,9 +408,9 @@ namespace TestCppApi
         ASSERT_TRUE(coll.Drop());
     }
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
 
-    /* The OCISodaIndex* calls work in ANSI builds; in UNICODE builds they fail
+    /* The OCISodaIndex* calls work in MBCS builds; in UNICODE builds they fail
        inside the Oracle client (ORA-40671 / OCI-22303, IndexDrop even SEGVs) —
        the real assertions live here */
     TEST(TestSodaCpp, IndexCreateDropList)

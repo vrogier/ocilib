@@ -136,7 +136,7 @@ namespace TestCppApi
         ASSERT_EQ(static_cast<OCI_UInt32>(Environment::CharsetWide), static_cast<OCI_UInt32>(env.GetCharset()));
         ASSERT_EQ(2u, env.GetCharMaxSize());
 #else
-        ASSERT_EQ(static_cast<OCI_UInt32>(Environment::CharsetAnsi), static_cast<OCI_UInt32>(env.GetCharset()));
+        ASSERT_EQ(static_cast<OCI_UInt32>(Environment::CharsetMbcs), static_cast<OCI_UInt32>(env.GetCharset()));
         ASSERT_EQ(1u, env.GetCharMaxSize());
 #endif
         ASSERT_GE(env.GetStats(OCI_UST_BYTES), static_cast<OCI_UInt64>(0));
@@ -201,7 +201,7 @@ namespace TestCppApi
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
-        ASSERT_TRUE(OCI_EnvironmentGetCharset(env) == OCI_CHAR_WIDE || OCI_EnvironmentGetCharset(env) == OCI_CHAR_ANSI);
+        ASSERT_TRUE(OCI_EnvironmentGetCharset(env) == OCI_CHAR_WIDE || OCI_EnvironmentGetCharset(env) == OCI_CHAR_MBCS);
     }
 
     TEST(TestEnvironment, GetImportMode)
@@ -469,7 +469,7 @@ namespace TestCppApi
         ASSERT_TRUE((OCI_Int32)OCI_EnvironmentGetImportMode(env) >= 0);
         /* locale code 0 is invalid -> NULL; valid codes return a string */
         ASSERT_EQ(nullptr, OCI_EnvironmentGetLocaleString(env, static_cast<OCI_LocaleCode>(0)));
-        ASSERT_TRUE(OCI_EnvironmentGetCharset(env) == OCI_CHAR_WIDE || OCI_EnvironmentGetCharset(env) == OCI_CHAR_ANSI);
+        ASSERT_TRUE(OCI_EnvironmentGetCharset(env) == OCI_CHAR_WIDE || OCI_EnvironmentGetCharset(env) == OCI_CHAR_MBCS);
         ASSERT_NE(0u, OCI_EnvironmentGetOCIRuntimeVersion(env));
     }
 

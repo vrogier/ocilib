@@ -8,7 +8,7 @@ namespace TestCApi
         (void) event;
     }
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
 
     TEST(TestSubscription, RegisterSecureMode)
     {
@@ -71,7 +71,7 @@ namespace TestCppApi
         (void) event;
     }
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
 
     TEST(TestSubscription, RegisterWithSecureNotification)
     {

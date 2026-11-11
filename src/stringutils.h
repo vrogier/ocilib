@@ -53,7 +53,7 @@ OCI_SYM_LOCAL void OcilibStringTranslate
     OCI_Size  size_char_out
 );
 
-#define OcilibStringAnsiToNative(s, d, l) \
+#define OcilibStringMbcsToNative(s, d, l) \
         OcilibStringTranslate((void *) (s), (void *) (d), l, sizeof(char),   sizeof(otext))
 
 #define OcilibStringNativeToAnsi(s, d, l) \
@@ -201,7 +201,7 @@ OCI_SYM_LOCAL otext * OcilibStringDuplicate
     const otext    * src
 );
 
-OCI_SYM_LOCAL char * OcilibStringAnsiDuplicate
+OCI_SYM_LOCAL char * OcilibStringMbcsDuplicate
 (
     OCI_Environment *env,
     const char     * src
@@ -213,7 +213,7 @@ OCI_SYM_LOCAL OCI_Int32 OcilibStringCaseCompare
     const otext* str2
 );
 
-OCI_SYM_LOCAL OCI_Int32 OcilibStringAnsiCaseCompare
+OCI_SYM_LOCAL OCI_Int32 OcilibStringMbcsCaseCompare
 (
     const char* str1,
     const char* str2

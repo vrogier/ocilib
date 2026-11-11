@@ -1685,12 +1685,12 @@ const otext * OcilibResultsetGetString
                         rowid, (OraText*) def->buf.tmpbuf, &rowid_length, rs->stmt->con->err
                     );
 
-                    if (IS_WIDE_CHAR_ENV())
+                    if (IS_WIDE_ENV())
                     {
-                        /* ROWIDs hex strings are always returned by OCI client as ANSI strings,
+                        /* ROWIDs hex strings are always returned by OCI client as MBCS strings,
                            we need to expand them to native wide character strings */
 
-                        OcilibStringAnsiToNative(def->buf.tmpbuf, def->buf.tmpbuf, rowid_length);
+                        OcilibStringMbcsToNative(def->buf.tmpbuf, def->buf.tmpbuf, rowid_length);
                     }
 
                     result = def->buf.tmpbuf;

@@ -647,23 +647,23 @@ OCI_Boolean OcilibStringGetAttribute
         OCI_Boolean is_ansi = FALSE;
 
         /*  Oracle BUG using OCI in Unicode mode (once again...)
-            Some attributes are returned as ANSI buffer even when OCI is initialized in UTF16 mode
+            Some attributes are returned as MBCS buffer even when OCI is initialized in UTF16 mode
             Some we check if the first character slot has any zero bytes set
             to detect this defect ! */
 
-        if (IS_WIDE_CHAR_ENV() && dbsize > 1)
+        if (IS_WIDE_ENV() && dbsize > 1)
         {
             char* ptr = (char*)dbstr;
 
             if (ptr[0] != 0 && ptr[1] != 0)
             {
-                /* ANSI buffer returned instead of an UTF16 one ! */
+                /* MBCS buffer returned instead of an UTF16 one ! */
                 is_ansi = TRUE;
                 len     = dbsize;
             }
         }
 
-        /* if the input buffer was not ANSI while using an UTF16 environment, compute string length
+        /* if the input buffer was not MBCS while using an UTF16 environment, compute string length
          * from returned buffer size */
         if (len == 0)
         {
@@ -1399,10 +1399,10 @@ otext* OcilibStringDuplicate
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStringAnsiDuplicate
+ * OcilibStringMbcsDuplicate
  * --------------------------------------------------------------------------------------------- */
 
-char* OcilibStringAnsiDuplicate
+char* OcilibStringMbcsDuplicate
 (
     OCI_Environment* env,
     const char     * src
@@ -1461,10 +1461,10 @@ OCI_Int32 OcilibStringCaseCompare
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibStringAnsiCaseCompare
+ * OcilibStringMbcsCaseCompare
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Int32 OcilibStringAnsiCaseCompare
+OCI_Int32 OcilibStringMbcsCaseCompare
 (
     const char* str1,
     const char* str2

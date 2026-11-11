@@ -284,7 +284,7 @@ void OcilibErrorSet
 
         if (location_len > 0)
         {
-            OcilibStringAnsiToNative(location, err->location, (OCI_Int32)location_len);
+            OcilibStringMbcsToNative(location, err->location, (OCI_Int32)location_len);
         }
         else
         {

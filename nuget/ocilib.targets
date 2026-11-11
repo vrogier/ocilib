@@ -16,15 +16,15 @@
   </Target>
    <Target Name="Ocilib_Copy_Dll_Ansi_x86" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x86'">
     <ItemGroup>
-      <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x86\ociliba.dll" />
-	  <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x86\ociliba.pdb" />
+      <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x86\ocilibm.dll" />
+	  <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x86\ocilibm.pdb" />
     </ItemGroup>
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(OutDir)" />
   </Target>
   <Target Name="Ocilib_Copy_Dll_Ansi_x64" BeforeTargets="PostBuildEvent;PrepareForRun" Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x64'">
     <ItemGroup>
-      <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x64\ociliba.dll" />
-      <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x64\ociliba.pdb" />
+      <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x64\ocilibm.dll" />
+      <BinFiles Include="$(MSBuildThisFileDirectory)\bin\x64\ocilibm.pdb" />
    </ItemGroup>
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(OutDir)" />
   </Target>

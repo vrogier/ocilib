@@ -427,7 +427,7 @@ OCI_Boolean OcilibReferenceToText
 
     dbtext *dbstr = NULL;
 
-    /* OCI hex string are always ANSI string whatever environment mode */
+    /* OCI hex string are always MBCS strings whatever environment mode */
     OCI_UInt32 char_count = size;
 
     CHECK_PTR(OCI_IPC_REF,    ref);
@@ -437,7 +437,7 @@ OCI_Boolean OcilibReferenceToText
 
     str[0] = 0;
 
-    if (IS_WIDE_CHAR_ENV())
+    if (IS_WIDE_ENV())
     {
         /* need temporary buffer in wide strings mode */
         dbstr = (dbtext *) OcilibMemoryAlloc(ref->con->env,OCI_IPC_STRING, (OCI_Size) ((char_count + 1) * sizeof(otext)), (OCI_Size) 1,
@@ -456,10 +456,10 @@ OCI_Boolean OcilibReferenceToText
         (OraText *) dbstr, (ub4 *) &char_count
     );
 
-    if (IS_WIDE_CHAR_ENV())
+    if (IS_WIDE_ENV())
     {
-        /* need to convert temporary ANSI buffer to Native in wide strings mode */
-        OcilibStringAnsiToNative(dbstr, str, (OCI_Int32) char_count);
+        /* need to convert temporary MBCS buffer to Native in wide strings mode */
+        OcilibStringMbcsToNative(dbstr, str, (OCI_Int32) char_count);
     }
 
     /* set null string terminator */
@@ -470,7 +470,7 @@ OCI_Boolean OcilibReferenceToText
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (IS_WIDE_CHAR_ENV())
+        if (IS_WIDE_ENV())
         {
             FREE(dbstr);
         }

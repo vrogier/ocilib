@@ -38,10 +38,10 @@
 #define OCILIB_LOG_UTF16 0
 #endif
 
-/* Native (otext) formatted output helpers. In ANSI builds otext is char,
+/* Native (otext) formatted output helpers. In MBCS builds otext is char,
    in wide builds otext is wchar_t, so we map to the matching CRT functions. */
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
 #define OcilibLogSnprintf   snprintf
 #define OcilibLogVsnprintf  vsnprintf
 #define OcilibLogFputs      fputs
@@ -295,7 +295,7 @@ OCI_Int32 OcilibLogNativeToUTF8
         return 0;
     }
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
 
     {
         OCI_Int32 len = (OCI_Int32) strlen(src);
@@ -368,7 +368,7 @@ static FILE * OcilibLogOpenFile
     const otext *path
 )
 {
-#if defined(OCI_CHARSET_ANSI)
+#if defined(OCI_CHARSET_MBCS)
 
     return fopen(path, "a");
 
@@ -378,7 +378,7 @@ static FILE * OcilibLogOpenFile
 
 #else
 
-    /* POSIX fopen() takes a multibyte path: convert with wcstombs() */
+    /* POSIX fopen() takes a MBCS path: convert with wcstombs() */
 
     char path_mb[OCI_SIZE_BUFFER * MB_LEN_MAX + 1];
 

@@ -335,11 +335,11 @@ AC_DEFUN([OCILIB_OPTIONS],
   [  ac_oracle_import=$withval ], [ ac_oracle_import="linkage" ])
 
   AC_ARG_WITH(oracle_charset,
-  [  --with-oracle-charset=(ansi|wide)],
-  [  ac_oracle_charset=$withval ], [ ac_oracle_charset="ansi" ])
+  [  --with-oracle-charset=(mbcs|wide)],
+  [  ac_oracle_charset=$withval ], [ ac_oracle_charset="mbcs" ])
 
   OCILIB_IMPORT="OCI_IMPORT_LINKAGE"
-  OCILIB_CHARSET="OCI_CHARSET_ANSI"
+  OCILIB_CHARSET="OCI_CHARSET_MBCS"
 
   if test x"$ac_oracle_import" = x"linkage"; then
     OCILIB_IMPORT="OCI_IMPORT_LINKAGE"
@@ -349,8 +349,10 @@ AC_DEFUN([OCILIB_OPTIONS],
     AC_MSG_ERROR([Invalid argument ($ac_oracle_import) for --with-oracle-import.])
   fi
 
-  if test x"$ac_oracle_charset" = x"ansi"; then
-    OCILIB_CHARSET="OCI_CHARSET_ANSI"
+  if test x"$ac_oracle_charset" = x"mbcs"; then
+    OCILIB_CHARSET="OCI_CHARSET_MBCS"
+  elif test x"$ac_oracle_charset" = x"ansi" ; then 
+    OCILIB_CHARSET="OCI_CHARSET_MBCS"
   elif test x"$ac_oracle_charset" = x"unicode" ; then 
     OCILIB_CHARSET="OCI_CHARSET_WIDE"
   elif test x"$ac_oracle_charset" = x"wide" ; then 

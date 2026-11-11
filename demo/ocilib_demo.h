@@ -25,7 +25,7 @@
  * SO, WE NEED A LITTLE EFFORT TO KEEP THE SAME SOURCE CODE FOR :
  *
  *    - MS WINDOWS AND UNIXES
- *    - ANSI / WIDE BUILDS
+ *    - MBCS / WIDE BUILDS
  *
  * SOME DEFINES FOLLOW IN ORDER TO HANDLE ALL THOSE STUFF
  *
@@ -78,8 +78,8 @@ typedef struct test_t
 
   #if defined(OCI_CHARSET_WIDE)
       #pragma comment(lib, "ocilibw.lib")
-  #elif defined(OCI_CHARSET_ANSI)
-      #pragma comment(lib, "ociliba.lib")
+  #elif defined(OCI_CHARSET_MBCS)
+      #pragma comment(lib, "ocilibm.lib")
   #endif
 
 #endif

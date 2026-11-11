@@ -250,8 +250,8 @@ void print_version(void)
     else
         print_text("OCI import mode         : RUNTIME\n");
 
-    if (OCI_EnvironmentGetCharset(env) == OCI_CHAR_ANSI)
-        print_text("char type               : ANSI\n");
+    if (OCI_EnvironmentGetCharset(env) == OCI_CHAR_MBCS)
+        print_text("char type               : MBCS\n");
     else
         print_text("char type               : WIDE\n");
 
@@ -852,7 +852,7 @@ void test_plsql(void)
     print_text("\nPL/SQL : trunc(sysdate+1)-trunc(sysdate-1)\n");
     print_frmt("\nResult : %i\n", res);
 
-#ifndef OCI_CHARSET_ANSI
+#ifndef OCI_CHARSET_MBCS
 
     {
         OCI_UInt32 version = OCI_EnvironmentGetOCIRuntimeVersion(env);
@@ -932,7 +932,7 @@ void test_dates(void)
 
 void test_timestamp(void)
 {
-#ifndef OCI_CHARSET_ANSI
+#ifndef OCI_CHARSET_MBCS
 
     OCI_UInt32 version = OCI_EnvironmentGetOCIRuntimeVersion(env);
 

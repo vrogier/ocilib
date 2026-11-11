@@ -1664,7 +1664,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionCommit(conn));
         const String spec = OTEXT("{\"name\":\"OCILIB_SODA_TEST_IDX\"}");
 
-        /* fails inside the OCI call in UNICODE builds (ORA-40671) — ANSI only */
+        /* fails inside the OCI call in UNICODE builds (ORA-40671) — MBCS only */
         const OCI_Boolean cix = OCI_SodaCollectionCreateIndex(coll2, spec.c_str());
 
         if (cix)
@@ -1709,9 +1709,9 @@ namespace TestCApi
         }
     }
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
 
-    /* The OCISodaIndex* calls work in ANSI builds; in UNICODE builds they fail
+    /* The OCISodaIndex* calls work in MBCS builds; in UNICODE builds they fail
        inside the Oracle client (ORA-40671 / OCI-22303, IndexDrop even SEGVs) —
        the real assertions live here, BulkSaveIndexAndMeta keeps diagnostic-only
        calls that run in both modes */

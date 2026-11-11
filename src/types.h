@@ -700,7 +700,7 @@ struct OCI_JsonNode
     OCI_JsonType type;        /* cached node type */
     otext       *str;         /* cached otext conversion of DOM string/field name */
     void        *domparent;   /* DOM parent (object/array) when attached, else NULL */
-    oratext     *domkey;      /* ANSI field name when parent is an object, else NULL */
+    oratext     *domkey;      /* MBCS field name when parent is an object, else NULL */
     ub2          domkeylen;   /* length of domkey (without terminator) */
     ub4          domidx;      /* element index when parent is an array */
 };

@@ -1321,7 +1321,7 @@ char * OcilibEnvironmentGetVariable
 
     if (NULL != str)
     {
-        value = OcilibStringAnsiDuplicate(env, str);
+        value = OcilibStringMbcsDuplicate(env, str);
     }
 
 #if defined(_WINDOWS)
@@ -1425,8 +1425,8 @@ OCI_Environment * OcilibEnvironmentCreate
     env->error_handler      = err_handler;
     env->version_compile    = OCI_VERSION_COMPILE;
     env->env_mode           = mode;
-    env->charset            = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_ANSI;
-    env->use_wide_char_conv = (IS_WIDE_CHAR_ENV() && (WCHAR_MAX == WCHAR_4_BYTES));
+    env->charset            = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_MBCS;
+    env->use_wide_char_conv = (IS_WIDE_ENV() && (WCHAR_MAX == WCHAR_4_BYTES));
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
@@ -1439,14 +1439,14 @@ OCI_Environment * OcilibEnvironmentCreate
     {
         char *value = OcilibEnvironmentGetVariable(env, EnvironmentVarNames[i]);
 
-        env->env_vars[i] = value && (OcilibStringAnsiCaseCompare(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
+        env->env_vars[i] = value && (OcilibStringMbcsCaseCompare(value, OCI_VARS_TRUE_VALUE) == 0 || atoi(value) == 1);
 
         FREE(value);
     }
 
     /* test for UTF8 environment */
 
-    if (IS_ANSI_ENV())
+    if (IS_MBCS_ENV())
     {
         char *str = OcilibEnvironmentGetVariable(env, "NLS_LANG");
 
@@ -1495,7 +1495,7 @@ OCI_Environment * OcilibEnvironmentCreate
         len++;
     }
 
-    strncat(path, OCI_DL_ANSI_NAME, sizeof(path) - len - 1);
+    strncat(path, OCI_DL_MBCS_NAME, sizeof(path) - len - 1);
 
     env->lib_handle = LIB_OPEN(path);
 

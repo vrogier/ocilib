@@ -136,7 +136,7 @@
    The following checks find out the real types and size of dbtext
 */
 
-#if  defined (OCI_CHARSET_ANSI)
+#if  defined (OCI_CHARSET_MBCS)
 
 typedef otext dbtext;
 
@@ -461,7 +461,7 @@ typedef OCI_UInt16 dbtext;
 
 /* helpers mapping macros */
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
 
 #define ostrcpy            strcpy
 #define ostrncpy           strncpy

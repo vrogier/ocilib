@@ -92,7 +92,7 @@ static void JsonNodeCacheStr
     if (NULL != node->str)
     {
 #if defined(OCI_CHARSET_WIDE)
-        OcilibStringAnsiToNative(src, node->str, (OCI_Int32) src_len);
+        OcilibStringMbcsToNative(src, node->str, (OCI_Int32) src_len);
 #else
         memcpy(node->str, src, src_len);
 #endif
@@ -980,7 +980,7 @@ OCI_Number * OcilibJsonNodeGetNumber
         otstr = (otext *) OcilibMemoryAlloc(node->json->env, OCI_IPC_VOID,
                                             (OCI_Size) sval.len_jznScalarVal + 1, sizeof(otext), FALSE);
         CHECK_NULL(otstr);
-        OcilibStringAnsiToNative(sval.val_jznScalarVal, otstr, (OCI_Int32) sval.len_jznScalarVal);
+        OcilibStringMbcsToNative(sval.val_jznScalarVal, otstr, (OCI_Int32) sval.len_jznScalarVal);
         otstr[sval.len_jznScalarVal] = 0;
 
         dbstr = OcilibStringGetDBString(node->json->env, otstr, &dbsize);

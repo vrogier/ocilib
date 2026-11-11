@@ -99,7 +99,7 @@ namespace ocilib
     inline void Exception::SetWhat(const otext* value) noexcept
     {
 
-#if defined(OCI_CHARSET_ANSI)
+#if defined(OCI_CHARSET_MBCS)
 
         CopyWhat(value);
 
@@ -160,7 +160,7 @@ namespace ocilib
 
         String message;
 
-#if defined(OCI_CHARSET_ANSI)
+#if defined(OCI_CHARSET_MBCS)
 
         message = str;
 

@@ -80,7 +80,7 @@ namespace ocilib
 
             UInt32 res = sizeof(String::value_type);
 
-            if (charsetMode == Environment::CharsetAnsi)
+            if (charsetMode == Environment::CharsetMbcs)
             {
 #ifdef _MSC_VER
 #pragma warning(push)

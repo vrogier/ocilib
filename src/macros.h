@@ -517,8 +517,8 @@ ocilib_exit_label:                  \
 
 /* helpers macros */
 
-#define IS_WIDE_CHAR_ENV()   (ocilib_call_context.env && (OCI_CHAR_WIDE == ocilib_call_context.env->charset))
-#define IS_ANSI_ENV()        (ocilib_call_context.env && (OCI_CHAR_ANSI == ocilib_call_context.env->charset))
+#define IS_WIDE_ENV()   (ocilib_call_context.env && (OCI_CHAR_WIDE == ocilib_call_context.env->charset))
+#define IS_MBCS_ENV()        (ocilib_call_context.env && (OCI_CHAR_MBCS == ocilib_call_context.env->charset))
 #define IS_UTF8_ENV()        (ocilib_call_context.env && (TRUE == ocilib_call_context.env->charset))
 
 #define GET_PROP(rtype, rvalue, stype, sptr, prop) \

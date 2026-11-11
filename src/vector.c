@@ -443,7 +443,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
 
     CHECK_ENUM_VALUE(format, VectorFormatValues, OTEXT("Vector format"));
 
-    if (IS_WIDE_CHAR_ENV())
+    if (IS_WIDE_ENV())
     {
         ansi_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)ansi_size+1, (OCI_Size)1, TRUE);
         OcilibStringNativeToAnsi(str, ansi_str, (OCI_Int32) ansi_size);
@@ -481,7 +481,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (IS_WIDE_CHAR_ENV())
+        if (IS_WIDE_ENV())
         {
             OcilibMemoryFree(vect->con->env, ansi_str);
         }
@@ -532,7 +532,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
     {
         str[0] = 0;
 
-        if (IS_WIDE_CHAR_ENV())
+        if (IS_WIDE_ENV())
         {
             ansi_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)ansi_size+1, (OCI_Size)1, TRUE);
         }
@@ -552,9 +552,9 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
             OCI_DEFAULT
         );
 
-        if (IS_WIDE_CHAR_ENV())
+        if (IS_WIDE_ENV())
         {
-            OcilibStringAnsiToNative(ansi_str, str, (OCI_Int32) ansi_size);
+            OcilibStringMbcsToNative(ansi_str, str, (OCI_Int32) ansi_size);
         }
         else
         {
@@ -577,7 +577,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (IS_WIDE_CHAR_ENV())
+        if (IS_WIDE_ENV())
         {
             OcilibMemoryFree(vect->con->env, ansi_str);
         }

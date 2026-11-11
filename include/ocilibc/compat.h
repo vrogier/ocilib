@@ -61,6 +61,11 @@
 #define OCI_NUM_UINT                     OCI_NUM_UINT32
 #define OCI_NUM_USHORT                   OCI_NUM_UINT16
 
+/* renamed charset constant (the ANSI build was renamed MBCS;
+   the build flag itself is aliased earlier in platform.h) */
+
+#define OCI_CHAR_ANSI                    OCI_CHAR_MBCS
+
 /* renamed functions */
 
 /* Collection */

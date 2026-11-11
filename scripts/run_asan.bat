@@ -4,4 +4,4 @@ call "c:\Program Files\Microsoft Visual Studio\18\Enterprise\Common7\Tools\VsDev
 set OCILIB_LOG=DEBUG
 set OCILIB_LOG_CATEGORIES=*
 set OCILIB_LOG_OUTPUT=asan_log.txt
-"%~dp0..\x64\Release - ANSI - ASAN\ocilib_tests.exe" %*
+"%~dp0..\x64\Release - MBCS - ASAN\ocilib_tests.exe" %*

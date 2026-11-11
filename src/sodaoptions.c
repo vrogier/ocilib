@@ -269,7 +269,7 @@ OCI_Boolean OcilibSodaOptionsSetKeys
     CHECK_SODA_ENABLED(options->sdb->con);
 
     /* OCISodaOperKeysSet() is unreliable on the client: it crashes under a
-     * UTF-16 environment (access violation on 23.6) and fails under ANSI
+     * UTF-16 environment (access violation on 23.6) and fails under MBCS
      * on 23ai. Multiple key operations are therefore emulated in OCILIB by
      * caching the keys and iterating over them in the consuming calls (find,
      * count, remove, replace), which use the OCI_ATTR_SODA_KEY attribute.

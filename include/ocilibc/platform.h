@@ -144,19 +144,31 @@
 
 /* Charset modes */
 
-#ifdef  OCI_CHARSET_UNICODE
+#if defined(OCI_CHARSET_UNICODE) && !defined(OCI_CHARSET_WIDE)
 #define OCI_CHARSET_WIDE
 #endif
 
+#if defined(OCI_CHARSET_ANSI) && !defined(OCI_CHARSET_MBCS)
+#define OCI_CHARSET_MBCS
+#endif
+
 #ifdef OCI_CHARSET_WIDE
+  #undef OCI_CHARSET_MBCS
   #undef OCI_CHARSET_ANSI
 #endif
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
   #undef OCI_CHARSET_WIDE
 #endif
 
-#if !defined(OCI_CHARSET_ANSI)  && !defined(OCI_CHARSET_WIDE)
+#if !defined(OCI_CHARSET_MBCS)  && !defined(OCI_CHARSET_WIDE)
+#define OCI_CHARSET_MBCS
+#endif
+
+/* keep the legacy flag defined on MBCS builds so that user code
+   doing #ifdef OCI_CHARSET_ANSI keeps working */
+
+#if defined(OCI_CHARSET_MBCS) && !defined(OCI_CHARSET_ANSI)
 #define OCI_CHARSET_ANSI
 #endif
 
@@ -164,10 +176,10 @@
    followed by variadic arguments. GCC and Clang check the format/argument
    consistency at compile time; MSVC does not support __attribute__ and the
    wide-format archetypes (wprintf/gnu_wprintf/ms_wprintf) are not consistently
-   available across GCC targets, so the macro is only enabled for ANSI builds
+   available across GCC targets, so the macro is only enabled for MBCS builds
    on GCC/Clang and expands to nothing otherwise. */
 
-#if (defined(__GNUC__) || defined(__clang__)) && defined(OCI_CHARSET_ANSI)
+#if (defined(__GNUC__) || defined(__clang__)) && defined(OCI_CHARSET_MBCS)
 #define OCI_ATTR_FORMAT(fmt_idx, arg_idx) __attribute__((format(printf, fmt_idx, arg_idx)))
 #else
 #define OCI_ATTR_FORMAT(fmt_idx, arg_idx)
@@ -177,67 +189,76 @@
  * @addtogroup OcilibCApiSupportedCharsets
  * @{
  *
- * OCILIB supports both ANSI and Unicode.
+ * OCILIB is built in one of two mutually exclusive charset flavors, selected at
+ * compile time by defining either OCI_CHARSET_MBCS or OCI_CHARSET_WIDE.
+ * The public API is identical in both flavors: every string parameter and return
+ * value uses the portable type 'otext', which maps to char or wchar_t.
  *
- * Oracle started a real Unicode support with Oracle 8i but only for bind and fetch data.
- * All SQL and PL/SQ/ statements, database objects names were still only supported in ANSI.
+ * The two flavors differ in which encoding OCI itself is initialized with, and
+ * therefore which encoding your application strings must use:
  *
- * With Oracle 9i, Oracle provides a full Unicode support.
- *
- * So depending on the compile time Oracle library or the runtime loaded library, Unicode support differs.
- *
- * OCILIB supports:
- *
- * - ANSI (char)
- * - Unicode (wchar_t)
- * - UTF8 strings
- *
- * OCILIB uses the character type 'otext' that is a define around char and wchar_t  depending on the charset mode.
- *
- * @par Option OCI_CHARSET_ANSI
+ * @par Option OCI_CHARSET_MBCS — the "MBCS" build (default)
  *
  *  - otext    -->    char
  *  - OTEXT(x) -->    x
  *
- * @par Option OCI_CHARSET_WIDE
+ * The name is historical and slightly misleading: this build is NOT limited to
+ * single-byte ANSI codepages. OCILIB creates the OCI environment in Oracle's
+ * default NLS mode, so the client-side encoding is whatever the Oracle client
+ * is configured for — driven by the NLS_LANG environment variable (or the
+ * equivalent registry setting on Windows):
+ *
+ *  - NLS_LANG=AMERICAN_AMERICA.WE8MSWIN1252 → single-byte ANSI strings
+ *  - NLS_LANG=AMERICAN_AMERICA.AL32UTF8    → full UTF-8 strings in char*
+ *
+ * With any UTF-8 Oracle charset in NLS_LANG, char* strings carry UTF-8 end to
+ * end: SQL text, object names, fetched data and bound values are all UTF-8
+ * between your application and Oracle.
+ *
+ * @par Option OCI_CHARSET_WIDE — the "Unicode" build
  *
  *  - otext    -->    wchar_t
  *  - OTEXT(x) -->    L ## x
  *
- * @par Unicode and ISO C
+ * Wide builds do NOT rely on NLS_LANG. OCILIB initializes OCI explicitly in
+ * UTF-16 mode: OCIEnvNlsCreate() is called with the OCI_UTF16ID character set
+ * for both the charset and the national charset. OCI's Unicode mode uses a
+ * fixed-length 2-byte UTF-16 encoding internally.
  *
- * Well, ISO C:
- * - does not know anything about Unicode.
- * - makes wide characters support tricky because wide character size is not defined and is freely adaptable by implementations.
+ * OCILIB bridges wchar_t and that fixed UTF-16 encoding automatically:
  *
- * OCILIB uses char/wchar_t strings for both public interface and internal storage.
- *
- * Unicode builds of OCILIB initialize OCI in UTF16 Unicode mode.
- * Oracle implements this mode with a 2 bytes (fixed length) UTF16 encoding.
+ *  - On Windows, wchar_t is 2 bytes and already UTF-16: otext buffers are
+ *    passed to and received from Oracle directly, with no conversion.
+ *  - On most Unix systems, wchar_t is 4 bytes (UTF-32): OCILIB transparently
+ *    converts every string between UTF-16 and UTF-32 — temporary buffers for
+ *    statements and object names on the way in, in-place buffer expansion for
+ *    fetched and bound strings on the way out. This costs no extra allocation
+ *    and is invisible to the application.
  *
  * @warning
- * When using Unicode builds of OCILIB, make sure that the target
- * Database charset is also using an Unicode charset or is a superset of UTF16.
- * If not, strings may be converted with substitution characters by the Oracle client !
- *
- * So, on systems implementing wchar_t as 2 bytes based UTF16 (e.g. Ms Windows),
- * strings are directly passed to Oracle and taken back from it.
- *
- * On other systems (most of the Unix systems) that use UTF32 as encoding, (4 bytes based wchar_t), OCILIB uses:
- * - temporary buffers for statements and object names
- * - buffer expansion from UTF16 to UTF32 for fetch and bind string:
- *     - allocation based on sizeof(wchar_t)
- *     - data filling based on sizeof(short) -> (UTF16 2 bytes)
- *     - data expansion to sizeof(wchar_t).
- *
- * Buffer expansion is done in place and has the advantage of not requiring extra buffer.
- * That reduces the cost of the Unicode/ISO C handling overhead on Unix systems.
+ * In wide builds, UTF-16 is used for ALL OCI string traffic — including SQL
+ * statement text and object names — regardless of NLS_LANG. Make sure the
+ * target database charset is a Unicode charset or a superset of UTF-16;
+ * otherwise the Oracle client may silently substitute characters.
  *
  * @par UTF8 strings
  *
- * OCILIB fully supports UTF8 strings :
- * - Within OCI_CHARSET_ANSI builds
- * - NLS_LANG environment variable must be set to any valid UTF8 Oracle charset string
+ * UTF-8 is fully supported through the OCI_CHARSET_MBCS (MBCS) build:
+ * set NLS_LANG to any valid UTF-8 Oracle charset (for example
+ * AMERICAN_AMERICA.AL32UTF8) and char* strings carry UTF-8.
+ * You do NOT need the wide build for UTF-8 data.
+ *
+ * @par Choosing a flavor
+ *
+ *  - Pick OCI_CHARSET_MBCS when your application works in char/UTF-8 —
+ *    the common choice on Unix and for portable code.
+ *  - Pick OCI_CHARSET_WIDE when your application is natively wchar_t —
+ *    typically Windows UNICODE/_UNICODE programs.
+ *
+ * The flavor is a property of the compiled OCILIB library, not a runtime
+ * option: an application must be built with the same OCI_CHARSET_* macro as
+ * the OCILIB library it links against. Mixing them leads to ABI mismatches
+ * (sizeof(otext) differs).
  *
  **/
 
@@ -260,13 +281,13 @@ OCI_EXTERN_CXX_CLOSE
 
 /* Charset macros */
 
-#define OCI_CHAR_ANSI       1
+#define OCI_CHAR_MBCS       1
 #define OCI_CHAR_WIDE       2
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
 typedef char otext;
 #define OTEXT(x)          x
-#define OCI_CHAR_TEXT     OCI_CHAR_ANSI
+#define OCI_CHAR_TEXT     OCI_CHAR_MBCS
 #else
 typedef wchar_t otext;
 #define OTEXT(x)          L ## x

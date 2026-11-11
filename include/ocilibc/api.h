@@ -242,7 +242,7 @@ OCI_SYM_PUBLIC OCI_ImportMode OCI_API OCI_EnvironmentGetImportMode
  * @param env - Environment handle
  * @return
  * The character set mode used by OCILIB. Possible values are:
- * - OCI_CHAR_ANSI : ANSI (single-byte or multi-byte) character set.
+ * - OCI_CHAR_MBCS : multibyte character set (single-byte codepage or UTF-8).
  * - OCI_CHAR_WIDE : Unicode (wide character) character set.
  *
  */
@@ -18047,7 +18047,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableMigrate
    * Oracle client bug (not an OCILIB bug): the mode
    * OCI_SRM_SECURE_NOTIFICATION currently fails inside the Oracle client
    * itself when the library is built in OCI_CHARSET_WIDE mode (UNICODE
-   * builds). ANSI builds work correctly. Verified with Oracle 23ai; a future
+   * builds). MBCS builds work correctly. Verified with Oracle 23ai; a future
    * Oracle client release may fix this.
    *
    * @note
@@ -19637,7 +19637,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollectionInsertMany
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexCreate() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (UNICODE builds) — ORA-40671 is returned. ANSI
+ * OCI_CHARSET_WIDE mode (UNICODE builds) — ORA-40671 is returned. MBCS
  * builds work correctly. Verified with Oracle 23ai; a future Oracle client
  * release may fix this.
  *
@@ -19663,7 +19663,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollectionCreateIndex
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexDrop() OCI call
  * fails inside the Oracle client itself when the library is built in
  * OCI_CHARSET_WIDE mode (UNICODE builds) — it can even crash the process.
- * ANSI builds work correctly. Verified with Oracle 23ai; a future Oracle
+ * MBCS builds work correctly. Verified with Oracle 23ai; a future Oracle
  * client release may fix this.
  *
  * @return
@@ -19709,7 +19709,7 @@ OCI_SYM_PUBLIC OCI_SodaDocument* OCI_API OCI_SodaCollectionGetDataGuide
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexList() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (UNICODE builds) — OCI-22303 is returned. ANSI
+ * OCI_CHARSET_WIDE mode (UNICODE builds) — OCI-22303 is returned. MBCS
  * builds work correctly. Verified with Oracle 23ai; a future Oracle client
  * release may fix this.
  *

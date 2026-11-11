@@ -7,20 +7,20 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OCILIB Dynamic Library", "o
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
-		Release - ANSI|x64 = Release - ANSI|x64
-		Release - ANSI|x86 = Release - ANSI|x86
-		Release - UNICODE|x64 = Release - UNICODE|x64
-		Release - UNICODE|x86 = Release - UNICODE|x86
+		Release - MBCS|x64 = Release - MBCS|x64
+		Release - MBCS|x86 = Release - MBCS|x86
+		Release - WIDE|x64 = Release - WIDE|x64
+		Release - WIDE|x86 = Release - WIDE|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - ANSI|x64.ActiveCfg = Release - ANSI|x64
-		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - ANSI|x64.Build.0 = Release - ANSI|x64
-		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - ANSI|x86.ActiveCfg = Release - ANSI|Win32
-		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - ANSI|x86.Build.0 = Release - ANSI|Win32
-		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - UNICODE|x64.ActiveCfg = Release - UNICODE|x64
-		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - UNICODE|x64.Build.0 = Release - UNICODE|x64
-		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - UNICODE|x86.ActiveCfg = Release - UNICODE|Win32
-		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - UNICODE|x86.Build.0 = Release - UNICODE|Win32
+		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - MBCS|x64.ActiveCfg = Release - MBCS|x64
+		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - MBCS|x64.Build.0 = Release - MBCS|x64
+		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - MBCS|x86.ActiveCfg = Release - MBCS|Win32
+		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - MBCS|x86.Build.0 = Release - MBCS|Win32
+		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - WIDE|x64.ActiveCfg = Release - WIDE|x64
+		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - WIDE|x64.Build.0 = Release - WIDE|x64
+		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - WIDE|x86.ActiveCfg = Release - WIDE|Win32
+		{B5B9DE0E-C2BE-4D75-BDA0-CBF81BD18D7D}.Release - WIDE|x86.Build.0 = Release - WIDE|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

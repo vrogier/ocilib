@@ -265,12 +265,12 @@ OCI_Message * OcilibDequeueGetMessage
         p_ind = &dequeue->msg->ind;
     }
 
-    /* OCIAQDeq() parameter  'queue_name' is supposed to be either ANSI or UTF16 depending on the
-    * environment. It appears that whatever mode is used, OCIAQDeq() only takes ANSI strings !
+    /* OCIAQDeq() parameter  'queue_name' is supposed to be either MBCS or UTF16 depending on the
+    * environment. It appears that whatever mode is used, OCIAQDeq() only takes MBCS strings !
     * Oracle might fix this issue at some point.
     * Thus let's try to handle oracle future version fixing this issue.
     * Make a first attempt using the correct way.
-    * If an error is reported let's try again using an ANSI string.
+    * If an error is reported let's try again using an MBCS string.
     */
 
 #ifdef OCI_CHARSET_WIDE
@@ -304,7 +304,7 @@ OCI_Message * OcilibDequeueGetMessage
                                   OCI_ERR_AQ_QUEUE_NOT_EXIST == code))
             {
                 /* non valid queue name in UTF16 mode, we have an Oracle client with OCIAQDeq()
-                 * accepting only ANSI strings.* Let's try again with an ANSI string for queue name
+                 * accepting only MBCS strings.* Let's try again with an MBCS string for queue name
                  */
 
                 const OCI_Int32 len = (OCI_Int32)ostrlen(dequeue->name);

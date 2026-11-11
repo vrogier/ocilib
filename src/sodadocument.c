@@ -551,7 +551,7 @@ const otext* OcilibSodaDocumentGetText
         }
         else
         {
-#if defined(OCI_CHARSET_ANSI)
+#if defined(OCI_CHARSET_MBCS)
 
             doc->content_text_size = (ub4)dbcharcount(doc->content_len);
 

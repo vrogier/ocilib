@@ -727,7 +727,7 @@ OCI_Boolean OcilibDirectPathSetColumn
 
     /* setup Unicode mode for Unicode user data */
 
-    if (OCI_DDT_TEXT == dpcol->type && IS_WIDE_CHAR_ENV())
+    if (OCI_DDT_TEXT == dpcol->type && IS_WIDE_ENV())
     {
         ub2 csid = OCI_UTF16ID;
 
@@ -927,10 +927,10 @@ OCI_Boolean OcilibDirectPathSetEntry
             size = (OCI_UInt32) ocharcount(size);
             OcilibStringUTF32ToUTF16(value, data, (OCI_Int32) size);
         }
-        else if (OCI_DDT_OTHERS == dpcol->type && IS_WIDE_CHAR_ENV())
+        else if (OCI_DDT_OTHERS == dpcol->type && IS_WIDE_ENV())
         {
             /* input Unicode numeric values causes oracle conversion error.
-               so, let's convert them to ANSI */
+               so, let's convert them to MBCS */
 
             size = (OCI_UInt32) ocharcount(size);
             OcilibStringNativeToAnsi(value, data, (OCI_Int32) size);

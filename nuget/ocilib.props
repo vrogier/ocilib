@@ -15,13 +15,13 @@
   <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x86'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-	  <PreprocessorDefinitions>OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <PreprocessorDefinitions>OCI_API=__stdcall;OCI_CHARSET_MBCS;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(MSBuildThisFileDirectory)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-	  <PreprocessorDefinitions>OCI_API=__stdcall;OCI_CHARSET_ANSI;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+	  <PreprocessorDefinitions>OCI_API=__stdcall;OCI_CHARSET_MBCS;OCI_IMPORT_RUNTIME;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'Unicode' and '$(PlatformTarget)' == 'x86'">
@@ -38,13 +38,13 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x86'">
     <Link>
-      <AdditionalDependencies>ociliba.lib;$(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ocilibm.lib;$(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(CharacterSet)' == 'MultiByte' and '$(PlatformTarget)' == 'x64'">
     <Link>
-      <AdditionalDependencies>ociliba.lib;$(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>ocilibm.lib;$(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(MSBuildThisFileDirectory)\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>

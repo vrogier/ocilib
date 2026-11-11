@@ -446,7 +446,7 @@ OCI_SodaDocumentCursor* OcilibSodaCollectionFind
     {
         opthandle = options->handle;
 
-        /* multi-key: OCISodaOperKeysSet (ANSI only — OraText** is unusable
+        /* multi-key: OCISodaOperKeysSet (MBCS builds only — OraText** is unusable
            in UTF-16) pushes the key array onto the options handle for a
            single server-side op; wide builds keep the client-side per-key
            emulation below */

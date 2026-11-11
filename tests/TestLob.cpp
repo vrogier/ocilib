@@ -619,7 +619,7 @@ namespace TestCApi
 
 
 
-    /* flipping env->charset to ANSI exercises the single-byte (misnamed
+    /* flipping env->charset to OCI_CHAR_MBCS exercises the single-byte (misnamed
        IS_UTF8_ENV) conversion arms of OcilibLobRead/Write/Append that a
        wide-char build never reaches. Calls may fail inside OCI; only the
        pre-call conversion paths matter here. */

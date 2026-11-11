@@ -108,11 +108,11 @@ extern "C" {
     #endif
   #endif
 
-/* ANSI string version of Oracle shared lib */
+/* MBCS string version of Oracle shared lib */
 
-#define OCI_DL_ANSI_GET(s) OCI_DL_ANSI_CVT(s)
-#define OCI_DL_ANSI_CVT(s)  # s
-#define OCI_DL_ANSI_NAME OCI_DL_ANSI_GET(OCI_DL)
+#define OCI_DL_MBCS_GET(s) OCI_DL_MBCS_CVT(s)
+#define OCI_DL_MBCS_CVT(s)  # s
+#define OCI_DL_MBCS_NAME OCI_DL_MBCS_GET(OCI_DL)
 
 /* Meta string version of Oracle shared lib */
 

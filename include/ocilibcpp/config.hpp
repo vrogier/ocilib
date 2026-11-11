@@ -55,7 +55,7 @@ namespace ocilib
  * string class wrapping the OCILIB otext * type and OTEXT() macros ( see @ref OcilibCApiSupportedCharsets )
  *
  * @note
- * - for ANSI builds, String is equivalent to std::string
+ * - for MBCS builds, String is equivalent to std::string
  * - for UNICODE builds, String is equivalent to std::wstring
  *
  */

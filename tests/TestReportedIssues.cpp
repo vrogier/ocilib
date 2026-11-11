@@ -156,7 +156,7 @@ namespace TestCApi
     }
 
 
-#ifdef OCI_CHARSET_ANSI
+#ifdef OCI_CHARSET_MBCS
 
     TEST(ReportedIssues, Issue238)
     {
