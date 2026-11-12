@@ -14849,8 +14849,8 @@ fi
     as_fn_error $? "Invalid argument ($ac_oracle_import) for --with-oracle-import." "$LINENO" 5
   fi
 
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: import: $ac_oracle_import " >&5
-printf "%s\n" "import: $ac_oracle_import " >&6; }
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: import: $ac_oracle_import" >&5
+printf "%s\n" "import: $ac_oracle_import" >&6; }
 
 
 
