@@ -13,8 +13,11 @@ CFLAGS =  -Wall -D@OCILIB_CHARSET@ -DOCI_IMPORT_LINKAGE
 EXEC_NAME = ocilib_tests
 INCLUDES = -I/usr/local/include -I@OCILIB_PREFIX@/include @ORACLE_INCLUDES@
 # the tests exercise internal (OCI_SYM_LOCAL, visibility-hidden) symbols, so
-# they must link the static archive — the shared lib does not export them
-LIBS = @ORACLE_LIBADD@ @OCILIB_PREFIX@/lib/libocilib.a -lgtest -lgtest_main -lpthread
+# they must link the static archive — the shared lib does not export them.
+# libocilib.a must precede @ORACLE_LIBADD@: in linkage mode it takes the
+# address of every OCI entry point, and with ld --as-needed a clntsh listed
+# first would be discarded before those references appear.
+LIBS = @OCILIB_PREFIX@/lib/libocilib.a @ORACLE_LIBADD@ -lgtest -lgtest_main -lpthread
 SOURCES := $(wildcard *.cpp) 
 OBJS := $(addsuffix .o, $(basename $(notdir $(SOURCES))))
 

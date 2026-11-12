@@ -59,7 +59,7 @@ namespace TestCppApi
         auto rs = st.GetResultset();
 
         UInt32 count = 0;
-        for (auto&& row : rs.Rows())
+        for ([[maybe_unused]] auto&& row : rs.Rows())
         {
             ++count;
         }
