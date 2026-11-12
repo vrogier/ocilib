@@ -241,7 +241,6 @@ OCI_Message * OcilibDequeueGetMessage
     sword ret   = OCI_ERROR;
     void *p_ind = NULL;
 
-    OCI_Int32 dbsize = -1;
     dbtext  * dbstr  = NULL;
 
     char* mbcs_queue_name = NULL;
@@ -255,7 +254,6 @@ OCI_Message * OcilibDequeueGetMessage
     /* dequeue message */
 
     dbstr = (dbtext *) (dequeue->name);
-    dbsize = OcilibStringDBSize(dequeue->name);
 
     if (OCI_UNKNOWN != dequeue->typinf->typecode && NULL != dequeue->msg->obj)
     {

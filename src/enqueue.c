@@ -135,7 +135,6 @@ OCI_Boolean OcilibEnqueuePut
 
     sword ret = OCI_ERROR;
 
-    OCI_Int32 dbsize = -1;
     dbtext  * dbstr  = NULL;
 
     char* mbcs_queue_name = NULL;
@@ -160,7 +159,6 @@ OCI_Boolean OcilibEnqueuePut
     /* enqueue message */
 
     dbstr = (dbtext *) (enqueue->name);
-    dbsize = OcilibStringDBSize(enqueue->name);
 
     /* OCIAQEnq() parameter  'queue_name' is supposed to be either MBCS or UTF16 depending on the
     * environment. It appears that whatever mode is used, OCIAQEnq() only takes MBCS strings !
