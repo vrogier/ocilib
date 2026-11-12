@@ -83,7 +83,7 @@ if (auto comm = row.GetOptional<double>(4))
 ## Row counting subtleties
 
 - The fetched-row count grows as you fetch in **default** mode; in **scrollable**
-  mode (page 275) the full count is known upfront.
+  mode ([scrollable resultsets](scrollable.html)) the full count is known upfront.
 - Rows-affected-on-the-statement is the DML counterpart — don't confuse the two.
 
 ## Putting it together — the typical sequence
@@ -100,10 +100,12 @@ The fetch loop is muscle memory in OCILIB — it never changes shape:
 5. **`IsColumnNull` first** on anything nullable — the getters don't protect
    you from NULL columns.
 
-Hints: `GetString` works on *any* column — it converts — so when you're
-unsure of the SQL type, text is the safe read; by-name getters are slower than
-by-index but self-documenting; and the biggest beginner bug is storing the
-`otext*` past the next fetch — the row buffer is reused, copy if you need it.
+!!! tip "Getter hints"
+    `GetString` works on *any* column — it converts — so when you're unsure
+    of the SQL type, text is the safe read; by-name getters are slower than
+    by-index but self-documenting; and the biggest beginner bug is storing
+    the `otext*` past the next fetch — the row buffer is reused, copy if you
+    need it.
 
 ## Try it yourself
 

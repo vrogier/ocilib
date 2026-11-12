@@ -50,12 +50,12 @@ level: beginner
 
 Every getter also exists in a `*ByName` variant that resolves the column name.
 
-## The mental rule
-
-- **Scalars** → copied into your variables; safe after the next fetch.
-- **Handles** → *transient*: they point into the current row. Read them, don't free
-  them, and don't keep them across `FetchNext` unless the type supports it
-  (LOBs/objects are locators — they stay valid; use them before freeing the statement).
+!!! tip "The mental rule"
+    - **Scalars** → copied into your variables; safe after the next fetch.
+    - **Handles** → *transient*: they point into the current row. Read them,
+      don't free them, and don't keep them across `FetchNext` unless the type
+      supports it (LOBs/objects are locators — they stay valid; use them
+      before freeing the statement).
 
 ## In C++
 

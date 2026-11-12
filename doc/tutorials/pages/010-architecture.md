@@ -1,11 +1,11 @@
 ---
-title: Anatomy of an OCILIB program
-navtitle: Anatomy of a program
+title: OCILIB architecture
+navtitle: Architecture
 part: 0
 level: beginner
 ---
 
-# Anatomy of an OCILIB program
+# OCILIB architecture
 
 **Objectives** — by the end of this page you will be able to:
 
@@ -13,6 +13,7 @@ level: beginner
 - predict the lifecycle (create → use → free) of any OCILIB object
 - tell owned handles from borrowed (transient) handles
 - map a C API call to its C++ equivalent at a glance
+- explain what "the API is synchronous" means in practice
 
 ## The handle model
 
@@ -136,6 +137,27 @@ Every call that can fail either returns `FALSE`/NULL (C) or throws an
 - the **last-error poll** — `OCI_GetLastError()` returns the calling thread's
   most recent error at any time.
 
+## Calls are synchronous
+
+OCILIB is a **synchronous** API: every call does its work before it returns.
+Executing a statement sends it to the server and comes back once the server has
+answered; fetching returns once the next row is in hand. There are no futures,
+promises or completion queues — if a call takes time, the calling thread waits
+inside it. A blocking call can always be interrupted from another thread with
+`OCI_ConnectionBreak` (see [Multithreading](multithreading.html)).
+
+Two things only *look* asynchronous and are worth separating from the calling
+model:
+
+- **server-initiated events** — AQ dequeue subscriptions, database change
+  notifications and agent messages are delivered to a callback you register;
+  they need the `OCI_ENV_EVENTS` environment flag (see
+  [Async dequeue & agents](aq-async.html));
+- **overlapping work** — OCILIB's answer is threads, not an async API: one
+  connection per thread under `OCI_ENV_THREADED`, or a pool that hands
+  connections out (see [Multithreading](multithreading.html) and
+  [Connection pools](pooling-basics.html)).
+
 ## The two build flavors
 
 | Flavor | Compile define | Meaning |
@@ -162,6 +184,8 @@ thanks to the `otext`/`OTEXT()` abstraction you will see in every sample.
 - Handles are opaque, named `OCI_<Type>`, with uniform Create/Free/Get/Set naming.
 - Ownership is a tree rooted at the environment; borrowed handles are never freed.
 - C returns `FALSE`/NULL + error callback; C++ throws `ocilib::Exception`.
+- Calls are synchronous and blocking; concurrency comes from threads and pools,
+  and only server-initiated notifications use callbacks.
 - MBCS/wide charset and linkage/runtime import are build-time choices; your code does not change.
 
 **Next:** get the two things every sample needs — an Oracle database and the Instant Client.

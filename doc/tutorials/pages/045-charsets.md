@@ -18,11 +18,15 @@ level: beginner
 OCILIB compiles in two flavors — but where each one *ships* depends on the
 platform:
 
-- **MBCS** (`OCI_CHARSET_MBCS`, `otext` = `char`) — available **everywhere**;
-  the only flavor shipped for Unix and macOS.
-- **Wide** (`OCI_CHARSET_WIDE`, `otext` = `wchar_t`) — **Windows only**,
-  because it relies on `wchar_t` being a 2-byte UTF-16 unit. Defining it
-  anywhere else is a compile-time error.
+- **MBCS** (`OCI_CHARSET_MBCS`, `otext` = `char`) — available **on every
+  platform, Windows included**.
+- **Wide** (`OCI_CHARSET_WIDE`, `otext` = `wchar_t`) — an *additional* option
+  on **Windows only**, because it relies on `wchar_t` being a 2-byte UTF-16
+  unit. Defining it anywhere else is a compile-time error.
+
+So on **Windows** you choose between two binaries — `ocilib.dll` (MBCS) and
+`ocilibw.dll` (wide), with MBCS the common case — while **Unix and macOS**
+build MBCS only.
 
 Every string in the public API —
 SQL text, object names, connection strings, fetched `VARCHAR2` data — uses the
@@ -80,7 +84,9 @@ with `OCI_CHARSET_WIDE` off Windows stops the build with a clear `#error`.
 ## Choosing — a practical decision tree
 
 - **Application uses `char*`/`std::string`, runs on Unix, or wants UTF-8** →
-  `OCI_CHARSET_MBCS` (set `NLS_LANG=….AL32UTF8` for UTF-8).
+  `OCI_CHARSET_MBCS` (set `NLS_LANG=….AL32UTF8` for UTF-8). **This includes
+  Windows**: a Windows app using `char*`/`std::string` strings links the MBCS
+  `ocilib.dll` — the wide build is not required or even preferable there.
 - **Application is natively `wchar_t`/`std::wstring` on Windows** — typically
   `UNICODE`/`_UNICODE` projects → `OCI_CHARSET_WIDE`.
 - **Prebuilt OCILIB binary already picked for you?** Match it: the macro in
@@ -123,6 +129,9 @@ the [strings & charsets page](text-charsets.html).
 
 - **"ANSI means ASCII-only"** — the old name lied: with a UTF-8 `NLS_LANG` it is a UTF-8
   build. The name refers to `char*`, not to a codepage.
+- **"Windows means wide"** — it doesn't: Windows ships *both* flavors and MBCS
+  is the default. Only reach for `ocilibw.dll` when your app is actually built
+  around `wchar_t` strings.
 - **Mixing flavors** — your app's `OCI_CHARSET_*` define must match the
   OCILIB binary's; a mismatch compiles on `char`-only paths and corrupts the
   first `wchar_t` argument.
@@ -132,7 +141,7 @@ the [strings & charsets page](text-charsets.html).
 ## Recap
 
 - One API, platform-scoped builds: MBCS = `char` — ANSI codepages *or* UTF-8
-  via `NLS_LANG`, and the only flavor off Windows. Wide = `wchar_t`,
-  OCI pinned to UTF-16, Windows only.
+  via `NLS_LANG`, on every platform including Windows. Wide = `wchar_t`,
+  OCI pinned to UTF-16, an extra Windows-only option.
 
 **Next:** [Hello OCILIB](hello-ocilib.html) — your first program.

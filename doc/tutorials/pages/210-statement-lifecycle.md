@@ -18,7 +18,7 @@ demos: [exec.c]
 
 A **statement** is the work slot where SQL happens.
 
-Every statement lives on a connection and carries three things: the **SQL text** (and its server-side parse context — that's why reusing a statement is fast), the **bind slots** for its variables, and at most **one current resultset** — the rows your last `SELECT` produced.
+Every statement lives on a connection and carries three things: the **SQL text** (and its server-side parse context — that's why reusing a statement is fast), the **bind slots** for its variables, and one **current resultset** at a time — the rows your last `SELECT` produced (a queue of further resultsets can sit behind it — see *several resultsets* below).
 
 One statement = one active SQL at a time.
 
@@ -40,8 +40,8 @@ There are three ways to run SQL — plus a scalar shortcut:
 
 | C function | C++ method | What it does | Use when |
 |------------|------------|--------------|----------|
-| `OCI_StatementParse` | `Parse` | sends SQL to the server, parses only | syntax-check or describe without running |
-| `OCI_StatementPrepare` | `Prepare` | parse + allocate the execution context | you will execute **repeatedly** or bind |
+| `OCI_StatementParse` | `Parse` | asks the **server** to parse without executing — one round-trip | syntax-check or describe without running |
+| `OCI_StatementPrepare` | `Prepare` | registers the SQL **locally** — no round-trip; the server parse is deferred to execute | you will execute **repeatedly** or bind |
 | `OCI_StatementExecutePrepared` | `ExecutePrepared` | runs the prepared statement | after `Prepare` |
 | `OCI_StatementExecute` | `Execute` | prepare + execute in one shot | one-off statements, DDL |
 | `OCI_StatementExecuteAndGetResultset` | `ExecuteAndGetResultset` | execute + return the resultset directly | SELECT shortcuts |
@@ -97,6 +97,56 @@ std::cout << st.GetSQLVerb() << " -> " << st.GetAffectedRows() << " row(s)\n";
 ```
 :::
 
+## Which calls reach the server?
+
+The verbs differ mostly in round-trips: `Prepare` is local, `Parse`/`Describe`/
+`Execute` each cost one, and `FetchNext` only crosses the wire when its buffers
+run dry. For the full map across the API — connections, transactions, LOBs,
+describes — see [server round-trips](round-trips.html).
+
+## One statement, several resultsets
+
+A statement is not limited to one resultset: some executions produce a
+**queue** of them. `GetResultset` hands you the first, `GetNextResultset`
+each following one, until NULL.
+
+Two cases generate that queue:
+
+| Case | How it happens | Details |
+|------|----------------|---------|
+| `DML … RETURNING INTO` + array binds | Oracle runs one iteration per array element — each iteration yields a resultset holding that iteration's returned values (scalar binds → a single resultset) | [ROWID & RETURNING](rowid-returning.html) |
+| Implicit resultsets (12c+) | a PL/SQL block calls `DBMS_SQL.RETURN_RESULT` — every pushed cursor arrives as another resultset on the same statement | [implicit resultsets](implicit-resultsets.html) |
+
+Not to be confused with `REF CURSOR` out-params or `CURSOR` columns: those
+return *statement* handles you execute separately — each with its own single
+resultset — not a queue on one statement. See [REF CURSORs](ref-cursors.html).
+
+Whatever produced the queue, the walking pattern is the same:
+
+:::sample
+```c
+for (OCI_Resultset *rs = OCI_StatementGetResultset(st);
+     NULL != rs;
+     rs = OCI_StatementGetNextResultset(st))
+{
+    while (OCI_FetchNext(rs))
+    {
+        /* rows of this resultset */
+    }
+}
+```
+
+```cpp
+for (ocilib::Resultset rs = st.GetResultset(); rs; rs = st.GetNextResultset())
+{
+    while (rs.Next())
+    {
+        /* rows of this resultset */
+    }
+}
+```
+:::
+
 ## Putting it together — the typical sequence
 
 Every SQL statement follows the same five-phase lifecycle — internalize it and
@@ -104,8 +154,9 @@ every later page clicks:
 
 1. **Create** — `OCI_StatementCreate(cn)` gives an empty handle; `Statement
    st(con)` in C++.
-2. **Prepare** — `OCI_StatementPrepare(st, sql)` sends the SQL to the server
-   once; parsing happens here, not at execute.
+2. **Prepare** — `OCI_StatementPrepare(st, sql)` registers the SQL on the
+   client — no round-trip yet; the server parse is deferred and bundled into
+   the first execute.
 3. **Bind** (if placeholders) — `StatementBind*` by `:name`; bind variables
    exist between prepare and execute.
 4. **Execute** — `ExecutePrepared` for already-prepared statements; fetch

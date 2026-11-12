@@ -59,7 +59,7 @@ Categories filter *what* logs; they're a bitmask combined as a comma list in
 |----------|----------|
 | `LIB` | OCILIB's own diagnostics: exceptions, connect/prepare/execute, and the API `ENTER`/`LEAVE` call trace |
 | `MEM` | memory + handle allocations and frees, and memory-leak reports |
-| `OCI` | `ENTER`/`LEAVE` trace of the **raw OCI calls** OCILIB issues (`env->api->*`) — see exactly which Oracle calls happen under each API call |
+| `OCI` | `ENTER`/`LEAVE` trace of the **raw OCI calls** OCILIB issues (`OCIStmtExecute`, `OCIParamGet`, …) — see exactly which Oracle calls happen under each API call |
 | `ALL` | `LIB` + `MEM` + `OCI` |
 
 !!! note "One deliberate exception"
@@ -71,12 +71,15 @@ Categories filter *what* logs; they're a bitmask combined as a comma list in
 Every line follows one shape:
 
 ```text
-YYYY-MM-DD HH:MM:SS.mmm  [LVL]  [CAT]  [step]  fn: message
-└─ timestamp           └─3-char level└─category└─ENTER/LEAVE (call-trace only)
+YYYY-MM-DD HH:MM:SS.mmm  [LVL]  [CAT]  [ThreadId]  fn: message
+└─ timestamp           └─3-char level└─category└─OS thread id
 ```
 
-`[LVL]` is `ERR`, `WRN`, `INF`, `DBG` or `TRC`; `[step]` appears only on call-trace
-lines and is either `ENTER` or `LEAVE` — the two bookends of a call.
+`[LVL]` is `ERR`, `WRN`, `INF`, `DBG` or `TRC`. `[ThreadId]` is the OS thread id
+of the logging thread (`GetCurrentThreadId` on Windows, `pthread_self()` on
+POSIX) — grep one id to follow a single thread's calls when a multithreaded app
+shows a deadlock or a race. On call-trace lines the message itself is `ENTER`
+or `LEAVE` — the two bookends of a call.
 
 ## Full example — tracing a connection
 
@@ -147,14 +150,14 @@ raw Oracle calls it makes underneath (`OCI` category), the allocations behind th
 scenes (`MEM`), and the call closing (`LEAVE`) with its return value:
 
 ```output
-2026-11-07 10:12:03.411 [TRC] [LIB] ENTER OcilibConnectionCreate
-2026-11-07 10:12:03.412 [DBG] [MEM] OcilibMemoryAlloc: bytes=27 type=7
-2026-11-07 10:12:03.418 [TRC] [OCI] ENTER OCIServerAttach
-2026-11-07 10:12:03.530 [TRC] [OCI] LEAVE OCIServerAttach (ret=0000000000000000)
-2026-11-07 10:12:03.531 [INF] [LIB] OcilibConnectionCreateInternal: handle=0000000000484510 connected to FREEPDB1
-2026-11-07 10:12:03.531 [TRC] [LIB] LEAVE OcilibConnectionCreate (ret=0000000000484510)
-2026-11-07 10:12:03.540 [TRC] [LIB] ENTER OcilibConnectionFree
-2026-11-07 10:12:03.545 [TRC] [LIB] LEAVE OcilibConnectionFree (ret=1)
+2026-11-07 10:12:03.411 [TRC] [LIB] [32728] OcilibConnectionCreate: ENTER
+2026-11-07 10:12:03.412 [DBG] [MEM] [32728] OcilibMemoryAlloc: bytes=27 type=7
+2026-11-07 10:12:03.418 [TRC] [OCI] [32728] OCIServerAttach: ENTER
+2026-11-07 10:12:03.530 [TRC] [OCI] [32728] OCIServerAttach: LEAVE (ret=0000000000000000)
+2026-11-07 10:12:03.531 [INF] [LIB] [32728] OcilibConnectionCreateInternal: handle=0000000000484510 connected to FREEPDB1
+2026-11-07 10:12:03.531 [TRC] [LIB] [32728] OcilibConnectionCreate: LEAVE (ret=0000000000484510)
+2026-11-07 10:12:03.540 [TRC] [LIB] [32728] OcilibConnectionFree: ENTER
+2026-11-07 10:12:03.545 [TRC] [LIB] [32728] OcilibConnectionFree: LEAVE (ret=1)
 ```
 
 Read traces as **matched ENTER/LEAVE pairs**: the calls between an `ENTER` and its `LEAVE` are what that call did internally — including which OCI primitives it used and what they returned.
@@ -166,7 +169,7 @@ A `LEAVE (ret=…)` showing an error return is where a failure surfaced.
 | Problem | Recommended |
 |---------|-------------|
 | "It won't connect" | `INFO` + `LIB` — see the connect call and its params |
-| "Which OCI call fails?" | `DEBUG` or `TRACE` + `OCI` — raw `env->api->*` ENTER/LEAVE lines |
+| "Which OCI call fails?" | `DEBUG` or `TRACE` + `OCI` — ENTER/LEAVE lines for the raw OCI calls |
 | "Handle/memory leak?" | `WARN` or higher + `MEM` — alloc/free + leak reports |
 | "Trace my whole session" | `TRACE` + `ALL` — every API and OCI call, ENTER/LEAVE paired |
 

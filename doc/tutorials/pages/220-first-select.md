@@ -10,7 +10,7 @@ sql: tutorial-schema.sql
 
 **Objectives** — by the end of this page you will be able to:
 
-- create an `OCI_Statement`, execute a `SELECT`, and walk the returned rows
+- create a statement, execute a `SELECT`, and walk the returned rows
 - read column values with typed getters, by index and by name
 - handle `NULL` values correctly
 - use the C++ `Resultset` range-for loop

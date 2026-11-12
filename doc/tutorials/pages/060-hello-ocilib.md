@@ -28,7 +28,13 @@ exists. Creating it does three jobs at once:
 
 Think of it as "the library, initialized": nothing works until it exists, and freeing it ends the program's relationship with Oracle.
 
-One per program is the norm; v5 allows several (independent islands), but handles never cross environments.
+**Most programs need exactly one environment**, created at startup and freed at
+exit — the object tree makes it naturally process-wide. v5 does allow several
+independent environments in one process, but that is for specific cases (a
+plugin needing its own error handler, a component needing different flags) and
+handles never cross environment boundaries — the
+[environments page](environments.html) in Part 1 covers when a second one is
+worth it.
 
 Creating it takes three inputs — your error callback, an optional path to the
 Oracle client, and a set of flags:
@@ -171,8 +177,9 @@ throughout — write it before you need it.
 ## Common pitfalls
 
 - **Calling anything before the environment exists** — every call fails until it does.
-- **Two environments, one program** — allowed since v5, but each owns its handles;
-  mixing handles across environments fails fast. Keep one env unless you have a reason.
+- **Two environments, one program** — legal since v5, but almost never needed:
+  each owns its handles and mixing them fails fast. Keep one env unless you
+  have one of the reasons listed on the [environments page](environments.html).
 - **Forgetting the threaded flag** in a multithreaded app — undefined behavior; see
   the threading page in Part 5.
 
