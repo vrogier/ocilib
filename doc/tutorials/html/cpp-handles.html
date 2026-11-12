@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the C++ API manages handles — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0" open><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Architecture</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Linux, macOS &amp; Unix</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li class="active"><a href="cpp-handles.html">C++ handle management</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="round-trips.html">Round-trips</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-beginner">Beginner</span></div>
+    <h1 id="how-the-c-api-manages-handles">How the C++ API manages handles</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>explain what happens when you copy a <code>ocilib::Connection</code> (or any wrapper)</li>
+<li>tell owned handles from borrowed ones in the C++ API</li>
+<li>predict when the underlying <code>OCI_*</code> handle actually gets freed</li>
+<li>use <code>Close()</code> for early release without breaking the sharing model</li>
+</ul>
+<h2 id="from-manual-frees-to-shared-ownership">From manual frees to shared ownership</h2>
+<p>In the C API every handle follows the rule from the
+<a href="architecture.html">architecture page</a>: whoever creates it frees it, exactly
+once, before its parent goes away. The C++ API keeps the same ownership tree
+but takes the bookkeeping off your hands — there is no <code>Free()</code> to call, and
+leaving scope is enough:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="n">ocilib</span><span class="o">::</span><span class="n">Environment</span><span class="w"> </span><span class="n">env</span><span class="p">;</span>
+<span class="w">    </span><span class="n">ocilib</span><span class="o">::</span><span class="n">Connection</span><span class="w">  </span><span class="nf">con</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">usr</span><span class="p">,</span><span class="w"> </span><span class="n">pwd</span><span class="p">);</span>
+<span class="w">    </span><span class="n">ocilib</span><span class="o">::</span><span class="n">Statement</span><span class="w">   </span><span class="nf">stmt</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+<span class="p">}</span><span class="w">   </span><span class="c1">// stmt's OCI_Statement, con's OCI_Connection and env's OCI_Environment</span>
+<span class="w">    </span><span class="c1">// are freed here — in reverse construction order, for free</span>
+</code></pre></div>
+
+<p>What makes it work is that each wrapper does not own the handle directly — it
+owns a <em>share</em> of a small control block that knows how to free it.</p>
+<h2 id="the-layers-under-every-c-object">The layers under every C++ object</h2>
+<div class="highlight"><pre><span></span><code>ocilib::Connection ─┐
+ocilib::Connection ─┼─ shared_ptr ──► HandleControl ──► OCI_Connection*
+   (copies)         │                    │  raw OCI handle (atomic)
+                    │                    │  owned or borrowed flag
+                    │                    │  parent / children links
+                    │                    │  free-notification hook
+                    └─ the last shared_ptr out triggers the free
+</code></pre></div>
+
+<ul>
+<li><strong><code>HandleHolder&lt;T&gt;</code></strong> — what every public class (<code>Connection</code>, <code>Statement</code>,
+  <code>Lob</code>, <code>Date</code>, …) contains: a <code>std::shared_ptr</code> to a control block.</li>
+<li><strong><code>HandleControl&lt;T&gt;</code></strong> — the control block: the atomic raw <code>OCI_*</code> handle, an
+  <em>owned/borrowed</em> flag, parent/child links, and an optional free-notification
+  hook. Its destructor releases the Oracle handle (through the matching
+  <code>OCI_*Free</code> call), removes it from the handle store, unlinks it from its
+  parent — and frees live children first.</li>
+</ul>
+<p><strong>Copying a C++ object copies the share, not the handle.</strong> Two <code>Connection</code>
+variables hold one <code>OCI_Connection</code>; the handle is freed when the <em>last</em> copy
+is released — which is why passing wrappers by value to functions is safe.</p>
+<h2 id="owned-vs-borrowed-handles">Owned vs borrowed handles</h2>
+<p>Not every wrapper frees its handle — the control block records whether the C++
+side <em>created</em> the object or merely <em>observed</em> it:</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Created when</th>
+<th>Freed by the wrapper?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Owned</strong> (<code>AcquireAllocated</code>)</td>
+<td>the wrapper ran <code>OCI_*Create</code>/<code>OCI_*Get</code>-style construction — <code>Connection(env, …)</code>, <code>Statement(con)</code></td>
+<td>yes — on last release</td>
+</tr>
+<tr>
+<td><strong>Borrowed</strong> (<code>AcquireTransient</code>)</td>
+<td>the handle came <em>from</em> another object — <code>Column</code> of a resultset, <code>TypeInfo</code> from a describe, <code>Resultset</code> from a statement, or a constructor taking a raw <code>OCI_*</code> pointer</td>
+<td>no — its owner manages it</td>
+</tr>
+</tbody>
+</table>
+<p>Borrowed handles mirror the C rule "don't free what you didn't create" — the
+wrapper stays valid only while its owner lives.</p>
+<h2 id="the-handle-store-one-control-block-per-oci-handle">The handle store — one control block per OCI handle</h2>
+<p>Each <code>ocilib::Environment</code> keeps a registry (the <code>HandleStore</code>) mapping raw
+<code>OCI_*</code> handles to their control blocks. When the C++ layer wraps a handle it
+consults the store first:</p>
+<ul>
+<li><strong>already wrapped?</strong> → the existing control block is <em>shared</em>, never
+  duplicated. If <code>OCI_StatementGetConnection</code> returns the connection you
+  already hold as a <code>ocilib::Connection</code>, <code>stmt.GetConnection()</code> gives you a
+  wrapper sharing <em>that same</em> control block — not a second owner that would
+  double-free it.</li>
+<li><strong>new?</strong> → a fresh control block is created, registered, and linked under its
+  parent.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Environments must come from the C++ API</p>
+<p>Deduplication requires the <code>OCI_Environment</code> to have been created through
+<code>ocilib::Environment</code> — the C++ object registers itself so any raw handle
+can find its store. Wrapping handles that belong to a <em>C-created</em>
+environment (<code>OCI_EnvironmentCreate</code>) is unsupported and can double-free.</p>
+</div>
+<h2 id="the-parentchild-tree">The parent/child tree</h2>
+<p>The C ownership tree exists in C++ too — every control block links to its
+parent and tracks live children (Environment → Connection → Statement →
+Resultset):</p>
+<ul>
+<li><strong>cascade on free</strong> — freeing a parent control block frees its children that
+  are still alive: closing a <code>Connection</code> releases the statements, resultsets
+  and handles built on it, in the right order.</li>
+<li><strong>navigation</strong> — the parent links are how <code>Statement::GetConnection()</code> or
+  <code>Resultset::GetStatement()</code> reach upward without owning what they find.</li>
+<li><strong>children are weak references</strong> — a parent does not extend a child's
+  lifetime; if you drop every wrapper of a statement, it is freed even though
+  its connection outlives it.</li>
+</ul>
+<p>Freeing is <strong>idempotent and thread-safe</strong>: the raw handle is swapped out
+atomically, so the first <code>Free()</code>/<code>Close()</code> wins and racing wrappers see a
+no-op — no double-free even under <code>OCI_ENV_THREADED</code>.</p>
+<h2 id="explicit-release-close-and-friends">Explicit release — <code>Close()</code> and friends</h2>
+<p>Automatic release happens at scope exit, but Oracle-side resources are real
+(server sessions, cursors, latches). To give one up <em>early</em>, call the wrapper's
+explicit close — it drops that wrapper's share; the actual OCI free still waits
+for the last sharer:</p>
+<div class="highlight"><pre><span></span><code><span class="n">ocilib</span><span class="o">::</span><span class="n">Connection</span><span class="w"> </span><span class="nf">con</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="w"> </span><span class="n">db</span><span class="p">,</span><span class="w"> </span><span class="n">usr</span><span class="p">,</span><span class="w"> </span><span class="n">pwd</span><span class="p">);</span>
+<span class="n">ocilib</span><span class="o">::</span><span class="n">Connection</span><span class="w"> </span><span class="n">alsoCon</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">con</span><span class="p">;</span><span class="w">   </span><span class="c1">// same OCI_Connection</span>
+
+<span class="n">con</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span><span class="w">                        </span><span class="c1">// drops con's share — still open!</span>
+<span class="n">alsoCon</span><span class="p">.</span><span class="n">Close</span><span class="p">();</span><span class="w">                    </span><span class="c1">// last share out → OCI_ConnectionFree now</span>
+</code></pre></div>
+
+<p><code>Close()</code> exists on <code>Connection</code>, <code>Lob</code>, <code>File</code>, <code>Pool</code>, …; a closed wrapper
+reads as false in <code>if (wrapper)</code> and can be re-<code>Open</code>ed/re-acquired.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Copy a <code>Connection</code> into a second variable, <code>Close()</code> the first — run a
+   statement through the second: still connected, because the last sharer
+   holds the handle.</li>
+<li>Call <code>stmt.GetConnection()</code> twice and compare with <code>==</code> — same underlying
+   control block, courtesy of the handle store.</li>
+<li>Let a <code>Resultset</code> outlive… nothing — observe it becomes unusable after its
+   <code>Statement</code> is released: borrowed handles don't own their parents.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>"Copies are deep"</strong> — they aren't: <code>ocilib::Connection b = a</code> shares the
+  session; <code>b</code>'s use affects <code>a</code> (same transactions, same state).</li>
+<li><strong>Wrapping a C-made environment's handles</strong> — the store only exists under
+  <code>ocilib::Environment</code>; mixed C/C++ ownership is unsupported.</li>
+<li><strong>Keeping children after freeing the parent</strong> — the cascade frees them for
+  you, but the wrapper objects then hold closed handles; check with
+  <code>if (wrapper)</code> before reuse.</li>
+<li><strong>Expecting <code>Close()</code> to close now</strong> — it releases <em>your</em> share; other
+  copies keep the handle alive by design.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>C++ wrappers share a control block; the last <code>shared_ptr</code> out frees the OCI
+  handle — copies share, never duplicate.</li>
+<li>Owned handles are freed on release; borrowed ones (getters, raw-pointer
+  constructors) are never freed by the wrapper.</li>
+<li>The environment's handle store deduplicates wrappers — one control block per
+  raw handle — and requires <code>ocilib::Environment</code>-created environments.</li>
+<li>Freeing cascades down the parent/child tree; <code>Close()</code> releases your share
+  early, safely, thread-safe.</li>
+</ul>
+<p><strong>Next:</strong> when things go wrong — the <a href="error-handling.html">error handling page</a>.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="first-connection.html"><span class="pn-dir">← Previous</span>Your first connection</a><a class="pn-link pn-next" href="error-handling.html"><span class="pn-dir">Next →</span>Error handling in depth</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

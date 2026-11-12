@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>LOBs — append, copy, buffering &amp; remote LOBs — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Architecture</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Linux, macOS &amp; Unix</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="cpp-handles.html">C++ handle management</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2" open><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li class="active"><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="round-trips.html">Round-trips</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-advanced">Advanced</span></div>
+    <h1 id="lobs-append-copy-buffering-remote-lobs">LOBs — append, copy, buffering &amp; remote LOBs</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>append and copy LOB content efficiently</li>
+<li>use buffering, flush and open/close modes</li>
+<li>work with remote and file-sourced LOBs</li>
+</ul>
+<h2 id="in-context-why-these-calls-exist">In context — why these calls exist</h2>
+<p>Every LOB operation crosses the wire: a <code>Write</code> of 4 KB costs a round-trip, and
+a read-modify-write of a LOB segment on the server costs even more. The advanced
+API exists to cut that traffic in three ways. <strong>Server-side moves</strong>
+(<code>AppendLob</code>, <code>Copy</code>, <code>CopyFromFile</code>) keep the bytes inside the database —
+copying a 500 MB document between rows takes one call, not a download and an
+upload. <strong>Buffering</strong> batches many small client writes into one flush — the
+client accumulates writes and <code>OCI_LobFlush</code> sends them as a single operation.
+<strong>Chunk alignment</strong> (<code>GetChunkSize</code>) lets you write in the storage unit Oracle
+actually uses, avoiding the read-modify-write penalty on partial blocks.</p>
+<p><code>Open</code>/<code>Close</code> belong to the same family: opening a LOB explicitly holds the
+server-side LOB open across several operations instead of paying an open cost
+per call — worthwhile inside a loop of reads or mixed read/write cycles.
+<code>IsRemote</code> tells you when the locator points through a database link
+(<code>@remote_db</code>), where some of these optimizations simply are not available —
+always worth checking before assuming a copy stays server-side.</p>
+<h2 id="the-advanced-surface">The advanced surface</h2>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_LobAppend</code></td>
+<td><code>Append</code></td>
+<td>append data at the end</td>
+</tr>
+<tr>
+<td><code>OCI_LobAppendLob</code></td>
+<td><code>AppendLob</code></td>
+<td>append one LOB to another server-side</td>
+</tr>
+<tr>
+<td><code>OCI_LobCopy</code></td>
+<td><code>Copy</code></td>
+<td>clone content</td>
+</tr>
+<tr>
+<td><code>OCI_LobCopyFromFile</code></td>
+<td>— (C only)</td>
+<td>clone from a <code>File</code></td>
+</tr>
+<tr>
+<td><code>OCI_LobErase</code></td>
+<td><code>Erase</code></td>
+<td>punch a hole</td>
+</tr>
+<tr>
+<td><code>OCI_LobTruncate</code></td>
+<td><code>Truncate</code></td>
+<td>shrink</td>
+</tr>
+<tr>
+<td><code>OCI_LobAssign</code></td>
+<td><code>Assign</code></td>
+<td>copy locator</td>
+</tr>
+<tr>
+<td><code>OCI_LobIsEqual</code></td>
+<td><code>Equals</code></td>
+<td>compare locators</td>
+</tr>
+<tr>
+<td><code>OCI_LobOpen</code></td>
+<td><code>Open</code></td>
+<td>explicit open mode for read/write cycles</td>
+</tr>
+<tr>
+<td><code>OCI_LobClose</code></td>
+<td><code>Close</code></td>
+<td>close</td>
+</tr>
+<tr>
+<td><code>OCI_LobEnableBuffering</code></td>
+<td><code>EnableBuffering</code></td>
+<td>client-side write buffering</td>
+</tr>
+<tr>
+<td><code>OCI_LobFlush</code></td>
+<td><code>Flush</code></td>
+<td>push buffered writes</td>
+</tr>
+<tr>
+<td><code>OCI_LobGetChunkSize</code></td>
+<td><code>GetChunkSize()</code></td>
+<td>optimal I/O unit</td>
+</tr>
+<tr>
+<td><code>OCI_LobGetMaxSize</code></td>
+<td><code>GetMaxSize()</code></td>
+<td>storage limit</td>
+</tr>
+<tr>
+<td><code>OCI_LobIsRemote</code></td>
+<td><code>IsRemote()</code></td>
+<td>locator's provenance</td>
+</tr>
+<tr>
+<td><code>OCI_LobGetConnection</code></td>
+<td><code>GetConnection()</code></td>
+<td>owning connection</td>
+</tr>
+</tbody>
+</table>
+<h2 id="server-side-copy-the-fast-path">Server-side copy — the fast path</h2>
+<p>Copying a LOB client→server→client is wasteful. <code>OCI_LobAppendLob</code> keeps bytes on the
+server:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Lob</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ResultsetGetLob</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span><span class="w">            </span><span class="cm">/* source row's lob  */</span>
+<span class="n">OCI_Lob</span><span class="w"> </span><span class="o">*</span><span class="n">b</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_LobCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_CLOB</span><span class="p">);</span><span class="w">  </span><span class="cm">/* new temp lob      */</span>
+<span class="n">OCI_LobAppendLob</span><span class="p">(</span><span class="n">b</span><span class="p">,</span><span class="w"> </span><span class="n">a</span><span class="p">);</span><span class="w">                    </span><span class="cm">/* a's content → b   */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Lob</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">().</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Lob</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span><span class="w">     </span><span class="cm">/* source row's lob  */</span>
+<span class="n">Lob</span><span class="w"> </span><span class="nf">b</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="n">Lob</span><span class="o">::</span><span class="n">Clob</span><span class="p">);</span><span class="w">                     </span><span class="cm">/* new temp lob      */</span>
+<span class="n">b</span><span class="p">.</span><span class="n">AppendLob</span><span class="p">(</span><span class="n">a</span><span class="p">);</span><span class="w">                            </span><span class="cm">/* a's content → b   */</span>
+</pre></div>
+</div></div>
+<p><code>OCI_LobCopyFromFile</code> streams an <code>OCI_File</code> (BFILE) into a LOB — the classic
+"external file → database" migration (C only; call it on raw handles from C++).</p>
+<h2 id="scenario-surgical-edits-erase-truncate">Scenario — surgical edits: erase &amp; truncate</h2>
+<p><code>Erase</code> zeroes a range (the length stays); <code>Truncate</code> shrinks the LOB:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_UInt64</span><span class="w"> </span><span class="n">erased</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_LobErase</span><span class="p">(</span><span class="n">lob</span><span class="p">,</span><span class="w"> </span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">);</span><span class="w">   </span><span class="cm">/* wipe 512 units @1024 */</span>
+<span class="n">OCI_LobTruncate</span><span class="p">(</span><span class="n">lob</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_UInt64</span><span class="p">)</span><span class="w"> </span><span class="mi">4096</span><span class="p">);</span><span class="w">      </span><span class="cm">/* drop everything &gt; 4 KiB */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">UInt64</span><span class="w"> </span><span class="n">erased</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lob</span><span class="p">.</span><span class="n">Erase</span><span class="p">(</span><span class="mi">1024</span><span class="p">,</span><span class="w"> </span><span class="mi">512</span><span class="p">);</span><span class="w">         </span><span class="cm">/* wipe 512 units @1024 */</span>
+<span class="n">lob</span><span class="p">.</span><span class="n">Truncate</span><span class="p">(</span><span class="mi">4096</span><span class="p">);</span><span class="w">                           </span><span class="cm">/* drop everything &gt; 4 KiB */</span>
+</pre></div>
+</div></div>
+<h2 id="scenario-chunk-aligned-throughput">Scenario — chunk-aligned throughput</h2>
+<p><code>GetChunkSize</code> returns the storage-aligned I/O unit. Writing in multiples of it
+avoids the server's read-modify-write penalty on partial blocks:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">chunk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_LobGetChunkSize</span><span class="p">(</span><span class="n">lob</span><span class="p">);</span><span class="w">  </span><span class="cm">/* e.g. 8132              */</span>
+<span class="n">OCI_UInt64</span><span class="w"> </span><span class="n">cap</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_LobGetMaxSize</span><span class="p">(</span><span class="n">lob</span><span class="p">);</span><span class="w">    </span><span class="cm">/* e.g. 4 TB              */</span>
+
+<span class="cm">/* write buffer sized to a multiple of `chunk` */</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_UInt64</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">total</span><span class="p">;</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">chunk</span><span class="p">)</span>
+<span class="w">    </span><span class="n">OCI_LobWrite</span><span class="p">(</span><span class="n">lob</span><span class="p">,</span><span class="w"> </span><span class="n">stage</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nch</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nby</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">UInt32</span><span class="w"> </span><span class="n">chunk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lob</span><span class="p">.</span><span class="n">GetChunkSize</span><span class="p">();</span><span class="w">            </span><span class="cm">/* e.g. 8132              */</span>
+<span class="n">UInt64</span><span class="w"> </span><span class="n">cap</span><span class="w">   </span><span class="o">=</span><span class="w"> </span><span class="n">lob</span><span class="p">.</span><span class="n">GetMaxSize</span><span class="p">();</span><span class="w">              </span><span class="cm">/* e.g. 4 TB              */</span>
+
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">UInt64</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">total</span><span class="p">;</span><span class="w"> </span><span class="n">off</span><span class="w"> </span><span class="o">+=</span><span class="w"> </span><span class="n">chunk</span><span class="p">)</span>
+<span class="w">    </span><span class="n">lob</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="n">stage</span><span class="p">);</span>
+</pre></div>
+</div></div>
+<h2 id="buffering-writes">Buffering writes</h2>
+<p>Many small <code>LobWrite</code>s = many round-trips. Buffer them:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_LobEnableBuffering</span><span class="p">(</span><span class="n">lob</span><span class="p">,</span><span class="w"> </span><span class="n">TRUE</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="err">…</span><span class="p">)</span><span class="w"> </span><span class="n">OCI_LobWrite</span><span class="p">(</span><span class="n">lob</span><span class="p">,</span><span class="w"> </span><span class="n">chunk</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nch</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">nby</span><span class="p">);</span><span class="w">   </span><span class="cm">/* batched client-side */</span>
+<span class="n">OCI_LobFlush</span><span class="p">(</span><span class="n">lob</span><span class="p">);</span><span class="w">                     </span><span class="cm">/* one flush           */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">lob</span><span class="p">.</span><span class="n">EnableBuffering</span><span class="p">();</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="err">…</span><span class="p">)</span><span class="w"> </span><span class="n">lob</span><span class="p">.</span><span class="n">Write</span><span class="p">(</span><span class="n">chunk</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">);</span><span class="w">           </span><span class="cm">/* batched client-side */</span>
+<span class="n">lob</span><span class="p">.</span><span class="n">Flush</span><span class="p">();</span><span class="w">                           </span><span class="cm">/* one flush           */</span>
+</pre></div>
+</div></div>
+<p><code>OCI_LobGetChunkSize</code> tells you the storage-aligned chunk — writing in multiples of
+it avoids read-modify-write overhead.</p>
+<h2 id="openclose">Open/close</h2>
+<p><code>OCI_LobOpen(lob, mode)</code> keeps a LOB open across multiple ops — useful for
+interleaved read/write without the server re-opening per call; close with
+<code>OCI_LobClose</code>.</p>
+<h2 id="remote-lobs">Remote LOBs</h2>
+<p>LOBs fetched through a database link (<code>@remote_db</code>) are <em>remote</em> — <code>OCI_LobIsRemote</code>
+reports it, <code>OCI_LobGetConnection</code> gives the owning connection handle for diagnostics.
+Some operations have restrictions remotely; test on your topology.</p>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>Advanced LOB work is a decision tree, and the decisions come first:</p>
+<ol>
+<li><strong>Can the data stay on the server?</strong> Copying a LOB through the client is a
+   download-then-upload — <code>AppendLob</code>, <code>Copy</code>, and <code>CopyFromFile</code> (BFILE→LOB)
+   all keep the bytes inside the database. Reach for them before any
+   read-write loop.</li>
+<li><strong>Are you doing many small writes?</strong> Enable buffering, write freely, then
+   <code>Flush</code> once — one round-trip instead of hundreds. Forgetting the flush is
+   the classic bug: buffered data never reaches the server.</li>
+<li><strong>Writing a lot?</strong> Align to <code>GetChunkSize</code> — partial-block writes force the
+   server into read-modify-write; chunk-aligned writes don't.</li>
+<li><strong>Long I/O session?</strong> <code>Open</code> explicitly, do the work, <code>Close</code> — otherwise
+   every op pays an implicit open.</li>
+<li><strong>Crossing a database link?</strong> <code>IsRemote</code> tells you — and several of these
+   paths are restricted remotely, so check before assuming.</li>
+</ol>
+<p>Hints: <code>Erase</code> punches a hole (length unchanged) while <code>Truncate</code> shortens —
+different operations, easy to confuse; <code>GetMaxSize</code> reports the platform cap
+(~TB range), useful sanity check before streaming unknown sources.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Build a LOB from 1000 small writes with and without buffering — time both.</li>
+<li>Copy one row's CLOB into another row entirely server-side.</li>
+<li>Read <code>GetChunkSize</code>/<code>GetMaxSize</code> for a BLOB column and explain the numbers.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong><code>LobFlush</code> forgotten</strong> — buffered writes never reach the server.</li>
+<li><strong>Copying through the client</strong> — <code>AppendLob</code>/<code>Copy</code> stay server-side; manual
+  read+write doubles traffic.</li>
+<li><strong>Offsets off by char/byte</strong> — <code>Seek</code>/<code>Truncate</code>/<code>GetLength</code> follow the LOB's
+  unit (chars for CLOB, bytes for BLOB).</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>Append</code>/<code>AppendLob</code>/<code>Copy</code>/<code>Erase</code>/<code>Truncate</code> for surgical edits; buffering +
+  <code>GetChunkSize</code> for throughput; <code>Open</code>/<code>Close</code> for I/O sessions.</li>
+</ul>
+<p><strong>Next:</strong> BFILEs — the filesystem inside the database.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="lobs-basics.html"><span class="pn-dir">← Previous</span>LOBs basics</a><a class="pn-link pn-next" href="bfiles.html"><span class="pn-dir">Next →</span>BFILEs</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

@@ -1,7 +1,7 @@
 ---
 author: admin
 comments: true
-date: 2024-01-15 20:00:00+01:00
+date: 2026-11-12 22:00:00+01:00
 layout: page
 slug: documentation
 title: Documentation
@@ -10,9 +10,9 @@ title: Documentation
 * [Browse online HTML documentation]({{site.baseurl}}/doc/html/)
 
 
-## Tutorial
+## Tutorials (upcoming v5.0.0)
 
-* [A guided, dual-language (C/C++) tutorial series — ships with v5]({{site.baseurl}}/doc/tutorials/html/)
+* [A guided, dual-language (C/C++) tutorial series — ships with OCILIB packages]({{site.baseurl}}/doc/tutorials/html/)
 
 ## Sample Applications
 

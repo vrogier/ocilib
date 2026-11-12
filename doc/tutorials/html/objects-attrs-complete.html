@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Object attributes — the complete accessor matrix — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Architecture</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Linux, macOS &amp; Unix</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="cpp-handles.html">C++ handle management</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="round-trips.html">Round-trips</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6" open><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li class="active"><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span></div>
+    <h1 id="object-attributes-the-complete-accessor-matrix">Object attributes — the complete accessor matrix</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>pick the right attribute getter/setter for any attribute type</li>
+<li>handle nested objects, collections, REFs, LOBs and NULL indicators</li>
+<li>dump any object generically</li>
+</ul>
+<h2 id="the-matrix">The matrix</h2>
+<p>For every attribute type there's a Get/Set pair on the object — one name per bound
+type (the C calls shown; C++ templated <code>Get&lt;T&gt;</code>/<code>Set&lt;T&gt;</code> cover them all, see below):</p>
+<table>
+<thead>
+<tr>
+<th>Attribute type</th>
+<th>C setter / getter</th>
+<th>C++</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NUMBER small</td>
+<td><code>OCI_ObjectSetInt16</code>/<code>SetUInt16</code> — <code>OCI_ObjectGetInt16</code>/<code>GetUInt16</code></td>
+<td><code>Set&lt;Int16&gt;</code>/<code>Get&lt;Int16&gt;</code>, <code>Set&lt;UInt16&gt;</code>/<code>Get&lt;UInt16&gt;</code></td>
+</tr>
+<tr>
+<td>NUMBER int</td>
+<td><code>OCI_ObjectSetInt32</code>/<code>SetUInt32</code> — <code>OCI_ObjectGetInt32</code>/<code>GetUInt32</code></td>
+<td><code>Set&lt;Int32&gt;</code>/<code>Get&lt;Int32&gt;</code>, <code>Set&lt;UInt32&gt;</code>/<code>Get&lt;UInt32&gt;</code></td>
+</tr>
+<tr>
+<td>NUMBER big</td>
+<td><code>OCI_ObjectSetInt64</code>/<code>SetUInt64</code> — <code>OCI_ObjectGetInt64</code>/<code>GetUInt64</code></td>
+<td><code>Set&lt;Int64&gt;</code>/<code>Get&lt;Int64&gt;</code>, <code>Set&lt;UInt64&gt;</code>/<code>Get&lt;UInt64&gt;</code></td>
+</tr>
+<tr>
+<td>NUMBER float</td>
+<td><code>OCI_ObjectSetFloat</code>/<code>SetDouble</code> — <code>OCI_ObjectGetFloat</code>/<code>GetDouble</code></td>
+<td><code>Set&lt;Float&gt;</code>/<code>Get&lt;Float&gt;</code>, <code>Set&lt;Double&gt;</code>/<code>Get&lt;Double&gt;</code></td>
+</tr>
+<tr>
+<td>NUMBER exact</td>
+<td><code>OCI_ObjectSetNumber</code> — <code>OCI_ObjectGetNumber</code></td>
+<td><code>Set&lt;Number&gt;</code>/<code>Get&lt;Number&gt;</code></td>
+</tr>
+<tr>
+<td>BOOLEAN</td>
+<td><code>OCI_ObjectSetBoolean</code> — <code>OCI_ObjectGetBoolean</code></td>
+<td><code>Set&lt;bool&gt;</code>/<code>Get&lt;bool&gt;</code></td>
+</tr>
+<tr>
+<td>CHAR/VARCHAR2</td>
+<td><code>OCI_ObjectSetString</code> — <code>OCI_ObjectGetString</code></td>
+<td><code>Set&lt;String&gt;</code>/<code>Get&lt;String&gt;</code></td>
+</tr>
+<tr>
+<td>RAW</td>
+<td><code>OCI_ObjectSetRaw</code> — <code>OCI_ObjectGetRaw</code> + <code>GetRawSize</code></td>
+<td><code>Set&lt;Raw&gt;</code>/<code>Get&lt;Raw&gt;</code></td>
+</tr>
+<tr>
+<td>DATE</td>
+<td><code>OCI_ObjectSetDate</code> — <code>OCI_ObjectGetDate</code></td>
+<td><code>Set&lt;Date&gt;</code>/<code>Get&lt;Date&gt;</code></td>
+</tr>
+<tr>
+<td>TIMESTAMP</td>
+<td><code>OCI_ObjectSetTimestamp</code> — <code>OCI_ObjectGetTimestamp</code></td>
+<td><code>Set&lt;Timestamp&gt;</code>/<code>Get&lt;Timestamp&gt;</code></td>
+</tr>
+<tr>
+<td>INTERVAL</td>
+<td><code>OCI_ObjectSetInterval</code> — <code>OCI_ObjectGetInterval</code></td>
+<td><code>Set&lt;Interval&gt;</code>/<code>Get&lt;Interval&gt;</code></td>
+</tr>
+<tr>
+<td>LOB</td>
+<td><code>OCI_ObjectSetLob</code> — <code>OCI_ObjectGetLob</code></td>
+<td><code>Set&lt;Clob&gt;</code>/<code>Get&lt;Clob&gt;</code> etc.</td>
+</tr>
+<tr>
+<td>BFILE</td>
+<td><code>OCI_ObjectSetFile</code> — <code>OCI_ObjectGetFile</code></td>
+<td><code>Set&lt;File&gt;</code>/<code>Get&lt;File&gt;</code></td>
+</tr>
+<tr>
+<td>nested object</td>
+<td><code>SetObject</code></td>
+<td><code>GetObject</code></td>
+</tr>
+<tr>
+<td>collection</td>
+<td><code>SetColl</code></td>
+<td><code>GetColl</code></td>
+</tr>
+<tr>
+<td>REF</td>
+<td><code>SetRef</code></td>
+<td><code>GetRef</code></td>
+</tr>
+<tr>
+<td>(any) NULL</td>
+<td><code>SetNull</code></td>
+<td><code>IsNull</code></td>
+</tr>
+</tbody>
+</table>
+<p>Plus utilities: <code>OCI_ObjectGetStruct</code> (whole object → C struct, same rules as
+<code>OCI_ResultsetGetStruct</code> page 235), <code>OCI_ObjectGetSelfReference</code> (a REF pointing at the object),
+<code>OCI_ObjectToText</code> (debug dump), <code>OCI_ObjectAssign</code>, <code>OCI_ObjectGetType</code>/<code>GetTypeInfo</code>.</p>
+<h2 id="nested-structures">Nested structures</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Object</span><span class="w"> </span><span class="o">*</span><span class="n">sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ResultsetGetObject</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
+
+<span class="n">OCI_Object</span><span class="w"> </span><span class="o">*</span><span class="n">vendor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ObjectGetObject</span><span class="p">(</span><span class="n">sale</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"VENDOR"</span><span class="p">));</span><span class="w">   </span><span class="cm">/* borrowed */</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"vendor: %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ObjectGetString</span><span class="p">(</span><span class="n">vendor</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">)));</span>
+<span class="n">OCI_ObjectFree</span><span class="p">(</span><span class="n">vendor</span><span class="p">);</span><span class="w">            </span><span class="cm">/* Get* handles on objects are owned → free */</span>
+
+<span class="n">OCI_Collection</span><span class="w"> </span><span class="o">*</span><span class="n">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ObjectGetColl</span><span class="p">(</span><span class="n">sale</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"TAGS"</span><span class="p">));</span><span class="w">           </span><span class="cm">/* → page 630 */</span>
+<span class="n">OCI_Reference</span><span class="w">  </span><span class="o">*</span><span class="n">r</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ObjectGetReference</span><span class="w"> </span><span class="p">(</span><span class="n">sale</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"MANAGER_REF"</span><span class="p">));</span><span class="w">    </span><span class="cm">/* → page 640 */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Object</span><span class="w"> </span><span class="n">sale</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="n">Object</span><span class="w"> </span><span class="n">vendor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sale</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"VENDOR"</span><span class="p">);</span><span class="w">       </span><span class="cm">/* owned ref — RAII frees it */</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"vendor: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">vendor</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+<span class="n">Collection</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="w"> </span><span class="n">tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sale</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Collection</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;&gt;</span><span class="p">(</span><span class="s">"TAGS"</span><span class="p">);</span><span class="w">   </span><span class="cm">/* → page 630 */</span>
+<span class="n">Ref</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">sale</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Ref</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"MANAGER_REF"</span><span class="p">);</span><span class="w">                             </span><span class="cm">/* → page 640 */</span>
+</pre></div>
+</div></div>
+<div class="admonition note">
+<p class="admonition-title">Who frees what</p>
+<p>Handles pulled <strong>out of</strong> an object (<code>GetObject</code>, <code>GetColl</code>, <code>GetRef</code>, <code>GetLob</code>,
+<code>GetDate</code>…) are owned references — free them. The object itself is borrowed when
+it came from <code>OCI_ResultsetGetObject</code> on a row.</p>
+</div>
+<h2 id="generic-attribute-dump">Generic attribute dump</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_TypeInfo</span><span class="w"> </span><span class="o">*</span><span class="n">ti</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ObjectGetTypeInfo</span><span class="p">(</span><span class="n">obj</span><span class="p">);</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">OCI_TypeInfoGetColumnCount</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Column</span><span class="w"> </span><span class="o">*</span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGetColumn</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="p">);</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">otext</span><span class="w"> </span><span class="o">*</span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ColumnGetName</span><span class="p">(</span><span class="n">a</span><span class="p">);</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%-12s %-15s %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_ColumnGetSqlType</span><span class="p">(</span><span class="n">a</span><span class="p">),</span>
+<span class="w">           </span><span class="n">OCI_ObjectIsNull</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"(null)"</span><span class="p">)</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"…"</span><span class="p">));</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">TypeInfo</span><span class="w"> </span><span class="n">ti</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">obj</span><span class="p">.</span><span class="n">GetTypeInfo</span><span class="p">();</span>
+<span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="n">UInt32</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">ti</span><span class="p">.</span><span class="n">GetColumnCount</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Column</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">ti</span><span class="p">.</span><span class="n">GetColumn</span><span class="p">(</span><span class="n">i</span><span class="p">);</span>
+<span class="w">    </span><span class="n">String</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">GetName</span><span class="p">();</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">a</span><span class="p">.</span><span class="n">GetSQLType</span><span class="p">()</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" "</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="p">(</span><span class="n">obj</span><span class="p">.</span><span class="n">IsNull</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="w"> </span><span class="o">?</span><span class="w"> </span><span class="s">"(null)"</span><span class="w"> </span><span class="o">:</span><span class="w"> </span><span class="s">"…"</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="the-c-way-typed-gettsettgetoptionalt">The C++ way — typed <code>Get&lt;T&gt;</code>/<code>Set&lt;T&gt;</code>/<code>GetOptional&lt;T&gt;</code></h2>
+<p>Where C needs one call per attribute type, C++ collapses the whole matrix into a
+single templated accessor — the attribute's column type decides <code>T</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="n">Object</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">row</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+<span class="kt">int</span><span class="w"> </span><span class="n">code</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"CODE"</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">);</span>
+<span class="kt">double</span><span class="w"> </span><span class="n">p</span><span class="w">    </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"PRICE"</span><span class="p">);</span>
+
+<span class="n">s</span><span class="p">.</span><span class="n">Set</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"CODE"</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
+<span class="n">s</span><span class="p">.</span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">,</span><span class="w"> </span><span class="s">"NEW"</span><span class="p">);</span>
+
+<span class="cm">/* nullable attribute — no separate NULL-flag dance: */</span>
+<span class="k">auto</span><span class="w"> </span><span class="n">price</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">GetOptional</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"PRICE"</span><span class="p">);</span><span class="w">   </span><span class="cm">/* std::optional&lt;double&gt; */</span>
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">price</span><span class="p">)</span><span class="w">  </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="o">*</span><span class="n">price</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+
+<span class="cm">/* nested handle — a typed Get yields the right wrapper, RAII-freed: */</span>
+<span class="n">Object</span><span class="w"> </span><span class="n">vendor</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">s</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"VENDOR"</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">vendor</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+</code></pre></div>
+
+<p><code>GetOptional&lt;T&gt;</code> is the C++ answer to the per-attribute null flag — it returns an
+empty <code>std::optional</code> when the attribute is NULL, so the flag check and the value
+read are one call.</p>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>Attribute access is a name+type lookup per field:</p>
+<ol>
+<li><strong>Get the TypeInfo</strong> — it knows every attribute's name, type, order.</li>
+<li><strong>Read attrs</strong> — <code>ObjectGet&lt;Type&gt;(obj, "attr")</code> per field — the type must
+   match the attribute's declared type.</li>
+<li><strong>Write attrs</strong> — <code>ObjectSet&lt;Type&gt;(obj, "attr", val)</code> — same name, same
+   type-match rule.</li>
+<li><strong>NULL attrs</strong> — <code>ObjectSetNull</code>/<code>IsNullAttribute</code> handle the not-set case.</li>
+</ol>
+<p>Hints: the getter/setter type must match the attribute's SQL type — a NUMBER
+attr takes <code>Int32</code>/<code>Double</code>, not <code>String</code>; NULL attributes need the <code>SetNull</code>
+family, not a zeroed <code>Set</code> — a zero isn't NULL; and attribute order in the
+TypeInfo matches the <code>CREATE TYPE</code> declaration — index access is faster than
+name lookup when you have the layout.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Add a <code>RAW(16)</code> and a <code>CLOB</code> attribute to <code>t_sale</code>; get/set them.</li>
+<li>Write the generic dumper and run it on a fetched <code>t_sale</code>.</li>
+<li>Use <code>GetOptional&lt;double&gt;</code> (C++) on a nullable <code>PRICE</code>.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Leaking nested handles</strong> — every <code>GetX</code> that yields a handle returns an owned one.</li>
+<li><strong><code>SetObject</code> on wrong-typed nested value</strong> — must match the attribute's declared type.</li>
+<li><strong><code>GetString</code> on a NUMBER attr</strong> — check the attr's <code>OCI_Column</code> type first.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>One Get/Set pair per attribute type; NULL via <code>SetNull</code>/<code>IsNull</code>; nested handles
+  are owned and freed.</li>
+</ul>
+<p><strong>Next:</strong> object operations — assign, compare, inheritance and self-refs.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="objects-basics.html"><span class="pn-dir">← Previous</span>Objects basics</a><a class="pn-link pn-next" href="objects-ops.html"><span class="pn-dir">Next →</span>Object operations</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

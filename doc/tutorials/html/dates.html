@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dates — the Date object — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Architecture</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Linux, macOS &amp; Unix</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="cpp-handles.html">C++ handle management</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2" open><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li class="active"><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="round-trips.html">Round-trips</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-beginner">Beginner</span><span class="badge badge-demo">demo/date.c</span><span class="badge badge-demo">demo/date.cpp</span></div>
+    <h1 id="dates-the-date-object">Dates — the <code>Date</code> object</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>create, read and write date values</li>
+<li>do date arithmetic: add days/months, diff, next/last day</li>
+<li>convert to/from text and C <code>time_t</code></li>
+</ul>
+<h2 id="in-context-what-an-oracle-date-really-is">In context — what an Oracle DATE really is</h2>
+<p>Oracle <code>DATE</code> is a 7-byte packed value — century, year, month, day, hour, minute,
+second — a format unchanged since the earliest Oracle versions. Two consequences
+follow directly from that storage, and both surprise newcomers: a DATE <em>always</em>
+carries a time component (there is no "date-only" column — the h/m/s bytes are
+always written, usually <code>00:00:00</code>), and a DATE holds <em>no timezone</em> — it is a
+naive local instant and the server cannot tell you where it was entered. If your
+data is timezone-aware, <code>TIMESTAMP WITH TIME ZONE</code> is the right column.</p>
+<p>In SQL, date arithmetic is numeric: <code>hiredate + 1</code> adds one day, <code>d2 - d1</code>
+returns a <code>NUMBER</code> of days — possibly fractional. OCILIB mirrors that semantic
+with explicit calls rather than operators: <code>AddDays</code> takes negative and
+fractional values, <code>AddMonths</code> follows Oracle's <code>ADD_MONTHS</code> rule (January 31
+plus one month lands on the <em>last</em> day of February, not on an invalid Feb 31),
+and <code>DaysBetween</code>/<code>Compare</code> give you the delta and the ordering.</p>
+<p>On the OCILIB side, <code>OCI_Date</code> is an OCI descriptor allocated against the
+<strong>environment</strong>, not the connection — which is why <code>OCI_DateCreate</code> takes <code>env</code>.
+You can build dates before connecting, stockpile them, and bind them later; the
+rule is the one this page keeps repeating: a date you created is freed by you, a
+date you fetched is borrowed from the row and dies with it. Every call returns
+<code>OCI_Boolean</code> (check it or consult <code>OCI_GetLastError</code>) — in C++, <code>ocilib::Date</code>
+is RAII and failures throw <code>ocilib::Exception</code>.</p>
+<h2 id="the-date-object">The Date object</h2>
+<p>A <code>Date</code> holds one SQL <code>DATE</code> value — day precision plus hours/minutes/seconds, no time zone.</p>
+<p>It's the first of OCILIB's <em>datatype objects</em>: unlike scalar getters, it's a handle you create on the <strong>environment</strong>, fill, bind into statements, and free — or, in C++, a RAII object.</p>
+<p>Borrowed-vs-owned matters everywhere here: a <code>Date</code> you fetch from a row is borrowed
+by the row; a <code>Date</code> you <code>Create</code> is yours to fill and free.</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Date</span><span class="w"> </span><span class="o">*</span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_DateCreate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span><span class="w">              </span><span class="cm">/* tied to the environment   */</span>
+<span class="cm">/* … use … */</span>
+<span class="n">OCI_DateFree</span><span class="p">(</span><span class="n">d</span><span class="p">);</span>
+
+<span class="n">OCI_Date</span><span class="w"> </span><span class="o">**</span><span class="n">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_DateArrayCreate</span><span class="p">(</span><span class="n">env</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">);</span><span class="w">  </span><span class="cm">/* arrays for bulk work      */</span>
+<span class="n">OCI_DateArrayFree</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Date</span><span class="w"> </span><span class="nf">d</span><span class="p">(</span><span class="n">env</span><span class="p">);</span><span class="w">                                    </span><span class="cm">/* RAII — no free            */</span>
+</pre></div>
+</div></div>
+<h2 id="get-set">Get &amp; set</h2>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_DateSysDate</code></td>
+<td><code>SysDate()</code></td>
+<td>set to server "now"</td>
+</tr>
+<tr>
+<td><code>OCI_DateSetDate</code></td>
+<td><code>SetDate(y,m,d)</code></td>
+<td>set y/m/d</td>
+</tr>
+<tr>
+<td><code>OCI_DateSetTime</code></td>
+<td><code>SetTime(h,mi,s)</code></td>
+<td>set h/m/s</td>
+</tr>
+<tr>
+<td><code>OCI_DateSetDateTime</code></td>
+<td><code>SetDateTime(...)</code></td>
+<td>set all parts</td>
+</tr>
+<tr>
+<td><code>OCI_DateGetDate</code></td>
+<td><code>GetDate(&amp;y,&amp;m,&amp;d)</code></td>
+<td>read y/m/d</td>
+</tr>
+<tr>
+<td><code>OCI_DateGetTime</code></td>
+<td><code>GetTime(&amp;h,&amp;mi,&amp;s)</code></td>
+<td>read h/m/s</td>
+</tr>
+<tr>
+<td><code>OCI_DateGetDateTime</code></td>
+<td><code>GetDateTime(...)</code></td>
+<td>read all parts</td>
+</tr>
+<tr>
+<td><code>OCI_DateCheck</code></td>
+<td><code>Check()</code></td>
+<td>sanity-check the parts</td>
+</tr>
+</tbody>
+</table>
+<h2 id="arithmetic-comparison">Arithmetic &amp; comparison</h2>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_DateAssign</code></td>
+<td><code>Assign</code> / <code>operator=</code></td>
+<td><code>d2 = d</code></td>
+</tr>
+<tr>
+<td><code>OCI_DateAddDays</code></td>
+<td><code>AddDays(n)</code></td>
+<td>add days</td>
+</tr>
+<tr>
+<td><code>OCI_DateAddMonths</code></td>
+<td><code>AddMonths(n)</code></td>
+<td>add months</td>
+</tr>
+<tr>
+<td><code>OCI_DateCompare</code></td>
+<td><code>Compare</code></td>
+<td><code>&lt;0 / 0 / &gt;0</code></td>
+</tr>
+<tr>
+<td><code>OCI_DateDaysBetween</code></td>
+<td><code>DaysBetween</code></td>
+<td>signed day delta</td>
+</tr>
+<tr>
+<td><code>OCI_DateNextDay</code></td>
+<td><code>NextDay(day)</code></td>
+<td>next weekday</td>
+</tr>
+<tr>
+<td><code>OCI_DateLastDay</code></td>
+<td><code>LastDay()</code></td>
+<td>last day of month</td>
+</tr>
+<tr>
+<td><code>OCI_DateZoneToZone</code></td>
+<td><code>ZoneToZone</code></td>
+<td>move between time zones</td>
+</tr>
+</tbody>
+</table>
+<h2 id="text-c-time-conversion">Text &amp; C time conversion</h2>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>Role</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_DateFromText</code></td>
+<td><code>FromText</code></td>
+<td>parse with a format model</td>
+</tr>
+<tr>
+<td><code>OCI_DateToText</code></td>
+<td><code>ToText</code></td>
+<td>format with a model</td>
+</tr>
+<tr>
+<td><code>OCI_DateToCTime</code></td>
+<td><code>ToCTime()</code></td>
+<td>→ <code>time_t</code></td>
+</tr>
+<tr>
+<td><code>OCI_DateFromCTime</code></td>
+<td><code>FromCTime</code></td>
+<td>← <code>time_t</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="scenario-set-shift-and-inspect-a-date">Scenario — set, shift and inspect a date</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Date</span><span class="w"> </span><span class="o">*</span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_DateCreate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="n">OCI_DateSysDate</span><span class="p">(</span><span class="n">d</span><span class="p">);</span><span class="w">                       </span><span class="cm">/* server "now"               */</span>
+<span class="n">OCI_DateAddDays</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">-30</span><span class="p">);</span><span class="w">                  </span><span class="cm">/* 30 days ago                */</span>
+<span class="n">OCI_DateAddMonths</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">                  </span><span class="cm">/* then +1 month              */</span>
+
+<span class="n">OCI_Int32</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">day</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">mi</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="n">OCI_DateGetDateTime</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">day</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">mi</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">s</span><span class="p">);</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"%04d-%02d-%02d %02d:%02d:%02d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">day</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">mi</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_DateCheck</span><span class="p">(</span><span class="n">d</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w">                </span><span class="cm">/* 0 = valid                  */</span>
+<span class="w">    </span><span class="n">puts</span><span class="p">(</span><span class="s">"valid date"</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Date</span><span class="w"> </span><span class="n">d</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Date</span><span class="o">::</span><span class="n">SysDate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span><span class="w">              </span><span class="cm">/* server "now"               */</span>
+<span class="n">d</span><span class="p">.</span><span class="n">AddDays</span><span class="p">(</span><span class="mi">-30</span><span class="p">);</span><span class="w">                           </span><span class="cm">/* 30 days ago                */</span>
+<span class="n">d</span><span class="p">.</span><span class="n">AddMonths</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">                           </span><span class="cm">/* then +1 month              */</span>
+
+<span class="n">Int32</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">day</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">mi</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">;</span>
+<span class="n">d</span><span class="p">.</span><span class="n">GetDateTime</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="n">day</span><span class="p">,</span><span class="w"> </span><span class="n">h</span><span class="p">,</span><span class="w"> </span><span class="n">mi</span><span class="p">,</span><span class="w"> </span><span class="n">s</span><span class="p">);</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">'-'</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">'-'</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">day</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">'\n'</span><span class="p">;</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">d</span><span class="p">.</span><span class="n">Check</span><span class="p">())</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"valid date</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+</pre></div>
+</div></div>
+<h2 id="scenario-tenure-and-calendar-maths">Scenario — tenure and calendar maths</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Date</span><span class="w"> </span><span class="o">*</span><span class="n">today</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_DateCreate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="n">OCI_Date</span><span class="w"> </span><span class="o">*</span><span class="n">hire</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_DateCreate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="n">OCI_DateSysDate</span><span class="p">(</span><span class="n">today</span><span class="p">);</span>
+<span class="n">OCI_DateFromText</span><span class="p">(</span><span class="n">hire</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"2015-03-17"</span><span class="p">),</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"YYYY-MM-DD"</span><span class="p">));</span>
+
+<span class="n">printf</span><span class="p">(</span><span class="s">"tenure: %d days</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_DateDaysBetween</span><span class="p">(</span><span class="n">today</span><span class="p">,</span><span class="w"> </span><span class="n">hire</span><span class="p">));</span>
+<span class="n">printf</span><span class="p">(</span><span class="s">"cmp   : %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span><span class="w">     </span><span class="n">OCI_DateCompare</span><span class="p">(</span><span class="n">today</span><span class="p">,</span><span class="w"> </span><span class="n">hire</span><span class="p">));</span><span class="w">   </span><span class="cm">/* &gt;0 */</span>
+
+<span class="n">OCI_DateAssign</span><span class="p">(</span><span class="n">hire</span><span class="p">,</span><span class="w"> </span><span class="n">today</span><span class="p">);</span><span class="w">              </span><span class="cm">/* copy                       */</span>
+<span class="n">OCI_DateNextDay</span><span class="p">(</span><span class="n">hire</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"FRIDAY"</span><span class="p">));</span><span class="w">   </span><span class="cm">/* next Friday                */</span>
+<span class="n">OCI_DateLastDay</span><span class="p">(</span><span class="n">hire</span><span class="p">);</span><span class="w">                    </span><span class="cm">/* month end                  */</span>
+
+<span class="n">OCI_DateFree</span><span class="p">(</span><span class="n">hire</span><span class="p">);</span>
+<span class="n">OCI_DateFree</span><span class="p">(</span><span class="n">today</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Date</span><span class="w"> </span><span class="n">today</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Date</span><span class="o">::</span><span class="n">SysDate</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="n">Date</span><span class="w"> </span><span class="nf">hire</span><span class="p">(</span><span class="n">env</span><span class="p">);</span>
+<span class="n">hire</span><span class="p">.</span><span class="n">FromText</span><span class="p">(</span><span class="s">"2015-03-17"</span><span class="p">,</span><span class="w"> </span><span class="s">"YYYY-MM-DD"</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"tenure: "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">today</span><span class="p">.</span><span class="n">DaysBetween</span><span class="p">(</span><span class="n">hire</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">" days</span><span class="se">\n</span><span class="s">"</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="s">"cmp   : "</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">today</span><span class="p">.</span><span class="n">Compare</span><span class="p">(</span><span class="n">hire</span><span class="p">)</span><span class="w">    </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">'\n'</span><span class="p">;</span><span class="w">  </span><span class="cm">/* &gt;0 */</span>
+
+<span class="n">hire</span><span class="p">.</span><span class="n">Assign</span><span class="p">(</span><span class="n">today</span><span class="p">);</span><span class="w">                       </span><span class="cm">/* copy                       */</span>
+<span class="n">hire</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">hire</span><span class="p">.</span><span class="n">NextDay</span><span class="p">(</span><span class="s">"FRIDAY"</span><span class="p">);</span><span class="w">            </span><span class="cm">/* next Friday                */</span>
+<span class="n">hire</span><span class="p">.</span><span class="n">LastDay</span><span class="p">();</span><span class="w">                           </span><span class="cm">/* month end                  */</span>
+</pre></div>
+</div></div>
+<h2 id="scenario-text-and-time_t-round-trips">Scenario — text and <code>time_t</code> round-trips</h2>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">otext</span><span class="w"> </span><span class="n">buf</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+<span class="k">struct</span><span class="w"> </span><span class="nc">tm</span><span class="w"> </span><span class="n">tmv</span><span class="p">;</span>
+<span class="kt">time_t</span><span class="w">    </span><span class="n">t</span><span class="p">;</span>
+
+<span class="n">OCI_DateFromText</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"2026-11-06 14:30"</span><span class="p">),</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"YYYY-MM-DD HH24:MI"</span><span class="p">));</span>
+<span class="n">OCI_DateToText</span><span class="w">  </span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"DD-MON-YYYY"</span><span class="p">),</span><span class="w"> </span><span class="k">sizeof</span><span class="p">(</span><span class="n">buf</span><span class="p">),</span><span class="w"> </span><span class="n">buf</span><span class="p">);</span>
+
+<span class="n">OCI_DateToCTime</span><span class="w"> </span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">tmv</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">t</span><span class="p">);</span><span class="w">            </span><span class="cm">/* out: broken-down + epoch   */</span>
+<span class="n">OCI_DateFromCTime</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">tmv</span><span class="p">,</span><span class="w"> </span><span class="n">t</span><span class="p">);</span><span class="w">            </span><span class="cm">/* in: both forms             */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">d</span><span class="p">.</span><span class="n">FromText</span><span class="p">(</span><span class="s">"2026-11-06 14:30"</span><span class="p">,</span><span class="w"> </span><span class="s">"YYYY-MM-DD HH24:MI"</span><span class="p">);</span>
+<span class="n">String</span><span class="w"> </span><span class="n">s</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">ToText</span><span class="p">(</span><span class="s">"DD-MON-YYYY"</span><span class="p">);</span>
+
+<span class="kt">time_t</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">d</span><span class="p">.</span><span class="n">ToCTime</span><span class="p">();</span><span class="w">                   </span><span class="cm">/* → epoch                    */</span>
+<span class="n">d</span><span class="p">.</span><span class="n">FromCTime</span><span class="p">(</span><span class="n">t</span><span class="p">);</span><span class="w">                           </span><span class="cm">/* ← epoch                    */</span>
+</pre></div>
+</div></div>
+<h2 id="binding-fetching">Binding &amp; fetching</h2>
+<p>A fetched <code>DATE</code> column gives a borrowed <code>Date</code> (C <code>OCI_ResultsetGetDate</code> / C++ <code>Get&lt;Date&gt;</code>);
+bind one with the date bind (<code>OCI_StatementBindDate</code> / <code>Bind(":d", d)</code>) — plug into the Part 3
+patterns.</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"update employees set hiredate = :d where empno = :e"</span><span class="p">));</span>
+<span class="n">OCI_StatementBindDate</span><span class="w"> </span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":d"</span><span class="p">),</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="n">OCI_StatementBindInt32</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":e"</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">empno</span><span class="p">);</span>
+<span class="n">OCI_StatementExecutePrepared</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"update employees set hiredate = :d where empno = :e"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":d"</span><span class="p">,</span><span class="w"> </span><span class="n">d</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":e"</span><span class="p">,</span><span class="w"> </span><span class="n">empno</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">ExecutePrepared</span><span class="p">();</span>
+</pre></div>
+</div></div>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>Most <code>Date</code> code follows the same five steps, in this order:</p>
+<ol>
+<li><strong>Create the handle on the environment</strong> — <code>OCI_DateCreate(env)</code> /
+   <code>Date d(env)</code>. No connection needed; do it before or after you connect.</li>
+<li><strong>Fill it one of four ways</strong>: <code>SysDate</code> for "now", <code>SetDateTime</code> for explicit
+   parts, <code>FromText</code> to parse a string, <code>FromCTime</code> to import a <code>time_t</code>.</li>
+<li><strong>Do the arithmetic</strong>: <code>Compare</code> for ordering, <code>DaysBetween</code> for the delta,
+   <code>AddDays</code>/<code>AddMonths</code> to shift, <code>NextDay</code>/<code>LastDay</code> for calendar questions.</li>
+<li><strong>Bind it into a statement, or fetch it</strong> — the fetched one is borrowed from
+   the row; never free it.</li>
+<li><strong>Render it with <code>ToText</code></strong> and a format model when you need a string —
+   never rely on a default date format.</li>
+</ol>
+<p>Hints: check the return of <code>FromText</code> — a wrong format model silently produces
+garbage dates; <code>NextDay</code> takes the <em>day name</em> in the session language; for bulk
+work the <code>OCI_DateArray*</code> family allocates a whole array of dates in one call.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Compute each employee's tenure: days-between(today, hiredate)/365.</li>
+<li>Insert a row with <code>hiredate</code> parsed from text.</li>
+<li>Print next Friday's date from today.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Freeing a fetched date</strong> — fetched handles are borrowed; only created ones are
+  yours.</li>
+<li><strong>Expecting time zones</strong> — <code>DATE</code> has none; need TZ → <code>Timestamp</code> (next page).</li>
+<li><strong>Wrong format model</strong> — <code>YYYY-MM-DD</code> vs <code>DD-MON-YYYY</code> mismatches = garbage dates.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>The <code>Date</code> object: create/get/set/add/compare/convert — the full SQL DATE toolbox.</li>
+<li>Borrowed on fetch, owned on create, bound by pointer.</li>
+</ul>
+<p><strong>Next:</strong> <code>Timestamp</code> — sub-second precision and time zones.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="text-charsets.html"><span class="pn-dir">← Previous</span>Strings &amp; charsets</a><a class="pn-link pn-next" href="timestamps.html"><span class="pn-dir">Next →</span>Timestamps</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

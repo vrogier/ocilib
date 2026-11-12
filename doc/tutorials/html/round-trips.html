@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Server round-trips — which calls cross the wire — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Architecture</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Linux, macOS &amp; Unix</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="cpp-handles.html">C++ handle management</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3" open><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li class="active"><a href="round-trips.html">Round-trips</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span></div>
+    <h1 id="server-round-trips-which-calls-cross-the-wire">Server round-trips — which calls cross the wire</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>tell which OCILIB calls hit the network and which are purely client-side</li>
+<li>pick the cheaper verb for the same job (<code>Prepare</code> vs <code>Parse</code>, prefetching, autocommit)</li>
+</ul>
+<h2 id="the-rule-of-thumb">The rule of thumb</h2>
+<p>Every OCILIB call is either <strong>local</strong> — it works on client-side handles, buffers
+and cached metadata — or a <strong>round-trip</strong> — a request sent to the server and
+answered. Oracle counts round-trips per OCI call in its <em>OCI Function Server
+Round-Trips</em> appendix (OCI Programmer's Guide); the tables below map those
+counts onto the OCILIB surface.</p>
+<p>The mental model: <strong>creating, configuring, binding and reading back are local;
+asking the server to do something is a round-trip.</strong> The few surprises are worth
+memorizing — <code>Prepare</code> is local while <code>Parse</code> is not, and <code>FetchNext</code> only
+crosses the wire when its buffers run dry.</p>
+<h2 id="environment-connections-sessions">Environment, connections, sessions</h2>
+<table>
+<thead>
+<tr>
+<th>Call</th>
+<th>Round-trips</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_EnvironmentCreate</code></td>
+<td>0</td>
+<td>pure client-side init</td>
+</tr>
+<tr>
+<td><code>OCI_ConnectionCreate</code></td>
+<td>~2</td>
+<td>server attach + session begin (authentication-dependent)</td>
+</tr>
+<tr>
+<td><code>OCI_PoolCreate</code></td>
+<td>pool-min × logins</td>
+<td>sessions established upfront — then <code>OCI_PoolGetConnection</code> reuses them locally</td>
+</tr>
+<tr>
+<td><code>OCI_ConnectionPing</code></td>
+<td>1</td>
+<td>that's its job</td>
+</tr>
+<tr>
+<td><code>OCI_ConnectionBreak</code></td>
+<td>1</td>
+<td>interrupts a blocked call on the server side</td>
+</tr>
+<tr>
+<td><code>OCI_EnvironmentSetUserPassword</code></td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OCI_DatabaseStartup</code>, <code>OCI_DatabaseShutdown</code></td>
+<td>1 each</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="statements-the-one-surprise">Statements — the one surprise</h2>
+<table>
+<thead>
+<tr>
+<th>Call</th>
+<th>Round-trips</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_StatementCreate</code></td>
+<td>0</td>
+<td>local handle</td>
+</tr>
+<tr>
+<td><code>OCI_StatementPrepare</code></td>
+<td><strong>0</strong></td>
+<td>registers the SQL client-side — the real parse is deferred to execute</td>
+</tr>
+<tr>
+<td><code>OCI_StatementParse</code></td>
+<td><strong>1</strong></td>
+<td>asks the server to parse without executing</td>
+</tr>
+<tr>
+<td><code>OCI_StatementDescribe</code></td>
+<td>1</td>
+<td>select-list description without executing</td>
+</tr>
+<tr>
+<td><code>OCI_StatementExecutePrepared</code>, <code>OCI_StatementExecute</code>, <code>OCI_ConnectionImmediate*</code></td>
+<td>1</td>
+<td>parse + execute bundled into one trip</td>
+</tr>
+<tr>
+<td><code>OCI_Bind*</code>, <code>OCI_Register*</code>, <code>OCI_StatementSetFetchSize</code> and friends</td>
+<td>0</td>
+<td>all setters are local — bound data ships with the execute</td>
+</tr>
+</tbody>
+</table>
+<p>The asymmetry that catches people: <code>Prepare</code> is a <em>local</em> call — it stores the
+SQL text and allocates the context without contacting the server, and the parse
+rides along inside the first execute round-trip. <code>Parse</code> exists for the
+opposite need: it <em>forces</em> a server round-trip to validate the SQL (or warm the
+server's cursor cache) without running it.</p>
+<h2 id="resultsets-and-fetches">Resultsets and fetches</h2>
+<table>
+<thead>
+<tr>
+<th>Call</th>
+<th>Round-trips</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_StatementGetResultset</code>, <code>OCI_StatementGetNextResultset</code></td>
+<td>0</td>
+<td>resultsets materialized during execute</td>
+</tr>
+<tr>
+<td><code>OCI_FetchNext</code></td>
+<td>0 while the row buffer lasts, 1 per refill</td>
+<td>the refill serves <code>OCI_StatementSetFetchSize</code> rows plus prefetched ones — see <a href="fetch-tuning.html">fetch tuning</a></td>
+</tr>
+<tr>
+<td><code>OCI_ResultsetFetchPrev</code>/<code>First</code>/<code>Last</code>/<code>Seek</code></td>
+<td>0</td>
+<td>scrollable cursors fetch the whole set client-side</td>
+</tr>
+<tr>
+<td>all resultset getters</td>
+<td>0</td>
+<td>read client buffers</td>
+</tr>
+</tbody>
+</table>
+<h2 id="transactions">Transactions</h2>
+<table>
+<thead>
+<tr>
+<th>Call</th>
+<th>Round-trips</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_Commit</code>, <code>OCI_Rollback</code></td>
+<td>1</td>
+<td>— <code>OCI_ConnectionSetAutoCommit</code> folds the commit into the execute trip instead</td>
+</tr>
+<tr>
+<td><code>OCI_TransactionStart</code>, <code>OCI_TransactionStop</code>, <code>OCI_TransactionResume</code>, <code>OCI_TransactionPrepare</code>, <code>OCI_TransactionForget</code></td>
+<td>1 each</td>
+<td>local/global transaction verbs</td>
+</tr>
+<tr>
+<td><code>OCI_TransactionCreate</code></td>
+<td>0</td>
+<td>local object</td>
+</tr>
+</tbody>
+</table>
+<h2 id="lobs-and-longs">LOBs and LONGs</h2>
+<p>LOB locator calls each cross the wire, which is why streaming a LOB piece by
+piece adds up:</p>
+<table>
+<thead>
+<tr>
+<th>Call</th>
+<th>Round-trips</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_LobGetLength</code>, <code>OCI_LobGetChunkSize</code></td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OCI_LobOpen</code>, <code>OCI_LobClose</code>, <code>OCI_LobIsOpen</code></td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OCI_LobRead</code>, <code>OCI_LobWrite</code>, <code>OCI_LobAppend</code></td>
+<td>0 or 1</td>
+<td>0 while data stays in the client-side LOB buffer; <code>OCI_LobFlush</code> pushes modified pages (1 per page)</td>
+</tr>
+<tr>
+<td><code>OCI_LobTruncate</code>, <code>OCI_LobErase</code>, <code>OCI_LobCopy</code></td>
+<td>1</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OCI_LobIsTemporary</code>, <code>OCI_LobGetType</code>, <code>OCI_LobGetOffset</code></td>
+<td>0</td>
+<td>locator state is client-side</td>
+</tr>
+<tr>
+<td><code>OCI_Long*</code> piecewise read/write</td>
+<td>1 per piece</td>
+<td>piece info is negotiated with the server — see <a href="longs.html">LONGs &amp; LONG RAW</a></td>
+</tr>
+</tbody>
+</table>
+<p>Oracle's own guidance: when the data fits, prefer binding/defining text→<code>CLOB</code>
+and raw→<code>BLOB</code> through the normal data interface — it avoids locator calls
+entirely.</p>
+<h2 id="describes-and-metadata">Describes and metadata</h2>
+<table>
+<thead>
+<tr>
+<th>Call</th>
+<th>Round-trips</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_TypeInfoGet</code></td>
+<td>1</td>
+<td>server describe; the returned <code>OCI_TypeInfo</code> is then inspectable locally</td>
+</tr>
+<tr>
+<td>column info on an executed statement</td>
+<td>0</td>
+<td>describe data rides back with execute/fetch — the reason <code>Execute</code> is preferred over <code>Describe</code> + <code>Execute</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="objects-and-collections">Objects and collections</h2>
+<p>Once an object or collection is loaded in the client-side object cache,
+<strong>everything you do to it is local</strong>: <code>OCI_Object*</code> attribute accessors,
+<code>OCI_Collection*</code> getters (<code>GetElement</code>, <code>Append</code>, <code>Trim</code>, <code>Count</code>, …),
+iterators, mark/unmark — all 0. The trips hide in two places:</p>
+<table>
+<thead>
+<tr>
+<th>Call</th>
+<th>Round-trips</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>first touch of a not-yet-loaded object/collection</td>
+<td>1</td>
+<td>lazy-load into the object cache, then local</td>
+</tr>
+<tr>
+<td><code>OCI_TypeInfoGet</code> on object types</td>
+<td>1 +</td>
+<td>describing a type not in the cache costs extra trips — one per collection element/attribute/method descriptor</td>
+</tr>
+</tbody>
+</table>
+<h2 id="soda">SODA</h2>
+<p>The document store is deliberately simple: <strong>every operation is one
+round-trip, everything on your side of the handle is local</strong>.</p>
+<table>
+<thead>
+<tr>
+<th>Call</th>
+<th>Round-trips</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_SodaDatabaseCreateCollection</code>, <code>OCI_SodaDatabaseOpenCollection</code>, <code>OCI_SodaDatabaseGetCollections</code>, <code>OCI_SodaDatabaseGetCollectionNames</code></td>
+<td>1 each</td>
+<td>collection DDL/listing</td>
+</tr>
+<tr>
+<td><code>OCI_SodaCollectionInsertDocument</code>, <code>OCI_SodaCollectionInsertMany</code>, <code>OCI_SodaCollectionSave</code></td>
+<td>1</td>
+<td><code>InsertMany</code> ships the whole batch in one trip — the SODA equivalent of array binding</td>
+</tr>
+<tr>
+<td><code>OCI_SodaCollectionFind</code>, <code>FindOne</code>, <code>FindOneByKey</code>, <code>DocumentCount*</code>, <code>ReplaceOne*</code>, <code>Remove*</code></td>
+<td>1 each</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OCI_SodaCollectionDrop</code>, <code>Truncate</code>, <code>CreateIndex</code>, <code>DropIndex</code>, <code>GetDataGuide</code>, <code>ListIndexes</code></td>
+<td>1 each</td>
+<td></td>
+</tr>
+<tr>
+<td><code>OCI_SodaDocumentCursorGetNext</code>, <code>OCI_SodaCollectionCursorGetNext</code></td>
+<td>0 or 1</td>
+<td>batched like <code>FetchNext</code> — sized by <code>OCI_SodaOptionsSetFetchArraySize</code></td>
+</tr>
+<tr>
+<td><code>OCI_SodaDatabaseCreate</code>, <code>OCI_SodaDocumentCreate*</code>, <code>OCI_SodaOptionsCreate</code>/<code>Set*</code>, document getters, <code>IsMapped</code>, <code>GetMetadata</code>, all <code>*Free</code></td>
+<td>0</td>
+<td>local objects and metadata</td>
+</tr>
+</tbody>
+</table>
+<h2 id="json">JSON</h2>
+<p>The in-memory JSON DOM is essentially a client-side library — parsing, node
+creation and tree manipulation don't touch the server:</p>
+<table>
+<thead>
+<tr>
+<th>Call</th>
+<th>Round-trips</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_JsonLoadText</code>, <code>OCI_JsonLoadBinary</code></td>
+<td>0</td>
+<td>parsing is local</td>
+</tr>
+<tr>
+<td><code>OCI_JsonNodeCreate*</code>, <code>OCI_JsonNodeGet*</code>/<code>Set*</code>, <code>OCI_JsonSetRoot</code></td>
+<td>0</td>
+<td>pure DOM work</td>
+</tr>
+<tr>
+<td><code>OCI_JsonToText</code>, <code>OCI_JsonToBinary</code>, <code>OCI_JsonClone</code></td>
+<td>0 or 1</td>
+<td>usually local — a trip can occur when the document is bound to server state</td>
+</tr>
+</tbody>
+</table>
+<h2 id="queues-and-notifications">Queues and notifications</h2>
+<p><code>OCI_EnqueuePut</code> and <code>OCI_DequeueGet</code> cost one trip each — they post and pop
+against a server queue. <code>OCI_DequeueSubscribe</code> registers a server-side
+subscription (1); after that, callbacks arrive server-initiated — no polling
+trips. <code>OCI_SubscriptionCreate</code> registers for change notification (1); the
+notifications themselves are pushed.</p>
+<h2 id="always-local">Always local</h2>
+<p>These never reach the server: all resultset getters, <code>OCI_GetLastError</code> and the
+whole <code>OCI_Error*</code> surface, every <code>OCI_*Free</code> (and C++ destructor), all datatype
+manipulation — <code>OCI_Date*</code>, <code>OCI_Interval*</code>, <code>OCI_Timestamp*</code>, <code>OCI_Number*</code>,
+<code>OCI_String*</code> — handle attribute getters/setters, and <code>OCI_Statement*</code> setters
+of all kinds.</p>
+<h2 id="cutting-round-trips">Cutting round-trips</h2>
+<p>The levers, in order of payoff:</p>
+<ol>
+<li><strong>Raise <code>OCI_StatementSetFetchSize</code></strong> — one execute, then batches of rows per
+   refill instead of one round-trip per row. See <a href="fetch-tuning.html">fetch tuning</a>.</li>
+<li><strong><code>Prepare</code> once, <code>ExecutePrepared</code> many</strong> — never <code>Parse</code> in a loop; let the
+   parse ride inside the execute. See <a href="prepared-reexecute.html">prepare once, execute many</a>.</li>
+<li><strong>Array binding</strong> — N rows of DML in one execute round-trip. See
+   <a href="array-binding.html">array binding</a>.</li>
+<li><strong><code>OCI_ConnectionSetAutoCommit</code> / <code>OCI_COMMIT_ON_SUCCESS</code></strong> — the commit
+   shares the execute trip instead of adding its own.</li>
+<li><strong>Pool connections</strong> — session-establishment trips are paid once at pool
+   creation, not per use. See <a href="pooling-basics.html">connection pools</a>.</li>
+</ol>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>Prepare</code> is free, <code>Parse</code> costs a trip — the names suggest the opposite.</li>
+<li><code>Execute</code> bundles parse + run + describe in a single trip; <code>Describe</code> adds a
+  redundant one.</li>
+<li><code>FetchNext</code> is only as chatty as your fetch size is small.</li>
+<li>Everything else is local: getters, binds, setters, frees, errors.</li>
+</ul>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="longs.html"><span class="pn-dir">← Previous</span>LONG &amp; LONG RAW</a><a class="pn-link pn-next" href="checkpoint-1.html"><span class="pn-dir">Next →</span>Checkpoint 1 query console</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

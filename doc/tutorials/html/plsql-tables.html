@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PL/SQL index-by tables — array parameters — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Architecture</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Linux, macOS &amp; Unix</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="cpp-handles.html">C++ handle management</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="round-trips.html">Round-trips</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4" open><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li class="active"><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span><span class="badge badge-demo">demo/plsql_table.c</span><a class="badge badge-demo" href="assets/sql/plsql_table.sql">plsql_table.sql</a></div>
+    <h1 id="plsql-index-by-tables-array-parameters">PL/SQL index-by tables — array parameters</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>pass C arrays into <code>TABLE OF …</code> PL/SQL parameters</li>
+<li>receive arrays back with OUT direction</li>
+<li>use <code>OCI_StatementBind*Array</code> for PL/SQL table types</li>
+</ul>
+<h2 id="setup-from-demoplsql_tablesql">Setup (from <code>demo/plsql_table.sql</code>)</h2>
+<div class="highlight"><pre><span></span><code><span class="k">create</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="k">replace</span><span class="w"> </span><span class="n">package</span><span class="w"> </span><span class="n">test_plsqltables</span><span class="w"> </span><span class="k">as</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="n">t_tab_names</span><span class="w">  </span><span class="k">is</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">varchar2</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">binary_integer</span><span class="p">;</span>
+<span class="w">    </span><span class="k">type</span><span class="w"> </span><span class="n">t_tab_values</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">varchar2</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span><span class="w"> </span><span class="k">index</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="n">binary_integer</span><span class="p">;</span>
+<span class="w">    </span><span class="k">procedure</span><span class="w"> </span><span class="n">combine_values</span>
+<span class="w">        </span><span class="p">(</span><span class="n">p_names</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">t_tab_names</span><span class="p">,</span><span class="w"> </span><span class="n">p_values</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="n">t_tab_values</span><span class="p">,</span>
+<span class="w">         </span><span class="n">p_results</span><span class="w"> </span><span class="k">out</span><span class="w"> </span><span class="n">t_tab_values</span><span class="p">);</span>
+<span class="k">end</span><span class="p">;</span>
+<span class="o">/</span>
+</code></pre></div>
+
+<h2 id="binding-table-parameters">Binding table parameters</h2>
+<p>A <code>TABLE OF varchar2 INDEX BY …</code> parameter maps to <strong>an array of buffers</strong> bound
+with the array-bind family — element capacity + count go in the bind call, and the
+direction flag marks which tables come back:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="cp">#define SIZE_NAME  50</span>
+<span class="cp">#define SIZE_VALUE 50</span>
+<span class="cp">#define COUNT      4</span>
+
+<span class="n">otext</span><span class="w"> </span><span class="n">tab_names</span><span class="w"> </span><span class="p">[</span><span class="n">COUNT</span><span class="p">][</span><span class="n">SIZE_NAME</span><span class="p">];</span>
+<span class="n">otext</span><span class="w"> </span><span class="n">tab_values</span><span class="p">[</span><span class="n">COUNT</span><span class="p">][</span><span class="n">SIZE_VALUE</span><span class="p">];</span>
+<span class="n">otext</span><span class="w"> </span><span class="n">tab_out</span><span class="w">   </span><span class="p">[</span><span class="n">COUNT</span><span class="p">][</span><span class="n">SIZE_VALUE</span><span class="p">];</span>
+
+<span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"begin test_plsqltables.combine_values"</span>
+<span class="w">                      </span><span class="s">"(:tab_names, :tab_values, :tab_out); end;"</span><span class="p">));</span>
+
+<span class="n">OCI_StatementBindStringArray</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":tab_names"</span><span class="p">),</span><span class="w">  </span><span class="p">(</span><span class="n">otext</span><span class="o">*</span><span class="p">)</span><span class="n">tab_names</span><span class="p">,</span><span class="w">  </span><span class="n">SIZE_NAME</span><span class="p">,</span><span class="w">  </span><span class="n">COUNT</span><span class="p">);</span>
+<span class="n">OCI_StatementBindStringArray</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":tab_values"</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="n">otext</span><span class="o">*</span><span class="p">)</span><span class="n">tab_values</span><span class="p">,</span><span class="w"> </span><span class="n">SIZE_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">COUNT</span><span class="p">);</span>
+<span class="n">OCI_StatementBindStringArray</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":tab_out"</span><span class="p">),</span><span class="w">    </span><span class="p">(</span><span class="n">otext</span><span class="o">*</span><span class="p">)</span><span class="n">tab_out</span><span class="p">,</span><span class="w">    </span><span class="n">SIZE_VALUE</span><span class="p">,</span><span class="w"> </span><span class="n">COUNT</span><span class="p">);</span>
+
+<span class="cm">/* directions: first two IN, third OUT */</span>
+<span class="n">OCI_BindSetDirection</span><span class="p">(</span><span class="n">OCI_StatementGetBind</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_BDM_IN</span><span class="p">);</span>
+<span class="n">OCI_BindSetDirection</span><span class="p">(</span><span class="n">OCI_StatementGetBind</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_BDM_IN</span><span class="p">);</span>
+<span class="n">OCI_BindSetDirection</span><span class="p">(</span><span class="n">OCI_StatementGetBind</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_BDM_OUT</span><span class="p">);</span>
+
+<span class="n">OCI_StatementExecutePrepared</span><span class="p">(</span><span class="n">st</span><span class="p">);</span><span class="w">        </span><span class="cm">/* tab_out[][] now holds the combined strings */</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="o">&gt;</span><span class="w"> </span><span class="n">names</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="p">,</span><span class="w"> </span><span class="n">out</span><span class="p">(</span><span class="n">COUNT</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"begin test_plsqltables.combine_values(:tab_names, :tab_values, :tab_out); end;"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":tab_names"</span><span class="p">,</span><span class="w">  </span><span class="n">names</span><span class="p">,</span><span class="w">  </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">In</span><span class="p">,</span><span class="w">  </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">AsPlSqlTable</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":tab_values"</span><span class="p">,</span><span class="w"> </span><span class="n">values</span><span class="p">,</span><span class="w"> </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">In</span><span class="p">,</span><span class="w">  </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">AsPlSqlTable</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":tab_out"</span><span class="p">,</span><span class="w">    </span><span class="n">out</span><span class="p">,</span><span class="w">    </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">Out</span><span class="p">,</span><span class="w"> </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">AsPlSqlTable</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">ExecutePrepared</span><span class="p">();</span>
+</pre></div>
+</div></div>
+<p>Numeric tables bind plain C/vector arrays — no element-size arg needed:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Int32</span><span class="w"> </span><span class="n">ids</span><span class="p">[</span><span class="mi">64</span><span class="p">];</span>
+<span class="n">OCI_StatementBindInt32Array</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":ids"</span><span class="p">),</span><span class="w"> </span><span class="n">ids</span><span class="p">,</span><span class="w"> </span><span class="mi">64</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">Int32</span><span class="o">&gt;</span><span class="w"> </span><span class="n">ids</span><span class="p">(</span><span class="mi">64</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":ids"</span><span class="p">,</span><span class="w"> </span><span class="n">ids</span><span class="p">,</span><span class="w"> </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">In</span><span class="p">,</span><span class="w"> </span><span class="n">BindInfo</span><span class="o">::</span><span class="n">AsPlSqlTable</span><span class="p">);</span>
+</pre></div>
+</div></div>
+<h2 id="rules-that-differ-from-array-dml-binds">Rules that differ from array DML binds</h2>
+<ul>
+<li>The <strong>size arg</strong> in the array-bind call is the table element count; for string
+  arrays you also give the per-element buffer size.</li>
+<li>OUT tables: the bound array must be big enough to receive every element the block
+  writes.</li>
+<li>Direction is per-bind, not per element.</li>
+<li>C++ binds index-by tables with <code>BindInfo::AsPlSqlTable</code> (vs <code>AsArray</code> for SQL
+  array binds, page 810) — and <code>SetBindArraySize</code> is <strong>not</strong> used for PL/SQL tables.</li>
+</ul>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>PL/SQL tables (associative arrays) are the collection type that only exists
+in PL/SQL:</p>
+<ol>
+<li><strong>Declare the type</strong> in a package: <code>type t is table of number index by
+   binary_integer</code>.</li>
+<li><strong>Bind an array</strong> — <code>StatementBind*Array</code> binds a C array into the PL/SQL
+   table slot, element for element.</li>
+<li><strong>Direction matters</strong> — IN tables send your array in, OUT tables come back
+   filled, IN OUT do both.</li>
+</ol>
+<p>Hints: the array size must match the table's capacity — Oracle won't resize a
+PL/SQL table for you; <code>index by binary_integer</code> tables are the common case —
+<code>index by varchar2</code> tables are rarer and bound the same way; and an OUT table
+bind's array comes back <em>fully populated</em> — initialize it even though it's
+"output".</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Run <code>plsql_table.sql</code> + the sample; print <code>tab_out</code>.</li>
+<li>Pass an <code>in out</code> table and modify two elements server-side.</li>
+<li>Bind a <code>table of number</code> parameter with <code>OCI_StatementBindInt32Array</code>.</li>
+</ol>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong><code>SetBindArraySize</code> on PL/SQL tables</strong> — the docs warn against it; sizing comes
+  from the bind call itself.</li>
+<li><strong>Too-small OUT buffer</strong> — writes beyond capacity error or truncate.</li>
+<li><strong>Confusing <code>AsArray</code> vs <code>AsPlSqlTable</code></strong> — same C++ <code>Bind</code> overload, different
+  server semantics (SQL collections vs PL/SQL index-by tables).</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li><code>TABLE OF … INDEX BY</code> params = <code>OCI_StatementBind*Array</code> + <code>OCI_BDM_*</code> direction flags.</li>
+<li>C++: <code>vector</code> + <code>BindInfo::AsPlSqlTable</code>.</li>
+</ul>
+<p><strong>Next:</strong> <code>DBMS_OUTPUT</code> — printing server-side text from PL/SQL.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="implicit-resultsets.html"><span class="pn-dir">← Previous</span>Implicit resultsets (12c+)</a><a class="pn-link pn-next" href="server-output.html"><span class="pn-dir">Next →</span>DBMS_OUTPUT</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

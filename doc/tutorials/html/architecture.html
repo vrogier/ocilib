@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OCILIB architecture — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0" open><summary class="nav-part">Getting started</summary><ul class="nav-group"><li class="active"><a href="architecture.html">Architecture</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Linux, macOS &amp; Unix</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="cpp-handles.html">C++ handle management</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2"><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="round-trips.html">Round-trips</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-beginner">Beginner</span></div>
+    <h1 id="ocilib-architecture">OCILIB architecture</h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>recognize the objects OCILIB exposes and how they relate</li>
+<li>predict the lifecycle (create → use → free) of any OCILIB object</li>
+<li>tell owned handles from borrowed (transient) handles</li>
+<li>map a C API call to its C++ equivalent at a glance</li>
+<li>explain what "the API is synchronous" means in practice</li>
+</ul>
+<h2 id="the-handle-model">The handle model</h2>
+<p>OCILIB exposes every Oracle resource as an <strong>opaque handle</strong>: a <code>struct</code> you cannot see inside, always used through a pointer.</p>
+<p>The naming convention is uniform — once you know it, you can guess most of the API.
+The C++ API mirrors it 1:1:</p>
+<table>
+<thead>
+<tr>
+<th>C pattern</th>
+<th>C++ equivalent</th>
+<th>Role</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_&lt;Type&gt;</code></td>
+<td><code>ocilib::&lt;Type&gt;</code></td>
+<td>handle type / wrapper class</td>
+<td><code>OCI_Connection</code> ↔ <code>ocilib::Connection</code></td>
+</tr>
+<tr>
+<td><code>OCI_&lt;Type&gt;Create…()</code></td>
+<td><code>ocilib::&lt;Type&gt;(…)</code></td>
+<td>constructor</td>
+<td><code>OCI_ConnectionCreate(env, …)</code> ↔ <code>Connection cn(env, …)</code></td>
+</tr>
+<tr>
+<td><code>OCI_&lt;Type&gt;Free()</code></td>
+<td>destructor — RAII</td>
+<td>end of life</td>
+<td><code>OCI_ConnectionFree(cn)</code> ↔ end of <code>cn</code>'s scope</td>
+</tr>
+<tr>
+<td><code>OCI_&lt;Type&gt;&lt;Action&gt;()</code></td>
+<td><code>&lt;obj&gt;.&lt;Action&gt;()</code></td>
+<td>method</td>
+<td><code>OCI_StatementExecute(st, …)</code> ↔ <code>st.Execute(…)</code></td>
+</tr>
+<tr>
+<td><code>OCI_&lt;Type&gt;Get/Set&lt;Prop&gt;()</code></td>
+<td><code>&lt;obj&gt;.Get/Set&lt;Prop&gt;()</code></td>
+<td>property</td>
+<td><code>OCI_LobGetLength(lob)</code> ↔ <code>lob.GetLength()</code></td>
+</tr>
+<tr>
+<td><code>OCI_&lt;PREFIX&gt;_*</code></td>
+<td><code>&lt;Type&gt;::&lt;Member&gt;</code></td>
+<td>constant / enum member</td>
+<td><code>OCI_SESSION_SYSDBA</code> ↔ <code>Environment::SessionSysDba</code></td>
+</tr>
+</tbody>
+</table>
+<h2 id="the-ownership-tree">The ownership tree</h2>
+<p>Handles are not independent — they form a tree rooted at the <strong>environment</strong>:</p>
+<div class="highlight"><pre><span></span><code>environment                        ← created once, freed last
+├── connection                     ← one per database session
+│   ├── statement                  ← one per SQL command
+│   │   ├── resultset              ← borrowed — never freed
+│   │   │   └── column             ← borrowed — never freed
+│   │   └── bind                   ← owned by the statement
+│   └── transaction                ← optional explicit unit of work
+└── pool                           ← a group of reusable connections
+    └── connection                 ← borrowed — returned to the pool
+</code></pre></div>
+
+<p>Each concept maps to one handle type in C and one wrapper class in C++ — the
+complete inventory is listed at the bottom of this page:</p>
+<table>
+<thead>
+<tr>
+<th>Concept</th>
+<th>C handle type</th>
+<th>C++ wrapper</th>
+<th>Born by</th>
+<th>Dies by</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>environment</td>
+<td><code>OCI_Environment</code></td>
+<td><code>ocilib::Environment</code></td>
+<td><code>OCI_EnvironmentCreate</code></td>
+<td><code>OCI_EnvironmentFree</code></td>
+</tr>
+<tr>
+<td>connection</td>
+<td><code>OCI_Connection</code></td>
+<td><code>ocilib::Connection</code></td>
+<td><code>OCI_ConnectionCreate</code></td>
+<td><code>OCI_ConnectionFree</code></td>
+</tr>
+<tr>
+<td>statement</td>
+<td><code>OCI_Statement</code></td>
+<td><code>ocilib::Statement</code></td>
+<td><code>OCI_StatementCreate</code></td>
+<td><code>OCI_StatementFree</code></td>
+</tr>
+<tr>
+<td>resultset</td>
+<td><code>OCI_Resultset</code></td>
+<td><code>ocilib::Resultset</code></td>
+<td><code>OCI_StatementGetResultset</code></td>
+<td>never — dies with its statement</td>
+</tr>
+<tr>
+<td>column</td>
+<td><code>OCI_Column</code></td>
+<td><code>ocilib::Column</code></td>
+<td><code>OCI_ResultsetGetColumn</code></td>
+<td>never — dies with its statement</td>
+</tr>
+<tr>
+<td>bind</td>
+<td><code>OCI_Bind</code></td>
+<td><code>ocilib::BindInfo</code></td>
+<td><code>OCI_StatementBindXxx</code> factories + <code>OCI_Bind*</code> methods</td>
+<td>never — dies with its statement</td>
+</tr>
+<tr>
+<td>transaction</td>
+<td><code>OCI_Transaction</code></td>
+<td><code>ocilib::Transaction</code></td>
+<td><code>OCI_TransactionCreate</code></td>
+<td><code>OCI_TransactionFree</code></td>
+</tr>
+<tr>
+<td>pool</td>
+<td><code>OCI_Pool</code></td>
+<td><code>ocilib::Pool</code></td>
+<td><code>OCI_PoolCreate</code></td>
+<td><code>OCI_PoolFree</code></td>
+</tr>
+<tr>
+<td>pooled connection</td>
+<td><code>OCI_Connection</code></td>
+<td><code>ocilib::Connection</code></td>
+<td><code>OCI_PoolGetConnection</code></td>
+<td><code>OCI_ConnectionFree</code> — returns it to the pool</td>
+</tr>
+</tbody>
+</table>
+<p>Three rules cover every case:</p>
+<ol>
+<li><strong>Create/free pairs.</strong> Anything you create, you free — before freeing its
+   parent. Children die with their parent anyway, so the safe order is always
+   <em>leaf → root</em>.</li>
+<li><strong>Borrowed handles are never freed.</strong> Resultsets, columns and pooled
+   connections are handed to you by the object that owns them. Use them, don't
+   free them. In C++ these are acquired <em>transiently</em> and release their parent
+   automatically.</li>
+<li><strong>The C++ layer removes rule 1 entirely.</strong> A <code>Connection</code> object frees its
+   handle when it goes out of scope — and exceptions unwind everything correctly.</li>
+</ol>
+<h2 id="every-handle-type">Every handle type</h2>
+<p>The same pattern extends to every OCILIB object. Here is the complete inventory —
+the parent is always the object that creates (or lends) the handle:</p>
+<table>
+<thead>
+<tr>
+<th>C type</th>
+<th>C++ wrapper</th>
+<th>Parent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_Environment</code></td>
+<td><code>ocilib::Environment</code></td>
+<td>— (root)</td>
+</tr>
+<tr>
+<td><code>OCI_Pool</code></td>
+<td><code>ocilib::Pool</code></td>
+<td>environment</td>
+</tr>
+<tr>
+<td><code>OCI_Connection</code></td>
+<td><code>ocilib::Connection</code></td>
+<td>environment — or a pool</td>
+</tr>
+<tr>
+<td><code>OCI_Transaction</code></td>
+<td><code>ocilib::Transaction</code></td>
+<td>connection</td>
+</tr>
+<tr>
+<td><code>OCI_Statement</code></td>
+<td><code>ocilib::Statement</code></td>
+<td>connection</td>
+</tr>
+<tr>
+<td><code>OCI_Resultset</code></td>
+<td><code>ocilib::Resultset</code></td>
+<td>statement</td>
+</tr>
+<tr>
+<td><code>OCI_Column</code></td>
+<td><code>ocilib::Column</code></td>
+<td>resultset</td>
+</tr>
+<tr>
+<td><code>OCI_Bind</code></td>
+<td><code>ocilib::BindInfo</code></td>
+<td>statement</td>
+</tr>
+<tr>
+<td><code>OCI_Error</code></td>
+<td><code>ocilib::Exception</code></td>
+<td>— (delivered to your error handler)</td>
+</tr>
+<tr>
+<td><code>OCI_Number</code></td>
+<td><code>ocilib::Number</code></td>
+<td>environment</td>
+</tr>
+<tr>
+<td><code>OCI_Date</code></td>
+<td><code>ocilib::Date</code></td>
+<td>environment</td>
+</tr>
+<tr>
+<td><code>OCI_Timestamp</code></td>
+<td><code>ocilib::Timestamp</code></td>
+<td>environment</td>
+</tr>
+<tr>
+<td><code>OCI_Interval</code></td>
+<td><code>ocilib::Interval</code></td>
+<td>environment</td>
+</tr>
+<tr>
+<td><code>OCI_Lob</code></td>
+<td><code>ocilib::Lob</code></td>
+<td>connection — or statement when fetched</td>
+</tr>
+<tr>
+<td><code>OCI_File</code></td>
+<td><code>ocilib::File</code></td>
+<td>connection — or statement when fetched</td>
+</tr>
+<tr>
+<td><code>OCI_Long</code></td>
+<td><code>ocilib::Long</code></td>
+<td>statement</td>
+</tr>
+<tr>
+<td><code>OCI_Json</code></td>
+<td><code>ocilib::Json</code></td>
+<td>connection — or statement when fetched</td>
+</tr>
+<tr>
+<td><code>OCI_JsonNode</code></td>
+<td><code>ocilib::JsonNode</code></td>
+<td>a JSON document — or a parent node</td>
+</tr>
+<tr>
+<td><code>OCI_Vector</code></td>
+<td><code>ocilib::Vector</code></td>
+<td>connection — or statement when fetched</td>
+</tr>
+<tr>
+<td><code>OCI_XmlType</code></td>
+<td><code>ocilib::XmlType</code></td>
+<td>statement</td>
+</tr>
+<tr>
+<td><code>OCI_TypeInfo</code></td>
+<td><code>ocilib::TypeInfo</code></td>
+<td>connection</td>
+</tr>
+<tr>
+<td><code>OCI_Object</code></td>
+<td><code>ocilib::Object</code></td>
+<td>type info — or statement when fetched</td>
+</tr>
+<tr>
+<td><code>OCI_Collection</code></td>
+<td><code>ocilib::Collection</code></td>
+<td>type info — or statement when fetched</td>
+</tr>
+<tr>
+<td><code>OCI_Element</code></td>
+<td><code>ocilib::CollectionElement</code></td>
+<td>collection</td>
+</tr>
+<tr>
+<td><code>OCI_Iterator</code></td>
+<td>—</td>
+<td>collection</td>
+</tr>
+<tr>
+<td><code>OCI_Reference</code></td>
+<td><code>ocilib::Reference</code></td>
+<td>type info — or statement when fetched</td>
+</tr>
+<tr>
+<td><code>OCI_HashTable</code></td>
+<td>—</td>
+<td>environment</td>
+</tr>
+<tr>
+<td><code>OCI_Subscription</code></td>
+<td><code>ocilib::Subscription</code></td>
+<td>connection</td>
+</tr>
+<tr>
+<td><code>OCI_Event</code></td>
+<td><code>ocilib::Event</code></td>
+<td>subscription</td>
+</tr>
+<tr>
+<td><code>OCI_Message</code></td>
+<td><code>ocilib::Message</code></td>
+<td>type info — or a dequeue</td>
+</tr>
+<tr>
+<td><code>OCI_Agent</code></td>
+<td><code>ocilib::Agent</code></td>
+<td>connection</td>
+</tr>
+<tr>
+<td><code>OCI_Enqueue</code></td>
+<td><code>ocilib::Enqueue</code></td>
+<td>type info</td>
+</tr>
+<tr>
+<td><code>OCI_Dequeue</code></td>
+<td><code>ocilib::Dequeue</code></td>
+<td>type info</td>
+</tr>
+<tr>
+<td><code>OCI_SodaDatabase</code></td>
+<td><code>ocilib::SodaDatabase</code></td>
+<td>connection</td>
+</tr>
+<tr>
+<td><code>OCI_SodaCollection</code></td>
+<td><code>ocilib::SodaCollection</code></td>
+<td>SODA database</td>
+</tr>
+<tr>
+<td><code>OCI_SodaDocument</code></td>
+<td><code>ocilib::SodaDocument</code></td>
+<td>SODA database — or a doc cursor</td>
+</tr>
+<tr>
+<td><code>OCI_SodaOptions</code></td>
+<td><code>ocilib::SodaOptions</code></td>
+<td>SODA database</td>
+</tr>
+<tr>
+<td><code>OCI_SodaCollectionCursor</code></td>
+<td><code>ocilib::SodaCollectionCursor</code></td>
+<td>SODA database</td>
+</tr>
+<tr>
+<td><code>OCI_SodaDocumentCursor</code></td>
+<td><code>ocilib::SodaDocumentCursor</code></td>
+<td>SODA collection</td>
+</tr>
+<tr>
+<td><code>OCI_DirectPath</code></td>
+<td><code>ocilib::DirectPath</code></td>
+<td>type info</td>
+</tr>
+<tr>
+<td><code>OCI_ShardingKey</code></td>
+<td><code>ocilib::ShardingKey</code></td>
+<td>environment</td>
+</tr>
+</tbody>
+</table>
+<p>A few types have no C++ twin (<code>—</code>) because the C++ layer covers the job
+differently — collections are iterated with C++-style iterators instead of an
+<code>OCI_Iterator</code> handle, for instance.</p>
+<h2 id="errors-the-fourth-leg">Errors: the fourth leg</h2>
+<p>Every call that can fail either returns <code>FALSE</code>/NULL (C) or throws an
+<code>ocilib::Exception</code> (C++). In C, two channels deliver the details:</p>
+<ul>
+<li>your <strong>error handler callback</strong> — installed when the environment is created,
+  invoked immediately with a filled error object;</li>
+<li>the <strong>last-error poll</strong> — <code>OCI_GetLastError()</code> returns the calling thread's
+  most recent error at any time.</li>
+</ul>
+<h2 id="calls-are-synchronous">Calls are synchronous</h2>
+<p>OCILIB is a <strong>synchronous</strong> API: every call does its work before it returns.
+Executing a statement sends it to the server and comes back once the server has
+answered; fetching returns once the next row is in hand. There are no futures,
+promises or completion queues — if a call takes time, the calling thread waits
+inside it. A blocking call can always be interrupted from another thread with
+<code>OCI_ConnectionBreak</code> (see <a href="multithreading.html">Multithreading</a>).</p>
+<p>Two things only <em>look</em> asynchronous and are worth separating from the calling
+model:</p>
+<ul>
+<li><strong>server-initiated events</strong> — AQ dequeue subscriptions, database change
+  notifications and agent messages are delivered to a callback you register;
+  they need the <code>OCI_ENV_EVENTS</code> environment flag (see
+  <a href="aq-async.html">Async dequeue &amp; agents</a>);</li>
+<li><strong>overlapping work</strong> — OCILIB's answer is threads, not an async API: one
+  connection per thread under <code>OCI_ENV_THREADED</code>, or a pool that hands
+  connections out (see <a href="multithreading.html">Multithreading</a> and
+  <a href="pooling-basics.html">Connection pools</a>).</li>
+</ul>
+<h2 id="the-two-build-flavors">The two build flavors</h2>
+<table>
+<thead>
+<tr>
+<th>Flavor</th>
+<th>Compile define</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>MBCS</td>
+<td><code>OCI_CHARSET_MBCS</code></td>
+<td><code>otext</code> = <code>char</code>, strings are bytes</td>
+</tr>
+<tr>
+<td>Wide</td>
+<td><code>OCI_CHARSET_WIDE</code></td>
+<td><code>otext</code> = <code>wchar_t</code> (UTF-16)</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Import</th>
+<th>Compile define</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Linkage</td>
+<td><code>OCI_IMPORT_LINKAGE</code></td>
+<td>link against <code>oci.lib</code>/<code>libclntsh</code> at build time</td>
+</tr>
+<tr>
+<td>Runtime</td>
+<td><code>OCI_IMPORT_RUNTIME</code></td>
+<td>OCILIB <code>dlopen</code>s the Oracle client itself — no Oracle SDK needed to build</td>
+</tr>
+</tbody>
+</table>
+<p>Both pairs are chosen when <strong>OCILIB</strong> is built; your application code stays identical
+thanks to the <code>otext</code>/<code>OTEXT()</code> abstraction you will see in every sample.</p>
+<h2 id="try-it-yourself">Try it yourself</h2>
+<ol>
+<li>Open <code>include/ocilibc/api.h</code> and pick any type (e.g. <code>OCI_Date</code>). Count how many
+   of its functions you can <em>predict</em> from the naming rules above.</li>
+<li>In <code>include/ocilibcpp/types.hpp</code>, find the C++ class matching your chosen type.</li>
+</ol>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>Handles are opaque, named <code>OCI_&lt;Type&gt;</code>, with uniform Create/Free/Get/Set naming.</li>
+<li>Ownership is a tree rooted at the environment; borrowed handles are never freed.</li>
+<li>C returns <code>FALSE</code>/NULL + error callback; C++ throws <code>ocilib::Exception</code>.</li>
+<li>Calls are synchronous and blocking; concurrency comes from threads and pools,
+  and only server-initiated notifications use callbacks.</li>
+<li>MBCS/wide charset and linkage/runtime import are build-time choices; your code does not change.</li>
+</ul>
+<p><strong>Next:</strong> get the two things every sample needs — an Oracle database and the Instant Client.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="index.html"><span class="pn-dir">← Previous</span>Welcome</a><a class="pn-link pn-next" href="prerequisites.html"><span class="pn-dir">Next →</span>Prerequisites</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

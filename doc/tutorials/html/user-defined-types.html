@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>User-defined types — OCI_Object — OCILIB Tutorials</title>
+<link rel="stylesheet" href="assets/tutorials.css">
+<link rel="stylesheet" href="assets/tutorials-dark.css">
+<link rel="stylesheet" href="assets/pygments.css">
+<link rel="stylesheet" href="assets/pygments-dark.css">
+<script src="assets/tutorials.js" defer></script>
+</head>
+<body>
+<header class="topbar">
+  <button id="nav-toggle" class="icon-btn" aria-label="Toggle navigation">☰</button>
+  <a class="brand" href="index.html">OCILIB Tutorials <span class="brand-ver">v5.0.0</span></a>
+  <div class="topbar-actions">
+    <button id="theme-toggle" class="icon-btn" aria-label="Toggle dark theme">◐</button>
+  </div>
+</header>
+<div class="layout">
+  <nav class="sidebar" id="sidebar"><ul class="nav-group nav-top"><li><a href="index.html">Welcome</a></li></ul><details class="nav-details" data-part="0"><summary class="nav-part">Getting started</summary><ul class="nav-group"><li><a href="architecture.html">Architecture</a></li><li><a href="prerequisites.html">Prerequisites</a></li><li><a href="setup-windows.html">Developing on Windows</a></li><li><a href="setup-linux.html">Linux, macOS &amp; Unix</a></li><li><a href="charsets.html">Charset builds</a></li><li><a href="first-project.html">Your first OCILIB project</a></li><li><a href="hello-ocilib.html">The environment</a></li><li><a href="first-connection.html">Your first connection</a></li><li><a href="cpp-handles.html">C++ handle management</a></li><li><a href="error-handling.html">Error handling in depth</a></li><li><a href="logging.html">Logging</a></li><li><a href="quickstart-checklist.html">Checkpoint 0 quickstart</a></li></ul></details><details class="nav-details" data-part="1"><summary class="nav-part">Connections &amp; environments</summary><ul class="nav-group"><li><a href="connection-strings.html">Connection strings</a></li><li><a href="connection-attrs.html">Connection attributes</a></li><li><a href="ping-break.html">Ping &amp; break</a></li><li><a href="library-info.html">Library introspection</a></li><li><a href="environments.html">Environments in depth</a></li></ul></details><details class="nav-details" data-part="2" open><summary class="nav-part">Oracle data types</summary><ul class="nav-group"><li><a href="text-charsets.html">Strings &amp; charsets</a></li><li><a href="dates.html">Dates</a></li><li><a href="timestamps.html">Timestamps</a></li><li><a href="intervals.html">Intervals</a></li><li><a href="numbers.html">Numbers</a></li><li><a href="raw.html">RAW</a></li><li><a href="vectors.html">AI vectors 23ai</a></li><li><a href="lobs-basics.html">LOBs basics</a></li><li><a href="lobs-advanced.html">LOBs advanced</a></li><li><a href="bfiles.html">BFILEs</a></li><li><a href="xmltype.html">XMLType</a></li><li><a href="json-columns.html">JSON columns</a></li><li><a href="json-dom.html">JSON DOM</a></li><li><a href="plsql-types.html">PL/SQL types</a></li><li class="active"><a href="user-defined-types.html">User types</a></li><li><a href="checkpoint-4.html">Checkpoint 4 profiles</a></li></ul></details><details class="nav-details" data-part="3"><summary class="nav-part">SQL, fetching &amp; binding</summary><ul class="nav-group"><li><a href="statement-lifecycle.html">The statement lifecycle</a></li><li><a href="first-select.html">Running your first SELECT</a></li><li><a href="fetch-getters.html">Fetching rows</a></li><li><a href="getter-type-map.html">Getter type map</a></li><li><a href="struct-mapping.html">Mapping rows into C structs</a></li><li><a href="column-metadata.html">Column metadata</a></li><li><a href="bind-basics.html">Bind variables</a></li><li><a href="bind-types-complete.html">All bind types</a></li><li><a href="bind-management.html">Managing binds</a></li><li><a href="prepared-reexecute.html">Prepare once, execute many</a></li><li><a href="describe.html">Describing SQL</a></li><li><a href="fetch-tuning.html">Fetch tuning</a></li><li><a href="scrollable.html">Scrollable resultsets</a></li><li><a href="rowid-returning.html">ROWID and DML RETURNING</a></li><li><a href="longs.html">LONG &amp; LONG RAW</a></li><li><a href="round-trips.html">Round-trips</a></li><li><a href="checkpoint-1.html">Checkpoint 1 query console</a></li></ul></details><details class="nav-details" data-part="4"><summary class="nav-part">PL/SQL</summary><ul class="nav-group"><li><a href="plsql-blocks.html">Anonymous PL/SQL blocks</a></li><li><a href="plsql-out-params.html">Procedures &amp; OUT params</a></li><li><a href="ref-cursors.html">REF CURSORs</a></li><li><a href="implicit-resultsets.html">Implicit resultsets (12c+)</a></li><li><a href="plsql-tables.html">PL/SQL tables</a></li><li><a href="server-output.html">DBMS_OUTPUT</a></li><li><a href="checkpoint-2.html">Checkpoint 2 payroll</a></li></ul></details><details class="nav-details" data-part="5"><summary class="nav-part">Transactions, pooling &amp; threads</summary><ul class="nav-group"><li><a href="transactions-basics.html">Transactions</a></li><li><a href="transaction-objects.html">Transaction objects</a></li><li><a href="pooling-basics.html">Connection pooling</a></li><li><a href="pool-tuning.html">Pool tuning &amp; monitoring</a></li><li><a href="multithreading.html">Multithreading</a></li><li><a href="checkpoint-3.html">Checkpoint 3 pool workers</a></li></ul></details><details class="nav-details" data-part="6"><summary class="nav-part">Object-relational API</summary><ul class="nav-group"><li><a href="describe-schema.html">Describing schema objects</a></li><li><a href="objects-basics.html">Objects basics</a></li><li><a href="objects-attrs-complete.html">Object attributes</a></li><li><a href="objects-ops.html">Object operations</a></li><li><a href="collections-basics.html">Collections basics</a></li><li><a href="collections-advanced.html">Collections advanced</a></li><li><a href="refs.html">REFs</a></li><li><a href="geometry-case-study.html">Case study object graph</a></li><li><a href="checkpoint-5.html">Checkpoint 5 org chart</a></li></ul></details><details class="nav-details" data-part="7"><summary class="nav-part">Messaging &amp; notifications</summary><ul class="nav-group"><li><a href="aq-setup.html">Queues &amp; queue tables</a></li><li><a href="aq-enqueue.html">Enqueueing messages</a></li><li><a href="aq-dequeue.html">Dequeueing messages</a></li><li><a href="aq-async.html">Async dequeue &amp; agents</a></li><li><a href="notifications.html">Change notification</a></li><li><a href="checkpoint-6.html">Checkpoint 6 jobs</a></li></ul></details><details class="nav-details" data-part="8"><summary class="nav-part">Bulk &amp; administration</summary><ul class="nav-group"><li><a href="array-binding.html">Array binding</a></li><li><a href="direct-path.html">Direct path loading</a></li><li><a href="database-admin.html">Database admin</a></li><li><a href="hash-tables.html">Hash tables</a></li><li><a href="checkpoint-7.html">Checkpoint 7 bulk loader</a></li></ul></details><details class="nav-details" data-part="9"><summary class="nav-part">Modern Oracle features</summary><ul class="nav-group"><li><a href="sharding.html">Sharding</a></li><li><a href="soda-basics.html">SODA basics</a></li><li><a href="soda-advanced.html">SODA advanced</a></li><li><a href="capstone.html">Capstone</a></li><li><a href="empdir-implementation.html">empdir source</a></li></ul></details><details class="nav-details" data-part="10"><summary class="nav-part">Appendices</summary><ul class="nav-group"><li><a href="appendix-api-map.html">API map</a></li><li><a href="appendix-type-map.html">Type map</a></li><li><a href="appendix-errors.html">Error model</a></li><li><a href="appendix-build-flags.html">Build flags</a></li><li><a href="appendix-oracle-matrix.html">Version matrix</a></li><li><a href="appendix-faq.html">FAQ</a></li><li><a href="appendix-demos-index.html">Demo index</a></li><li><a href="appendix-migration.html">From OCILIB 4.x</a></li><li><a href="appendix-api-index.html">API index</a></li></ul></details></nav>
+  <div class="sidebar-scrim" id="sidebar-scrim"></div>
+  <main class="content">
+    <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span><span class="badge badge-demo">demo/object.c</span></div>
+    <h1 id="user-defined-types-oci_object-object">User-defined types — <code>OCI_Object</code> / <code>Object</code></h1>
+<p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
+<ul>
+<li>describe a schema <code>CREATE TYPE</code> with <code>OCI_TypeInfo</code></li>
+<li>create, read and write object attributes</li>
+<li>bind and fetch objects in SQL and PL/SQL</li>
+</ul>
+<h2 id="in-context-schema-objects-vs-plsql-records">In context — schema objects vs PL/SQL records</h2>
+<p>Oracle gives you two ways to build a composite type, and they land on different
+OCILIB paths. A <strong>UDT</strong> (<code>CREATE TYPE … AS OBJECT</code>) is a <em>schema-level</em> object —
+it lives in the data dictionary, can be a column type in any table, and can be
+returned by SQL functions. A <strong>PL/SQL RECORD</strong> (previous page) is anonymous and
+package-scoped — it exists only inside PL/SQL execution. Both map to
+<code>OCI_Object</code>, but only the UDT can appear in a SELECT list or a column
+definition.</p>
+<p>Describing is the entry point for both: <code>OCI_TypeInfoGet</code> walks the data
+dictionary and hands you back the attribute layout — names, types, order — which
+is what the <code>Get</code>/<code>Set</code> accessors then index. Because describing hits the
+dictionary, OCILIB caches type info internally; the <code>TypeInfo</code> object itself is
+borrowed (owned by the connection's cache) while each <code>Object</code> you create is
+yours to free.</p>
+<h2 id="the-object-handle">The Object handle</h2>
+<p>A <strong>user-defined type</strong> (UDT) is a schema-level <code>CREATE TYPE … AS OBJECT</code> — a
+structured row of named attributes, stored as a table column or passed to
+PL/SQL.</p>
+<p>OCILIB represents every UDT instance as <strong><code>OCI_Object</code></strong> (C) / <strong><code>Object</code></strong>
+(C++) — the same handle that backs PL/SQL <code>RECORD</code>s (previous page). Describe
+the type once, then create instances, get/set attributes by name, and bind them
+into statements.</p>
+<table>
+<thead>
+<tr>
+<th>C function</th>
+<th>C++ method</th>
+<th>purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>OCI_TypeInfoGet</code> (<code>OCI_TIF_TYPE</code>)</td>
+<td><code>TypeInfo</code> ctor</td>
+<td>describe the UDT</td>
+</tr>
+<tr>
+<td><code>OCI_ObjectCreate</code></td>
+<td><code>Object</code> ctor</td>
+<td>instantiate</td>
+</tr>
+<tr>
+<td><code>OCI_ObjectFree</code></td>
+<td>— (RAII)</td>
+<td>release</td>
+</tr>
+<tr>
+<td><code>OCI_ObjectGet{Type}</code> / <code>OCI_ObjectSet{Type}</code></td>
+<td><code>Get&lt;T&gt;</code> / <code>Set&lt;T&gt;</code></td>
+<td>attribute access</td>
+</tr>
+<tr>
+<td><code>OCI_ObjectGetStruct</code></td>
+<td>—</td>
+<td>all attrs → C struct</td>
+</tr>
+<tr>
+<td><code>OCI_StatementBindObject</code></td>
+<td><code>Bind(":o", obj)</code></td>
+<td>SQL/PLSQL param</td>
+</tr>
+<tr>
+<td><code>OCI_ResultsetGetObject</code></td>
+<td><code>Get&lt;Object&gt;</code></td>
+<td>fetch a UDT column</td>
+</tr>
+</tbody>
+</table>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_TypeInfo</span><span class="w"> </span><span class="o">*</span><span class="n">ti</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_TypeInfoGet</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"VENDOR"</span><span class="p">),</span><span class="w"> </span><span class="n">OCI_TIF_TYPE</span><span class="p">);</span>
+<span class="n">OCI_Object</span><span class="w">   </span><span class="o">*</span><span class="n">v</span><span class="w">  </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ObjectCreate</span><span class="p">(</span><span class="n">ti</span><span class="p">);</span>
+
+<span class="n">OCI_ObjectSetInt32</span><span class="w"> </span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"CODE"</span><span class="p">),</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+<span class="n">OCI_ObjectSetString</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">),</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"ACME"</span><span class="p">));</span>
+
+<span class="n">OCI_StatementPrepare</span><span class="p">(</span><span class="n">st</span><span class="p">,</span>
+<span class="w">    </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"insert into vendors(id, vendor) values(:i, :v)"</span><span class="p">));</span>
+<span class="n">OCI_StatementBindInt32</span><span class="w"> </span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":i"</span><span class="p">),</span><span class="w"> </span><span class="o">&amp;</span><span class="n">id</span><span class="p">);</span>
+<span class="n">OCI_StatementBindObject</span><span class="p">(</span><span class="n">st</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">":v"</span><span class="p">),</span><span class="w"> </span><span class="n">v</span><span class="p">);</span>
+<span class="n">OCI_StatementExecutePrepared</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+
+<span class="n">OCI_ObjectFree</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Object</span><span class="w"> </span><span class="n">v</span><span class="p">(</span><span class="n">TypeInfo</span><span class="p">(</span><span class="n">con</span><span class="p">,</span><span class="w"> </span><span class="s">"VENDOR"</span><span class="p">,</span><span class="w"> </span><span class="n">TypeInfo</span><span class="o">::</span><span class="n">Type</span><span class="p">));</span>
+
+<span class="n">v</span><span class="p">.</span><span class="n">Set</span><span class="o">&lt;</span><span class="n">Int32</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"CODE"</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+<span class="n">v</span><span class="p">.</span><span class="n">Set</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="w"> </span><span class="p">(</span><span class="s">"NAME"</span><span class="p">,</span><span class="w"> </span><span class="s">"ACME"</span><span class="p">);</span>
+
+<span class="n">st</span><span class="p">.</span><span class="n">Prepare</span><span class="p">(</span><span class="s">"insert into vendors(id, vendor) values(:i, :v)"</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":i"</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">Bind</span><span class="p">(</span><span class="s">":v"</span><span class="p">,</span><span class="w"> </span><span class="n">v</span><span class="p">);</span>
+<span class="n">st</span><span class="p">.</span><span class="n">ExecutePrepared</span><span class="p">();</span><span class="w">          </span><span class="cm">/* v is RAII — no free needed */</span>
+</pre></div>
+</div></div>
+<p>Fetching a <code>VENDOR</code>-typed column gives a <strong>borrowed</strong> <code>Object</code> — read it, never
+free it:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_Resultset</span><span class="w"> </span><span class="o">*</span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_StatementGetResultset</span><span class="p">(</span><span class="n">st</span><span class="p">);</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_ResultsetFetchNext</span><span class="p">(</span><span class="n">rs</span><span class="p">))</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">OCI_Object</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_ResultsetGetObject</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span><span class="w">   </span><span class="cm">/* borrowed! */</span>
+<span class="w">    </span><span class="n">printf</span><span class="p">(</span><span class="s">"%d %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span>
+<span class="w">           </span><span class="n">OCI_ObjectGetInt32</span><span class="w"> </span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"CODE"</span><span class="p">)),</span>
+<span class="w">           </span><span class="n">OCI_ObjectGetString</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">OTEXT</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">)));</span>
+<span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">Resultset</span><span class="w"> </span><span class="n">rs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">st</span><span class="p">.</span><span class="n">GetResultset</span><span class="p">();</span>
+<span class="k">while</span><span class="w"> </span><span class="p">(</span><span class="n">rs</span><span class="p">.</span><span class="n">Next</span><span class="p">())</span>
+<span class="p">{</span>
+<span class="w">    </span><span class="n">Object</span><span class="w"> </span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">rs</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Object</span><span class="o">&gt;</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span><span class="w">                    </span><span class="cm">/* borrowed! */</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">cout</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">Int32</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"CODE"</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">' '</span>
+<span class="w">              </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">Get</span><span class="o">&lt;</span><span class="n">String</span><span class="o">&gt;</span><span class="p">(</span><span class="s">"NAME"</span><span class="p">)</span><span class="w">  </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="sc">'\n'</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+</div></div>
+<h2 id="beyond-plain-objects">Beyond plain objects</h2>
+<p>UDTs compose — an attribute can be another UDT, a <code>VARRAY</code>/nested table, a
+<code>REF</code>, or any scalar. That whole family shares the object-relational API:</p>
+<ul>
+<li><strong><a href="objects-basics.html">Objects &amp; attributes</a></strong> — the full <code>Object</code> API</li>
+<li><strong><a href="collections-basics.html">Collections</a></strong> — <code>OCI_Collection</code>/<code>Collection</code> for
+  <code>VARRAY</code> and nested-table attributes</li>
+<li><strong><a href="refs.html">REFs</a></strong> — <code>OCI_Reference</code>/<code>Reference</code> pointers between objects</li>
+<li><strong><a href="describe-schema.html">Describe</a></strong> — <code>OCI_TypeInfo</code>/<code>TypeInfo</code> introspection</li>
+</ul>
+<h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
+<p>UDT work always starts with the dictionary, not the data:</p>
+<ol>
+<li><strong>Describe the type</strong> with <code>TypeInfoGet(con, "MY_TYPE", OCI_TIF_TYPE)</code> —
+   fully qualified with the schema when it isn't yours. This one call walks
+   the data dictionary and gives you the attribute layout everything else
+   depends on.</li>
+<li><strong>Create the object</strong> from that <code>TypeInfo</code> — <code>ObjectCreate</code> builds an
+   <code>OCI_Object</code> you own.</li>
+<li><strong>Fill the attributes</strong> by name — <code>Set</code>/<code>Set&lt;Type&gt;</code> — then bind it into an
+   INSERT or PL/SQL call with <code>BindObject</code>.</li>
+<li><strong>Fetch it back</strong>: a UDT column arrives as a borrowed <code>Object</code> — read the
+   attributes with <code>Get</code>/<code>Get&lt;Type&gt;</code>; never free the handle.</li>
+<li><strong>Go deeper</strong>: <code>ObjectGetColl</code> pulls a nested collection attribute,
+   <code>ObjectGetSelfReference</code> gives a <code>REF</code> you can bind elsewhere — both come
+   from the same describe-first machinery.</li>
+</ol>
+<p>Hints: <code>OCI_TIF_TYPE</code> describes a <em>type</em>, <code>OCI_TIF_TABLE</code> a <em>table</em> — mixing
+them is a common source of "type not found"; describe results are cached per
+connection, so repeating <code>TypeInfoGet</code> is cheap; and a <code>NULL</code> object attribute
+needs <code>ObjectSetNull</code>, not a zeroed <code>Set</code>.</p>
+<h2 id="common-pitfalls">Common pitfalls</h2>
+<ul>
+<li><strong>Freeing a fetched <code>Object</code></strong> — resultset objects are borrowed; only free
+  objects you created with <code>OCI_ObjectCreate</code>.</li>
+<li><strong><code>OCI_TypeInfoGet</code> on a table</strong> — pass <code>OCI_TIF_TYPE</code> for UDTs; tables/views
+  use <code>OCI_TIF_TABLE</code>/<code>OCI_TIF_VIEW</code> (see <a href="describe-schema.html">describe</a>).</li>
+<li><strong><code>Get&lt;int&gt;</code> on a <code>VARCHAR2</code> attr</strong> — match the getter to the attribute type;
+  check <code>OCI_ColumnGetType</code> on the type's <code>OCI_Column</code> first.</li>
+</ul>
+<h2 id="recap">Recap</h2>
+<ul>
+<li>UDT = <code>CREATE TYPE … AS OBJECT</code> → <code>OCI_Object</code>/<code>Object</code> handle</li>
+<li><code>OCI_TypeInfoGet(con, name, OCI_TIF_TYPE)</code> → <code>OCI_ObjectCreate</code> →
+  <code>Get/Set</code> attrs → <code>OCI_StatementBindObject</code></li>
+<li>fetched objects are borrowed; created ones you free</li>
+<li>collections/REFs/describe → Part 6</li>
+</ul>
+<p><strong>Next:</strong> checkpoint — put every type from Part 2 to work.</p>
+    <nav class="prev-next"><a class="pn-link pn-prev" href="plsql-types.html"><span class="pn-dir">← Previous</span>PL/SQL types</a><a class="pn-link pn-next" href="checkpoint-4.html"><span class="pn-dir">Next →</span>Checkpoint 4 profiles</a></nav>
+    <footer class="page-footer">OCILIB v5.0.0 — C/C++ driver for Oracle —
+    generated from <code>doc/tutorials/pages</code></footer>
+  </main>
+</div>
+</body>
+</html>

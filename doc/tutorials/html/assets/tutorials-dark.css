@@ -1,0 +1,45 @@
+/* ==========================================================================
+   OCILIB Tutorials — dark variant.
+   Loaded unconditionally: every rule is scoped to html[data-theme="dark"],
+   so it only takes effect when the theme toggle sets the attribute.
+   ========================================================================== */
+
+html[data-theme="dark"] {
+  --tut-primary: #64a8e8;
+  --tut-primary-ink: #9cc4ec;
+  --tut-primary-soft: rgba(100, 168, 232, .16);
+  --tut-accent: #4db6ac;
+
+  --tut-bg: #12151a;
+  --tut-surface: #1a1e25;
+  --tut-surface-2: #232833;
+  --tut-text: #e4e7eb;
+  --tut-text-2: #9aa3b0;
+  --tut-border: #2c333e;
+  --tut-link: #82b4e8;
+  --tut-nav-accent: #a3b8e0;
+
+  --tut-code-bg: #171b21;
+  --tut-code-tabs-bg: #20252e;
+  --tut-code-border: #2c333e;
+
+  --tut-note: #64a8e8;   --tut-note-bg: #17222e;
+  --tut-tip: #66bb6a;    --tut-tip-bg: #16261a;
+  --tut-warn: #ffa726;   --tut-warn-bg: #2a2013;
+  --tut-demo: #b39ddb;   --tut-demo-bg: #211b30;
+  --tut-oracle: #ef5350; --tut-oracle-bg: #2b1718;
+
+  --tut-beginner: #66bb6a;
+  --tut-intermediate: #ffa726;
+  --tut-advanced: #ef5350;
+
+  --tut-shadow: 0 1px 2px rgba(0, 0, 0, .4), 0 1px 3px rgba(0, 0, 0, .35);
+  --tut-shadow-lg: 0 4px 14px rgba(0, 0, 0, .5);
+}
+
+html[data-theme="dark"] .badge-beginner     { background: #16261a; }
+html[data-theme="dark"] .badge-intermediate { background: #2a2013; }
+html[data-theme="dark"] .badge-advanced     { background: #2b1718; }
+
+html[data-theme="dark"] .code-tab:hover,
+html[data-theme="dark"] .code-copy:hover { background: rgba(255, 255, 255, .08); }
