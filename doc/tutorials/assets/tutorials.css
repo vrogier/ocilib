@@ -17,6 +17,7 @@
   --tut-text-2: #5b6470;
   --tut-border: #e2e6ec;
   --tut-link: var(--tut-primary);
+  --tut-nav-accent: #385fa2;
 
   --tut-code-bg: #f7f9fc;
   --tut-code-tabs-bg: #eceff3;
@@ -58,7 +59,7 @@ body {
   background: var(--tut-bg);
 }
 
-h1, h2, h3, h4 { line-height: 1.3; font-weight: 600; }
+h1, h2, h3, h4 { line-height: 1.3; font-weight: 600; color: var(--tut-nav-accent); }
 h1 { font-size: 1.9rem; margin: .2em 0 .6em; padding-bottom: .35em;
      border-bottom: 2px solid var(--tut-primary-soft); }
 h2 { font-size: 1.4rem; margin: 1.6em 0 .5em; }
@@ -98,7 +99,7 @@ hr { border: 0; border-top: 1px solid var(--tut-border); margin: 2em 0; }
 }
 
 .brand {
-  font-weight: 700; font-size: 1.05rem; color: var(--tut-text);
+  font-weight: 700; font-size: 1.05rem; color: var(--tut-nav-accent);
   display: flex; align-items: baseline; gap: .5rem;
 }
 .brand:hover { text-decoration: none; }
@@ -136,7 +137,7 @@ hr { border: 0; border-top: 1px solid var(--tut-border); margin: 2em 0; }
 .nav-part {
   margin: .35rem .4rem .1rem;
   font-size: .95rem; font-weight: 600;
-  color: var(--tut-text);
+  color: var(--tut-nav-accent);
 }
 
 .nav-details { margin: 0; }
@@ -159,7 +160,7 @@ hr { border: 0; border-top: 1px solid var(--tut-border); margin: 2em 0; }
 .nav-group { list-style: none; margin: 0; padding: 0; }
 .nav-group li a {
   display: block; padding: 0 .6rem .28rem; border-radius: var(--tut-radius-sm);
-  color: var(--tut-text); font-size: .92rem; font-weight: 300; line-height: 1.5;
+  color: var(--tut-nav-accent); font-size: .92rem; font-weight: 300; line-height: 1.5;
 }
 .nav-group li a:hover { color: var(--tut-primary); text-decoration: underline; }
 .nav-group li.active a {

@@ -1,9 +1,7 @@
-<!-- HTML header for doxygen 1.8.15-->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
 <head>
-<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
-<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta charset="utf-8"/>
 <meta name="generator" content="Doxygen $doxygenversion"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <!--BEGIN PROJECT_NAME--><title>$projectname: $title</title><!--END PROJECT_NAME-->
@@ -16,6 +14,18 @@ $search
 $mathjax
 <link href="$relpath^$stylesheet" rel="stylesheet" type="text/css" />
 $extrastylesheet
+<script>
+/* apply stored theme before first paint — key shared with tutorials + website */
+(function () {
+  var t = "light";
+  try {
+    t = localStorage.getItem("ocilib-tut-theme") ||
+        ((window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light");
+  } catch (e) {}
+  document.documentElement.setAttribute("data-theme", t);
+})();
+</script>
+<script src="$relpath^theme.js" defer></script>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -24,12 +34,12 @@ $extrastylesheet
 <div id="titlearea">
 <table cellspacing="0" cellpadding="0">
  <tbody>
- <tr style="height: 56px;">
+ <tr>
   <!--BEGIN PROJECT_LOGO-->
   <td id="projectlogo"><img alt="Logo" src="$relpath^$projectlogo"/></td>
   <!--END PROJECT_LOGO-->
   <!--BEGIN PROJECT_NAME-->
-  <td id="projectalign" style="padding-left: 0.5em;">
+  <td id="projectalign">
    <div id="projectname">$projectname
    <!--BEGIN PROJECT_NUMBER-->&#160;<span id="projectnumber">$projectnumber</span><!--END PROJECT_NUMBER-->
    </div>
@@ -38,7 +48,7 @@ $extrastylesheet
   <!--END PROJECT_NAME-->
   <!--BEGIN !PROJECT_NAME-->
    <!--BEGIN PROJECT_BRIEF-->
-    <td style="padding-left: 0.5em;">
+    <td id="projectalign">
     <div id="projectbrief">$projectbrief</div>
     </td>
    <!--END PROJECT_BRIEF-->
@@ -48,6 +58,7 @@ $extrastylesheet
    <td>$searchbox</td>
    <!--END SEARCHENGINE-->
   <!--END DISABLE_INDEX-->
+  <td id="titleactions"><button id="theme-toggle" class="iconbtn" aria-label="Toggle dark theme">&#9672;</button></td>
  </tr>
  </tbody>
 </table>
