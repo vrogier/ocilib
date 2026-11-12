@@ -393,7 +393,7 @@ void OcilibExceptionJson
 
         if (NULL != msg && 0 != *msg)
         {
-            OCI_Int32 len = min((OCI_Int32)strlen(msg), (OCI_Int32)OCI_SIZE_BUFFER - 1);
+            OCI_Size len = min(strlen(msg), (OCI_Size)OCI_SIZE_BUFFER - 1);
             OcilibStringMbcsToNative((const char *)msg, buffer, len);
         }
         else

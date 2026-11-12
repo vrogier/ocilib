@@ -203,7 +203,7 @@ OCI_Boolean OcilibEnqueuePut
                  * accepting only MBCS strings.* Let's try again with an MBCS string for queue name
                  */
 
-                const OCI_Int32 len = (OCI_Int32)ostrlen(enqueue->name);
+                const OCI_Size len = ostrlen(enqueue->name);
                 mbcs_queue_name = OcilibMemoryAlloc(enqueue->typinf->con->env, OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
                 OcilibStringNativeToMbcs(enqueue->name, mbcs_queue_name, len);
             }

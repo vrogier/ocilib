@@ -905,7 +905,7 @@ OCI_Boolean OcilibDirectPathSetEntry
                so, let's convert them to MBCS */
 
             size = (OCI_UInt32) ocharcount(size);
-            OcilibStringNativeToMbcs(value, (char *) data, (OCI_Int32) size);
+            OcilibStringNativeToMbcs(value, (char *) data, (OCI_Size) size);
         }
         else if (OCI_DDT_NUMBER == dpcol->type)
         {

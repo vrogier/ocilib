@@ -319,6 +319,8 @@ OCI_Size OcilibStringNativeToMbcs
  * OcilibStringCodepointToUTF8
  * --------------------------------------------------------------------------------------------- */
 
+#ifdef OCI_CHARSET_WIDE
+
 static OCI_Int32 OcilibStringCodepointToUTF8
 (
     OCI_UInt32 code,
@@ -362,6 +364,8 @@ static OCI_Int32 OcilibStringCodepointToUTF8
 
     return 0;
 }
+
+#endif
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibStringUTF8ToNative

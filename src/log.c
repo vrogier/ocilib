@@ -55,7 +55,7 @@
 #define OCILIB_LOG_LINE_SIZE    (OCILIB_LOG_BUFFER_SIZE + OCILIB_LOG_PREFIX_SIZE)
 #define OCILIB_LOG_UTF8_SIZE    (OCILIB_LOG_LINE_SIZE * 4)
 
-#define OCILIB_LOG_COUNT(array) ((OCI_Int32) (sizeof(array) / sizeof(otext)) - 1)
+#define OCILIB_LOG_COUNT(array) ((OCI_Size) (sizeof(array) / sizeof(otext)) - 1)
 
 static OCI_Logger OcilibLogger;
 

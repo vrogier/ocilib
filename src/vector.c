@@ -446,7 +446,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
     if (IS_WIDE_ENV())
     {
         mbcs_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)mbcs_size+1, (OCI_Size)1, TRUE);
-        OcilibStringNativeToMbcs(str, mbcs_str, (OCI_Int32) mbcs_size);
+        OcilibStringNativeToMbcs(str, mbcs_str, (OCI_Size) mbcs_size);
     }
     else
     {
@@ -554,7 +554,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
 
         if (IS_WIDE_ENV())
         {
-            OcilibStringMbcsToNative(mbcs_str, str, (OCI_Int32) mbcs_size);
+            OcilibStringMbcsToNative(mbcs_str, str, (OCI_Size) mbcs_size);
         }
         else
         {

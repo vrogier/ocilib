@@ -308,7 +308,7 @@ OCI_Message * OcilibDequeueGetMessage
                  * accepting only MBCS strings.* Let's try again with an MBCS string for queue name
                  */
 
-                const OCI_Int32 len = (OCI_Int32)ostrlen(dequeue->name);
+                const OCI_Size len = ostrlen(dequeue->name);
                 mbcs_queue_name = OcilibMemoryAlloc(dequeue->typinf->con->env, OCI_IPC_STRING, sizeof(char), len + 1, FALSE);
                 OcilibStringNativeToMbcs(dequeue->name, mbcs_queue_name, len);
             }

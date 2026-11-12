@@ -434,7 +434,7 @@ const otext * OcilibShardingKeyToText
            it requires a conversion to otext in wide charset builds */
 
         ALLOC_DATA(OCI_IPC_STRING, skey->str, (OCI_Size)b64size + 1);
-        OcilibStringMbcsToNative((const char *)b64, skey->str, (OCI_Int32)b64size);
+        OcilibStringMbcsToNative((const char *)b64, skey->str, (OCI_Size)b64size);
     }
 
     SET_RETVAL(skey->str);

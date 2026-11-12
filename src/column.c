@@ -573,7 +573,7 @@ OCI_Boolean OcilibColumnRetrieveInfo
 
             ALLOC_DATA(OCI_IPC_STRING, col->name, char_count + 1);
 
-            OcilibStringMbcsToNative(param_struct->column_info->name, col->name, (OCI_Int32) char_count);
+            OcilibStringMbcsToNative(param_struct->column_info->name, col->name, char_count);
         }
         else
         {

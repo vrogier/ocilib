@@ -48,7 +48,7 @@ OCI_SYM_LOCAL void OcilibLogWrite
     const char     *function,
     const otext    *format,
     ...
-) OCI_ATTR_FORMAT(5, 6);
+) OCI_ATTR_FORMAT(4, 5);
 
 /* internal helpers exposed for unit testing (not part of the public API) */
 
