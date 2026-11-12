@@ -1,7 +1,0 @@
-2011-07-13 Version 3.9.2 Vincent Rogier vince.rogier@ocilib.net
-
-    * Miscellaneous fixes
-
-      - Detection of the 'long long' type on unix/linux platforms is now working as expected in all situations
-      - version 3.9.0 broke support of Oracle client versions < 10g when using OCI import mode OCI_IMPORT_LINKAGE (default option on unix/linux platforms)
-

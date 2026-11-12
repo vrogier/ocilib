@@ -1,47 +1,46 @@
-<nav class="navbar">
-  <nav class="row">
-    <div id="nav">
-      <ul class="columns medium-8 left primary-nav">
-
-	<li id="toggleMenu"><a href="#nav">Menu</a></li>
-	<li id="hideMenu"><a href="#toggleMenu">Menu</a></li>
-	
-	{% for nav in site.data.nav %}
-	  {% if nav.subcategories != null %}
-	    <li class="dropdown">
-	      <a href="{{ site.baseurl }}{{ nav.url }}">{{ nav.title }}</a>
-		<ul>
-		  {% for subcategory in nav.subcategories %}
-		    <li><a href="{{ site.baseurl }}{{ subcategory.subhref }}">{{ subcategory.subtitle }}</a></li>
-		  {% endfor %}
-		</ul>
-	    </li>
-	{% elsif nav.external-subcategories != null %}
-	    <li class="dropdown">
-	      <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
-		<ul>
-		  {% for subcategory in nav.external-subcategories %}
-		    <li><a href="{{ subcategory.subhref }}">{{ subcategory.subtitle }}</a></li>
-		  {% endfor %}
-		</ul>
-	    </li>
-		{% elsif nav.title == page.title %}
-		  <li class="active"><a href="{{ site.baseurl }}{{ nav.href }}">{{ nav.title }}</a></li>
-		{% else %}
-		  {% if nav.href %}
-		  <li><a href="{{ site.baseurl }}{{ nav.href }}">{{ nav.title }}</a></li>
-		    {% elsif nav.external %}
-		    <li><a href="{{ nav.external }}">{{ nav.title }}</a></li>
-		  {% endif %}
-	  {% endif %}
-	{% endfor %}
-      </ul>
-
-      <ul class="columns medium-4 right primary-nav">
-	{% for socials in site.data.socials %}
-	  <li class="right"><a href="{{ socials.href }}"><span class="icon-{{ socials.title }} socials"></span></a></li>
-	{% endfor %}
-      </ul>
-    </div>
-  </nav>
+<nav class="navbar" id="navbar">
+  <div class="navbar-inner">
+    <button id="nav-toggle" class="iconbtn" aria-label="Toggle navigation">☰</button>
+    <a class="brand" href="{{ site.baseurl }}/">
+      <img class="brand-logo" src="{{ site.baseurl }}/images/ocilib-logo-with-text-details-small.png" alt="OCILIB logo">
+      <span class="brand-ver">v{{ site.ocilib_current_release_version }}</span>
+    </a>
+    <ul class="primary-nav" id="primary-nav">
+      {% for nav in site.data.nav %}
+        {% if nav.subcategories != null %}
+          <li class="dropdown">
+            <a href="{{ site.baseurl }}{{ nav.url }}">{{ nav.title }}</a>
+            <ul>
+              {% for subcategory in nav.subcategories %}
+                <li><a href="{{ site.baseurl }}{{ subcategory.subhref }}">{{ subcategory.subtitle }}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% elsif nav.external-subcategories != null %}
+          <li class="dropdown">
+            <a href="{{ site.url }}{{ nav.url }}">{{ nav.title }}</a>
+            <ul>
+              {% for subcategory in nav.external-subcategories %}
+                <li><a href="{{ subcategory.subhref }}">{{ subcategory.subtitle }}</a></li>
+              {% endfor %}
+            </ul>
+          </li>
+        {% elsif nav.title == page.title %}
+          <li class="active"><a href="{{ site.baseurl }}{{ nav.href }}">{{ nav.title }}</a></li>
+        {% else %}
+          {% if nav.href %}
+            <li><a href="{{ site.baseurl }}{{ nav.href }}">{{ nav.title }}</a></li>
+          {% elsif nav.external %}
+            <li><a href="{{ nav.external }}">{{ nav.title }}</a></li>
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    </ul>
+    <ul class="topbar-actions">
+      {% for socials in site.data.socials %}
+        <li><a href="{{ socials.href }}"><span class="icon-{{ socials.title }} socials"></span></a></li>
+      {% endfor %}
+      <li><button id="theme-toggle" class="iconbtn" aria-label="Toggle dark theme">◐</button></li>
+    </ul>
+  </div>
 </nav>

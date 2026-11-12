@@ -10,38 +10,47 @@ title: Documentation
 * [Browse online HTML documentation]({{site.baseurl}}/doc/html/)
 
 
-### Example of a minimal OCILIB C application  
+## Tutorial
+
+* [A guided, dual-language (C/C++) tutorial series — ships with v5]({{site.baseurl}}/doc/tutorials/html/)
+
+## Sample Applications
+
+### Minimal OCILIB C application  
  
 {% highlight c linenos %}
     #include "ocilib.h"
     
     int main(int argc, char *argv[])
     {
+        OCI_Environment* env;
         OCI_Connection* cn;
         OCI_Statement* st;
         OCI_Resultset* rs;
          
-        OCI_Initialize(NULL, NULL, OCI_ENV_DEFAULT);
+        env = OCI_EnvironmentCreate(NULL, NULL, OCI_ENV_DEFAULT);
      
         cn = OCI_ConnectionCreate("db", "usr", "pwd", OCI_SESSION_DEFAULT);
         st = OCI_StatementCreate(cn);
        
-        OCI_ExecuteStmt(st, "select intcol, strcol from table");
+        OCI_StatementExecute(st, "select intcol, strcol from table");
         
-        rs = OCI_GetResultset(st);
+        rs = OCI_StatementGetResultset(st);
        
-        while (OCI_FetchNext(rs))
+        while (OCI_ResultsetFetchNext(rs))
         {
-            printf("%i - %s\n", OCI_GetInt(rs, 1), OCI_GetString(rs,2));
+            printf("%i - %s\n", OCI_ResultsetGetInt(rs, 1), OCI_ResultsetGetString(rs, 2));
         }
      
-        OCI_Cleanup();
+        OCI_StatementFree(st);
+        OCI_ConnectionFree(cn);
+        OCI_EnvironmentFree(env);
      
         return EXIT_SUCCESS;
     }
 {% endhighlight %}
  
-### Example of a minimal OCILIB C++ application
+### Minimal OCILIB C++ application
 
 {% highlight cpp linenos %}
     #include "ocilib.hpp"
@@ -52,7 +61,7 @@ title: Documentation
     {
         try
         {
-            Environment::Initialize();
+            Environment env;
     
             Connection con("db", "usr", "pwd");
             
@@ -69,8 +78,6 @@ title: Documentation
         {
              std::cout << ex.what() << std::endl;
         }
-    
-        Environment::Cleanup();
      
         return EXIT_SUCCESS;
     }

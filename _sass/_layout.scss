@@ -1,19 +1,9 @@
 
-// Wrap
+// Wrap — full width so the sticky topbar spans the viewport;
+// content is centered by Foundation .row / .post-content padding
 .wrap {
-  max-width: 1920px;
   min-height: 100%;
   display: block;
-  margin-bottom: -$footer-height;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-// Styling for mobile devices
-@media screen and (max-width: 768px) {
-  .wrap {
-    margin-bottom: -$footer-height * 2.8; 
-  }
 }
 
 .wrap:after {
@@ -34,13 +24,7 @@
 // Posts
 
 .post-header {
-    margin: $spacing-unit;
-}
-
-.post-title {
-    font-size: 2em;
-    letter-spacing: -1px;
-    line-height: 1;
+    margin: $spacing-unit $spacing-unit 0;
 }
 
 .post-content {
@@ -57,35 +41,13 @@
     }
 }
 
-.post-meta {
-   // font-size: $small-font-size;
-    color: darken($complimentary-color, 75%)
+// Logo banner — sits above the sticky topbar, scrolls away normally
+.page-banner {
+  padding: 24px 0 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--site-border);
+  background: var(--site-surface);
 }
-
-.post-link {
-    display: block;
-    font-size: 12px;
-}
-
-// Footer
-#footer {
-  background-color: $footer-color;
-}
-
-.site-footer, .wrap:after {
-  height: $footer-height; 
-}
-.site-footer {
-  background: $footer-color;
-}
-
-// Styling for mobile devices
-@media screen and (max-width: 768px) {
-  .site-footer, .wrap:after {
-    height: $footer-height * 2.8; 
-  }
-  
-  .recent-posts ul li {
-    margin-bottom: 2em;
-  }
+.page-banner img {
+  max-height: 120px;
 }

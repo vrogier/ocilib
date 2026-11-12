@@ -1,4 +1,0 @@
-2008-01-07 Version 1.5.3 Vincent Rogier vince_rogier@yahoo.fr
-
-    * Fixed : Array binding support introduced in version 1.5.0 caused troubled for single objects bindings 
-            (lobs, files, dates, intervals, timestamps)

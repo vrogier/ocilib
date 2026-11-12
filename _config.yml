@@ -9,10 +9,12 @@ url: https://ocilib.net
 projecturl: https://github.com/vrogier/ocilib
 meurl: https://github.com/vrogier/
 
-header: yes
+# Logo lives in the topbar (left, next to the menu) — no separate banner.
+# A page can still opt into a banner via `header: yes` + `header_img:`.
+header: no
 header_img: images/ocilib-logo-with-text-details-small.png
 
-exclude: [.bundle, bin, vendor, Gemfile, Gemfile.lock, Rakefile, s3_website.yml, .last_optimized]
+exclude: [.bundle, bin, vendor, Gemfile, Gemfile.lock, Rakefile, s3_website.yml, .last_optimized, .vs, node_modules]
  
 kramdown:
   input: GFM
@@ -22,7 +24,6 @@ kramdown:
 
 destination: _site
 
-permalink: /blog/:year/:title
 
 google_universal_analytics: UA-64388697-1
 google_universal_analytics_cookiedomain: auto

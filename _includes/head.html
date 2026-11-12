@@ -16,9 +16,20 @@
   {% endif %}
     
   <link href="{{ site.baseurl }}/css/main.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <script>
+    // Apply stored theme before first paint (shared key with the tutorials/API doc)
+    (function () {
+      var t = "light";
+      try {
+        t = localStorage.getItem("ocilib-tut-theme") ||
+            ((window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches) ? "dark" : "light");
+      } catch (e) {}
+      document.documentElement.setAttribute("data-theme", t);
+    })();
+  </script>
+  <script src="{{ site.baseurl }}/js/site.js" defer></script>
   <link rel="canonical" href="{{ site.baseurl }}{{ page.url }}">
   <link rel="icon" type="image/png" href="{{ site.baseurl }}/images/ocilib-logo-small.png">
-  <link rel="alternate" type="application/atom+xml" title="{{ site.title }}" href="{{ site.baseurl }}/atom.xml"/>
   
   {% include metadata.html %}
   {% include google_analytics.html %} 

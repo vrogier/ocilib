@@ -12,24 +12,20 @@ wordpress_id: 81
 <br/>
 Check project page at GitHub
 
-* [**OCILIB Groups**](https://groups.google.com/forum/#!forum/ocilib)
-<br/>
-Discussion forums about OCILIB at google groups
-
-* [**OCILIB Blog**]({{site.baseurl}}/blog/)
-<br/>
-OCILIB blog about OCILIB and oracle resources
-
 * [**OCILIB bug Tracker**]({{site.projecturl}}/issues/ )
 <br/>
 Check project bug tracker at GitHub
 
-* [**Click here to get support for OCILIB !** (support@ocilib.net)](mailto:support@ocilib.net)
+* [**Click here to get support for OCILIB !** (vince.rogier+ocilib@gmail.com)](mailto:vince.rogier+ocilib@gmail.com)
 
 
 <br/>
 Older and unsupported resources (from previous sourceforge hosting):
 <br/>
+
+* [**OCILIB Groups**](https://groups.google.com/forum/#!forum/ocilib)
+<br/>
+Discussion forums about OCILIB at google groups
 
 * [**Mailing lists archives**](http://sourceforge.net/mail/?group_id=140360)
 <br/>

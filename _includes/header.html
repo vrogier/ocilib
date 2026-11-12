@@ -1,13 +1,14 @@
-{% if page.header%}
-  <header role="banner">
+{% comment %}
+  Logo banner. Site-wide default comes from `site.header`/`site.header_img`;
+  a page can override the image via `header_img:` or disable the banner
+  entirely via `header: no` in front matter.
+{% endcomment %}
+{% if page.header_img %}
+  <header role="banner" class="page-banner">
       <a href="{{ site.baseurl }}"><img src="{{ site.baseurl }}/{{ page.header_img }}"  alt="{{ site.title }} banner image" title="{{ site.title }} banner image" class="center"></a>
   </header>
-  
-  {% elsif site.header %}
-    <header role="banner">
+{% elsif page.header != false and site.header %}
+  <header role="banner" class="page-banner">
       <a href="{{ site.baseurl }}"><img src="{{ site.baseurl }}/{{ site.header_img }}" alt="{{ site.title }} banner image" title="{{ site.title }} banner image" class="center"></a>
-    </header>
-  
-  {% else %}
-
+  </header>
 {% endif %}

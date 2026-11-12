@@ -1,275 +1,190 @@
-//Reset
-#nav, #nav ul {
-	list-style: none;
-	margin: 0;
-	padding: 0;
-}
+// Tutorial-style sticky topbar — white surface, brand + nav + actions
 
-#nav #toggleMenu, #nav #hideMenu {
-	display: none;
-}
-
-// Navbar wrap
 .navbar {
-  height: $navbar-height;
-  background-color: $navbar-color;
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  min-height: $navbar-height;
+  background: var(--site-surface);
+  border-bottom: 1px solid var(--site-border);
+  box-shadow: var(--site-shadow);
 }
 
-// Main navigation bar
-#nav .primary-nav{
-	z-index: 2;
-	position: relative;
-	display: block;
+.navbar-inner {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  min-height: $navbar-height;
+  padding: .35rem 1rem;
 }
 
-#nav >.primary-nav>li {
-	display: block;
-	float: left;
-	position: relative;
+/* Brand — logo image (with text) + version pill, mirrors tutorials .brand */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--site-nav-accent);
+  white-space: nowrap;
+}
+.brand:hover { text-decoration: none; }
+.brand-logo { height: 112px; align-self: center; }
+.brand-ver {
+  font-size: .78rem;
+  font-weight: 500;
+  color: var(--site-text-2);
+  background: var(--site-surface-2);
+  border-radius: 999px;
+  padding: .1rem .55rem;
 }
 
-// Alignment of Social Icons
-#nav>.primary-nav>.right>a {
-    padding: 0px;
+/* Icon buttons (nav toggle, theme toggle) — mirrors tutorials .icon-btn.
+   NB: class is "iconbtn" on purpose — the icomoon rule [class^="icon-"]
+   would otherwise hijack these buttons with icon-font metrics. */
+.iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--site-border);
+  background: var(--site-surface);
+  color: var(--site-text-2);
+  border-radius: 8px;
+  cursor: pointer;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  margin: 0;
+  font-size: 1.05rem;
+  line-height: 1;
+}
+.iconbtn:hover { background: var(--site-surface-2); color: var(--site-text); }
+
+#nav-toggle { display: none; }
+
+/* Primary nav links */
+.primary-nav {
+  list-style: none;
+  margin: 0 0 0 1rem;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: .15rem;
+  height: 100%;
+}
+.primary-nav > li { position: relative; height: 100%; display: flex; align-items: center; }
+.primary-nav > li > a {
+  display: block;
+  padding: .3rem .7rem;
+  border-radius: $radius-sm;
+  font-family: $navbar-font-family;
+  font-size: $navbar-font-size;
+  font-weight: 500;
+  color: var(--site-nav-accent);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.primary-nav > li > a:hover { color: var(--site-primary); text-decoration: underline; }
+.primary-nav > li.active > a {
+  background: var(--site-primary-soft);
+  color: var(--site-primary-ink);
+  font-weight: 600;
 }
 
-
-// Main navigation links
-#nav>.primary-nav>li>a {
-	/* Layout */
-	line-height: $navbar-height;
-	display: block;
-	padding: 0 5px;
-	border-color: #aaa;
-
-	/* Typography */
-	font-family: $navbar-font-family;
-	font-size: $navbar-font-size;
-	font-weight: 200;
-	color: $secondary-color;
-	text-transform: uppercase;
-	text-decoration: none;
-	
-	/* Transitions */
-	-webkit-transition: color .2s ease-in, border-top-color .2s ease-in;
-	-ms-transition: color .2s ease-in, border-top-color .2s ease-in;
-	-moz-transition: color .2s ease-in, border-top-color .2s ease-in;
-	-o-transition: color .2s ease-in, border-top-color .2s ease-in;
-	transition: color .2s ease-in, border-top-color .2s ease-in;
+/* Dropdown submenus — surfaced as white cards */
+.primary-nav > li.dropdown > a { padding-right: 1.5rem; }
+.primary-nav > li.dropdown > a::after {
+  content: "";
+  position: absolute;
+  right: .55rem;
+  top: 50%;
+  margin-top: -2px;
+  border: 4px solid transparent;
+  border-top-color: var(--site-nav-accent);
 }
-
-// Hover state of the links
-#nav>.primary-nav>li:hover>a {
-	color: $navbar-hover-color;
-	border-top-color: #fff;
+.primary-nav ul {
+  list-style: none;
+  margin: 0;
+  padding: .3rem 0;
+  position: absolute;
+  top: 100%;
+  left: -9999px;
+  min-width: 200px;
+  background: var(--site-surface);
+  border: 1px solid var(--site-border);
+  border-radius: $radius-sm;
+  box-shadow: var(--site-shadow-lg);
+  opacity: 0;
+  transition: opacity .15s ease;
+  z-index: 50;
 }
-
-// Active state of the links
-#nav>.primary-nav>li.active {
-	background-color: $navbar-active-color;
+.primary-nav > li:hover > ul,
+.primary-nav > li.dropdown:focus-within > ul {
+  left: 0;
+  opacity: 1;
 }
-
-#nav>.primary-nav>li.dropdown>a {
-	padding-right: 28px;
+.primary-nav ul li a {
+  display: block;
+  padding: .45rem 1rem;
+  font-size: $navbar-font-size * .92;
+  color: var(--site-nav-accent);
+  white-space: nowrap;
 }
+.primary-nav ul li a:hover { background: var(--site-surface-2); text-decoration: none; }
 
-// Dropdown menu arrow
-.dropdown>a::after {
-	position: absolute;
-	display: block;
-	content: "";
-	height: 0;
-	width: 0;
-	border: 4px solid transparent;
-	border-top-color: inherit;
-	right: 11px;
-	top: ($navbar-height / 2);
+/* Right-side actions: socials + theme toggle */
+.topbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  list-style: none;
+  padding: 0;
 }
-
-// Submenus
-#nav .primary-nav ul {
-	z-index: auto;
-	display: block;
-	position: absolute;
-	top: $navbar-height;
-	left: -9999px;
-	opacity: 0;
-	background: $navbar-color;
-	cursor: pointer;
-	border-bottom-left-radius: 3px;
-	border-bottom-right-radius: 3px;
-	-webkit-transition: opacity .22s ease-in;
-	-ms-transition: opacity .22s ease-in;
-	-moz-transition: opacity .22s ease-in;
-	-o-transition: opacity .22s ease-in;
-	transition: opacity .22s ease-in;
+.topbar-actions li { display: flex; align-items: center; }
+.topbar-actions a { display: flex; align-items: center; }
+.topbar-actions .socials {
+  color: var(--site-nav-accent);
+  font-size: 1.2em;
 }
+.topbar-actions a:hover .socials { color: var(--site-primary); }
 
-#nav .primary-nav ul li {
-	display: block;
-	position: absolute;
-	height: 0px;
-	-webkit-transition: height .15s ease-in;
-	-ms-transition: height .15s ease-in;
-	-moz-transition: height .15s ease-in;
-	-o-transition: height .15s ease-in;
-	transition: height .15s ease-in;
-}
+/* ------------------------------------------------------------- mobile */
+@media screen and (max-width: 860px) {
+  #nav-toggle { display: inline-block; }
 
-// Submenu appears when its parent is hovered
-#nav>.primary-nav>li:hover>ul {
-	left: 0px;
-	opacity: 1;
-}
+  .navbar-inner { padding: .3rem .6rem; gap: .5rem; }
+  .brand-logo { height: 56px; }
+  .primary-nav > li > a { font-size: 18px; }
 
-#nav .primary-nav li:hover>ul>li {
-	position: relative;
-	height: 31px;
-}
+  .primary-nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    background: var(--site-surface);
+    border-bottom: 1px solid var(--site-border);
+    box-shadow: var(--site-shadow-lg);
+    display: none;
+  }
+  .navbar.open .primary-nav { display: flex; }
 
-// Submenu links
-#nav .primary-nav ul li a {
-	/* Layout */
-	display: block;
-	padding: 7px 12px 7px 22px;
-	width: 200px;
+  .primary-nav > li { height: auto; }
+  .primary-nav > li > a { padding: .7rem 1.1rem; border-radius: 0; }
 
-	/* Typography */
-	font-family: $navbar-font-family;
-	font-size: ($navbar-font-size * .92);
-	text-decoration: none;
-	color: $secondary-color;
-	font-weight: 400;
-	
-	/* Background & effects */
-	background: $navbar-color;
-	-webkit-transition: color .2s ease-in, border-left-color .2s ease-in;;
-	-ms-transition: color .2s ease-in, border-left-color .2s ease-in;;
-	-moz-transition: color .2s ease-in, border-left-color .2s ease-in;;
-	-o-transition: color .2s ease-in, border-left-color .2s ease-in;;
-	transition: color .2s ease-in, border-left-color .2s ease-in;;
-}
-
-// Change the link color on hover
-#nav .primary-nav ul li:hover>a {
-	color: $navbar-hover-color;
-}
-
-.nav ul ul {
-	display: none;
-}
-
-
-// Styling for mobile devices
-@media screen and (max-width: 768px) {
-	#nav .primary-nav{
-		width: 100%;
-		max-width: 768px;
-		height: auto;
-		background: $navbar-color;
-	}
-
-	#nav .primary-nav li {
-		float: none;
-		padding: 0 10px;
-		display: none;
-	}
-
-	#nav>.primary-nav>li>a {
-		line-height: 45px;
-		padding: 0 10px;
-	}
-
-	.dropdown>a::after {
-		display: none;
-	}
-
-	#nav .primary-nav ul {
-		position: relative;
-		top: 0px;
-		left: 0px;
-		right: auto;
-		opacity: 1;
-		clear: both;
-	}
-
-	#nav .primary-nav ul li, #nav>.primary-nav>li:hover>ul>li {
-		height: auto;
-		position: relative;
-
-	}
-
-	#nav .primary-nav ul li a {
-		padding: 5px 10px;
-		width: auto;
-	}
-
-	#nav #toggleMenu {
-		display: block;
-		padding-left: 15px;
-	}
-
-	#nav #toggleMenu>a, #nav #hideMenu>a {
-		padding: 0px 10px;
-		z-index: 1;
-		line-height: 45px;
-	}
-
-	#nav:target li {
-		display: block;
-	}
-
-	#nav:target #toggleMenu {
-		display: none;
-	}
-
-	#nav:target #hideMenu {
-		display: block;
-		background: rgba(0, 0, 0, .3);
-		border-top-left-radius: 3px;
-		border-top-right-radius: 3px;
-		padding-left: 25px;
-		padding: 0 15px 0 15px;
-	}
-
-	#nav #hideMenu>a {
-		color: $secondary-color;
-	}
-
-	#toggleMenu>a::after, #hideMenu>a::after {
-		position: absolute;
-		content: "";
-		right: 35px;
-		top: 21px;
-		height: 9px;
-		width: 20px;
-		border-top: 2px solid $secondary-color;
-		border-bottom: 2px solid $secondary-color;
-		z-index: 1;
-	}
-
-	#toggleMenu>a::before, #hideMenu>a::before {
-		position: absolute;
-		content: "";
-		right: 35px;
-		top: 13px;
-		height: 3px;
-		width: 20px;
-		border-bottom: 2px solid $secondary-color;
-		z-index: 1;
-	}
-
-	#hideMenu>a::after, #hideMenu>a::before {
-		border-color: $secondary-color;
-	}
-	
-	.navbar {
-	  background-color: $navbar-color;
-	  height: 44px;
-	  display: inline;
-	}
- 
-	#nav>.right.primary-nav  {
-	  background-color: lighten($navbar-color, 10%);
-	}
+  .primary-nav ul {
+    position: static;
+    opacity: 1;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    display: none;
+    background: var(--site-surface-2);
+  }
+  .primary-nav > li.dropdown:hover > ul,
+  .primary-nav > li.dropdown:focus-within > ul { display: block; }
 }
