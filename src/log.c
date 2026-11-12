@@ -22,6 +22,8 @@
 
 #include "stringutils.h"
 
+#include "threading.h"
+
 #include <ctype.h>
 #include <limits.h>
 #include <stdarg.h>
@@ -32,6 +34,7 @@
 
 #ifndef _WINDOWS
   #include <sys/time.h>
+  #include <pthread.h>
 #endif
 
 /* Native (otext) formatted output helpers. In MBCS builds otext is char,
@@ -428,11 +431,31 @@ OCI_Boolean OcilibLogCleanup(void)
  * OcilibLogWrite
  * --------------------------------------------------------------------------------------------- */
 
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibLogGetThreadId
+ * --------------------------------------------------------------------------------------------- */
+
+static OCI_UInt64 OcilibLogGetThreadId
+(
+    void
+)
+{
+#if defined(_WIN32)
+    /* the numeric OS thread id — the same one shown by debuggers/tools */
+    return (OCI_UInt64) GetCurrentThreadId();
+#else
+    return (OCI_UInt64) (OCI_Size) pthread_self();
+#endif
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibLogWrite
+ * --------------------------------------------------------------------------------------------- */
+
 void OcilibLogWrite
 (
     OCI_LogCategory category,
     OCI_LogLevel    level,
-    const char     *step,
     const char     *function,
     const otext    *format,
     ...
@@ -446,7 +469,6 @@ void OcilibLogWrite
 
     otext level_text[16];
     otext cat_text[16];
-    otext step_text[32];
     otext func_text[256];
 
     OCI_Int32 year = 0, month = 0, day = 0;
@@ -465,24 +487,13 @@ void OcilibLogWrite
 
     OcilibStringMbcsToNative(OcilibLogGetLevelName(level),        level_text, OCILIB_LOG_COUNT(level_text));
     OcilibStringMbcsToNative(OcilibLogGetCategoryName(category),  cat_text,   OCILIB_LOG_COUNT(cat_text));
-    if (step && step[0])
-    {
-        char step_buf[32];
-
-        snprintf(step_buf, sizeof(step_buf), "%s ", step);
-        OcilibStringMbcsToNative(step_buf, step_text, OCILIB_LOG_COUNT(step_text));
-    }
-    else
-    {
-        step_text[0] = 0;
-    }
     OcilibStringMbcsToNative(function ? function : "",            func_text,  OCILIB_LOG_COUNT(func_text));
 
     OcilibLogSnprintf(prefix, OCILIB_LOG_COUNT(prefix),
-                      OTEXT("%04d-%02d-%02d %02d:%02d:%02d.%03d [%s] [%s] %s%s%s"),
+                      OTEXT("%04d-%02d-%02d %02d:%02d:%02d.%03d [%s] [%s] [%llu] %s: "),
                       year, month, day, hour, min, sec, msec,
-                      level_text, cat_text, step_text, func_text,
-                      (step && step[0]) ? OTEXT(" ") : OTEXT(": "));
+                      level_text, cat_text,
+                      OcilibLogGetThreadId(), func_text);
 
     va_start(args, format);
     chars = OcilibLogVsnprintf(message, OCILIB_LOG_COUNT(message), format, args);

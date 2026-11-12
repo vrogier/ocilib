@@ -45,7 +45,6 @@ OCI_SYM_LOCAL void OcilibLogWrite
 (
     OCI_LogCategory category,
     OCI_LogLevel    level,
-    const char     *step,
     const char     *function,
     const otext    *format,
     ...

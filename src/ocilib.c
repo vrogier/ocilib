@@ -79,28 +79,28 @@ static void OcilibCheckContext
 
 #define CALL_IMPL(impl, ...)                                                                                           \
         do {                                                                                                           \
-            OCILIB_LOG_STEP_WITH_ENV(NULL, OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "ENTER", __func__, OTEXT("%s"), OTEXT("")); \
+            OCILIB_LOG_WITH_ENV(NULL, OCI_LOG_CAT_LIB, OCI_LOG_TRACE, __func__, OTEXT("ENTER"));                       \
             OcilibCheckContext();                                                                                      \
             return impl(__VA_ARGS__);                                                                                  \
         } while(0);
 
 #define CALL_IMPL_NO_ARGS(impl)                                                                                        \
         do {                                                                                                           \
-            OCILIB_LOG_STEP_WITH_ENV(NULL, OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "ENTER", __func__, OTEXT("%s"), OTEXT("")); \
+            OCILIB_LOG_WITH_ENV(NULL, OCI_LOG_CAT_LIB, OCI_LOG_TRACE, __func__, OTEXT("ENTER"));                       \
             OcilibCheckContext();                                                                                      \
             return impl();                                                                                             \
         } while(0);
 
 #define CALL_IMPL_E(impl, env, ...)                                                                                     \
         do {                                                                                                            \
-            OCILIB_LOG_STEP_WITH_ENV((env), OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "ENTER", __func__, OTEXT("%s"), OTEXT("")); \
+            OCILIB_LOG_WITH_ENV((env), OCI_LOG_CAT_LIB, OCI_LOG_TRACE, __func__, OTEXT("ENTER"));                      \
             OcilibCheckContext();                                                                                       \
             return impl(env, __VA_ARGS__);                                                                              \
         } while(0);
 
 #define CALL_IMPL_NO_ARGS_E(impl, env)                                                                                  \
         do {                                                                                                            \
-            OCILIB_LOG_STEP_WITH_ENV((env), OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "ENTER", __func__, OTEXT("%s"), OTEXT("")); \
+            OCILIB_LOG_WITH_ENV((env), OCI_LOG_CAT_LIB, OCI_LOG_TRACE, __func__, OTEXT("ENTER"));                      \
             OcilibCheckContext();                                                                                       \
             return impl(env);                                                                                           \
         } while(0);

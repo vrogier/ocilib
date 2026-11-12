@@ -208,26 +208,20 @@ ocilib_exit_label:                  \
 #define LOG_ENABLED(cat, lvl) \
         OcilibLogIsEnabled((cat), (lvl))
 
-#define OCILIB_LOG_STEP_WITH_ENV(env, cat, lvl, step, func, ...) \
-        do { if (LOG_ENABLED(cat, lvl)) { OcilibLogWrite((cat), (lvl), (step), (func), __VA_ARGS__); } } while(0)
-
 #define OCILIB_LOG_WITH_ENV(env, cat, lvl, func, ...) \
-        OCILIB_LOG_STEP_WITH_ENV((env), (cat), (lvl), NULL, (func), __VA_ARGS__)
+        do { if (LOG_ENABLED(cat, lvl)) { OcilibLogWrite((cat), (lvl), (func), __VA_ARGS__); } } while(0)
 
 #define OCILIB_LOG(cat, lvl, ...) \
         OCILIB_LOG_WITH_ENV(ocilib_call_context.env, (cat), (lvl), __func__, __VA_ARGS__)
 
-#define OCILIB_LOG_STEP(cat, lvl, step, ...) \
-        OCILIB_LOG_STEP_WITH_ENV(ocilib_call_context.env, (cat), (lvl), (step), __func__, __VA_ARGS__)
-
 #define OCILIB_LOG_API_ENTRY() \
-        OCILIB_LOG_STEP(OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "ENTER", OTEXT("%s"), OTEXT(""))
+        OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_TRACE, OTEXT("ENTER"))
 
 #define OCILIB_LOG_API_EXIT_VOID() \
-        OCILIB_LOG_STEP(OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "LEAVE", OTEXT("%s"), OTEXT(""))
+        OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_TRACE, OTEXT("LEAVE"))
 
 #define OCILIB_LOG_API_EXIT_FUNC() \
-        OCILIB_LOG_STEP(OCI_LOG_CAT_LIB, OCI_LOG_TRACE, "LEAVE", OTEXT("(ret=%p)"), (void *) (OCI_Size) (ocilib_call_retval))
+        OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_TRACE, OTEXT("LEAVE (ret=%p)"), (void *) (OCI_Size) (ocilib_call_retval))
 
 #define FAILURE (ocilib_call_status == FALSE)
 
@@ -650,12 +644,12 @@ ocilib_exit_label:                  \
         {                                                                                    \
             CHECK_NULL(ocilib_call_context.env);                                             \
             CHECK_NULL(ocilib_call_context.env->api);                                        \
-            OCILIB_LOG_STEP_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,               \
-                                     OCI_LOG_TRACE, "ENTER", #func, OTEXT("%s"), OTEXT("")); \
+            OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,                    \
+                                OCI_LOG_TRACE, #func, OTEXT("ENTER"));                       \
             (ret) = ocilib_call_context.env->api->func(__VA_ARGS__);                         \
-            OCILIB_LOG_STEP_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,               \
-                                     OCI_LOG_TRACE, "LEAVE", #func,                          \
-                                     OTEXT("(ret=%p)"), (void *)(size_t)(ret));              \
+            OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,                    \
+                                OCI_LOG_TRACE, #func,                                        \
+                                OTEXT("LEAVE (ret=%p)"), (void *)(size_t)(ret));             \
         }                                                                                    \
         while (0)
 
