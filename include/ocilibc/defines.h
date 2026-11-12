@@ -310,10 +310,12 @@
    buffer capacity) - keep passing it explicitly.
    Note: 'otext *' maps to OCI_ARG_TEXT, which carries no destination size;
    prefer OCI_ARG_TEXT_N for bounded string copies.
-   C only - C++ callers keep explicit OCI_ARG_* tags (the C++ API does not
-   expose the variadic helpers). */
+   Only defined when compiling as C11 or later - pre-C11 C callers and C++
+   callers keep explicit OCI_ARG_* tags (the C++ API does not expose the
+   variadic helpers). */
 
 #ifndef __cplusplus
+#if defined(__STDC_VERSION__) && (__STDC_VERSION__ >= 201112L)
 
 #define OCI_ARG_OF(ptr) _Generic((ptr),                                        \
                                  OCI_Int16           * : OCI_ARG_INT16,        \
@@ -339,7 +341,8 @@
                                  OCI_Vector      * : OCI_ARG_VECTOR,           \
                                  OCI_Json        * : OCI_ARG_JSON), (ptr)
 
-#endif
+#endif /* __STDC_VERSION__ >= 201112L */
+#endif /* __cplusplus */
 
 /* statement types */
 

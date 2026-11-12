@@ -815,7 +815,6 @@ enable_warnings
 enable_werror
 enable_sanitizers
 with_oracle_import
-with_oracle_charset
 with_oracle_home
 with_oracle_headers_path
 with_oracle_lib_path
@@ -1487,7 +1486,6 @@ Optional Packages:
   --with-sysroot[=DIR]    Search for dependent libraries within DIR (or the
                           compiler's sysroot if not specified).
   --with-oracle-import=(linkage|runtime)
-  --with-oracle-charset=(mbcs|wide)
 --with-oracle-home=Location of Oracle Installation.
 --with-oracle-headers-path=Location of OCI public headers.
 --with-oracle-lib-path=Location of OCI shared library.
@@ -14840,15 +14838,6 @@ fi
 
 
 
-# Check whether --with-oracle_charset was given.
-if test ${with_oracle_charset+y}
-then :
-  withval=$with_oracle_charset;   ac_oracle_charset=$withval
-else $as_nop
-   ac_oracle_charset="mbcs"
-fi
-
-
   OCILIB_IMPORT="OCI_IMPORT_LINKAGE"
   OCILIB_CHARSET="OCI_CHARSET_MBCS"
 
@@ -14860,20 +14849,8 @@ fi
     as_fn_error $? "Invalid argument ($ac_oracle_import) for --with-oracle-import." "$LINENO" 5
   fi
 
-  if test x"$ac_oracle_charset" = x"mbcs"; then
-    OCILIB_CHARSET="OCI_CHARSET_MBCS"
-  elif test x"$ac_oracle_charset" = x"ansi" ; then
-    OCILIB_CHARSET="OCI_CHARSET_MBCS"
-  elif test x"$ac_oracle_charset" = x"unicode" ; then
-    OCILIB_CHARSET="OCI_CHARSET_WIDE"
-  elif test x"$ac_oracle_charset" = x"wide" ; then
-    OCILIB_CHARSET="OCI_CHARSET_WIDE"
-  else
-    as_fn_error $? "Invalid argument ($ac_oracle_charset) for --with-oracle-charset." "$LINENO" 5
-  fi
-
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: import: $ac_oracle_import, charset = $ac_oracle_charset " >&5
-printf "%s\n" "import: $ac_oracle_import, charset = $ac_oracle_charset " >&6; }
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: import: $ac_oracle_import " >&5
+printf "%s\n" "import: $ac_oracle_import " >&6; }
 
 
 

@@ -741,8 +741,9 @@ The OCI-client-side figure is no longer exposed.
   so `OCI_Immediate(con, sql, OCI_ARG_OF(&count))` replaces `OCI_ARG_INT, &count`
   and a tag/pointer mismatch becomes a compile error. `otext*` maps to
   `OCI_ARG_TEXT`, `void*`/`unsigned char*` to `OCI_ARG_RAW`; `OCI_ARG_TEXT_N`
-  stays explicit (it needs the buffer capacity argument). C only — the C++ API
-  does not expose the variadic helpers.
+  stays explicit (it needs the buffer capacity argument). Only defined when
+  compiling as C11 or later — pre-C11 C callers keep explicit `OCI_ARG_*` tags,
+  and the C++ API does not expose the variadic helpers.
 
 ---
 

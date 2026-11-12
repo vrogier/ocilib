@@ -7,7 +7,7 @@
 ### Enhancements (C API)
 
 - API update
-  - The library now requires C11
+  - The library now requires C11 to build (consumers keep plain C headers and ABI — no C-standard restriction; `OCI_ARG_OF` is only defined under C11+)
   - Better scalar type naming: `OCI_Boolean`, `OCI_Int16`/`OCI_UInt16`, `OCI_Int32`/`OCI_UInt32`, `OCI_Int64`/`OCI_UInt64`, `OCI_Float`, `OCI_Double`, and `OCI_Size`
   - Added typedefs for each enum type used by the public API: `OCI_SessionMode`, `OCI_PoolType`, `OCI_LobType`, `OCI_TimestampType`, `OCI_IntervalType`, `OCI_TypeInfoType`, `OCI_EnvMode`, `OCI_ImportMode`, `OCI_Charset`, `OCI_ErrorCode`, etc.
 

@@ -56,7 +56,7 @@ Feature availability also depends on the Oracle client version used by the appli
 ## 4. Requirements
 
 - **Oracle versions** — OCILIB is compatible with all Oracle versions from 8.0 and adapts automatically to the Oracle client available at runtime, including future versions
-- **C API** — requires a C11 or later compiler
+- **C API** — building the library requires a C11 or later compiler; *using* it requires no specific C standard — the public headers and ABI are plain C (the `OCI_ARG_OF` helper macro is only defined when compiling as C11+)
 - **C++ API** — requires a C++17 or later compiler
 - **Platforms** — Windows, Linux, HP/UX, Solaris, AIX, Mac OS X, OpenVMS
 

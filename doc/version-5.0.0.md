@@ -57,7 +57,7 @@ The biggest user-visible change is the end of the global, static environment.
 ## 4. C11 / C++17 baseline
 
 ### C layer
-- The C implementation now targets **ISO C11**.
+- The C implementation now targets **ISO C11**. This is a *build-time* requirement only: consuming the library places no C-standard restriction on application code — the public headers compile with any C compiler and the ABI is plain C. The single exception is the `OCI_ARG_OF` convenience macro (`_Generic`-based), which is only defined when the including TU is compiled as C11 or later.
 - Internal synchronization uses `<threads.h>` (`mtx_t`, `tss_t`, `once_flag`, `call_once`):
   - `OCI_List` and `OCI_Environment` embed `mtx_t` directly.
   - Per-thread `OCI_Error` storage uses `tss_t`.

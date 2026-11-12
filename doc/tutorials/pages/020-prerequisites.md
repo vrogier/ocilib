@@ -17,7 +17,7 @@ level: beginner
 
 1. **An Oracle database** to connect to.
 2. **The Oracle client libraries** — OCILIB talks to the database *through* them.
-3. **A C and/or C++ toolchain** — OCILIB is C11 / C++17.
+3. **A C and/or C++ toolchain** — building OCILIB from source needs C11 / C++17; *using* an installed OCILIB from C needs no specific standard (plain C headers and ABI).
 
 ## Getting a database
 
