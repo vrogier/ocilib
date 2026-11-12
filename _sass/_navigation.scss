@@ -18,7 +18,7 @@
   padding: .35rem 1rem;
 }
 
-/* Brand — logo image (with text) + version pill, mirrors tutorials .brand */
+/* Brand — logo image (with text), mirrors tutorials .brand */
 .brand {
   display: flex;
   align-items: center;
@@ -30,14 +30,6 @@
 }
 .brand:hover { text-decoration: none; }
 .brand-logo { height: 112px; align-self: center; }
-.brand-ver {
-  font-size: .78rem;
-  font-weight: 500;
-  color: var(--site-text-2);
-  background: var(--site-surface-2);
-  border-radius: 999px;
-  padding: .1rem .55rem;
-}
 
 /* Icon buttons (nav toggle, theme toggle) — mirrors tutorials .icon-btn.
    NB: class is "iconbtn" on purpose — the icomoon rule [class^="icon-"]

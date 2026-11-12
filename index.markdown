@@ -23,8 +23,7 @@ to the Oracle client available at runtime, and runs across major platforms.
 
 The latest version is [version {{site.ocilib_current_release_version}} ({{site.ocilib_current_release_date}})]({{site.projecturl}}/releases/)
 
-[![Code Analysis](https://img.shields.io/coverity/scan/8019.svg)](https://scan.coverity.com/projects/vrogier-ocilib)
-<img alt="Github downloads" src="https://img.shields.io/github/downloads/vrogier/ocilib/total.svg"/>
-<img alt="SF.NET downloads" src="https://img.shields.io/sourceforge/dt/orclib.svg"/>
-<img alt="Nuget downloads" src="https://img.shields.io/nuget/dt/ocilib"/>
+<img alt="Github downloads" src="https://img.shields.io/github/downloads/vrogier/ocilib/total.svg?label=github%20downloads"/>
+<img alt="SF.NET downloads" src="https://img.shields.io/sourceforge/dt/orclib.svg?label=sourceforge%20downloads"/>
+<img alt="Nuget downloads" src="https://img.shields.io/nuget/dt/ocilib?label=nuget%20downloads"/>
 
