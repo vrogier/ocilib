@@ -168,7 +168,7 @@ OCI_Subscription * OcilibSubscriptionCreate
         /* context */ OCI_IPC_CONNECTION, con
     );
 
-    ub4       attr   = 0;
+    ub4 attr = 0;
 
     OCI_Subscription* sub = NULL;
 

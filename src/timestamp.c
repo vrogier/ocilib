@@ -562,9 +562,9 @@ OCI_Boolean OcilibTimestampFromString
         CHECK_NULL(fmt);
     }
 
-    dbstr1 = (dbtext *) (str);
+    dbstr1  = (dbtext *) (str);
     dbsize1 = OcilibStringDBSize(str);
-    dbstr2 = (dbtext *) (fmt);
+    dbstr2  = (dbtext *) (fmt);
     dbsize2 = OcilibStringDBSize(fmt);
 
     CHECK_OCI
@@ -632,8 +632,8 @@ OCI_Boolean OcilibTimestampToString
         fmt = OcilibEnvironmentGetFormat(tmsp->env, tmsp->type == OCI_TIMESTAMP_TZ ? OCI_FMT_TIMESTAMP_TZ : OCI_FMT_TIMESTAMP);
     }
 
-    dbstr1 = (dbtext *) (str);
-    dbstr2 = (dbtext *) (fmt);
+    dbstr1  = (dbtext *) (str);
+    dbstr2  = (dbtext *) (fmt);
     dbsize2 = OcilibStringDBSize(fmt);
 
     CHECK_OCI
@@ -646,7 +646,6 @@ OCI_Boolean OcilibTimestampToString
         (OraText *) NULL, (OCI_Size) 0,
         (ub4*) &dbsize1, (OraText *) dbstr1
     );
-
 
     /* set null string terminator */
 
@@ -850,7 +849,6 @@ OCI_Boolean OcilibTimestampGetTimeZoneName
         tmsp->handle, (ub1*) dbstr,
         (ub4*) &dbsize
     );
-
 
     /* set null string terminator */
 

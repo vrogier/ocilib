@@ -520,7 +520,6 @@ OCI_Boolean OcilibNumberToStringInternal
 
             dbstr1 = (dbtext *) (out_value);
 
-
             CHECK_OCI
             (
                 err,
@@ -529,7 +528,6 @@ OCI_Boolean OcilibNumberToStringInternal
                 (ub4)OcilibStringDBSize(fmt), (oratext *)NULL, (ub4)0,
                 (ub4 *)&dbsize1, (oratext *)dbstr1
             );
-
 
             out_value_size = (dbsize1 / (OCI_Int32) sizeof(dbtext));
         }

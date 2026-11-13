@@ -298,7 +298,7 @@ OCI_Boolean OcilibJsonLoadText
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    dbstr = (dbtext *) (json_text);
+    dbstr  = (dbtext *) (json_text);
     dbsize = (0 == length ? OcilibStringDBSize(json_text) : dbsize);
 
     CHECK_NULL(dbstr);
@@ -606,10 +606,8 @@ OCI_Boolean OcilibJsonClone
     bin = (ub1 *) OcilibMemoryAlloc(src->con->env, OCI_IPC_VOID, (OCI_Size) bin_len, 1, FALSE);
     CHECK_PTR(OCI_IPC_VOID, bin);
 
-    {
-        OCI_UInt32 bin_len2 = bin_len;
-        CHECK(OcilibJsonToBinary(src, bin, &bin_len2));
-    }
+    OCI_UInt32 bin_len2 = bin_len;
+    CHECK(OcilibJsonToBinary(src, bin, &bin_len2));
 
     CHECK(OcilibJsonLoadBinary(dest, bin, bin_len));
 
@@ -821,13 +819,11 @@ OCI_JsonNode * OcilibJsonGetRoot
 
     CHECK_JSON_DOC(json);
 
-    {
-        jznDomNode *root = JsonDomGetRoot(json->jdoc);
-        CHECK_JSON(json->jdoc, NULL != root);
+    jznDomNode *root = JsonDomGetRoot(json->jdoc);
+    CHECK_JSON(json->jdoc, NULL != root);
 
-        node = OcilibJsonNodeInitialize(json, root, OCI_JNT_NULL);
-        CHECK_NULL(node);
-    }
+    node = OcilibJsonNodeInitialize(json, root, OCI_JNT_NULL);
+    CHECK_NULL(node);
 
     SET_RETVAL(node);
 
@@ -869,13 +865,9 @@ OCI_Boolean OcilibJsonSetRoot
 
     CHECK_JSON_DOC(json);
 
-    {
-        sword res = 0;
+    sword res = JsonDomSetRoot(json->jdoc, node->handle);
 
-        res = JsonDomSetRoot(json->jdoc, node->handle);
-
-        CHECK_JSON(json->jdoc, res == 0);
-    }
+    CHECK_JSON(json->jdoc, res == 0);
 
     SET_SUCCESS();
 

@@ -57,7 +57,6 @@ OCI_Boolean OcilibDatabaseStartup
 
     OCIAdmin* adm = NULL;
 
-
 #endif
 
     CHECK_PTR(OCI_IPC_ENVIRONMENT, env);

@@ -237,11 +237,9 @@ OCI_Size OcilibStringMbcsToNative
         return 0;
     }
 
-    {
-        const OCI_Size src_len = strlen(src);
+    const OCI_Size src_len = strlen(src);
 
-        len = (src_len < count) ? src_len : count;
-    }
+    len = (src_len < count) ? src_len : count;
 
 #ifdef OCI_CHARSET_WIDE
 
@@ -415,8 +413,8 @@ OCI_Size OcilibStringUTF8ToNative
     while (in < src_len)
     {
         const unsigned char c = (unsigned char) src[in];
-        OCI_UInt32 code;
-        OCI_Size   seq;
+        OCI_UInt32          code;
+        OCI_Size            seq;
 
         if (c < 0x80)
         {
@@ -426,23 +424,23 @@ OCI_Size OcilibStringUTF8ToNative
         else if ((c & 0xE0) == 0xC0 && in + 1 < src_len)
         {
             code = ((OCI_UInt32)(c & 0x1F) << 6)
-                 |  (OCI_UInt32)(src[in + 1] & 0x3F);
-            seq  = 2;
+                   |  (OCI_UInt32)(src[in + 1] & 0x3F);
+            seq = 2;
         }
         else if ((c & 0xF0) == 0xE0 && in + 2 < src_len)
         {
             code = ((OCI_UInt32)(c & 0x0F) << 12)
-                 | ((OCI_UInt32)(src[in + 1] & 0x3F) << 6)
-                 |  (OCI_UInt32)(src[in + 2] & 0x3F);
-            seq  = 3;
+                   | ((OCI_UInt32)(src[in + 1] & 0x3F) << 6)
+                   |  (OCI_UInt32)(src[in + 2] & 0x3F);
+            seq = 3;
         }
         else if ((c & 0xF8) == 0xF0 && in + 3 < src_len)
         {
             code = ((OCI_UInt32)(c & 0x07) << 18)
-                 | ((OCI_UInt32)(src[in + 1] & 0x3F) << 12)
-                 | ((OCI_UInt32)(src[in + 2] & 0x3F) << 6)
-                 |  (OCI_UInt32)(src[in + 3] & 0x3F);
-            seq  = 4;
+                   | ((OCI_UInt32)(src[in + 1] & 0x3F) << 12)
+                   | ((OCI_UInt32)(src[in + 2] & 0x3F) << 6)
+                   |  (OCI_UInt32)(src[in + 3] & 0x3F);
+            seq = 4;
         }
         else
         {
@@ -458,7 +456,7 @@ OCI_Size OcilibStringUTF8ToNative
 
             if (dst && out + 1 < dst_cap)
             {
-                code -= 0x10000;
+                code        -= 0x10000;
                 dst[out]     = (otext) (0xD800 + (code >> 10));
                 dst[out + 1] = (otext) (0xDC00 + (code & 0x3FF));
             }
@@ -554,23 +552,21 @@ OCI_Size OcilibStringNativeToUTF8
             }
         }
 
+        OCI_Int32 n = 0;
+
+        if (dst && out < dst_cap)
         {
-            OCI_Int32 n = 0;
-
-            if (dst && out < dst_cap)
-            {
-                n = OcilibStringCodepointToUTF8(code, dst + out, (OCI_Int32) (dst_cap - out));
-            }
-
-            if (0 == n)
-            {
-                /* sizing pass or output full: count worst case */
-
-                n = (OCI_Int32)(code < 0x80 ? 1 : code < 0x800 ? 2 : code < 0x10000 ? 3 : 4);
-            }
-
-            out += (OCI_Size) n;
+            n = OcilibStringCodepointToUTF8(code, dst + out, (OCI_Int32) (dst_cap - out));
         }
+
+        if (0 == n)
+        {
+            /* sizing pass or output full: count worst case */
+
+            n = (OCI_Int32)(code < 0x80 ? 1 : code < 0x800 ? 2 : code < 0x10000 ? 3 : 4);
+        }
+
+        out += (OCI_Size) n;
 
         in++;
     }
@@ -619,8 +615,8 @@ char* OcilibStringGetDBMbcsString
        in a freshly allocated buffer that must be released with
        OcilibStringReleaseDBMbcsString(). '*size' receives the byte count. */
 
-    char    * dst = NULL;
-    OCI_Size  len = 0;
+    char   * dst = NULL;
+    OCI_Size len = 0;
 
     if (!src)
     {
@@ -762,7 +758,6 @@ OCI_Boolean OcilibStringToStringPtr
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_ENVIRONMENT, libenv
     );
-
 
     CHECK_PTR(OCI_IPC_STRING, value);
 
@@ -920,7 +915,7 @@ OCI_Boolean OcilibStringSetAttribute
 
     CHECK_PTR(OCI_IPC_CONNECTION, con);
 
-    dbstr = (dbtext *) (value);
+    dbstr  = (dbtext *) (value);
     dbsize = OcilibStringDBSize(value);
 
     if (dbsize == -1)
@@ -1438,19 +1433,17 @@ static OCI_UInt32 OcilibStringAppendChecked
         offset = limit;
     }
 
+    const OCI_Size avail = (OCI_Size)(limit - offset);
+
+    if (count > avail)
     {
-        const OCI_Size avail = (OCI_Size)(limit - offset);
+        count = avail;
+    }
 
-        if (count > avail)
-        {
-            count = avail;
-        }
-
-        if (NULL != src && count > 0)
-        {
-            memcpy(dest + offset, src, count * sizeof(otext));
-            offset += (OCI_UInt32)count;
-        }
+    if (NULL != src && count > 0)
+    {
+        memcpy(dest + offset, src, count * sizeof(otext));
+        offset += (OCI_UInt32)count;
     }
 
     dest[offset] = 0;

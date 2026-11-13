@@ -135,7 +135,7 @@ OCI_Boolean OcilibEnqueuePut
 
     sword ret = OCI_ERROR;
 
-    dbtext  * dbstr  = NULL;
+    dbtext * dbstr = NULL;
 
     char* mbcs_queue_name = NULL;
 

@@ -185,7 +185,7 @@ OCI_SodaDocument* OcilibSodaDocumentInitialize
     {
         if (NULL != key)
         {
-            dbkey = (dbtext *) (key);
+            dbkey    = (dbtext *) (key);
             dbkeylen = OcilibStringDBSize(key);
         }
 
@@ -283,15 +283,7 @@ OCI_SodaDocument* OcilibSodaDocumentInitialize
 
         if (FAILURE && alloc && NULL != doc)
         {
-            if (NULL != doc->sdb)
-            {
-                OcilibSodaDocumentFree(doc);
-            }
-            else
-            {
-                OcilibErrorResetSource(NULL, doc);
-                FREE(doc);
-            }
+            OcilibSodaDocumentFree(doc);
         }
     );
 }
@@ -540,11 +532,9 @@ const otext* OcilibSodaDocumentGetText
 
             ALLOC_DATA(OCI_IPC_STRING, doc->content_text, doc->content_text_size + 1);
 
-            {
-                OCI_UInt32 len = doc->content_text_size + 1;
+            OCI_UInt32 len = doc->content_text_size + 1;
 
-                CHECK(OcilibJsonToText(json, doc->content_text, &len, 0));
-            }
+            CHECK(OcilibJsonToText(json, doc->content_text, &len, 0));
 
             OcilibJsonFree(json);
             json = NULL;

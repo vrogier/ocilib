@@ -46,12 +46,6 @@ OCI_SodaDatabase * OcilibSodaDatabaseCreate
     CHECK_PTR(OCI_IPC_CONNECTION, con);
     CHECK_SODA_ENABLED(con);
 
-    CHECK_NULL(con->env->api);
-    CHECK_NULL(con->env->api->OCISodaCollOpen);
-    CHECK_NULL(con->env->api->OCISodaDocCreate);
-    CHECK_NULL(con->env->api->OCISodaFind);
-    CHECK_NULL(con->env->api->OCISodaDocGetNext);
-
     ALLOC_HANDLE(OCI_IPC_SODA_DB, sdb);
     sdb->con = con;
 
@@ -133,7 +127,7 @@ OCI_SodaCollection * OcilibSodaDatabaseCreateCollection
         /* context */ OCI_IPC_SODA_DB, sdb
     );
 
-    OCI_SodaCollection *coll     = NULL;
+    OCI_SodaCollection *coll = NULL;
 
     CHECK_PTR(OCI_IPC_SODA_DB, sdb);
     CHECK_PTR(OCI_IPC_STRING, name);
@@ -165,9 +159,7 @@ OCI_SodaCollection * OcilibSodaDatabaseCreateCollection
 
         if (FAILURE && NULL != coll)
         {
-            OcilibMemoryFreeHandle(sdb->env, (dvoid*)coll->handle, OCI_HTYPE_SODA_COLLECTION);
-            OcilibErrorResetSource(NULL, coll);
-            FREE(coll);
+            OcilibSodaCollectionFree(coll);
         }
     );
 }
@@ -188,7 +180,7 @@ OCI_SodaCollection * OcilibSodaDatabaseOpenCollection
         /* context */ OCI_IPC_SODA_DB, sdb
     );
 
-    OCI_SodaCollection *coll   = NULL;
+    OCI_SodaCollection *coll = NULL;
 
     CHECK_PTR(OCI_IPC_SODA_DB, sdb);
     CHECK_PTR(OCI_IPC_STRING, name);
@@ -197,27 +189,24 @@ OCI_SodaCollection * OcilibSodaDatabaseOpenCollection
     ALLOC_HANDLE(OCI_IPC_SODA_COLL, coll);
     coll->sdb = sdb;
 
-    {
-        sword oci_ret = sdb->con->env->api->OCISodaCollOpen
-                        (
-                            sdb->con->handle,
-                            (const OraText*)(name),
-                            (ub4)OcilibStringDBSize(name),
-                            &coll->handle,
-                            sdb->con->err,
-                            OCI_DEFAULT
-                        );
+    sword oci_ret = sdb->con->env->api->OCISodaCollOpen
+                    (
+                        sdb->con->handle,
+                        (const OraText*)(name),
+                        (ub4)OcilibStringDBSize(name),
+                        &coll->handle,
+                        sdb->con->err,
+                        OCI_DEFAULT
+                    );
 
-        CHECK
-        (
-            OCI_SUCCESS == oci_ret || OCI_SUCCESS_WITH_INFO == oci_ret || OCI_NO_DATA == oci_ret
-        );
-    }
+    CHECK
+    (
+        OCI_SUCCESS == oci_ret || OCI_SUCCESS_WITH_INFO == oci_ret || OCI_NO_DATA == oci_ret
+    );
 
     if (NULL == coll->handle)
     {
-        OcilibErrorResetSource(NULL, coll);
-        FREE(coll);
+        OcilibSodaCollectionFree(coll);
         SET_RETVAL(NULL);
     }
     else
@@ -231,9 +220,7 @@ OCI_SodaCollection * OcilibSodaDatabaseOpenCollection
 
         if (FAILURE && NULL != coll)
         {
-            OcilibMemoryFreeHandle(sdb->env, (dvoid*)coll->handle, OCI_HTYPE_SODA_COLLECTION);
-            OcilibErrorResetSource(NULL, coll);
-            FREE(coll);
+            OcilibSodaCollectionFree(coll);
         }
     );
 }
@@ -266,7 +253,7 @@ OCI_SodaCollectionCursor * OcilibSodaDatabaseGetCollections
 
     if (NULL != startName)
     {
-        dbstr = (dbtext *) (startName);
+        dbstr  = (dbtext *) (startName);
         dbsize = OcilibStringDBSize(startName);
     }
 
@@ -291,9 +278,7 @@ OCI_SodaCollectionCursor * OcilibSodaDatabaseGetCollections
 
         if (FAILURE && NULL != cursor)
         {
-            OcilibMemoryFreeHandle(sdb->env, (dvoid*)cursor->handle, OCI_HTYPE_SODA_COLL_CURSOR);
-            OcilibErrorResetSource(NULL, cursor);
-            FREE(cursor);
+            OcilibSodaCollectionCursorFree(cursor);
         }
     );
 }

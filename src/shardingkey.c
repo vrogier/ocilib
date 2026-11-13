@@ -171,7 +171,6 @@ OCI_Boolean OcilibShardingKeyAddString
         /* context */ OCI_IPC_SHARDING_KEY, skey
     );
 
-
     CHECK_PTR(OCI_IPC_SHARDING_KEY, skey);
     CHECK_PTR(OCI_IPC_STRING,       value);
     CHECK_ENV_FEATURE(OCI_FEATURE_SHARDING, OCI_12_2);

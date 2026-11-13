@@ -1422,10 +1422,10 @@ OCI_Environment * OcilibEnvironmentCreate
 
 #endif
 
-    env->error_handler      = err_handler;
-    env->version_compile    = OCI_VERSION_COMPILE;
-    env->env_mode           = mode;
-    env->charset            = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_MBCS;
+    env->error_handler   = err_handler;
+    env->version_compile = OCI_VERSION_COMPILE;
+    env->env_mode        = mode;
+    env->charset         = (sizeof(otext) == sizeof(wchar_t)) ? OCI_CHAR_WIDE : OCI_CHAR_MBCS;
 
     for (i = 0; i < OCI_FMT_COUNT; i++)
     {
@@ -2186,7 +2186,6 @@ const otext* OcilibEnvironmentGetLocaleString
                 (OCI_Size)dbsize,
                 (ub2)code
             );
-
 
             /* publish the slot only on success so a failed fill can be retried */
 

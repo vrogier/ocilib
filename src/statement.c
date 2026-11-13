@@ -1471,7 +1471,7 @@ OCI_Boolean OcilibStatementPrepareInternal
 
     OCILIB_LOG(OCI_LOG_CAT_LIB, OCI_LOG_INFO, OTEXT("handle=[%p]sql=[%s]"), stmt, sql ? sql : OTEXT(""));
 
-    dbstr = (dbtext *) (stmt->sql);
+    dbstr  = (dbtext *) (stmt->sql);
     dbsize = OcilibStringDBSize(stmt->sql);
 
     if (stmt->con->env->version_runtime < OCI_9_2)

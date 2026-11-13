@@ -415,7 +415,6 @@ OCI_Boolean OcilibDateFromString
         /* context */ OCI_IPC_DATE, date
     );
 
-
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, str);
 
@@ -581,7 +580,6 @@ OCI_Boolean OcilibDateNextDay
         /* context */ OCI_IPC_DATE, date
     );
 
-
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, day);
 
@@ -736,7 +734,6 @@ OCI_Boolean OcilibDateToString
 
     dbstr1 = (dbtext *) (str);
 
-
     CHECK_OCI
     (
         date->env->err,
@@ -745,7 +742,6 @@ OCI_Boolean OcilibDateToString
         (ub1) OcilibStringDBSize(fmt), (oratext *) NULL, (ub4) 0,
         (ub4*) &dbsize1, (oratext *) dbstr1
     );
-
 
     /* set null string terminator */
 
@@ -772,7 +768,6 @@ OCI_Boolean OcilibDateZoneToZone
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DATE, date
     );
-
 
     CHECK_PTR(OCI_IPC_DATE,   date);
     CHECK_PTR(OCI_IPC_STRING, zone1);

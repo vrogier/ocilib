@@ -179,7 +179,7 @@
 
 #if defined(OCI_CHARSET_WIDE) && !defined(_WINDOWS)
 #error "OCI_CHARSET_WIDE is supported on Windows only. " \
-       "On Unix/macOS, build with OCI_CHARSET_MBCS (otext = char, UTF-8/ANSI via NLS_LANG)."
+    "On Unix/macOS, build with OCI_CHARSET_MBCS (otext = char, UTF-8/ANSI via NLS_LANG)."
 #endif
 
 /* printf-style format checking for functions taking an otext format string

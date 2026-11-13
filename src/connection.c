@@ -183,10 +183,8 @@ OCI_Connection * OcilibConnectionAllocate
         con->pwd  = OcilibStringDuplicate(env, pwd  ? pwd  : OTEXT(""));
     }
 
-    {
-        con->env->handle = env->handle;
-        con->env         = env;
-    }
+    con->env->handle = env->handle;
+    con->env         = env;
 
     /*  allocate error handle */
 
@@ -305,16 +303,16 @@ OCI_Boolean OcilibConnectionAttach
 
         if (con->env->version_runtime >= OCI_9_0 && con->pool)
         {
-            dbstr = (dbtext *) (con->pool->name);
+            dbstr  = (dbtext *) (con->pool->name);
             dbsize = OcilibStringDBSize(con->pool->name);
-            cmode = OCI_CPOOL;
+            cmode  = OCI_CPOOL;
         }
         else
 
 #endif
 
         {
-            dbstr = (dbtext *) (con->db);
+            dbstr  = (dbtext *) (con->db);
             dbsize = OcilibStringDBSize(con->db);
         }
 
@@ -427,11 +425,11 @@ static OCI_Boolean OcilibConnectionLogonRegular
 
     if (IS_STRING_VALID(new_pwd))
     {
-        dbstr1 = (dbtext *) (con->user);
+        dbstr1  = (dbtext *) (con->user);
         dbsize1 = OcilibStringDBSize(con->user);
-        dbstr2 = (dbtext *) (con->pwd);
+        dbstr2  = (dbtext *) (con->pwd);
         dbsize2 = OcilibStringDBSize(con->pwd);
-        dbstr3 = (dbtext *) (new_pwd);
+        dbstr3  = (dbtext *) (new_pwd);
         dbsize3 = OcilibStringDBSize(new_pwd);
 
         CHECK_ATTRIB_SET
@@ -467,7 +465,7 @@ static OCI_Boolean OcilibConnectionLogonRegular
 
         if (IS_STRING_VALID(con->user))
         {
-            dbstr1 = (dbtext *) (con->user);
+            dbstr1  = (dbtext *) (con->user);
             dbsize1 = OcilibStringDBSize(con->user);
 
             CHECK_ATTRIB_SET
@@ -482,7 +480,7 @@ static OCI_Boolean OcilibConnectionLogonRegular
 
         if (IS_STRING_VALID(con->pwd))
         {
-            dbstr2 = (dbtext *) (con->pwd);
+            dbstr2  = (dbtext *) (con->pwd);
             dbsize2 = OcilibStringDBSize(con->pwd);
 
             CHECK_ATTRIB_SET
@@ -512,7 +510,7 @@ static OCI_Boolean OcilibConnectionLogonRegular
                 OCILIB_REVISION_VERSION
             );
 
-            dbstr3 = (dbtext *) (driver_version);
+            dbstr3  = (dbtext *) (driver_version);
             dbsize3 = OcilibStringDBSize(driver_version);
 
             CHECK_ATTRIB_SET
@@ -678,7 +676,6 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
         if (IS_STRING_VALID(con->user))
         {
 
-
             CHECK_ATTRIB_SET
             (
                 OCI_HTYPE_AUTHINFO, OCI_ATTR_USERNAME,
@@ -689,7 +686,6 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
 
         if (IS_STRING_VALID(con->pwd))
         {
-
 
             CHECK_ATTRIB_SET
             (
@@ -714,7 +710,7 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
 
     if (NULL != con->pool)
     {
-        dbstr = (dbtext *) (con->pool->name);
+        dbstr  = (dbtext *) (con->pool->name);
         dbsize = OcilibStringDBSize(con->pool->name);
 
         if (OCI_HTYPE_SPOOL == con->pool->kind)
@@ -723,7 +719,7 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
 
             if (IS_STRING_VALID(tag))
             {
-                dbtag = (dbtext *) (tag);
+                dbtag     = (dbtext *) (tag);
                 dbtagsize = OcilibStringDBSize(tag);
             }
         }
@@ -741,7 +737,7 @@ static OCI_Boolean OcilibConnectionLogonSessionGet
             sess_mode |= OCI_SESSGET_STMTCACHE;
         }
 
-        dbstr = (dbtext *) (con->db);
+        dbstr  = (dbtext *) (con->db);
         dbsize = OcilibStringDBSize(con->db);
     }
 
@@ -856,14 +852,12 @@ OCI_Boolean OcilibConnectionLogon
 
     /* if a warning/error was raised during logon and it must be reported,
        fail now. The CLEANUP block will dispose the partially created con. */
-    {
-        OCI_Error *err = OcilibErrorGet(con->env, FALSE, FALSE);
+    OCI_Error *err = OcilibErrorGet(con->env, FALSE, FALSE);
 
-        if (NULL != err &&  OCI_UNKNOWN != err->code &&
-            (OCI_ERR_TYPE_WARNING != err->type || err->warnings_on))
-        {
-            CHECK(FALSE);
-        }
+    if (NULL != err &&  OCI_UNKNOWN != err->code &&
+        (OCI_ERR_TYPE_WARNING != err->type || err->warnings_on))
+    {
+        CHECK(FALSE);
     }
 
     SET_SUCCESS();
@@ -964,7 +958,7 @@ static OCI_Boolean OcilibConnectionLogoffSessionPool
 
         if (NULL != con->pool && NULL != con->sess_tag && ( OCI_HTYPE_SPOOL == con->pool->kind))
         {
-            dbstr = (dbtext *) (con->sess_tag);
+            dbstr  = (dbtext *) (con->sess_tag);
             dbsize = OcilibStringDBSize(con->sess_tag);
             mode   = OCI_SESSRLS_RETAG;
         }
@@ -1656,7 +1650,6 @@ const otext * OcilibConnectionGetServerVersionString
             );
         }
 
-
 #if OCI_VERSION_COMPILE >= OCI_18_1
 
         if (con->env->version_runtime >= OCI_18_1)
@@ -2168,7 +2161,7 @@ OCI_Boolean OcilibConnectionSetTrace
     {
         if (NULL != str)
         {
-            dbstr = (dbtext *) (str);
+            dbstr  = (dbtext *) (str);
             dbsize = OcilibStringDBSize(str);
         }
 

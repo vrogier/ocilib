@@ -241,7 +241,7 @@ OCI_Message * OcilibDequeueGetMessage
     sword ret   = OCI_ERROR;
     void *p_ind = NULL;
 
-    dbtext  * dbstr  = NULL;
+    dbtext * dbstr = NULL;
 
     char* mbcs_queue_name = NULL;
 
@@ -999,7 +999,7 @@ OCI_Boolean OcilibDequeueSubscribe
                 *str = (otext) otoupper(*str);
             }
 
-            dbstr = (dbtext *) (buffer);
+            dbstr  = (dbtext *) (buffer);
             dbsize = OcilibStringDBSize(buffer);
 
             CHECK_ATTRIB_SET

@@ -64,12 +64,7 @@ OCI_SodaOptions * OcilibSodaOptionsCreate
     (
         if (FAILURE && NULL != options)
         {
-            if (NULL != options->handle)
-            {
-                OcilibMemoryFreeHandle(sdb->env, (dvoid*)options->handle, OCI_HTYPE_SODA_OPER_OPTIONS);
-            }
-            OcilibErrorResetSource(NULL, options);
-            FREE(options);
+            OcilibSodaOptionsFree(options);
         }
     );
 }
@@ -183,7 +178,6 @@ OCI_Boolean OcilibSodaOptionsSetKeyAttr
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
-
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, key);
@@ -319,7 +313,6 @@ OCI_Boolean OcilibSodaOptionsSetVersion
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
 
-
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, version);
     CHECK_PTR(OCI_IPC_SODA_DB, options->sdb);
@@ -355,7 +348,6 @@ OCI_Boolean OcilibSodaOptionsSetFilter
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
-
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, filterSpec);
@@ -503,7 +495,6 @@ OCI_Boolean OcilibSodaOptionsSetHint
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_SODA_OPTIONS, options
     );
-
 
     CHECK_PTR(OCI_IPC_SODA_OPTIONS, options);
     CHECK_PTR(OCI_IPC_STRING, hint);

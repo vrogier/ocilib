@@ -638,19 +638,19 @@ ocilib_exit_label:                  \
 
 #define IS_STRING_VALID(s) ((s) && ((s)[0]))
 
-#define OCI_CALL(ret, func, ...)                                                             \
-                                                                                             \
-        do                                                                                   \
-        {                                                                                    \
-            CHECK_NULL(ocilib_call_context.env);                                             \
-            CHECK_NULL(ocilib_call_context.env->api);                                        \
-            OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,                    \
-                                OCI_LOG_TRACE, #func, OTEXT("ENTER"));                       \
-            (ret) = ocilib_call_context.env->api->func(__VA_ARGS__);                         \
-            OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,                    \
-                                OCI_LOG_TRACE, #func,                                        \
-                                OTEXT("LEAVE (ret=%p)"), (void *)(size_t)(ret));             \
-        }                                                                                    \
+#define OCI_CALL(ret, func, ...)                                                 \
+                                                                                 \
+        do                                                                       \
+        {                                                                        \
+            CHECK_NULL(ocilib_call_context.env);                                 \
+            CHECK_NULL(ocilib_call_context.env->api);                            \
+            OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,        \
+                                OCI_LOG_TRACE, #func, OTEXT("ENTER"));           \
+            (ret) = ocilib_call_context.env->api->func(__VA_ARGS__);             \
+            OCILIB_LOG_WITH_ENV(ocilib_call_context.env, OCI_LOG_CAT_OCI,        \
+                                OCI_LOG_TRACE, #func,                            \
+                                OTEXT("LEAVE (ret=%p)"), (void *)(size_t)(ret)); \
+        }                                                                        \
         while (0)
 
 #define OCI_ERROR_GET(errhp, code, buf, buflen)                                                                         \

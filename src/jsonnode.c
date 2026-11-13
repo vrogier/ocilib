@@ -36,7 +36,7 @@
                                                             \
         CHECK(OcilibJsonNodeSetValue(node, otype, &value)); \
         SET_SUCCESS();                                      \
-        EXIT_FUNC();                            \
+        EXIT_FUNC();                                        \
 
 
 #define OCL_JSON_NODE_NUMBER_GETTER(otype)                 \
@@ -983,9 +983,9 @@ OCI_Number * OcilibJsonNodeGetNumber
                                  (OCI_Size) sval.len_jznScalarVal);
         otstr[sval.len_jznScalarVal] = 0;
 
-        dbstr = (dbtext *) (otstr);
-        dbsize = OcilibStringDBSize(otstr);
-        dbfmt = (dbtext *) (fmt);
+        dbstr   = (dbtext *) (otstr);
+        dbsize  = OcilibStringDBSize(otstr);
+        dbfmt   = (dbtext *) (fmt);
         fmtsize = OcilibStringDBSize(fmt);
 
         CHECK_NULL(dbstr);
@@ -1249,50 +1249,48 @@ OCI_Timestamp * OcilibJsonNodeGetTimestamp
 
     CHECK_NULL(value);
 
+    signed char tz_hour   = (signed char) aux.dt_JsonOCIVal.tzHourOffset_JsonDateTime;
+    signed char tz_minute = (signed char) aux.dt_JsonOCIVal.tzMinuteOffset_JsonDateTime;
+    otext       tz[8]     = { 0 };
+    OraText    *tzp       = (OraText *)NULL;
+    OCI_Size    tz_len    = 0;
+
+    if (OCI_TIMESTAMP_TZ == ttype)
     {
-        signed char tz_hour   = (signed char) aux.dt_JsonOCIVal.tzHourOffset_JsonDateTime;
-        signed char tz_minute = (signed char) aux.dt_JsonOCIVal.tzMinuteOffset_JsonDateTime;
-        otext       tz[8]     = { 0 };
-        OraText    *tzp       = (OraText *)NULL;
-        OCI_Size    tz_len    = 0;
+        /* timezone text must be in the OCI environment character set */
 
-        if (OCI_TIMESTAMP_TZ == ttype)
-        {
-            /* timezone text must be in the OCI environment character set */
+        OCI_Int32 hour   = (tz_hour   < 0) ? -tz_hour   : tz_hour;
+        OCI_Int32 minute = (tz_minute < 0) ? -tz_minute : tz_minute;
 
-            OCI_Int32 hour   = (tz_hour   < 0) ? -tz_hour   : tz_hour;
-            OCI_Int32 minute = (tz_minute < 0) ? -tz_minute : tz_minute;
+        tz[0] = (tz_hour < 0) ? OTEXT('-') : OTEXT('+');
+        tz[1] = (otext)(OTEXT('0') + hour / 10);
+        tz[2] = (otext)(OTEXT('0') + hour % 10);
+        tz[3] = OTEXT(':');
+        tz[4] = (otext)(OTEXT('0') + minute / 10);
+        tz[5] = (otext)(OTEXT('0') + minute % 10);
+        tz[6] = 0;
 
-            tz[0] = (tz_hour < 0) ? OTEXT('-') : OTEXT('+');
-            tz[1] = (otext)(OTEXT('0') + hour / 10);
-            tz[2] = (otext)(OTEXT('0') + hour % 10);
-            tz[3] = OTEXT(':');
-            tz[4] = (otext)(OTEXT('0') + minute / 10);
-            tz[5] = (otext)(OTEXT('0') + minute % 10);
-            tz[6] = 0;
-
-            tz_len = otextsize(tz);
-            tzp    = (OraText *)tz;
-        }
-
-        CHECK_OCI
-        (
-            node->json->con->env->err,
-            OCIDateTimeConstruct,
-            node->json->con->env->handle,
-            node->json->con->env->err,
-            value->handle,
-            (sb2) aux.dt_JsonOCIVal.year_JsonDateTime,
-            (ub1) aux.dt_JsonOCIVal.month_JsonDateTime,
-            (ub1) aux.dt_JsonOCIVal.day_JsonDateTime,
-            (ub1) aux.dt_JsonOCIVal.hour_JsonDateTime,
-            (ub1) aux.dt_JsonOCIVal.minute_JsonDateTime,
-            (ub1) aux.dt_JsonOCIVal.second_JsonDateTime,
-            (ub4) aux.dt_JsonOCIVal.fsecond_JsonDateTime,
-            tzp,
-            tz_len
-        );
+        tz_len = otextsize(tz);
+        tzp    = (OraText *)tz;
     }
+
+    CHECK_OCI
+    (
+        node->json->con->env->err,
+        OCIDateTimeConstruct,
+        node->json->con->env->handle,
+        node->json->con->env->err,
+        value->handle,
+        (sb2) aux.dt_JsonOCIVal.year_JsonDateTime,
+        (ub1) aux.dt_JsonOCIVal.month_JsonDateTime,
+        (ub1) aux.dt_JsonOCIVal.day_JsonDateTime,
+        (ub1) aux.dt_JsonOCIVal.hour_JsonDateTime,
+        (ub1) aux.dt_JsonOCIVal.minute_JsonDateTime,
+        (ub1) aux.dt_JsonOCIVal.second_JsonDateTime,
+        (ub4) aux.dt_JsonOCIVal.fsecond_JsonDateTime,
+        tzp,
+        tz_len
+    );
 
     SET_RETVAL(value);
 

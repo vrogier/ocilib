@@ -393,7 +393,6 @@ OCI_Boolean OcilibIntervalFromString
         /* context */ OCI_IPC_INTERVAL, itv
     );
 
-
     CHECK_PTR(OCI_IPC_INTERVAL, itv);
     CHECK_PTR(OCI_IPC_STRING,   str);
 
@@ -471,7 +470,6 @@ OCI_Boolean OcilibIntervalToString
 
     dbsize = (OCI_Int32)len;
 
-
     /* set null string terminator */
 
     str[dbcharcount(dbsize)] = 0;
@@ -496,7 +494,6 @@ OCI_Boolean OcilibIntervalFromTimeZone
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_INTERVAL, itv
     );
-
 
     CHECK_PTR(OCI_IPC_INTERVAL, itv);
     CHECK_PTR(OCI_IPC_STRING,   str);

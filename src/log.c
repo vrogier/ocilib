@@ -304,71 +304,69 @@ static OCI_Boolean OcilibLogInitializeUnlocked(void)
     OcilibLogger.output_path[0] = 0;
     OcilibLogger.ref_count      = 0;
 
+    const char *level_str  = getenv("OCILIB_LOG");
+    const char *cat_str    = getenv("OCILIB_LOG_CATEGORIES");
+    const char *output_str = getenv("OCILIB_LOG_OUTPUT");
+
+    if (!level_str || level_str[0] == 0)
     {
-        const char *level_str  = getenv("OCILIB_LOG");
-        const char *cat_str    = getenv("OCILIB_LOG_CATEGORIES");
-        const char *output_str = getenv("OCILIB_LOG_OUTPUT");
+        OcilibLogger.ref_count = 1;
+        return TRUE;
+    }
 
-        if (!level_str || level_str[0] == 0)
+    if      (OcilibLogStrEquals(level_str, "ERROR")) OcilibLogger.level = OCI_LOG_ERROR;
+    else if (OcilibLogStrEquals(level_str, "WARN"))  OcilibLogger.level = OCI_LOG_WARN;
+    else if (OcilibLogStrEquals(level_str, "INFO"))  OcilibLogger.level = OCI_LOG_INFO;
+    else if (OcilibLogStrEquals(level_str, "TRACE")) OcilibLogger.level = OCI_LOG_TRACE;
+    else if (OcilibLogStrEquals(level_str, "DEBUG")) OcilibLogger.level = OCI_LOG_DEBUG;
+
+    if (OcilibLogger.level == OCI_LOG_NONE)
+    {
+        OcilibLogger.ref_count = 1;
+        return TRUE;
+    }
+
+    if (cat_str)
+    {
+        char  cat_buf[128];
+        char *token, *next;
+
+        snprintf(cat_buf, sizeof(cat_buf), "%s", cat_str);
+        OcilibLogger.categories = 0;
+
+        for (token = cat_buf; token && *token; token = next)
         {
-            OcilibLogger.ref_count = 1;
-            return TRUE;
+            next = strchr(token, ',');
+            if (next) { *next = 0; next++; }
+            while (*token == ' ') token++;
+            if      (OcilibLogStrEquals(token, "LIB")) OcilibLogger.categories |= OCI_LOG_CAT_LIB;
+            else if (OcilibLogStrEquals(token, "MEM")) OcilibLogger.categories |= OCI_LOG_CAT_MEM;
+            else if (OcilibLogStrEquals(token, "OCI")) OcilibLogger.categories |= OCI_LOG_CAT_OCI;
+            else if (OcilibLogStrEquals(token, "ALL")) OcilibLogger.categories |= OCI_LOG_CAT_ALL;
         }
+    }
 
-        if      (OcilibLogStrEquals(level_str, "ERROR")) OcilibLogger.level = OCI_LOG_ERROR;
-        else if (OcilibLogStrEquals(level_str, "WARN"))  OcilibLogger.level = OCI_LOG_WARN;
-        else if (OcilibLogStrEquals(level_str, "INFO"))  OcilibLogger.level = OCI_LOG_INFO;
-        else if (OcilibLogStrEquals(level_str, "TRACE")) OcilibLogger.level = OCI_LOG_TRACE;
-        else if (OcilibLogStrEquals(level_str, "DEBUG")) OcilibLogger.level = OCI_LOG_DEBUG;
+    if (output_str && output_str[0])
+    {
+        OcilibStringMbcsToNative(output_str, OcilibLogger.output_path, OCI_SIZE_BUFFER);
 
-        if (OcilibLogger.level == OCI_LOG_NONE)
-        {
-            OcilibLogger.ref_count = 1;
-            return TRUE;
-        }
-
-        if (cat_str)
-        {
-            char  cat_buf[128];
-            char *token, *next;
-
-            snprintf(cat_buf, sizeof(cat_buf), "%s", cat_str);
-            OcilibLogger.categories = 0;
-
-            for (token = cat_buf; token && *token; token = next)
-            {
-                next = strchr(token, ',');
-                if (next) { *next = 0; next++; }
-                while (*token == ' ') token++;
-                if      (OcilibLogStrEquals(token, "LIB")) OcilibLogger.categories |= OCI_LOG_CAT_LIB;
-                else if (OcilibLogStrEquals(token, "MEM")) OcilibLogger.categories |= OCI_LOG_CAT_MEM;
-                else if (OcilibLogStrEquals(token, "OCI")) OcilibLogger.categories |= OCI_LOG_CAT_OCI;
-                else if (OcilibLogStrEquals(token, "ALL")) OcilibLogger.categories |= OCI_LOG_CAT_ALL;
-            }
-        }
-
-        if (output_str && output_str[0])
-        {
-            OcilibStringMbcsToNative(output_str, OcilibLogger.output_path, OCI_SIZE_BUFFER);
-
-            if (OcilibLogStrEquals(output_str, "STDERR"))
-            {
-                OcilibLogger.file = stderr;
-            }
-            else if (OcilibLogStrEquals(output_str, "STDOUT"))
-            {
-                OcilibLogger.file = stdout;
-            }
-            else
-            {
-                OcilibLogger.file       = OcilibLogOpenFile(OcilibLogger.output_path);
-                OcilibLogger.file_owned = (OcilibLogger.file != NULL);
-            }
-        }
-        else
+        if (OcilibLogStrEquals(output_str, "STDERR"))
         {
             OcilibLogger.file = stderr;
         }
+        else if (OcilibLogStrEquals(output_str, "STDOUT"))
+        {
+            OcilibLogger.file = stdout;
+        }
+        else
+        {
+            OcilibLogger.file       = OcilibLogOpenFile(OcilibLogger.output_path);
+            OcilibLogger.file_owned = (OcilibLogger.file != NULL);
+        }
+    }
+    else
+    {
+        OcilibLogger.file = stderr;
     }
 
     OcilibLogger.initialized = TRUE;
@@ -513,12 +511,10 @@ void OcilibLogWrite
 
     OcilibLogLock();
 
-    {
-        FILE *file = OcilibLogger.file ? OcilibLogger.file : stderr;
+    FILE *file = OcilibLogger.file ? OcilibLogger.file : stderr;
 
-        OcilibLogFputs(line, file);
-        fflush(file);
-    }
+    OcilibLogFputs(line, file);
+    fflush(file);
 
     OcilibLogUnlock();
 }

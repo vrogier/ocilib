@@ -168,8 +168,8 @@ OCI_TypeInfo * OcilibTypeInfoGet
 
     otext buffer[(OCI_SIZE_OBJ_NAME * 2) + 2] = OTEXT("");
 
-    OCI_Size  max_chars = sizeof(buffer) / sizeof(otext) - 1;
-    sb4       pbsp      = 1;
+    OCI_Size max_chars = sizeof(buffer) / sizeof(otext) - 1;
+    sb4      pbsp      = 1;
 
     otext obj_schema[OCI_SIZE_OBJ_NAME + 1];
     otext obj_name[OCI_SIZE_OBJ_NAME + 1];

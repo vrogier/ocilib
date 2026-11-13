@@ -267,12 +267,12 @@ OCI_Pool * OcilibPoolCreate
 
         /* create the pool */
 
-        dbstr_db = (dbtext *) (pool->db);
-        dbsize_db = OcilibStringDBSize(pool->db);
-        dbstr_user = (dbtext *) (pool->user);
+        dbstr_db    = (dbtext *) (pool->db);
+        dbsize_db   = OcilibStringDBSize(pool->db);
+        dbstr_user  = (dbtext *) (pool->user);
         dbsize_user = OcilibStringDBSize(pool->user);
-        dbstr_pwd = (dbtext *) (pool->pwd);
-        dbsize_pwd = OcilibStringDBSize(pool->pwd);
+        dbstr_pwd   = (dbtext *) (pool->pwd);
+        dbsize_pwd  = OcilibStringDBSize(pool->pwd);
 
         if (OCI_HTYPE_CPOOL == pool->kind)
         {

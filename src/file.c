@@ -145,10 +145,10 @@ OCI_Boolean OcilibFileGetInfo
     /* retrieve name */
 
     dbsize1 = (OCI_Int32) OCI_SIZE_DIRECTORY  * (OCI_Int32) sizeof(otext);
-    dbstr1 = (dbtext *) (file->dir);
+    dbstr1  = (dbtext *) (file->dir);
 
     dbsize2 = (OCI_Int32) OCI_SIZE_FILENAME  * (OCI_Int32) sizeof(otext);
-    dbstr2 = (dbtext *) (file->name);
+    dbstr2  = (dbtext *) (file->name);
 
     usize1 = (ub2) dbsize1;
     usize2 = (ub2) dbsize2;
@@ -164,7 +164,6 @@ OCI_Boolean OcilibFileGetInfo
 
     dbsize1 = (OCI_Int32) usize1;
     dbsize2 = (OCI_Int32) usize2;
-
 
     SET_SUCCESS();
 
@@ -566,7 +565,6 @@ OCI_Boolean OcilibFileSetName
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_FILE, file
     );
-
 
     CHECK_PTR(OCI_IPC_FILE, file);
 

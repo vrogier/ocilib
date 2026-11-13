@@ -83,16 +83,14 @@ static OCI_Boolean OcilibMemoryComputeSize
         return FALSE;
     }
 
+    const OCI_Size requested = block_size * block_count;
+
+    if (requested > (SIZE_MAX - sizeof(OCI_MemoryBlock)))
     {
-        const OCI_Size requested = block_size * block_count;
-
-        if (requested > (SIZE_MAX - sizeof(OCI_MemoryBlock)))
-        {
-            return FALSE;
-        }
-
-        *size = sizeof(OCI_MemoryBlock) + requested;
+        return FALSE;
     }
+
+    *size = sizeof(OCI_MemoryBlock) + requested;
 
     return TRUE;
 }

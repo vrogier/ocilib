@@ -432,7 +432,6 @@ void OcilibExceptionOCI
         ctx->env->api->OCIErrorGet((dvoid *)oci_err, (ub4)1, (OraText *)NULL, &err_code,
                                    (OraText *)err_msg, (ub4)err_size, (ub4)OCI_HTYPE_ERROR);
 
-
         if (err_code == 0 && err_msg[0] == 0)
         {
             /* for some OCI call might return an error but OCIErrorGet() not giving more
@@ -477,7 +476,6 @@ void OcilibExceptionOCI
             buffer,
             0
         );
-
 
         OcilibExceptionCallHandler(err);
     }

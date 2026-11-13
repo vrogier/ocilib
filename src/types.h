@@ -87,9 +87,9 @@ struct OCI_Item
 
 typedef struct OCI_Item OCI_Item;
 
-#define OCI_HANDLE(HType)       \
-        OCI_Environment *env;   \
-        HType          *handle; \
+#define OCI_HANDLE(HType)        \
+        OCI_Environment *env;    \
+        HType          *handle;  \
         void           *usrdata; \
         OCI_PointerType htype
 
@@ -407,7 +407,7 @@ struct OCI_Column
     sb1                 scale;        /* SQL scale */
     ub1                 nullable;     /* is nullable */
     ub1                 charused;     /* is column size expressed in characters */
-        ub1                 handletype;   /* oracle handle type */
+    ub1                 handletype;       /* oracle handle type */
     ub1                 json_schema;  /* column has a JSON schema constraint (23ai) */
 };
 

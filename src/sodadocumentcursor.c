@@ -63,9 +63,7 @@ OCI_SodaDocumentCursor * OcilibSodaDocumentCursorInitialize
     (
         if (FAILURE && alloc && NULL != cursor)
         {
-            OcilibMemoryFreeHandle(coll->sdb->env, (dvoid*)cursor->handle, OCI_HTYPE_SODA_DOC_CURSOR);
-            OcilibErrorResetSource(NULL, cursor);
-            FREE(cursor);
+            OcilibSodaDocumentCursorFree(cursor);
         }
     );
 }
@@ -102,8 +100,7 @@ OCI_SodaDocument * OcilibSodaDocumentCursorGetNext
 
         if (cursor->doc_pos >= cursor->doc_count)
         {
-            OcilibErrorResetSource(NULL, doc);
-            FREE(doc);
+            OcilibSodaDocumentFree(doc);
             doc = NULL;
             JUMP_CLEANUP();
         }
@@ -125,8 +122,7 @@ OCI_SodaDocument * OcilibSodaDocumentCursorGetNext
 
         if (OCI_NO_DATA == oci_ret || NULL == doc->handle)
         {
-            OcilibErrorResetSource(NULL, doc);
-            FREE(doc);
+            OcilibSodaDocumentFree(doc);
             doc = NULL;
             JUMP_CLEANUP();
         }

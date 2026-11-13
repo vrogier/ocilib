@@ -362,7 +362,6 @@ OCI_DirectPath * OcilibDirectPathCreate
     if (IS_STRING_VALID(dp->typinf->schema))
     {
 
-
         CHECK_ATTRIB_SET
         (
             OCI_HTYPE_DIRPATH_CTX, OCI_ATTR_SCHEMA_NAME,
@@ -375,7 +374,6 @@ OCI_DirectPath * OcilibDirectPathCreate
 
     if (IS_STRING_VALID(partition))
     {
-
 
         CHECK_ATTRIB_SET
         (
@@ -488,10 +486,10 @@ OCI_Boolean OcilibDirectPathSetColumn
         /* context */ OCI_IPC_DIRPATH, dp
     );
 
-    OCI_DirPathColumn *dpcol   = NULL;
-    OCI_Column        *col     = NULL;
-    OCIParam          *hattr   = NULL;
-    OCIParam          *hlist   = NULL;
+    OCI_DirPathColumn *dpcol = NULL;
+    OCI_Column        *col   = NULL;
+    OCIParam          *hattr = NULL;
+    OCIParam          *hlist = NULL;
 
     ub2 i = 0;
 
@@ -696,7 +694,6 @@ OCI_Boolean OcilibDirectPathSetColumn
 
     if (dpcol->format && dpcol->format[0] && (OCI_DDT_NUMBER != dpcol->type))
     {
-
 
         CHECK_ATTRIB_SET
         (
@@ -1328,7 +1325,6 @@ OCI_Boolean OcilibDirectPathSetDateFormat
         /* returns */ OCI_Boolean, FALSE,
         /* context */ OCI_IPC_DIRPATH, dp
     );
-
 
     CHECK_PTR(OCI_IPC_DIRPATH, dp);
     CHECK_DIRPATH_STATUS(dp, OCI_DPS_NOT_PREPARED);

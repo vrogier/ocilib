@@ -63,9 +63,7 @@ OCI_SodaCollectionCursor * OcilibSodaCollectionCursorInitialize
     (
         if (FAILURE && alloc && NULL != cursor)
         {
-            OcilibMemoryFreeHandle(sdb->env, (dvoid*)cursor->handle, OCI_HTYPE_SODA_COLL_CURSOR);
-            OcilibErrorResetSource(NULL, cursor);
-            FREE(cursor);
+            OcilibSodaCollectionCursorFree(cursor);
         }
     );
 }
@@ -106,8 +104,7 @@ OCI_SodaCollection * OcilibSodaCollectionCursorGetNext
 
     if (OCI_NO_DATA == oci_ret || NULL == coll->handle)
     {
-        OcilibErrorResetSource(NULL, coll);
-        FREE(coll);
+        OcilibSodaCollectionFree(coll);
         coll = NULL;
         JUMP_CLEANUP();
     }
@@ -122,9 +119,7 @@ OCI_SodaCollection * OcilibSodaCollectionCursorGetNext
     (
         if (FAILURE && NULL != coll)
         {
-            OcilibMemoryFreeHandle(coll->sdb->env, (dvoid*)coll->handle, OCI_HTYPE_SODA_COLLECTION);
-            OcilibErrorResetSource(NULL, coll);
-            FREE(coll);
+            OcilibSodaCollectionFree(coll);
         }
     );
 }

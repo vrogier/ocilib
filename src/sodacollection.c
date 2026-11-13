@@ -117,9 +117,7 @@ static OCI_Boolean OcilibSodaCollectionRefreshContentInfo
 
     coll->content_sql_type = sql_type;
     coll->content_format   = fmt;
-    coll->binary_content   = (sql_type == SQLT_BLOB ||
-        sql_type == SQLT_BIN ||
-        (sql_type == SQLT_JSON && fmt == OCI_JSON_FORMAT_OSON));
+    coll->binary_content   = (sql_type == SQLT_BLOB ||  sql_type == SQLT_BIN || (sql_type == SQLT_JSON && fmt == OCI_JSON_FORMAT_OSON));
 
     SET_SUCCESS();
 
@@ -165,9 +163,7 @@ OCI_SodaCollection* OcilibSodaCollectionInitialize
     (
         if (FAILURE && alloc && NULL != coll)
         {
-            OcilibMemoryFreeHandle(sdb->env, (dvoid*)coll->handle, OCI_HTYPE_SODA_COLLECTION);
-            OcilibErrorResetSource(NULL, coll);
-            FREE(coll);
+            OcilibSodaCollectionFree(coll);
         }
     );
 }
@@ -576,31 +572,24 @@ OCI_SodaDocumentCursor* OcilibSodaCollectionFind
 
         if (FAILURE)
         {
-            OCI_Environment *env = coll->sdb->env;
             OCI_UInt32 d;
 
             for (d = 0; d < mat_count; d++)
             {
                 if (NULL != mat_docs && NULL != mat_docs[d])
                 {
-                    OcilibMemoryFreeHandle(env, (dvoid*)mat_docs[d], OCI_HTYPE_SODA_DOCUMENT);
+                    OcilibMemoryFreeHandle(coll->sdb->env, (dvoid*)mat_docs[d], OCI_HTYPE_SODA_DOCUMENT);
                 }
             }
 
             if (NULL != mat_docs)
             {
-                OcilibMemoryFree(env, mat_docs);
+                OcilibMemoryFree(coll->sdb->env, mat_docs);
             }
 
             if (NULL != cursor)
             {
-                if (NULL != cursor->handle)
-                {
-                    OcilibMemoryFreeHandle(env, (dvoid*)cursor->handle, OCI_HTYPE_SODA_DOC_CURSOR);
-                }
-
-                OcilibErrorResetSource(NULL, cursor);
-                FREE(cursor);
+                OcilibSodaDocumentCursorFree(cursor);
             }
         }
     );
@@ -685,8 +674,7 @@ OCI_SodaDocument* OcilibSodaCollectionFindOne
 
     if (NULL == doc->handle)
     {
-        OcilibErrorResetSource(NULL, doc);
-        FREE(doc);
+        OcilibSodaDocumentFree(doc);
         doc = NULL;
         JUMP_CLEANUP();
     }
@@ -725,9 +713,9 @@ OCI_SodaDocument* OcilibSodaCollectionFindOneByKey
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    OCI_SodaDocument* doc      = NULL;
-    sword             oci_ret  = 0;
-    OCISodaDoc      * handle   = NULL;
+    OCI_SodaDocument* doc     = NULL;
+    sword             oci_ret = 0;
+    OCISodaDoc      * handle  = NULL;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, key);
@@ -746,9 +734,6 @@ OCI_SodaDocument* OcilibSodaCollectionFindOneByKey
 
     if (OCI_NO_DATA == oci_ret)
     {
-        OcilibErrorResetSource(NULL, doc);
-        FREE(doc);
-        doc = NULL;
         JUMP_CLEANUP();
     }
 
@@ -766,9 +751,7 @@ OCI_SodaDocument* OcilibSodaCollectionFindOneByKey
 
         if (FAILURE && NULL != doc)
         {
-            OcilibMemoryFreeHandle(doc->sdb->env, (dvoid*)doc->handle, OCI_HTYPE_SODA_DOCUMENT);
-            OcilibErrorResetSource(NULL, doc);
-            FREE(doc);
+            OcilibSodaDocumentFree(doc);
         }
     );
 }
@@ -870,7 +853,7 @@ OCI_UInt64 OcilibSodaCollectionDocumentCountWithFilter
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    ub8       numdocs  = 0;
+    ub8 numdocs = 0;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, filterSpec);
@@ -1038,7 +1021,7 @@ OCI_Boolean OcilibSodaCollectionReplaceOneByKey
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
     CHECK_SODA_ENABLED(coll->sdb->con);
 
-    dbkey = (dbtext *) (key);
+    dbkey    = (dbtext *) (key);
     dbkeylen = OcilibStringDBSize(key);
 
     if (refresh)
@@ -1189,7 +1172,7 @@ OCI_Boolean OcilibSodaCollectionRemoveOneByKey
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    boolean   removed  = FALSE;
+    boolean removed = FALSE;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, key);
@@ -1333,7 +1316,6 @@ OCI_Boolean OcilibSodaCollectionCreateIndex
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, indexSpec);
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
@@ -1372,7 +1354,7 @@ OCI_Boolean OcilibSodaCollectionDropIndex
         /* context */ OCI_IPC_SODA_COLL, coll
     );
 
-    boolean   dropped  = FALSE;
+    boolean dropped = FALSE;
 
     CHECK_PTR(OCI_IPC_SODA_COLL, coll);
     CHECK_PTR(OCI_IPC_STRING, name);
@@ -1492,12 +1474,10 @@ OCI_Boolean OcilibSodaCollectionSave
         found = OcilibSodaCollectionFindOneByKey(coll, key);
         CHECK_NULL(found);
 
-        {
-            OCISodaDoc *fresh = found->handle;
-            found->handle = NULL;    /* consumed by RefreshMetadata */
+        OCISodaDoc *fresh = found->handle;
+        found->handle = NULL;    /* consumed by RefreshMetadata */
 
-            CHECK(OcilibSodaDocumentRefreshMetadata(doc, fresh));
-        }
+        CHECK(OcilibSodaDocumentRefreshMetadata(doc, fresh));
 
         OcilibSodaDocumentFree(found);
     }

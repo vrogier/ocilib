@@ -592,7 +592,6 @@ static OCI_Boolean OcilibBindPerformBinding
         /* context */ OCI_IPC_BIND, bnd
     );
 
-
     CHECK_PTR(OCI_IPC_BIND, bnd);
 
     if (OCI_BIND_BY_POS == bnd->stmt->bind_mode)
@@ -618,7 +617,6 @@ static OCI_Boolean OcilibBindPerformBinding
     }
     else
     {
-
 
         CHECK_OCI
         (
