@@ -16,7 +16,7 @@ Check project page at GitHub
 <br/>
 Check project bug tracker at GitHub
 
-* [**Click here to get support for OCILIB !**](mailto:vince.rogier+ocilib@gmail.com)
+* [**Click here to get support for OCILIB !**](mailto:ocilib.library@gmail.com)
 
 
 <br/>

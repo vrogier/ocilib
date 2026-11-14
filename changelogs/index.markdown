@@ -9,7 +9,7 @@ title: Changelog
 
 ## 2026-05-19 - Version 4.9.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Enhancements (C API)
 
@@ -46,7 +46,7 @@ title: Changelog
 
 ## 2025-05-13 - Version 4.8.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Enhancements (C API)
 
@@ -99,7 +99,7 @@ title: Changelog
 
 ## 2025-01-14 - Version 4.7.7
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Enhancements (C API)
 
@@ -149,7 +149,7 @@ title: Changelog
 
 ## 2023-02-08 - Version 4.7.6
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -161,7 +161,7 @@ title: Changelog
 
 ## 2023-02-06 - Version 4.7.5
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Changes (C API)
 
@@ -206,7 +206,7 @@ title: Changelog
 
 ## 2021-11-30 - Version 4.7.4
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -230,7 +230,7 @@ title: Changelog
 
 ## 2021-03-09 - Version 4.7.3
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -262,7 +262,7 @@ title: Changelog
 
 ## 2020-11-10 - Version 4.7.2
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -277,7 +277,7 @@ title: Changelog
 
 ## 2020-10-27 - Version 4.7.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Enhancements (C API)
 
@@ -312,7 +312,7 @@ title: Changelog
 
 ## 2020-07-16 - Version 4.7.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Enhancements (C API)
 
@@ -365,7 +365,7 @@ title: Changelog
 
 ## 2020-04-18 - Version 4.6.4
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -398,7 +398,7 @@ title: Changelog
 
 ## 2019-11-01 - Version 4.6.3
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -414,7 +414,7 @@ title: Changelog
 
 ## 2019-02-25 - Version 4.6.2
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -430,7 +430,7 @@ title: Changelog
 
 ## 2019-02-17 - Version 4.6.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -458,7 +458,7 @@ title: Changelog
 
 ## 2018-11-21 - Version 4.6.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Changes
 
@@ -512,7 +512,7 @@ title: Changelog
 
 ## 2018-09-13 - Version 4.5.2
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -540,7 +540,7 @@ title: Changelog
 
 ## 2018-02-21 - Version 4.5.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Changes (C API)
 
@@ -583,7 +583,7 @@ title: Changelog
 
 ## 2018-02-07 - Version 4.5.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Enhancements (C and C++ API)
 
@@ -608,7 +608,7 @@ title: Changelog
 
 ## 2017-11-29 - Version 4.4.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Enhancements (C API)
 
@@ -637,7 +637,7 @@ title: Changelog
 
 ## 2017-10-25 - Version 4.4.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -668,7 +668,7 @@ title: Changelog
 
 ## 2017-06-07 - Version 4.3.3
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -702,7 +702,7 @@ title: Changelog
 
 ## 2017-02-08 - Version 4.3.2
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -743,7 +743,7 @@ title: Changelog
 
 ## 2017-01-25 - Version 4.3.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Fixes (C API)
 
@@ -770,7 +770,7 @@ title: Changelog
 
 ## 2016-11-09 - Version 4.3.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - New Features:
 
@@ -848,7 +848,7 @@ title: Changelog
 
 ## 2016-03-21 - Version 4.2.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 ### Licensing
 
@@ -882,7 +882,7 @@ title: Changelog
 
 ## 2015-09-21 - Version 4.2.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - New Features:
 
@@ -960,7 +960,7 @@ title: Changelog
 
 ## 2015-05-05 - Version 4.1.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - C API
 
@@ -1065,7 +1065,7 @@ title: Changelog
 
 ## 2015-01-13 - Version 4.0.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - C API
 
@@ -1095,7 +1095,7 @@ title: Changelog
 
 ## 2014-12-10 - Version 4.0.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Introducing new C++ API
 
@@ -1185,7 +1185,7 @@ title: Changelog
 
 ## 2013-03-04 - Version 3.12.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Fixed Unicode support (OCI_CHARSET_WIDE and OCI_CHARSET_MIXED)
 
@@ -1206,7 +1206,7 @@ title: Changelog
 
 ## 2013-02-07 - Version 3.12.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Added support for lob prefetching introduced in 11gR1
 
@@ -1242,7 +1242,7 @@ title: Changelog
 
 ## 2012-12-19 - Version 3.11.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Fixed broken support for Oracle Database Change notifications
 
@@ -1252,7 +1252,7 @@ title: Changelog
 
 ## 2012-12-12 - Version 3.11.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Extended Oracle Streams AQ (Advanced Queues) support:
 
@@ -1309,7 +1309,7 @@ title: Changelog
 
 ## 2012-08-08 - Version 3.10.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Added support for native C float datatype:
 
@@ -1331,7 +1331,7 @@ title: Changelog
 
 ## 2012-06-29 - Version 3.9.4
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Miscellaneous fixes
 
@@ -1363,7 +1363,7 @@ title: Changelog
 
 ## 2011-12-05 - Version 3.9.3
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Miscellaneous fixes
 
@@ -1399,7 +1399,7 @@ title: Changelog
 
 ## 2011-07-13 - Version 3.9.2
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Miscellaneous fixes
 
@@ -1408,7 +1408,7 @@ title: Changelog
 
 ## 2011-07-08 - Version 3.9.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Miscellaneous fixes
 
@@ -1419,7 +1419,7 @@ title: Changelog
 
 ## 2011-04-20 - Version 3.9.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Added support Oracle XA
 
@@ -1503,7 +1503,7 @@ title: Changelog
 
 ## 2010-12-13 - Version 3.8.1
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Miscellaneous fixes
 
@@ -1536,7 +1536,7 @@ title: Changelog
 
 ## 2010-10-24 - Version 3.8.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Added support for Oracle Streams AQ (Advanced Queues)
 
@@ -1646,7 +1646,7 @@ title: Changelog
 
 ## 2010-07-26 - Version 3.7.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Added support for Session Pools
 
@@ -1739,7 +1739,7 @@ title: Changelog
 
 ## 2010-05-18 - Version 3.6.0
 
-**Author:** Vincent Rogier (vince.rogier@ocilib.net)
+**Author:** Vincent Rogier (vince.rogier@gmail.com)
 
 - Improved Array interface
 
@@ -1824,8 +1824,8 @@ title: Changelog
 
 - use the following contact address for any information/question/help about OCILIB:
 
-- support and help: support@ocilib.net
-- contact and information: vince.rogier@ocilib.net
+- support and help: ocilib.library@gmail.com
+- contact and information: ocilib.library@gmail.com
 
 ## 2010-02-03 - Version 3.5.1
 
@@ -3496,7 +3496,7 @@ title: Changelog
 
 ## 2007-12-01 - Version 1.2.1
 
-**Author:** Vincent Rogier (vince_rogier@fsinet.fr)
+**Author:** Vincent Rogier (vince_rogier@yahoo.fr)
 
 - Updated Documentation
 

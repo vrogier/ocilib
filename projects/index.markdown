@@ -43,7 +43,7 @@ I have only few detailed descriptions about projects using OCILIB.
 Most of the time, I'm only reported about the type of application designed with OCILIB.
 I have contact with many developers from all around the world who are extremely satisfied of OCILIB and all of them say that OCILIB saved them so much time or sometimes even their life !! 
 
-[Click here](mailto:vince.rogier@ocilib.net) to report a project that relies on OCILIB.
+[Click here](mailto:ocilib.library@gmail.com) to report a project that relies on OCILIB.
 
 
   
