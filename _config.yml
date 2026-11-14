@@ -30,7 +30,9 @@ google_universal_analytics_cookiedomain: auto
 
 twitter_user: ocilib
 twitter_card: true
-twitter_image: 
+# Card/share image for og:image and twitter:image — site-root-relative path.
+# Any page can override it via `image:` front matter.
+social_image: /images/ocilib-logo-with-text-details.png
 
 ocilib_current_release_version: 4.9.0
 ocilib_current_release_date: 2026-05-19
