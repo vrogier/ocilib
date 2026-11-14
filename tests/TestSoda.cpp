@@ -1653,6 +1653,45 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaDocumentFree(sv));
     }
 
+    TEST_F(TestSodaOps, SodaCollSaveWithRefresh_PopulatesDocMetadata)
+    {
+        OCI_SodaDocument* sv = MakeDoc(OTEXT("{\"a\":100}"), OTEXT("ksr"));
+        ASSERT_NE(nullptr, sv);
+
+        /* refresh=TRUE exercises OCISodaSaveAndGet (MBCS) or the
+           FindOneByKey emulation (WIDE) — both must populate metadata */
+
+        ASSERT_TRUE(OCI_SodaCollectionSave(coll, sv, TRUE));
+
+        const String version1 = OCI_SodaDocumentGetVersion(sv);
+
+        /* second upsert bumps the version when the server tracks one —
+           proves refreshed metadata comes from the server, not stale state */
+
+        ASSERT_TRUE(OCI_SodaCollectionSave(coll, sv, TRUE));
+
+        const String version2 = OCI_SodaDocumentGetVersion(sv);
+        if (!version1.empty())
+        {
+            EXPECT_NE(version1, version2);
+        }
+
+        /* refreshed doc must report what a fresh find reports
+           (on JSON collections the version/timestamps may be empty
+           server-side — the key is always populated) */
+
+        OCI_SodaDocument* found = OCI_SodaCollectionFindOneByKey(coll, OTEXT("ksr"));
+        ASSERT_NE(nullptr, found);
+
+        EXPECT_EQ(String(OTEXT("ksr")), String(OCI_SodaDocumentGetKey(sv)));
+        EXPECT_EQ(String(OCI_SodaDocumentGetVersion(found)), version2);
+        EXPECT_EQ(String(OCI_SodaDocumentGetCreatedOn(found)), String(OCI_SodaDocumentGetCreatedOn(sv)));
+        EXPECT_EQ(String(OCI_SodaDocumentGetLastModified(found)), String(OCI_SodaDocumentGetLastModified(sv)));
+
+        ASSERT_TRUE(OCI_SodaDocumentFree(found));
+        ASSERT_TRUE(OCI_SodaDocumentFree(sv));
+    }
+
     TEST_F(TestSodaOps, SodaCollCreateAndDropIndex_WorksWhenClientSupports)
     {
         DropCollIfExists(sdb, OTEXT("OCILIB_SODA_IDX_COLL"));

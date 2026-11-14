@@ -3,7 +3,7 @@
  *
  * Website: http://www.ocilib.net
  *
- * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@ocilib.net>
+ * Copyright (c) 2007-2026 Vincent ROGIER <vince.rogier@gmail.com>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -1450,21 +1450,24 @@ OCI_Boolean OcilibSodaCollectionSave
     CHECK_PTR(OCI_IPC_SODA_DB, coll->sdb);
     CHECK_SODA_ENABLED(coll->sdb->con);
 
-    CHECK_OCI
-    (
-        coll->sdb->con->err,
-        OCISodaSave,
-        coll->sdb->con->handle,
-        coll->handle,
-        doc->handle,
-        coll->sdb->con->err,
-        OCI_DEFAULT
-    );
-
     if (refresh)
     {
-        /* OCISodaSaveAndGet() crashes on some client/server combinations;
-           emulate with a lookup to refresh the document metadata in place */
+#if defined(OCI_CHARSET_WIDE)
+
+        /* OCISodaSaveAndGet() crashes with UTF-16 environments (OCI bug);
+           save then emulate the get with a lookup to refresh the
+           document metadata in place */
+
+        CHECK_OCI
+        (
+            coll->sdb->con->err,
+            OCISodaSave,
+            coll->sdb->con->handle,
+            coll->handle,
+            doc->handle,
+            coll->sdb->con->err,
+            OCI_DEFAULT
+        );
 
         const otext      *key   = OcilibSodaDocumentGetKey(doc);
         OCI_SodaDocument *found = NULL;
@@ -1480,6 +1483,38 @@ OCI_Boolean OcilibSodaCollectionSave
         CHECK(OcilibSodaDocumentRefreshMetadata(doc, fresh));
 
         OcilibSodaDocumentFree(found);
+
+#else
+
+        OCISodaDoc *reshandle = doc->handle;
+
+        CHECK_OCI
+        (
+            coll->sdb->con->err,
+            OCISodaSaveAndGet,
+            coll->sdb->con->handle,
+            coll->handle,
+            &reshandle,
+            coll->sdb->con->err,
+            OCI_DEFAULT
+        );
+
+        CHECK(OcilibSodaDocumentRefreshMetadata(doc, reshandle));
+
+#endif
+    }
+    else
+    {
+        CHECK_OCI
+        (
+            coll->sdb->con->err,
+            OCISodaSave,
+            coll->sdb->con->handle,
+            coll->handle,
+            doc->handle,
+            coll->sdb->con->err,
+            OCI_DEFAULT
+        );
     }
 
     SET_SUCCESS();
