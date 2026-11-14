@@ -59,6 +59,12 @@ OUT_DIR = ROOT / "html"
 
 SITE_TITLE = "OCILIB Tutorials"
 SITE_VERSION = "v5.0.0"
+SITE_URL = "https://ocilib.net/doc/tutorials/"
+SITE_DESC = ("Learn OCILIB, the open-source C and C++ driver for Oracle — "
+             "hands-on tutorials from first connection to JSON, SODA and advanced features.")
+# Share image served from the git repo; switch branch to master once v5 lands there.
+SITE_IMAGE = ("https://raw.githubusercontent.com/vrogier/ocilib/develop-v5.0.0/"
+              "images/ocilib-logo-with-text-details.png")
 
 LANG_LABELS = {
     "c": "C", "cpp": "C++", "h": "C header", "sql": "SQL", "plsql": "PL/SQL",
@@ -278,6 +284,18 @@ TEMPLATE = """<!DOCTYPE html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title} — {site}</title>
+<meta name="description" content="{desc}">
+<link rel="canonical" href="{url}">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="{site}">
+<meta property="og:title" content="{title} — {site}">
+<meta property="og:description" content="{desc}">
+<meta property="og:url" content="{url}">
+<meta property="og:image" content="{image}">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="{title} — {site}">
+<meta name="twitter:description" content="{desc}">
+<meta name="twitter:image" content="{image}">
 <link rel="stylesheet" href="assets/tutorials.css">
 <link rel="stylesheet" href="assets/tutorials-dark.css">
 <link rel="stylesheet" href="assets/pygments.css">
@@ -335,6 +353,10 @@ def build():
         page_html = (TEMPLATE
                      .replace("{title}", html_mod.escape(page["meta"]["title"]))
                      .replace("{site}", SITE_TITLE)
+                     .replace("{desc}", html_mod.escape(
+                         page["meta"].get("description", SITE_DESC), quote=True))
+                     .replace("{url}", SITE_URL + page["out"])
+                     .replace("{image}", SITE_IMAGE)
                      .replace("{ver}", SITE_VERSION)
                      .replace("{nav}", nav_html(parts, pages, page["out"]))
                      .replace("{badges}", badge_html(page["meta"]))
