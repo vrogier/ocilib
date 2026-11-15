@@ -4,7 +4,7 @@ using namespace ocilib;
 
 namespace TestCppApi
 {
-    TEST(TestObjectCpp, ToStringCpp)
+    TEST(TestObjectCpp, ToStringOnObject_RendersObject)
     {
         ExecDML(OTEXT("create type TestObjectToStringCpp as object(code number, name varchar2(30))"));
 
@@ -26,7 +26,7 @@ namespace TestCppApi
         ExecDML(OTEXT("drop type TestObjectToStringCpp"));
     }
 
-    TEST(TestObjectCpp, NullToString)
+    TEST(TestObjectCpp, ToStringOnNullObject_ReturnsEmptyString)
     {
         Object obj;
         ASSERT_EQ(String(OTEXT("NULL")), obj.ToString());

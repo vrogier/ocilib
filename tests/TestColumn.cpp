@@ -4,7 +4,7 @@
 
 namespace TestCApi
 {
-    TEST(TestColumn, Info)
+    TEST(TestColumn, ColumnGettersOnSelectedColumns_ReturnNameAndType)
     {
         ExecDML(OTEXT("CREATE TABLE TestCApiCovColInfo(id NUMBER, name VARCHAR2(50))"));
 
@@ -65,7 +65,7 @@ namespace TestCApi
         }
     }
 
-    TEST(TestColumn, CharacterTypeNames)
+    TEST(TestColumn, GetSQLTypeOnCharColumns_ReturnsTypeNames)
     {
         ExecDML(OTEXT("CREATE TABLE TestColCharTypes("
                       "c_char CHAR(10), c_nchar NCHAR(10), c_varchar VARCHAR2(20), "
@@ -98,7 +98,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestColCharTypes"));
     }
 
-    TEST(TestColumn, CharacterSetForms)
+    TEST(TestColumn, GetCharsetInfoOnCharColumns_ReturnsExpectedForms)
     {
         ExecDML(OTEXT("CREATE TABLE TestColCharForms("
                       "c_char CHAR(10), c_nchar NCHAR(10), c_vchar VARCHAR2(30 CHAR), "
@@ -139,7 +139,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestColCharForms"));
     }
 
-    TEST(TestColumn, NumericTypeNames)
+    TEST(TestColumn, GetSQLTypeOnNumericColumns_ReturnsTypeNames)
     {
         ExecDML(OTEXT("CREATE TABLE TestColNumTypes("
                       "c_number NUMBER, c_numprec NUMBER(10), c_numscale NUMBER(10,3), "
@@ -190,7 +190,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestColNumTypes"));
     }
 
-    TEST(TestColumn, DateTimeTypeNames)
+    TEST(TestColumn, GetSQLTypeOnDateTimeColumns_ReturnsTypeNames)
     {
         ExecDML(OTEXT("CREATE TABLE TestColDateTypes("
                       "c_date DATE, c_ts TIMESTAMP(6), c_tstz TIMESTAMP(3) WITH TIME ZONE, "
@@ -250,7 +250,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestColDateTypes"));
     }
 
-    TEST(TestColumn, LobAndLongTypeNames)
+    TEST(TestColumn, GetSQLTypeOnLobAndLongColumns_ReturnsTypeNames)
     {
         ExecDML(OTEXT("CREATE TABLE TestColLobTypes("
                       "c_clob CLOB, c_nclob NCLOB, c_blob BLOB, c_bfile BFILE, "
@@ -294,7 +294,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestColLobTypes"));
     }
 
-    TEST(TestColumn, XmlTypeColumn)
+    TEST(TestColumn, DescribeXmlTypeColumn_ReturnsXmlTypeInfo)
     {
         ExecDML(OTEXT("CREATE TABLE TestColXml(id NUMBER, c_xml XMLTYPE)"));
 
@@ -327,7 +327,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestColXml"));
     }
 
-    TEST(TestColumn, GeneratedColumnFlags)
+    TEST(TestColumn, FlagsOnGeneratedColumns_ReportIdentityAndVirtual)
     {
         ExecDML(OTEXT("CREATE TABLE TestColProps("
                       "c_ident NUMBER GENERATED ALWAYS AS IDENTITY, "
@@ -371,7 +371,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestColProps2"));
     }
 
-    TEST(TestColumn, LongImplicitMode)
+    TEST(TestColumn, LongColumnInEachFetchMode_MapsToExpectedType)
     {
         ExecDML(OTEXT("CREATE TABLE TestColLong(id NUMBER, txt LONG)"));
 
@@ -419,7 +419,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestColLong"));
     }
 
-    TEST(TestColumn, CursorExpression)
+    TEST(TestColumn, DescribeCursorExpressionColumn_ReturnsCursorType)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -448,7 +448,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
 
-    TEST(TestColumn, NamedTypeColumns)
+    TEST(TestColumn, DescribeNamedTypeColumns_ReturnsObjectRefAndCollInfo)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestColObj AS OBJECT(id NUMBER, name VARCHAR2(20))"));
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestColObjTab AS TABLE OF TestColObj"));
@@ -496,7 +496,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestColObj"));
     }
 
-    TEST(TestColumn, Oracle23Types)
+    TEST(TestColumn, GetSQLTypeOnOracle23Columns_ReturnsTypeNames)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -570,7 +570,7 @@ namespace TestCApi
 
 
 
-    TEST(TestColumn, StructAttributeSizes)
+    TEST(TestColumn, GetStructOnTypedColumns_FillsStructFields)
     {
         ExecDML(OTEXT("CREATE TABLE TestColStruct(id NUMBER, fval BINARY_FLOAT, dval BINARY_DOUBLE)"));
         ExecDML(OTEXT("INSERT INTO TestColStruct VALUES(1, 1.5, 2.5)"));
@@ -714,8 +714,7 @@ namespace TestCApi
             ColAttrCase{ "CollationID",     ColAttrCollation },
             ColAttrCase{ "Dimension",       ColAttrDimension },
             ColAttrCase{ "FullSQLType",     ColAttrFullType },
-            ColAttrCase{ "SubType",         ColAttrSubType }),
-        ::testing::PrintToStringParamName());
+            ColAttrCase{ "SubType",         ColAttrSubType }));
 
     class TestColumnNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
@@ -745,7 +744,6 @@ namespace TestCApi
             { "ColumnGetType", [] { return OCI_UNKNOWN == OCI_ColumnGetType(nullptr); } },
             { "ColumnGetTypeInfo", [] { return nullptr == OCI_ColumnGetTypeInfo(nullptr); } },
             { "ColumnHasJsonSchema", [] { return !OCI_ColumnHasJsonSchema(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

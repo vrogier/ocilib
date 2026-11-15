@@ -30,7 +30,7 @@ static void CheckColumnFullType
 
 namespace TestCppApi
 {
-    TEST(TestVectorCpp, DescribeTableVectorCpp)
+    TEST(TestVectorCpp, DescribeTableVectorColumn_ReturnsVectorInfo)
     {
         ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
         ExecDML
@@ -65,7 +65,7 @@ namespace TestCppApi
         ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
     }
 
-    TEST(TestVectorCpp, CreateCpp)
+    TEST(TestVectorCpp, CreateVector_ReturnsTypedVector)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -75,7 +75,7 @@ namespace TestCppApi
         
     }
 
-    TEST(TestVectorCpp, SetValueArrayCpp)
+    TEST(TestVectorCpp, SetValuesFromArray_StoresValues)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -104,7 +104,7 @@ namespace TestCppApi
         
     }
 
-    TEST(TestVectorCpp, SetValueVectorCpp)
+    TEST(TestVectorCpp, SetValuesFromVector_StoresValues)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -127,7 +127,7 @@ namespace TestCppApi
         
     }
 
-    TEST(TestVectorCpp, ToStringCpp)
+    TEST(TestVectorCpp, ToStringOnVector_RendersValues)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -143,7 +143,7 @@ namespace TestCppApi
         
     }
 
-    TEST(TestVectorCpp, FromTextCpp)
+    TEST(TestVectorCpp, FromTextOnVector_ParsesValues)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -163,7 +163,7 @@ namespace TestCppApi
         ASSERT_FLOAT_EQ(4.4f, values[3]);        
     }
 
-    TEST(TestVectorCpp, BindCpp)
+    TEST(TestVectorCpp, BindVectorOnInsert_BindsValues)
     {
         ExecDML(OTEXT("CREATE TABLE TestBindVector (value VECTOR(*, FLOAT32))"));
 
@@ -200,7 +200,7 @@ namespace TestCppApi
         ExecDML(OTEXT("DROP TABLE  TestBindVector"));
     }
 
-    TEST(TestVectorCpp, FetchCpp)
+    TEST(TestVectorCpp, FetchVectorColumn_ReturnsVector)
     {
         ExecDML(OTEXT("CREATE TABLE TestFetchVector (value VECTOR(*, FLOAT32))"));
         ExecDML(OTEXT("INSERT INTO TestFetchVector values('[1.1, 2.2, 3.3, 4.4]')"));
@@ -232,7 +232,7 @@ namespace TestCppApi
         ExecDML(OTEXT("DROP TABLE  TestFetchVector"));
     }
 
-    TEST(TestVectorCpp, FetchAsStringCpp)
+    TEST(TestVectorCpp, FetchVectorAsString_ReturnsText)
     {
         ExecDML(OTEXT("CREATE TABLE TestFetchVectorAsString (value VECTOR(*, INT8))"));
         ExecDML(OTEXT("INSERT INTO TestFetchVectorAsString values('[1, 2, 3, 4]')"));
@@ -252,7 +252,7 @@ namespace TestCppApi
         ExecDML(OTEXT("DROP TABLE  TestFetchVectorAsString"));
     }
 
-    TEST(TestVectorCpp, RegisterVectorCpp)
+    TEST(TestVectorCpp, RegisterVectorOnReturningInto_ReturnsVector)
     {
         ExecDML(OTEXT("CREATE TABLE TestRegisterVector (code int, value VECTOR(*, INT8))"));
         ExecDML(OTEXT("TRUNCATE TABLE TestRegisterVector"));
@@ -274,7 +274,7 @@ namespace TestCppApi
         ExecDML(OTEXT("DROP TABLE TestRegisterVector"));
     }
 
-    TEST(TestVectorCpp, NullToString)
+    TEST(TestVectorCpp, ToStringOnNullVector_ReturnsEmptyString)
     {
         Vector v;
         ASSERT_EQ(String(OTEXT("NULL")), v.ToString());

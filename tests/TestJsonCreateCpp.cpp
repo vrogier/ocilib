@@ -8,7 +8,7 @@ namespace TestCppApi
 {
 
 
-    TEST(TestJsonCreateCpp, CreateAndFree)
+    TEST(TestJsonCreateCpp, JsonCreate_ReturnsJson)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);

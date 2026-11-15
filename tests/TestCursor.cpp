@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestCursor, Fetch)
+    TEST(TestCursor, FetchCursorStatement_ReturnsRows)
     {
         auto env = GetEnvironment(nullptr);
 

@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestDate, CreateAndFree)
+    TEST(TestDate, Create_ReturnsFreeableDate)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -15,7 +15,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, ArrayCreateAndFree)
+    TEST(TestDate, ArrayCreate_ReturnsArrayOfDates)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -32,7 +32,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, Assign)
+    TEST(TestDate, AssignFromOtherDate_CopiesValue)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -50,7 +50,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, AddDays)
+    TEST(TestDate, AddDaysBackAndForth_RestoresDate)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -70,7 +70,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, AddMonths)
+    TEST(TestDate, AddMonthsBackAndForth_RestoresDate)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -90,7 +90,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, CompareInferior)
+    TEST(TestDate, CompareWithEarlierDate_ReturnsMinusOne)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -109,7 +109,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, CompareSuperior)
+    TEST(TestDate, CompareWithLaterDate_ReturnsOne)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -128,7 +128,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, CompareEqual)
+    TEST(TestDate, CompareWithSameDate_ReturnsZero)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -146,7 +146,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, DaysBetween)
+    TEST(TestDate, DaysBetweenDatesApart_ReturnsDayCount)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -165,7 +165,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, FromTextDefaultFormat)
+    TEST(TestDate, FromTextWithDefaultFormat_ParsesDateTime)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -188,7 +188,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, ToTextDefaultFormat)
+    TEST(TestDate, ToTextWithDefaultFormat_FormatsDateTime)
     {
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         const OCI_Int32 year = 1978, month = 4, day = 13, hour = 20, min = 30, sec = 15;
@@ -208,7 +208,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, GetLastDay)
+    TEST(TestDate, LastDayOnMidMonthDate_ReturnsMonthEnd)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -252,7 +252,7 @@ namespace TestCApi
 
     }*/
 
-    TEST(TestDate, SetGetDateTime)
+    TEST(TestDate, SetThenGetDateTime_RoundTripsAllFields)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -277,7 +277,7 @@ namespace TestCApi
     }
 
 
-    TEST(TestDate, DateFetch)
+    TEST(TestDate, FetchDateColumn_ReturnsDate)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -303,7 +303,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, DateBindInOut)
+    TEST(TestDate, BindDateInOutOnPlsqlIncrement_AdvancesOneDay)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -330,7 +330,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, DateBindRegister)
+    TEST(TestDate, RegisterDateOnReturningInto_ReturnsInsertedValue)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -363,7 +363,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, FormatWithSetGet)
+    TEST(TestDate, ToFromTextWithExplicitFormat_AppliesDateFormat)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -387,7 +387,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestDate, FromCTimeAndNullFormat)
+    TEST(TestDate, FromCTimeWithNullFormat_RoundTripsDate)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -433,7 +433,7 @@ namespace TestCApi
     }
     */
 
-    TEST(TestDate, ZoneToZone)
+    TEST(TestDate, ZoneToZoneBetweenGmtAndEst_Succeeds)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -447,7 +447,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DateFree(date));
     }
 
-    TEST(TestDate, FromCTimeNullTmZeroTime)
+    TEST(TestDate, FromCTimeWithNullTmAndZeroTime_ReturnsFalse)
     {
         /* NULL tm with a zero time is rejected */
 
@@ -462,7 +462,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DateFree(date));
     }
 
-    TEST(TestDate, FromCTimeNullTmValidTime)
+    TEST(TestDate, FromCTimeWithNullTmAndValidTime_UsesLocaltime)
     {
         /* NULL tm with a valid time goes through localtime() */
 
@@ -477,7 +477,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DateFree(date));
     }
 
-    TEST(TestDate, FromCTimeNegative)
+    TEST(TestDate, FromCTimeWithNegativeTime_CompletesOrFailsGracefully)
     {
         /* a negative time_t fails where localtime() rejects it (MSVC) */
 
@@ -526,7 +526,6 @@ namespace TestCApi
             { "DateToCTime", [] { return !OCI_DateToCTime(nullptr, NullArgTm(), NullArgTime()); } },
             { "DateToText", [] { return !OCI_DateToText(nullptr, OTEXT("x"), 1, NullArgText()); } },
             { "DateZoneToZone", [] { return !OCI_DateZoneToZone(nullptr, OTEXT("x"), OTEXT("x")); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

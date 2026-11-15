@@ -46,7 +46,7 @@ namespace
 
 namespace TestCApi
 {
-    TEST(TestJsonText, LoadTextAndToText)
+    TEST(TestJsonText, LoadJsonTextThenToText_RoundTripsText)
     {
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -68,7 +68,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonText, BinaryRoundTrip)
+    TEST(TestJsonText, SaveAndLoadBinary_RoundTripsJson)
     {
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -98,7 +98,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json1));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonText, Clone)
+    TEST(TestJsonText, CloneOnJson_DuplicatesContent)
     {
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -152,7 +152,6 @@ namespace TestCApi
             { "JsonToBinary", [] { return !OCI_JsonToBinary(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>()); } },
             { "JsonToText", [] { return !OCI_JsonToText(nullptr, NullArgText(), NullArgOut<OCI_UInt32>(), 1); } },
             { "JsonValidate", [] { return !OCI_JsonValidate(nullptr, nullptr, nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

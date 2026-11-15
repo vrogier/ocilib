@@ -63,7 +63,7 @@ namespace TestCApi
         NumberOperation<T, C, decltype(OCI_NumberDivide)>(value1, value2, expected, OCI_NumberDivide);
     }
 
-    TEST(TestNumber, CreateAndFree)
+    TEST(TestNumber, Create_ReturnsFreeableNumber)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -75,7 +75,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, ArrayCreateAndFree)
+    TEST(TestNumber, ArrayCreate_ReturnsArrayOfNumbers)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -92,47 +92,47 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, SetAndGetValueUnsignedShort)
+    TEST(TestNumber, SetThenGetValueWithUnsignedShort_RoundTripsValue)
     {
         SetAndGetValue<OCI_UInt16, OCI_NUM_UINT16>(13);
     }
 
-    TEST(TestNumber, SetAndGetValueSignedShort)
+    TEST(TestNumber, SetThenGetValueWithSignedShort_RoundTripsValue)
     {
         SetAndGetValue<OCI_Int16, OCI_NUM_INT16>(-13);
     }
 
-    TEST(TestNumber, SetAndGetValueUnsignedInt)
+    TEST(TestNumber, SetThenGetValueWithUnsignedInt_RoundTripsValue)
     {
         SetAndGetValue<OCI_UInt32, OCI_NUM_UINT32>(99123456);
     }
 
-    TEST(TestNumber, SetAndGetValueSignedInt)
+    TEST(TestNumber, SetThenGetValueWithSignedInt_RoundTripsValue)
     {
         SetAndGetValue<OCI_Int32, OCI_NUM_INT32>(-99123456);
     }
 
-    TEST(TestNumber, SetAndGetValueUnsignedBigInt)
+    TEST(TestNumber, SetThenGetValueWithUnsignedBigInt_RoundTripsValue)
     {
         SetAndGetValue<OCI_UInt64, OCI_NUM_UINT64>(81234123412341234);
     }
 
-    TEST(TestNumber, SetAndGetValueSignedBigInt)
+    TEST(TestNumber, SetThenGetValueWithSignedBigInt_RoundTripsValue)
     {
         SetAndGetValue<OCI_Int64, OCI_NUM_INT64>(-34123412341234);
     }
 
-    TEST(TestNumber, SetAndGetValueFloat)
+    TEST(TestNumber, SetThenGetValueWithFloat_RoundTripsValue)
     {
         SetAndGetValue<OCI_Float, OCI_NUM_FLOAT>(3.14f);
     }
 
-    TEST(TestNumber, SetAndGetValueDouble)
+    TEST(TestNumber, SetThenGetValueWithDouble_RoundTripsValue)
     {
         SetAndGetValue<OCI_Double, OCI_NUM_DOUBLE>(3.14);
     }
 
-    TEST(TestNumber, SetAndGetValueNumber)
+    TEST(TestNumber, SetThenGetValueWithNumberContent_RoundTripsValue)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -152,7 +152,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, SetContent)
+    TEST(TestNumber, SetContentFromOtherNumber_CopiesValue)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -172,7 +172,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, Assign)
+    TEST(TestNumber, AssignFromOtherNumber_CopiesValue)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -192,7 +192,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, FromTextDefaultFormat)
+    TEST(TestNumber, FromTextWithDefaultFormat_ParsesInteger)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -210,7 +210,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, ToTextDefaultFormat)
+    TEST(TestNumber, ToTextWithDefaultFormat_FormatsInteger)
     {
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
         OCI_Int32 value_test = 123456789;
@@ -230,7 +230,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, ToTextWithNullFormat)
+    TEST(TestNumber, ToTextWithNullFormat_UsesDefaultFormat)
     {
         otext buffer[OCI_SIZE_BUFFER] = {};
         OCI_Int32 value_test = 123456789;
@@ -250,7 +250,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, FromTextWithNullFormat)
+    TEST(TestNumber, FromTextWithNullFormat_ParsesInteger)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -268,47 +268,47 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, AddValueUnsignedShort)
+    TEST(TestNumber, AddValueWithUnsignedShort_ComputesSum)
     {
         AddValue<OCI_UInt16, OCI_NUM_UINT16>(13, 14, 27);
     }
 
-    TEST(TestNumber, AddValueSignedShort)
+    TEST(TestNumber, AddValueWithSignedShort_ComputesSum)
     {
         AddValue<OCI_Int16, OCI_NUM_INT16>(-13, 4, -9);
     }
 
-    TEST(TestNumber, AddValueUnsignedInt)
+    TEST(TestNumber, AddValueWithUnsignedInt_ComputesSum)
     {
         AddValue<OCI_UInt32, OCI_NUM_UINT32>(1876543210, 1876543210, 3753086420);
     }
 
-    TEST(TestNumber, AddValueSignedInt)
+    TEST(TestNumber, AddValueWithSignedInt_ComputesSum)
     {
         AddValue<OCI_Int32, OCI_NUM_INT32>(-938271605, 1876543210, 938271605);
     }
 
-    TEST(TestNumber, AddValueUnsignedBigInt)
+    TEST(TestNumber, AddValueWithUnsignedBigInt_ComputesSum)
     {
         AddValue<OCI_UInt64, OCI_NUM_UINT64>(18765432100, 18765432100, 37530864200);
     }
 
-    TEST(TestNumber, AddValueSignedBigInt)
+    TEST(TestNumber, AddValueWithSignedBigInt_ComputesSum)
     {
         AddValue<OCI_Int64, OCI_NUM_INT64>(-18765432100, 37530864200, 18765432100);
     }
 
-    TEST(TestNumber, AddValueFloat)
+    TEST(TestNumber, AddValueWithFloat_ComputesSum)
     {
         AddValue<OCI_Float, OCI_NUM_FLOAT>(3.14f, 6.28f, 9.42f);
     }
 
-    TEST(TestNumber, AddValueDouble)
+    TEST(TestNumber, AddValueWithDouble_ComputesSum)
     {
         AddValue<OCI_Double, OCI_NUM_DOUBLE>(3.14, 6.28, 9.42);
     }
 
-    TEST(TestNumber, AddValueNumber)
+    TEST(TestNumber, AddValueWithNumberContent_ComputesSum)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -329,47 +329,47 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, SubValueUnsignedShort)
+    TEST(TestNumber, SubValueWithUnsignedShort_ComputesDifference)
     {
         SubValue<OCI_UInt16, OCI_NUM_UINT16>(14, 13, 1);
     }
 
-    TEST(TestNumber, SubValueSignedShort)
+    TEST(TestNumber, SubValueWithSignedShort_ComputesDifference)
     {
         SubValue<OCI_Int16, OCI_NUM_INT16>(-13, 4, -17);
     }
 
-    TEST(TestNumber, SubValueUnsignedInt)
+    TEST(TestNumber, SubValueWithUnsignedInt_ComputesDifference)
     {
         SubValue<OCI_UInt32, OCI_NUM_UINT32>(3753086420, 1876543210, 1876543210);
     }
 
-    TEST(TestNumber, SubValueSignedInt)
+    TEST(TestNumber, SubValueWithSignedInt_ComputesDifference)
     {
         SubValue<OCI_Int32, OCI_NUM_INT32>(-938271605, 938271605, -1876543210);
     }
 
-    TEST(TestNumber, SubValueUnsignedBigInt)
+    TEST(TestNumber, SubValueWithUnsignedBigInt_ComputesDifference)
     {
         SubValue<OCI_UInt64, OCI_NUM_UINT64>(37530864200, 18765432100, 18765432100);
     }
 
-    TEST(TestNumber, SubValueSignedBigInt)
+    TEST(TestNumber, SubValueWithSignedBigInt_ComputesDifference)
     {
         SubValue<OCI_Int64, OCI_NUM_INT64>(-18765432100, 18765432100, -37530864200);
     }
 
-    TEST(TestNumber, SubValueFloat)
+    TEST(TestNumber, SubValueWithFloat_ComputesDifference)
     {
         SubValue<OCI_Float, OCI_NUM_FLOAT>(9.42f, 3.14f, 6.28f);
     }
 
-    TEST(TestNumber, SubValueDouble)
+    TEST(TestNumber, SubValueWithDouble_ComputesDifference)
     {
         SubValue<OCI_Double, OCI_NUM_DOUBLE>(9.42, 3.14, 6.28);
     }
 
-    TEST(TestNumber, SubValueNumber)
+    TEST(TestNumber, SubValueWithNumberContent_ComputesDifference)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -390,47 +390,47 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, MultiplyValueUnsignedShort)
+    TEST(TestNumber, MultiplyValueWithUnsignedShort_ComputesProduct)
     {
         MultiplyValue<OCI_UInt16, OCI_NUM_UINT16>(13, 2, 26);
     }
 
-    TEST(TestNumber, MultiplyValueSignedShort)
+    TEST(TestNumber, MultiplyValueWithSignedShort_ComputesProduct)
     {
         MultiplyValue<OCI_Int16, OCI_NUM_INT16>(-13, 2, -26);
     }
 
-    TEST(TestNumber, MultiplyValueUnsignedInt)
+    TEST(TestNumber, MultiplyValueWithUnsignedInt_ComputesProduct)
     {
         MultiplyValue<OCI_UInt32, OCI_NUM_UINT32>(1876543210, 2, 3753086420);
     }
 
-    TEST(TestNumber, MultiplyValueSignedInt)
+    TEST(TestNumber, MultiplyValueWithSignedInt_ComputesProduct)
     {
         MultiplyValue<OCI_Int32, OCI_NUM_INT32>(-938271605, 2, -1876543210);
     }
 
-    TEST(TestNumber, MultiplyValueUnsignedBigInt)
+    TEST(TestNumber, MultiplyValueWithUnsignedBigInt_ComputesProduct)
     {
         MultiplyValue<OCI_UInt64, OCI_NUM_UINT64>(18765432100, 2, 37530864200);
     }
 
-    TEST(TestNumber, MultiplyValueSignedBigInt)
+    TEST(TestNumber, MultiplyValueWithSignedBigInt_ComputesProduct)
     {
         MultiplyValue<OCI_Int64, OCI_NUM_INT64>(-18765432100, 2, -37530864200);
     }
 
-    TEST(TestNumber, MultiplyValueFloat)
+    TEST(TestNumber, MultiplyValueWithFloat_ComputesProduct)
     {
         MultiplyValue<OCI_Float, OCI_NUM_FLOAT>(3.14f, 2.0f, 6.28f);
     }
 
-    TEST(TestNumber, MultiplyValueDouble)
+    TEST(TestNumber, MultiplyValueWithDouble_ComputesProduct)
     {
         MultiplyValue<OCI_Double, OCI_NUM_DOUBLE>(3.14, 2.0, 6.28);
     }
 
-    TEST(TestNumber, MultiplyValueNumber)
+    TEST(TestNumber, MultiplyValueWithNumberContent_ComputesProduct)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -451,47 +451,47 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, DivideValueUnsignedShort)
+    TEST(TestNumber, DivideValueWithUnsignedShort_ComputesQuotient)
     {
         DivideValue<OCI_UInt16, OCI_NUM_UINT16>(26, 2, 13);
     }
 
-    TEST(TestNumber, DivideValueSignedShort)
+    TEST(TestNumber, DivideValueWithSignedShort_ComputesQuotient)
     {
         DivideValue<OCI_Int16, OCI_NUM_INT16>(-26, 2, -13);
     }
 
-    TEST(TestNumber, DivideValueUnsignedInt)
+    TEST(TestNumber, DivideValueWithUnsignedInt_ComputesQuotient)
     {
         DivideValue<OCI_UInt32, OCI_NUM_UINT32>(3753086420, 2, 1876543210);
     }
 
-    TEST(TestNumber, DivideValueSignedInt)
+    TEST(TestNumber, DivideValueWithSignedInt_ComputesQuotient)
     {
         DivideValue<OCI_Int32, OCI_NUM_INT32>(-1876543210, 2, -938271605);
     }
 
-    TEST(TestNumber, DivideValueUnsignedBigInt)
+    TEST(TestNumber, DivideValueWithUnsignedBigInt_ComputesQuotient)
     {
         DivideValue<OCI_UInt64, OCI_NUM_UINT64>(37530864200, 2, 18765432100);
     }
 
-    TEST(TestNumber, DivideValueSignedBigInt)
+    TEST(TestNumber, DivideValueWithSignedBigInt_ComputesQuotient)
     {
         DivideValue<OCI_Int64, OCI_NUM_INT64>(-37530864200, 2, -18765432100);
     }
 
-    TEST(TestNumber, DivideValueFloat)
+    TEST(TestNumber, DivideValueWithFloat_ComputesQuotient)
     {
         DivideValue<OCI_Float, OCI_NUM_FLOAT>(6.28f, 2.0f, 3.14f);
     }
 
-    TEST(TestNumber, DivideValueDouble)
+    TEST(TestNumber, DivideValueWithDouble_ComputesQuotient)
     {
         DivideValue<OCI_Double, OCI_NUM_DOUBLE>(6.28, 2.0, 3.14);
     }
 
-    TEST(TestNumber, DivideValueNumber)
+    TEST(TestNumber, DivideValueWithNumberContent_ComputesQuotient)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -513,7 +513,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, TestPositiveInfinity)
+    TEST(TestNumber, FromTextWithPositiveInfinity_RoundTripsText)
     {
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
@@ -532,7 +532,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, TestNegativeInfinity)
+    TEST(TestNumber, FromTextWithNegativeInfinity_RoundTripsText)
     {
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
@@ -551,7 +551,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestNumber, FormatWithSetGet)
+    TEST(TestNumber, ToFromTextWithFormatString_AppliesNumericFormat)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -711,7 +711,7 @@ namespace TestCApi
        OcilibNumberToText / OcilibNumberFromText / OcilibNumberTranslate /
        OcilibNumberToString / OcilibNumberGetContent --- */
 
-    TEST(TestNumber, ToTextAndFromText)
+    TEST(TestNumber, ToTextThenFromText_RoundTripsValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -740,7 +740,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_NumberFree(num2));
     }
 
-    TEST(TestNumber, SetValueGetValueAndAdd)
+    TEST(TestNumber, AddValueToStoredNumber_UpdatesStoredValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -763,7 +763,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_NumberFree(num));
     }
 
-    TEST(TestNumber, NullNumberErrors)
+    TEST(TestNumber, ApisCalledWithNullNumber_ReturnFailure)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -806,7 +806,6 @@ namespace TestCApi
             { "NumberSetValue", [] { return !OCI_NumberSetValue(nullptr, 1, NullArgBuffer()); } },
             { "NumberSub", [] { return !OCI_NumberSub(nullptr, 1, NullArgBuffer()); } },
             { "NumberToText", [] { return !OCI_NumberToText(nullptr, OTEXT("x"), 1, NullArgText()); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

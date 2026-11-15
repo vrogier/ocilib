@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestBindCpp, ArrayBindIntegers)
+    TEST(TestBindCpp, ArrayBindIntegers_InsertsRows)
     {
         ExecDML(OTEXT("create table TestBindCpp_Array (id int)"));
 
@@ -30,7 +30,7 @@ namespace TestCppApi
         ExecDML(OTEXT("drop table TestBindCpp_Array"));
     }
 
-    TEST(TestBindCpp, ArrayBindStrings)
+    TEST(TestBindCpp, ArrayBindStrings_InsertsRows)
     {
         ExecDML(OTEXT("create table TestBindCpp_ArrayString (id int, name varchar2(50))"));
 
@@ -58,7 +58,7 @@ namespace TestCppApi
         ExecDML(OTEXT("drop table TestBindCpp_ArrayString"));
     }
 
-    TEST(TestBindCpp, ScalarOutBind)
+    TEST(TestBindCpp, ScalarOutBind_ReturnsValue)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -76,7 +76,7 @@ namespace TestCppApi
         ASSERT_EQ(123, value2);
     }
 
-    TEST(TestBindCpp, PlSqlTableIntOut)
+    TEST(TestBindCpp, PlSqlTableIntOutBind_ReturnsTable)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -93,7 +93,7 @@ namespace TestCppApi
         ASSERT_EQ(30, out[2]);
     }
 
-    TEST(TestBindCpp, PlSqlTableStringOut)
+    TEST(TestBindCpp, PlSqlTableStringOutBind_ReturnsTable)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -109,7 +109,7 @@ namespace TestCppApi
         ASSERT_EQ(String(OTEXT("bob")), out[1]);
     }
 
-    TEST(TestBindCpp, BindInfoUsage)
+    TEST(TestBindCpp, BindWithBindInfo_AppliesDirection)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -126,7 +126,7 @@ namespace TestCppApi
         ASSERT_EQ(456, value);
     }
 
-    TEST(TestBindCpp, DuplicateVectorBindThrows)
+    TEST(TestBindCpp, BindDuplicateVectorName_Throws)
     {
         ExecDML(OTEXT("create table TestBind_Dup (id int)"));
 
@@ -145,7 +145,7 @@ namespace TestCppApi
         ExecDML(OTEXT("drop table TestBind_Dup"));
     }
 
-    TEST(TestBindCpp, DuplicateStringVectorBindThrows)
+    TEST(TestBindCpp, BindDuplicateStringVectorName_Throws)
     {
         ExecDML(OTEXT("create table TestBind_DupStr (name varchar2(50))"));
 

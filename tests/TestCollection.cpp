@@ -126,7 +126,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestCollection, SelectVarray)
+    TEST(TestCollection, SelectVarrayColumn_ReturnsCollection)
     {
         ExecDML(OTEXT("create type SelectVarray_Type as object(code int, name varchar2(50))"));
         ExecDML(OTEXT("create type SelectVarray_Coll as varray(2) of SelectVarray_Type"));
@@ -142,7 +142,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type SelectVarray_Type"));
     }
 
-    TEST(TestCollection, SelectNestedTable)
+    TEST(TestCollection, SelectNestedTableColumn_ReturnsCollection)
     {
         ExecDML(OTEXT("create type SelectNestedTable_Type as object(code int, name varchar2(50))"));
         ExecDML(OTEXT("create type SelectNestedTable_Coll as table of SelectNestedTable_Type"));
@@ -158,7 +158,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type SelectNestedTable_Type"));
     }
 
-    TEST(TestCollection, BindOutVarray)
+    TEST(TestCollection, BindVarrayOutParam_ReturnsCollection)
     {
         ExecDML(OTEXT("create type BindOutVarray_Type as object(code int, name varchar2(50))"));
         ExecDML(OTEXT("create type BindOutVarray_Coll as varray(3) of BindOutVarray_Type"));
@@ -179,7 +179,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type BindOutVarray_Coll"));
         ExecDML(OTEXT("drop type BindOutVarray_Type"));
     }
-    TEST(TestCollection, BindOutNestedTable)
+    TEST(TestCollection, BindNestedTableOutParam_ReturnsCollection)
     {
         ExecDML(OTEXT("create type BindOutNestedTable_Type as object(code int, name varchar2(50))"));
         ExecDML(OTEXT("create type BindOutNestedTable_Coll as table of BindOutNestedTable_Type"));
@@ -202,7 +202,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type BindOutNestedTable_Type"));
     }
 
-    TEST(TestCollection, NumberVarrayAccess)
+    TEST(TestCollection, ElementAccessOnNumberVarray_ReturnsValues)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCApiCovVarray AS VARRAY(10) OF NUMBER"));
 
@@ -254,7 +254,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestCApiCovVarray"));
     }
 
-    TEST(TestCollection, StringVarrayAccess)
+    TEST(TestCollection, ElementAccessOnStringVarray_ReturnsValues)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCApiCovStrVarray AS VARRAY(10) OF VARCHAR2(50)"));
 
@@ -552,7 +552,7 @@ namespace TestCApi
         EXPECT_EQ(0u, OCI_CollectionGetCount(coll));
     }
 
-    TEST(TestCollection, NullElementToText)
+    TEST(TestCollection, ToTextOnCollWithNullElement_RendersNull)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollNull AS VARRAY(2) OF NUMBER"));
 
@@ -586,7 +586,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestCollNull"));
     }
 
-    TEST(TestCollection, ToTextWithNullString)
+    TEST(TestCollection, ToTextOnCollWithNullString_RendersNull)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollNullStr AS VARRAY(2) OF VARCHAR2(50)"));
 
@@ -620,7 +620,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestCollNullStr"));
     }
 
-    TEST(TestCollection, ToTextWithRaw)
+    TEST(TestCollection, ToTextOnRawColl_RendersRawValue)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollRaw AS VARRAY(2) OF RAW(10)"));
 
@@ -653,7 +653,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestCollRaw"));
     }
 
-    TEST(TestCollection, ToTextWithDate)
+    TEST(TestCollection, ToTextOnDateColl_RendersDateValue)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollDate AS VARRAY(2) OF DATE"));
 
@@ -686,7 +686,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestCollDate"));
     }
 
-    TEST(TestCollection, ToTextWithTimestamp)
+    TEST(TestCollection, ToTextOnTimestampColl_RendersTimestampValue)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollTs AS VARRAY(2) OF TIMESTAMP"));
 
@@ -719,7 +719,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestCollTs"));
     }
 
-    TEST(TestCollection, ToTextWithInterval)
+    TEST(TestCollection, ToTextOnIntervalColl_RendersIntervalValue)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCollItv AS VARRAY(2) OF INTERVAL DAY TO SECOND"));
 
@@ -790,7 +790,7 @@ namespace TestCApi
         }
     };
 
-    TEST_P(TestCollectionToText, RendersElementType)
+    TEST_P(TestCollectionToText, ToTextWithEachElementType_RendersValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -914,7 +914,6 @@ namespace TestCApi
             { "CollSetElem", [] { return !OCI_CollectionSetElement(nullptr, 1, nullptr); } },
             { "CollToText", [] { return !OCI_CollectionToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
             { "CollTrim", [] { return !OCI_CollectionTrim(nullptr, 1); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

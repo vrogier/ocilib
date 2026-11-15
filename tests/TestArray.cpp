@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestArray, InsertExternalArray)
+    TEST(TestArray, InsertWithExternalDataArray_InsertsRows)
     {
         ExecDML(OTEXT("create table TestExternalArrayInsertArray(code int, name varchar2(50))"));
         ExecDML(OTEXT("truncate table TestExternalArrayInsertArray"));
@@ -41,7 +41,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestExternalArrayInsertArray"));
     }
 
-    TEST(TestArray, InsertExternalArrayError)
+    TEST(TestArray, InsertWithExternalDataArrayError_ReportsError)
     {
         ExecDML(OTEXT("create table TestExternalArrayInsertArrayError(code int NOT NULL, name varchar2(50))"));
         ExecDML(OTEXT("truncate table TestExternalArrayInsertArrayError"));

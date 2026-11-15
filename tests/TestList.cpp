@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestList, ConnectionLists)
+    TEST(TestList, ListConnectionPoolsAndConnections_EnumeratesItems)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -27,7 +27,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestList, TypeInfoCache)
+    TEST(TestList, ListTypeInfoCache_EnumeratesTypeInfos)
     {
         ExecDML(OTEXT("create table TestListTable (id int)"));
 

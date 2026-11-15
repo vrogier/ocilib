@@ -3,31 +3,31 @@
 
 using namespace ocilib;
 
-enum DirectPathErrorTestMode
-{
-    Default = 0,
-    InsufficientBufferError = 1,
-    ConversionError = 2,
-    LoadError = 4,
-    ForceLoad = 8
-};
-
-class TestDirectPathErrorModes : public ::testing::TestWithParam<OCI_Int32> {};
-
-static std::vector<OCI_Int32> DirectPathErrorTestModes
-{ 
-    DirectPathErrorTestMode::Default,
-  //  DirectPathErrorTestMode::InsufficientBufferError,
-  //  DirectPathErrorTestMode::InsufficientBufferError | DirectPathErrorTestMode::ForceLoad,
-    DirectPathErrorTestMode::ConversionError,
-    DirectPathErrorTestMode::ConversionError | DirectPathErrorTestMode::ForceLoad,
-    DirectPathErrorTestMode::LoadError,
-    DirectPathErrorTestMode::LoadError | DirectPathErrorTestMode::ForceLoad
-};
-
 namespace TestCApi
 {
-    TEST(TestDirectPath, Simple)
+    enum DirectPathErrorTestMode
+    {
+        Default = 0,
+        InsufficientBufferError = 1,
+        ConversionError = 2,
+        LoadError = 4,
+        ForceLoad = 8
+    };
+
+    class TestDirectPathErrorModes : public ::testing::TestWithParam<OCI_Int32> {};
+
+    static std::vector<OCI_Int32> DirectPathErrorTestModes
+    {
+        DirectPathErrorTestMode::Default,
+      //  DirectPathErrorTestMode::InsufficientBufferError,
+      //  DirectPathErrorTestMode::InsufficientBufferError | DirectPathErrorTestMode::ForceLoad,
+        DirectPathErrorTestMode::ConversionError,
+        DirectPathErrorTestMode::ConversionError | DirectPathErrorTestMode::ForceLoad,
+        DirectPathErrorTestMode::LoadError,
+        DirectPathErrorTestMode::LoadError | DirectPathErrorTestMode::ForceLoad
+    };
+
+    TEST(TestDirectPath, CreateThenConvertThenLoad_InsertsRows)
     {
         auto constexpr ArraySize = 10u;
         auto constexpr LoadSize = 10u;
@@ -147,7 +147,7 @@ namespace TestCApi
         CheckAllErrorWorkflows(con, dp, ((gen_conv_error && force) || gen_load_error) ? (TotalCount - ErrCount) : TotalCount, nb_rows, "distinct rows in database");
     }
 
-    TEST_P(TestDirectPathErrorModes, AllErrorWorkflows)
+    TEST_P(TestDirectPathErrorModes, LoadWithErrorMode_ReportsErrorRows)
     {
         auto constexpr ArraySize = 10u;
         auto constexpr LoadSize = 10u;

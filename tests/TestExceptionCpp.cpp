@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestExceptionCpp, InspectException)
+    TEST(TestExceptionCpp, InspectOnThrownException_ExposesDetails)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);

@@ -2,14 +2,13 @@
 #include "NullArgs.h"
 #include "../include/ocilib.h"
 
-class TestTimestamp : public ::testing::TestWithParam<OCI_UInt32>{};
-
-static std::vector<OCI_UInt32> TimestampTypes{ OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
-
 namespace TestCApi
 {
+    class TestTimestamp : public ::testing::TestWithParam<OCI_UInt32>{};
 
-    TEST_P(TestTimestamp, CreateAndFree)
+    static std::vector<OCI_UInt32> TimestampTypes{ OCI_TIMESTAMP, OCI_TIMESTAMP_TZ, OCI_TIMESTAMP_LTZ };
+
+    TEST_P(TestTimestamp, CreateWithEachType_ReturnsTypedTimestamp)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -20,7 +19,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, ArrayCreateAndFree)
+    TEST_P(TestTimestamp, ArrayCreateWithEachType_ReturnsTypedArray)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -37,7 +36,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, Assign)
+    TEST_P(TestTimestamp, AssignBetweenTimestamps_CopiesValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -54,7 +53,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, CompareInferiorSuperior)
+    TEST_P(TestTimestamp, CompareWithLaterTimestamp_ReturnsSignedOrder)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -73,7 +72,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, CompareEqual)
+    TEST_P(TestTimestamp, CompareWithSameTimestamp_ReturnsZero)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -90,7 +89,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, FromTextDefaultFormat)
+    TEST_P(TestTimestamp, FromTextWithDefaultFormat_ParsesAllFields)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -113,7 +112,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, ToTextDefaultFormat)
+    TEST_P(TestTimestamp, ToTextWithDefaultFormat_FormatsTimestamp)
     {
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
@@ -132,7 +131,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, AddInterval)
+    TEST_P(TestTimestamp, IntervalAddWithDaySecond_AdvancesTimestamp)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -159,7 +158,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, SubInterval)
+    TEST_P(TestTimestamp, IntervalSubWithDaySecond_DelaysTimestamp)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -186,7 +185,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestTimestamp, TimestampFetch)
+    TEST(TestTimestamp, FetchTimestampColumn_ReturnsTimestamp)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -212,7 +211,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, TimestampBindInOut)
+    TEST_P(TestTimestamp, BindTimestampInOutOnPlsqlAdd_AdvancesTimestamp)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -239,7 +238,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestTimestamp, TimestampBindRegister)
+    TEST(TestTimestamp, RegisterTimestampOnReturningInto_ReturnsInsertedValue)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -272,7 +271,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestTimestamp, FormatWithSetGet)
+    TEST(TestTimestamp, ToFromTextWithExplicitFormat_AppliesTimestampFormat)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -296,7 +295,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, GetDateAndTime)
+    TEST_P(TestTimestamp, GetDateAndTimeOnParsedTimestamp_ReturnsAllFields)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -323,7 +322,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, TimeZoneAccessors)
+    TEST_P(TestTimestamp, GetTimeZoneOnTzTimestamp_ReturnsNameAndOffset)
     {
         if (OCI_TIMESTAMP == GetParam())
         {
@@ -348,7 +347,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, ToTextWithNullFormat)
+    TEST_P(TestTimestamp, ToTextWithNullFormat_UsesDefaultFormat)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -365,7 +364,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, FromTextWithNullFormat)
+    TEST_P(TestTimestamp, FromTextWithNullFormat_ParsesTimestamp)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -383,7 +382,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, ToFromCTime)
+    TEST_P(TestTimestamp, FromCTimeThenToCTime_RoundTripsTimestamp)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -411,7 +410,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, ConstructAndConvert)
+    TEST_P(TestTimestamp, ConstructThenConvertToPlainTimestamp_ConvertsValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -430,7 +429,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestTimestamp, SubtractAndCheck)
+    TEST_P(TestTimestamp, SubtractTimestamps_FillsIntervalAndCheckPasses)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -507,7 +506,6 @@ namespace TestCApi
             { "TimestampSysTimestamp", [] { return !OCI_TimestampSysTimestamp(nullptr); } },
             { "TimestampToCTime", [] { return !OCI_TimestampToCTime(nullptr, NullArgTm(), NullArgTime()); } },
             { "TimestampToText", [] { return !OCI_TimestampToText(nullptr, OTEXT("x"), 1, NullArgText(), 1); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

@@ -8,20 +8,20 @@
 using namespace ocilib;
 
 namespace TestCApi
-{/*
-    TEST(TestEnvironment, Default)
+{
+    TEST(TestEnvironment, GetEnvironment_ReturnsEnvironment)
     {
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
 
     }
-    TEST(TestEnvironment, CleanupWithoutInitialize)
+    TEST(TestEnvironment, FreeNullEnvironment_ReturnsFalse)
     {
         ASSERT_FALSE(OCI_EnvironmentFree(nullptr));
     }
 
-    TEST(TestEnvironment, MultipleCall)
+    TEST(TestEnvironment, GetEnvironmentRepeatedly_ReturnsEnvironmentEachTime)
     {
         for (OCI_Int32 i = 1; i < 10; i++)
         {
@@ -31,7 +31,7 @@ namespace TestCApi
         }
     }
 
-    TEST(TestEnvironment, GetLocaleValidCode)
+    TEST(TestEnvironment, GetLocaleStringWithDayNameCode_ReturnsString)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -42,7 +42,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestEnvironment, GetLocaleInalidCode)
+    TEST(TestEnvironment, GetLocaleStringWithOutOfRangeCode_ReturnsNull)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -82,19 +82,18 @@ namespace TestCApi
             { "SetHAHandler", [] { return !OCI_EnvironmentSetHAHandler(nullptr, nullptr); } },
             { "SetSubscriptionPort", [] { return !OCI_EnvironmentSetSubscriptionPort(nullptr, 1); } },
             { "SetUserPassword", [] { return !OCI_EnvironmentSetUserPassword(nullptr, OTEXT("x"), OTEXT("x"), OTEXT("x"), OTEXT("x")); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }
 
 namespace TestCppApi
 {
-    TEST(TestEnvironment, DefaultCpp)
+    TEST(TestEnvironment, GetEnvironmentCppSingleton_ReturnsEnvironment)
     {
         Environment& env = GetEnvironmentCpp();       
     }
 
-    TEST(TestEnvironment, MultipleCallCpp)
+    TEST(TestEnvironment, GetEnvironmentCppRepeatedly_DoesNotThrow)
     {
         auto exceptionRaised{ false };
 
@@ -114,7 +113,7 @@ namespace TestCppApi
         ASSERT_FALSE(exceptionRaised);
     }
 
-    TEST(TestEnvironment, GetLocaleValidCodeCpp)
+    TEST(TestEnvironment, GetLocaleStringWithDayNameCode_ReturnsNonEmptyString)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -122,7 +121,7 @@ namespace TestCppApi
         ASSERT_NE(String(), str);        
     }
 
-    TEST(TestEnvironment, ModeAndVersionInfoCpp)
+    TEST(TestEnvironment, ModeCharsetAndVersionGetters_ReturnExpectedValues)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -152,35 +151,48 @@ namespace TestCppApi
         ASSERT_GE(env.GetRuntimeRevisionVersion(), 0u);
     }
 
-    TEST(TestEnvironment, WarningsAndFormatsCpp)
+    TEST(TestEnvironment, EnableWarnings_TogglesWithoutError)
     {
         Environment& env = GetEnvironmentCpp();
 
         env.EnableWarnings(true);
         env.EnableWarnings(false);
+    }
+
+    TEST(TestEnvironment, SetThenGetDateFormat_RoundTripsFormat)
+    {
+        Environment& env = GetEnvironmentCpp();
 
         ASSERT_TRUE(env.SetFormat(FormatTypeValues::FormatDate, OTEXT("YYYY-MM-DD")));
         ASSERT_EQ(String(OTEXT("YYYY-MM-DD")), env.GetFormat(FormatTypeValues::FormatDate));
     }
 
-    TEST(TestEnvironment, SubscriptionAndHACpp)
+    TEST(TestEnvironment, SetThenGetSubscriptionPort_RoundTripsPort)
     {
         Environment& env = GetEnvironmentCpp();
 
         env.SetSubscriptionPort(12345);
         ASSERT_EQ(12345u, env.GetSubscriptionPort());
+    }
+
+    TEST(TestEnvironment, SetHAHandlerWithNull_Succeeds)
+    {
+        Environment& env = GetEnvironmentCpp();
 
         env.SetHAHandler(nullptr);
     }
 
-    TEST(TestEnvironment, GetLocaleInvalidCodeCpp)
+    TEST(TestEnvironment, GetLocaleStringWithInvalidCode_Throws)
     {
         Environment& env = GetEnvironmentCpp();
 
         ASSERT_THROW((void)(env.GetLocaleString(Environment::LocaleCode(static_cast<Environment::LocaleCodeValues>(999)))), ocilib::Exception);
     }
-    */
-    TEST(TestEnvironment, GetOCICompileVersion)
+}
+
+namespace TestCApi
+{
+    TEST(TestEnvironment, GetOCICompileVersion_ReturnsNonZero)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -188,7 +200,7 @@ namespace TestCppApi
         ASSERT_NE(0u, OCI_EnvironmentGetOCICompileVersion(env));
     }
 
-    TEST(TestEnvironment, GetOCIRuntimeVersion)
+    TEST(TestEnvironment, GetOCIRuntimeVersion_ReturnsNonZero)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -196,7 +208,7 @@ namespace TestCppApi
         ASSERT_NE(0u, OCI_EnvironmentGetOCIRuntimeVersion(env));
     }
 
-    TEST(TestEnvironment, GetCharset)
+    TEST(TestEnvironment, GetCharset_ReturnsWideOrMbcs)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -204,7 +216,7 @@ namespace TestCppApi
         ASSERT_TRUE(OCI_EnvironmentGetCharset(env) == OCI_CHAR_WIDE || OCI_EnvironmentGetCharset(env) == OCI_CHAR_MBCS);
     }
 
-    TEST(TestEnvironment, GetImportMode)
+    TEST(TestEnvironment, GetImportMode_ReturnsModeWithoutError)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -214,7 +226,7 @@ namespace TestCppApi
 
     class TestEnvironmentStats : public ::testing::TestWithParam<OCI_Stat> {};
 
-    TEST_P(TestEnvironmentStats, GetStats)
+    TEST_P(TestEnvironmentStats, GetStatsForEachStatType_Succeeds)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -225,7 +237,7 @@ namespace TestCppApi
     INSTANTIATE_TEST_CASE_P(StatTypes, TestEnvironmentStats,
         ::testing::Values(OCI_UST_HANDLES, OCI_UST_OBJECTS, OCI_UST_BYTES, OCI_UST_DESCRIPTORS));
 
-    TEST(TestEnvironment, GetStatsUnknownStat)
+    TEST(TestEnvironment, GetStatsWithUnknownStat_ReturnsZero)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -233,12 +245,12 @@ namespace TestCppApi
         ASSERT_EQ((OCI_UInt64) 0, OCI_EnvironmentGetStats(env, static_cast<OCI_Stat>(99)));
     }
 
-    TEST(TestEnvironment, GetStatsNullEnv)
+    TEST(TestEnvironment, GetStatsWithNullEnv_ReturnsZero)
     {
         ASSERT_EQ((OCI_UInt64) 0, OCI_EnvironmentGetStats(nullptr, OCI_UST_HANDLES));
     }
 
-    TEST(TestEnvironment, SubscriptionPortZeroKeepsAttributeUnset)
+    TEST(TestEnvironment, SetSubscriptionPortWithZero_KeepsAttributeUnset)
     {
         /* use a dedicated environment: the port attribute cannot be cleared
            on the OCI handle once set, and notification tests share the
@@ -253,7 +265,7 @@ namespace TestCppApi
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
 
-    TEST(TestEnvironment, SubscriptionPortSetAndGet)
+    TEST(TestEnvironment, SetThenGetSubscriptionPort_Succeeds)
     {
         /* the port attribute may not be readable on recent clients,
            so the getter is not asserted */
@@ -267,7 +279,7 @@ namespace TestCppApi
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
 
-    TEST(TestEnvironment, SetFormatDate)
+    TEST(TestEnvironment, SetFormatWithDateFormat_RoundTripsFormat)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -276,7 +288,7 @@ namespace TestCppApi
         ASSERT_EQ(String(OTEXT("YYYY/MM/DD")), String(OCI_EnvironmentGetFormat(env, OCI_FMT_DATE)));
     }
 
-    TEST(TestEnvironment, SetFormatNullRestoresDefault)
+    TEST(TestEnvironment, SetFormatWithNullFormat_RestoresDefault)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -285,7 +297,7 @@ namespace TestCppApi
         ASSERT_NE(nullptr, OCI_EnvironmentGetFormat(env, OCI_FMT_DATE));
     }
 
-    TEST(TestEnvironment, SetFormatInvalidTypeRejected)
+    TEST(TestEnvironment, SetFormatWithInvalidType_ReturnsFalse)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -293,7 +305,7 @@ namespace TestCppApi
         ASSERT_FALSE(OCI_EnvironmentSetFormat(env, static_cast<OCI_FormatType>(99), OTEXT("X")));
     }
 
-    TEST(TestEnvironment, GetFormatInvalidType)
+    TEST(TestEnvironment, GetFormatWithInvalidType_ReturnsNull)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -302,7 +314,7 @@ namespace TestCppApi
     }
 
 
-    TEST(TestEnvironment, GetLocaleInvalidCode)
+    TEST(TestEnvironment, GetLocaleStringWithInvalidCode_ReturnsNull)
     {
         const auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -311,7 +323,7 @@ namespace TestCppApi
     }
 
 
-    TEST(TestEnvironment, LibPathInvalid)
+    TEST(TestEnvironment, EnvironmentCreateWithInvalidLibPath_FailsOrIsIgnored)
     {
         /* an invalid runtime library path fails with LoadingSharedLib,
            but lib_path is ignored entirely in OCI_IMPORT_LINKAGE builds */
@@ -326,7 +338,7 @@ namespace TestCppApi
         }
     }
 
-    TEST(TestEnvironment, LibPathValid)
+    TEST(TestEnvironment, EnvironmentCreateWithValidLibPath_Succeeds)
     {
     #ifdef _WINDOWS
         /* reloading the Oracle shared library through an explicit path
@@ -441,7 +453,7 @@ namespace TestCppApi
        OCI_EnvironmentGetFormat / OCI_EnvironmentSetFormat / OCI_GetVariable / OCI_EnvironmentGetImportMode /
        OCI_EnvironmentGetLocaleString / OCI_EnvironmentGetCharset / OCI_EnvironmentFree --- */
 
-    TEST(TestEnvironment, FormatGetSetLazyFill)
+    TEST(TestEnvironment, GetFormatOnFreshEnvironment_LazyFillsDefaults)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -459,7 +471,7 @@ namespace TestCppApi
         ASSERT_TRUE(OCI_EnvironmentSetFormat(env, OCI_FMT_DATE, nullptr));
     }
 
-    TEST(TestEnvironment, GetVariableLocaleAndModes)
+    TEST(TestEnvironment, EnvironmentGetters_ReturnValidValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -473,7 +485,7 @@ namespace TestCppApi
         ASSERT_NE(0u, OCI_EnvironmentGetOCIRuntimeVersion(env));
     }
 
-    TEST(TestEnvironment, FreeWithUndisposedConn)
+    TEST(TestEnvironment, FreeEnvironmentWithLiveConnection_RefusesOrDisposes)
     {
         /* OcilibEnvironmentFree leaked-resource arm: freeing env with a live
            connection goes through the undisposed-resource path. Use a private

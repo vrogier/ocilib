@@ -5,7 +5,7 @@
 
 namespace TestCApi
 {
-    TEST(TestMessage, CreateAndFree)
+    TEST(TestMessage, MessageCreateOnType_ReturnsMessage)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -25,7 +25,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestMessage, SetGetRaw)
+    TEST(TestMessage, SetThenGetRawPayload_RoundTripsBytes)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -54,7 +54,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestMessage, SetGetProperties)
+    TEST(TestMessage, SetThenGetProperties_RoundTripsValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -90,7 +90,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestMessage, Reset)
+    TEST(TestMessage, ResetOnMessage_ClearsProperties)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -124,7 +124,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestMessage, OriginalID)
+    TEST(TestMessage, GetOriginalIDOnMessage_ReturnsId)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -153,7 +153,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestMessage, Sender)
+    TEST(TestMessage, SetThenGetSender_RoundTripsAddress)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -216,7 +216,6 @@ namespace TestCApi
             { "MsgSetPriority", [] { return !OCI_MessageSetPriority(nullptr, 1); } },
             { "MsgSetRaw", [] { return !OCI_MessageSetRaw(nullptr, NullArgBuffer(), 1); } },
             { "MsgSetSender", [] { return !OCI_MessageSetSender(nullptr, nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

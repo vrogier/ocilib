@@ -18,7 +18,7 @@ namespace TestCApi
     {
     }
 
-    TEST(TestCallback, SetAndTriggerErrorHandler)
+    TEST(TestCallback, SetErrorHandler_InvokesHandlerOnError)
     {
         s_errorHandlerCalled = false;
 
@@ -40,7 +40,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestCallback, SetTAFHandlerOnCapableConnection)
+    TEST(TestCallback, SetTAFHandlerOnCapableConnection_RegistersCallback)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -56,7 +56,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestCallback, SetHAHandlerOnEnvironment)
+    TEST(TestCallback, SetHAHandlerOnEnvironment_RegistersCallback)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);

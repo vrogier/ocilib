@@ -6,7 +6,7 @@
 
 namespace TestCApi
 {
-    TEST(TestError, Getters)
+    TEST(TestError, ErrorGettersOnRaisedError_ReturnDetails)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -27,7 +27,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestError, SqlError)
+    TEST(TestError, ExecuteInvalidSql_ReportsOciError)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -53,7 +53,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestError, InsertValueTooLong)
+    TEST(TestError, InsertTooLongValue_ReportsOraError)
     {
         ExecDML(OTEXT("drop table TestErrorData"));
         ExecDML(OTEXT("create table TestErrorData (value varchar2(5))"));
@@ -84,7 +84,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestErrorData"));
     }
 
-    TEST(TestError, PoolCreationError)
+    TEST(TestError, PoolCreateWithBadCredentials_ReportsError)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -109,7 +109,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestError, InternalError)
+    TEST(TestError, InternalApiFailure_ReportsLibError)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -135,7 +135,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestError, DateTimestampIntervalSource)
+    TEST(TestError, ErrorFromDateTimestampIntervalApi_ReportsSource)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -180,7 +180,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestError, ResultsetError)
+    TEST(TestError, FetchOnFailedStatement_ReportsError)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -447,7 +447,6 @@ namespace TestCApi
             { "ErrorGetStatement", [] { return nullptr == OCI_ErrorGetStatement(nullptr); }, NoNullPointerError }, // error.c
             { "ErrorGetString", [] { return nullptr == OCI_ErrorGetString(nullptr); }, NoNullPointerError }, // error.c
             { "ErrorGetType", [] { return OCI_UNKNOWN == OCI_ErrorGetType(nullptr); }, NoNullPointerError }, // error.c
-        }),
-        &NullArgCaseName);
+        }));
 
 }

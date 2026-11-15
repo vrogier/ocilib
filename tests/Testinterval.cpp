@@ -20,7 +20,7 @@ namespace TestCApi
 
     static std::vector<OCI_UInt32> IntervalTypes{ OCI_INTERVAL_DS, OCI_INTERVAL_YM };
 
-    TEST_P(TestInterval, CreateAndFree)
+    TEST_P(TestInterval, CreateWithEachType_ReturnsIntervalOfThatType)
     {
         auto env = GetEnvironment(AddError);
         ASSERT_NE(nullptr, env);
@@ -31,7 +31,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestInterval, ArrayCreateAndFree)
+    TEST_P(TestInterval, ArrayCreateWithEachType_ReturnsTypedArray)
     {
         auto env = GetEnvironment(AddError);
         ASSERT_NE(nullptr, env);
@@ -48,7 +48,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, AssignDaySecond)
+    TEST(TestInterval, AssignOnDaySecondInterval_CopiesContents)
     {
         auto env = GetEnvironment(AddError);
 
@@ -66,7 +66,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, AssignYearMonth)
+    TEST(TestInterval, AssignOnYearMonthInterval_CopiesContents)
     {
         auto env = GetEnvironment(AddError);
 
@@ -84,7 +84,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, CompareDaySecondInferiorSuperior)
+    TEST(TestInterval, CompareOnUnequalDaySecondIntervals_ReturnsSignedOrder)
     {
         auto env = GetEnvironment(AddError);
 
@@ -103,7 +103,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, CompareYearMonthInferiorSuperior)
+    TEST(TestInterval, CompareOnUnequalYearMonthIntervals_ReturnsSignedOrder)
     {
         auto env = GetEnvironment(AddError);
 
@@ -123,7 +123,7 @@ namespace TestCApi
     }
 
 
-    TEST(TestInterval, CompareDaySecondEqual)
+    TEST(TestInterval, CompareOnEqualDaySecondIntervals_ReturnsZero)
     {
         auto env = GetEnvironment(AddError);
 
@@ -141,7 +141,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, CompareYearMonthEqual)
+    TEST(TestInterval, CompareOnEqualYearMonthIntervals_ReturnsZero)
     {
         auto env = GetEnvironment(AddError);
 
@@ -159,7 +159,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, FromTextDaySecond)
+    TEST(TestInterval, FromTextWithDaySecondLiteral_ParsesAllFields)
     {
         auto env = GetEnvironment(AddError);
 
@@ -181,7 +181,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, FromTextYearMonth)
+    TEST(TestInterval, FromTextWithYearMonthLiteral_ParsesYearAndMonth)
     {
         auto env = GetEnvironment(AddError);
 
@@ -200,7 +200,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, ToTextDaySecond)
+    TEST(TestInterval, ToTextOnDaySecondInterval_FormatsLiteral)
     {
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
@@ -219,7 +219,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, ToTextDayYearMonth)
+    TEST(TestInterval, ToTextOnYearMonthInterval_FormatsLiteral)
     {
         otext buffer[OCI_SIZE_BUFFER] = OTEXT("");
 
@@ -238,7 +238,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, AddDaySecond)
+    TEST(TestInterval, AddDaySecondIntervals_AccumulatesFields)
     {
         auto env = GetEnvironment(AddError);
 
@@ -266,7 +266,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, SubstractDaySecond)
+    TEST(TestInterval, SubtractDaySecondIntervals_DeductsFields)
     {
         auto env = GetEnvironment(AddError);
 
@@ -295,7 +295,7 @@ namespace TestCApi
     }
 
 
-    TEST(TestInterval, AdYearMonth)
+    TEST(TestInterval, AddYearMonthIntervals_AccumulatesFields)
     {
         auto env = GetEnvironment(AddError);
 
@@ -320,7 +320,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, SubstractYearMonth)
+    TEST(TestInterval, SubtractYearMonthIntervals_DeductsFields)
     {
         auto env = GetEnvironment(AddError);
 
@@ -345,7 +345,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, IntervalFetch)
+    TEST(TestInterval, FetchDaySecondColumn_ReturnsInterval)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -371,7 +371,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, IntervalBindInOut)
+    TEST(TestInterval, BindIntervalInOutOnPlsqlMultiply_DoublesValue)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -399,7 +399,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestInterval, IntervalBindRegister)
+    TEST(TestInterval, RegisterIntervalOnReturningInto_ReturnsInsertedValue)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -434,7 +434,7 @@ namespace TestCApi
 
     INSTANTIATE_TEST_CASE_P(TestInterval, TestInterval, ::testing::ValuesIn(IntervalTypes));
 
-    TEST(TestInterval, Check)
+    TEST(TestInterval, CheckOnValidInterval_ReturnsZero)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -447,7 +447,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_IntervalFree(itv));
     }
 
-    TEST(TestInterval, FromTimeZone)
+    TEST(TestInterval, FromTimeZoneWithNegativeOffset_SetsNegativeHour)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -507,7 +507,6 @@ namespace TestCApi
             { "IntervalSetYearMonth", [] { return !OCI_IntervalSetYearMonth(nullptr, 1, 1); } },
             { "IntervalSubtract", [] { return !OCI_IntervalSubtract(nullptr, nullptr); } },
             { "IntervalToText", [] { return !OCI_IntervalToText(nullptr, 1, 1, 1, NullArgText()); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

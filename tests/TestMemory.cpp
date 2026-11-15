@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestMemory, PrefetchMemory)
+    TEST(TestMemory, SetThenGetPrefetchMemory_RoundTripsSize)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);

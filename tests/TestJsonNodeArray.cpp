@@ -20,7 +20,7 @@ namespace
 
 namespace TestCApi
 {
-    TEST(TestJsonNodeArray, ArrayAccessC)
+    TEST(TestJsonNodeArray, ArrayItemAccess_ReturnsElements)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -76,7 +76,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonNodeArray, BadPathsC)
+    TEST(TestJsonNodeArray, GetItemsWithBadPaths_ReturnNull)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -175,7 +175,6 @@ namespace TestCApi
             { "JsonNodeRemoveItem", [] { return !OCI_JsonNodeRemoveItem(nullptr, 1); } },
             { "JsonNodeRemoveItems", [] { return 0 == OCI_JsonNodeRemoveItems(nullptr, 1, 1); } },
             { "JsonNodeSetItem", [] { return !OCI_JsonNodeSetItem(nullptr, 1, nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

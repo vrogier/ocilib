@@ -4,7 +4,7 @@ using namespace ocilib;
 
 namespace TestCppApi
 {
-    TEST(TestCollectionCpp, ToStringCpp)
+    TEST(TestCollectionCpp, ToStringOnColl_RendersElements)
     {
         ExecDML(OTEXT("create type CollToStringCpp_Type as object(code int, name varchar2(50))"));
         ExecDML(OTEXT("create type CollToStringCpp_Coll as varray(2) of CollToStringCpp_Type"));
@@ -36,7 +36,7 @@ namespace TestCppApi
         ExecDML(OTEXT("drop type CollToStringCpp_Type"));
     }
 
-    TEST(TestCollectionCpp, NullToString)
+    TEST(TestCollectionCpp, ToStringOnNullColl_ReturnsEmptyString)
     {
         Collection<String> coll;
         ASSERT_EQ(String(OTEXT("NULL")), coll.ToString());

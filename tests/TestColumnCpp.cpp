@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestColumnCpp, InfoCpp)
+    TEST(TestColumnCpp, ColumnGettersOnSelectedColumn_ReturnMetadata)
     {
         ExecDML(OTEXT("CREATE TABLE TestCppApiCovColInfo(id NUMBER, name VARCHAR2(50), dt DATE)"));
 

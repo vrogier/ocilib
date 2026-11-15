@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestHandle, EnvironmentDestroyedFreesConnection)
+    TEST(TestHandle, EnvironmentDestroyed_FreesConnection)
     {
         Connection con;
 
@@ -17,7 +17,7 @@ namespace TestCppApi
         ASSERT_TRUE(con.IsNull());
     }
 
-    TEST(TestHandle, ConnectionDestroyedFreesStatement)
+    TEST(TestHandle, ConnectionDestroyed_FreesStatement)
     {
         Environment& env = GetEnvironmentCpp();
         Statement stmt;
@@ -31,7 +31,7 @@ namespace TestCppApi
         ASSERT_TRUE(stmt.IsNull());
     }
 
-    TEST(TestHandle, StatementDestroyedFreesResultset)
+    TEST(TestHandle, StatementDestroyed_FreesResultset)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -47,7 +47,7 @@ namespace TestCppApi
         ASSERT_TRUE(rs.IsNull());
     }
 
-    TEST(TestHandle, ConnectionDestroyedFreesResultset)
+    TEST(TestHandle, ConnectionDestroyed_FreesResultset)
     {
         Environment& env = GetEnvironmentCpp();
         Statement stmt;
@@ -66,7 +66,7 @@ namespace TestCppApi
         ASSERT_TRUE(rs.IsNull());
     }
 
-    TEST(TestHandle, EnvironmentDestroyedFreesResultset)
+    TEST(TestHandle, EnvironmentDestroyed_FreesResultset)
     {
         Statement stmt;
         Resultset rs;
@@ -86,7 +86,7 @@ namespace TestCppApi
         ASSERT_TRUE(rs.IsNull());
     }
 
-    TEST(TestHandle, EnvironmentDestroyedFreesNumber)
+    TEST(TestHandle, EnvironmentDestroyed_FreesNumber)
     {
         Number n;
 
@@ -99,7 +99,7 @@ namespace TestCppApi
         ASSERT_TRUE(n.IsNull());
     }
 
-    TEST(TestHandle, EnvironmentDestroyedFreesDate)
+    TEST(TestHandle, EnvironmentDestroyed_FreesDate)
     {
         Date d;
 
@@ -112,7 +112,7 @@ namespace TestCppApi
         ASSERT_TRUE(d.IsNull());
     }
 
-    TEST(TestHandle, EnvironmentDestroyedFreesInterval)
+    TEST(TestHandle, EnvironmentDestroyed_FreesInterval)
     {
         Interval i;
 
@@ -125,7 +125,7 @@ namespace TestCppApi
         ASSERT_TRUE(i.IsNull());
     }
 
-    TEST(TestHandle, EnvironmentDestroyedFreesTimestamp)
+    TEST(TestHandle, EnvironmentDestroyed_FreesTimestamp)
     {
         Timestamp t;
 
@@ -138,7 +138,7 @@ namespace TestCppApi
         ASSERT_TRUE(t.IsNull());
     }
 
-    TEST(TestHandle, ConnectionDestroyedFreesLob)
+    TEST(TestHandle, ConnectionDestroyed_FreesLob)
     {
         Environment& env = GetEnvironmentCpp();
         Clob lob;
@@ -152,7 +152,7 @@ namespace TestCppApi
         ASSERT_TRUE(lob.IsNull());
     }
 
-    TEST(TestHandle, ConnectionDestroyedFreesFile)
+    TEST(TestHandle, ConnectionDestroyed_FreesFile)
     {
         Environment& env = GetEnvironmentCpp();
         File file;
@@ -166,7 +166,7 @@ namespace TestCppApi
         ASSERT_TRUE(file.IsNull());
     }
 
-    TEST(TestHandle, TypeInfoDestroyedKeepsObject)
+    TEST(TestHandle, TypeInfoDestroyed_KeepsObject)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -185,7 +185,7 @@ namespace TestCppApi
         ExecDML(OTEXT("drop type TestHandleTypeCpp force"));
     }
 
-    TEST(TestHandle, ConnectionDestroyedFreesObject)
+    TEST(TestHandle, ConnectionDestroyed_FreesObject)
     {
         Environment& env = GetEnvironmentCpp();
         Object obj;
@@ -202,7 +202,7 @@ namespace TestCppApi
         ExecDML(OTEXT("drop type TestHandleTypeCpp force"));
     }
 
-    TEST(TestHandle, ConnectionDestroyedFreesCollection)
+    TEST(TestHandle, ConnectionDestroyed_FreesCollection)
     {
         Environment& env = GetEnvironmentCpp();
         Collection<String> coll;
@@ -217,7 +217,7 @@ namespace TestCppApi
         ASSERT_TRUE(coll.IsNull());
     }
 
-    TEST(TestHandle, ConnectionDestroyedFreesTypeInfoAndObject)
+    TEST(TestHandle, ConnectionDestroyed_FreesTypeInfoAndObject)
     {
         Environment& env = GetEnvironmentCpp();
         TypeInfo ti;

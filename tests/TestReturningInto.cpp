@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestReturningInto, RegisterInt)
+    TEST(TestReturningInto, RegisterIntReturningInto_ReturnsValue)
     {
         ExecDML(OTEXT("create table TestReturningIntoRegisterInt(code int, name varchar2(50))"));
         ExecDML(OTEXT("truncate table TestReturningIntoRegisterInt"));
@@ -80,7 +80,6 @@ namespace TestCApi
             { "RegisterUnsignedInt", [] { return !OCI_StatementRegisterUInt32(nullptr, OTEXT("x")); } },
             { "RegisterUnsignedShort", [] { return !OCI_StatementRegisterUInt16(nullptr, OTEXT("x")); } },
             { "RegisterVector", [] { return !OCI_StatementRegisterVector(nullptr, OTEXT("x")); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

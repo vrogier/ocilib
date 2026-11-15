@@ -23,7 +23,7 @@ namespace
 
 namespace TestCApi
 {
-    TEST(TestJsonDom, MutableAndRoot)
+    TEST(TestJsonDom, MutableFlagAndRootNode_ReflectState)
     {
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -70,7 +70,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestJsonDom, DomNavigation)
+    TEST(TestJsonDom, NavigateDomNodes_ReachesExpectedNodes)
     {
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -330,8 +330,7 @@ namespace TestCApi
             JsonNodeTypeCase{ "Binary",    NodeBinary },
             JsonNodeTypeCase{ "Date",      NodeDate },
             JsonNodeTypeCase{ "Timestamp", NodeTimestamp },
-            JsonNodeTypeCase{ "Interval",  NodeInterval }),
-        ::testing::PrintToStringParamName());
+            JsonNodeTypeCase{ "Interval",  NodeInterval }));
 
     class TestJsonDomCreate : public ::testing::Test
     {
@@ -774,10 +773,9 @@ namespace TestCApi
             JsonNumCase{ "BigInt",  NumBigInt },
             JsonNumCase{ "BigUInt", NumBigUInt },
             JsonNumCase{ "Float",   NumFloat },
-            JsonNumCase{ "Double",  NumDouble }),
-        ::testing::PrintToStringParamName());
+            JsonNumCase{ "Double",  NumDouble }));
 
-    TEST(TestJsonDom, ValidateSchema)
+    TEST(TestJsonDom, ValidateDocumentAgainstSchema_EnforcesSchema)
     {
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -839,7 +837,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestJsonDom, NodeOps)
+    TEST(TestJsonDom, NodeGetSetOps_RoundTripValues)
     {
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -874,7 +872,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestJsonDom, NodeRemoveItemsOutOfRange)
+    TEST(TestJsonDom, RemoveNodeItemsWithOutOfRangeRange_Fails)
     {
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -1009,7 +1007,6 @@ namespace TestCApi
             { "JsonNodeGetParent", [] { return nullptr == OCI_JsonNodeGetParent(nullptr); } },
             { "JsonNodeGetType", [] { return OCI_JNT_NULL == OCI_JsonNodeGetType(nullptr); } },
             { "JsonNodeIsNull", [] { return !OCI_JsonNodeIsNull(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

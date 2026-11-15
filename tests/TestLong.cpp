@@ -63,22 +63,22 @@ namespace TestCppApi
         ExecDML(OTEXT("drop table TestLongFetchCustom"));
     }
 
-    TEST(TestLongCpp, InsertAndFetchSmallBinaryBigLongSize)
+    TEST(TestLongCpp, InsertThenFetchSmallBinaryWithBigLongSize_ReturnsData)
     {
         TestLongFetchCustom(50, OCI_SIZE_PIECE_DYNAMIC_FETCH);
     }
 
-    TEST(TestLongCpp, InsertAndFetchSmallBinarySmallLongSize)
+    TEST(TestLongCpp, InsertThenFetchSmallBinaryWithSmallLongSize_ReturnsData)
     {
         TestLongFetchCustom(50, 20);
     }
 
-    TEST(TestLongCpp, InsertAndFetchBigBinarySmallLongSize)
+    TEST(TestLongCpp, InsertThenFetchBigBinaryWithSmallLongSize_ReturnsData)
     {
         TestLongFetchCustom(5000, 200);
     }
 
-    TEST(TestLongCpp, EmptyWriteReturnsZero)
+    TEST(TestLongCpp, WriteLongWithEmptyData_ReturnsZero)
     {
         Blong lng;
         Raw empty;
@@ -216,7 +216,6 @@ namespace TestCApi
             { "LongGetType", [] { return OCI_UNKNOWN == OCI_LongGetType(nullptr); } },
             { "LongRead", [] { return 0 == OCI_LongRead(nullptr, NullArgBuffer(), 1); } },
             { "LongWrite", [] { return 0 == OCI_LongWrite(nullptr, NullArgBuffer(), 1); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

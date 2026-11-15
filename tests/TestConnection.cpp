@@ -13,7 +13,7 @@ namespace TestCApi
         context.Errs.emplace_back(Error{ OCI_ErrorGetCode(err), OCI_ErrorGetCategory(err) });
     }
 
-    TEST(TestConnection, ValidCredentials)
+    TEST(TestConnection, CreateWithValidCredentials_ReturnsConnection)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -27,7 +27,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestConnection, InvalidUser)
+    TEST(TestConnection, CreateWithInvalidUser_FailsWithOra1017)
     {
         Guard guard(context.Lock);
         context.Errs.clear();
@@ -36,7 +36,7 @@ namespace TestCApi
 
         ASSERT_NE(nullptr, env);
 
-        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD_WRONG, OCI_SESSION_DEFAULT);
+        const auto conn = OCI_ConnectionCreate(env, DBS, OTEXT("no_such_user_42"), PWD, OCI_SESSION_DEFAULT);
 
         ASSERT_EQ(nullptr, conn);
 
@@ -48,7 +48,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestConnection, InvalidPassword)
+    TEST(TestConnection, CreateWithInvalidPassword_FailsWithOra1017)
     {
         Guard guard(context.Lock);
         context.Errs.clear();
@@ -68,7 +68,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestConnection, Abort)
+    TEST(TestConnection, BreakDuringLongStatement_AbortsWithOra1013)
     {
         Guard guard(context.Lock);
         context.Errs.clear();
@@ -106,7 +106,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestConnection, Trace)
+    TEST(TestConnection, SetThenGetTraceModule_RoundTripsValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -124,7 +124,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestConnection, Getters)
+    TEST(TestConnection, ConnectionGettersAndSetters_ReturnConfiguredValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -160,7 +160,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestConnection, CommitAndRollback)
+    TEST(TestConnection, CommitAndRollbackAroundDml_Succeed)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -178,7 +178,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestConnection, Metadata)
+    TEST(TestConnection, ServerVersionGetters_ReturnValidValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -201,7 +201,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestConnection, ServerOutput)
+    TEST(TestConnection, EnableServerOutputThenPutLine_CapturesOutput)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -218,7 +218,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestConnection, PingAndTimeout)
+    TEST(TestConnection, PingOnLiveConnection_ReturnsTrue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -227,6 +227,18 @@ namespace TestCApi
         ASSERT_NE(nullptr, con);
 
         ASSERT_TRUE(OCI_ConnectionPing(con));
+
+        ASSERT_TRUE(OCI_ConnectionFree(con));
+
+    }
+
+    TEST(TestConnection, SetThenGetSendTimeout_RoundTripsValue)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto con = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, con);
 
         ASSERT_TRUE(OCI_ConnectionSetTimeout(con, OCI_NTO_SEND, 60));
         ASSERT_EQ(60u, OCI_ConnectionGetTimeout(con, OCI_NTO_SEND));
@@ -273,7 +285,7 @@ namespace TestCApi
         OCI_Connection* con{ nullptr };
     };
 
-    TEST_P(TestConnectionTrace, SetAndGet)
+    TEST_P(TestConnectionTrace, SetThenGetTraceForEachType_RoundTripsValue)
     {
         ASSERT_TRUE(OCI_ConnectionSetTrace(con, GetParam().type, GetParam().value));
         ASSERT_EQ(String(GetParam().value), String(OCI_ConnectionGetTrace(con, GetParam().type)));
@@ -287,7 +299,7 @@ namespace TestCApi
             TraceCase{ OCI_TRC_DETAIL,    OTEXT("info") },
             TraceCase{ OCI_TRC_OPERATION, OTEXT("operation") }));
 
-    TEST(TestConnection, SetUserPasswordAtLogon)
+    TEST(TestConnection, SetUserPasswordAtLogon_ChangesThenRestoresPassword)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -300,7 +312,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_EnvironmentSetUserPassword(env, DBS, USR, OTEXT("OcilibCovPwd1"), PWD));
     }
 
-    TEST(TestConnection, SetPasswordWhileLogged)
+    TEST(TestConnection, SetPasswordWhileLogged_ChangesThenRestoresPassword)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -316,7 +328,7 @@ namespace TestCApi
     }
 
 
-    TEST(TestConnection, ServerOutputEdgeCases)
+    TEST(TestConnection, EnableServerOutputWithExtremeSizes_CapturesOutput)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -334,7 +346,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
 
-    TEST(TestConnection, ExternalCredentials)
+    TEST(TestConnection, CreateWithNullCredentials_DoesNotCrash)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -349,7 +361,7 @@ namespace TestCApi
     }
 
 
-    TEST(TestConnection, FreeWithSubscription)
+    TEST(TestConnection, FreeConnectionWithSubscription_DetachesSubscription)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -367,7 +379,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
     }
 
-    TEST(TestConnection, TAFHandler)
+    TEST(TestConnection, SetTAFHandlerOnNonTafService_MatchesCapability)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -383,7 +395,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
 
-    TEST(TestConnection, PoolLogoffAutocommitAndTag)
+    TEST(TestConnection, PoolGetConnectionWithMatchingTag_ReusesTaggedSession)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -411,7 +423,7 @@ namespace TestCApi
        OCI_ConnectionSetPassword exercise the version-string parse + password-change
        arms the dropped tests used --- */
 
-    TEST(TestConnection, GetServerVersionComponents)
+    TEST(TestConnection, GetServerVersionComponents_ReturnsPlausibleValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -435,7 +447,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestConnection, SetPasswordOnLoggedConn)
+    TEST(TestConnection, SetPasswordToCurrentValue_Succeeds)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -609,7 +621,6 @@ namespace TestCApi
             { "SetTrace", [] { return !OCI_ConnectionSetTrace(nullptr, 1, OTEXT("x")); } },
             { "SetTransaction", [] { return !OCI_ConnectionSetTransaction(nullptr, nullptr); } },
             { "StatementCreate", [] { return nullptr == OCI_StatementCreate(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

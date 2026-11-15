@@ -47,7 +47,7 @@ namespace TestCppApi
 
         return result;
     }
-    TEST(ReportedIssuesCpp, Issue250)
+    TEST(ReportedIssuesCpp, Issue250_ConnectWithWrongPassword_ThrowsWithAnsiAndWideMessage)
     {
 
         std::string ansiMessage;
@@ -205,7 +205,7 @@ namespace TestCppApi
         ExecDML(OTEXT("drop table TestTableIssue309_3"));
     }
 
-    TEST(ReportedIssuesCpp, Issue314)
+    TEST(ReportedIssuesCpp, Issue314_PrepareWithNumericBind_ExecutesWithoutException)
     {
         auto exceptionOccured{ false };
 
@@ -234,7 +234,7 @@ namespace TestCppApi
         
     }
 
-    TEST(ReportedIssuesCpp, Issue325)
+    TEST(ReportedIssuesCpp, Issue325_LobGetConnection_ReturnsConnection)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -249,7 +249,7 @@ namespace TestCppApi
 
     }
 
-    TEST(ReportedIssuesCpp, Issue329)
+    TEST(ReportedIssuesCpp, Issue329_ScrollableFetchWithBind_ReturnsRows)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -276,7 +276,7 @@ namespace TestCppApi
         
     }
 
-    TEST(ReportedIssuesCpp, Issue331)
+    TEST(ReportedIssuesCpp, Issue331_FetchXmlColumnsInScrollableMode_ReturnsXml)
     {
         auto expectedString = ToUpper(String(OTEXT("<element name=\"name\" type=\"str\"></element>")));
         Environment& env = GetEnvironmentCpp();
@@ -298,7 +298,7 @@ namespace TestCppApi
         
     }
 
-    TEST(ReportedIssuesCpp, Issue355)
+    TEST(ReportedIssuesCpp, Issue355_PoolGetConnectionPastMaxSize_ReusesPooledSessions)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -394,7 +394,7 @@ namespace TestCppApi
         
     }
 
-    TEST(ReportedIssuesCpp, Issue377)
+    TEST(ReportedIssuesCpp, Issue377_BatchInsertNumber18_InsertsExpectedCount)
     {
         ExecDML(OTEXT("create table TestIssue377(value number(18))"));
 
@@ -561,7 +561,7 @@ namespace TestCppApi
         
     }
 
-    TEST(ReportedIssuesCpp, Issue382)
+    TEST(ReportedIssuesCpp, Issue382_ConnectWithExpiredPassword_ReportsGraceWarning)
     {
         ExecDML(OTEXT("drop user UserIssue382"));
         ExecDML(OTEXT("drop profile ProfileIssue382"));
@@ -612,7 +612,7 @@ namespace TestCppApi
         ExecDML(OTEXT("drop profile ProfileIssue382"));
     }
 
-    TEST(ReportedIssuesCpp, Issue387)
+    TEST(ReportedIssuesCpp, Issue387_SetPayloadOnRawMessage_StoresRawBytes)
     { 
         const auto msgTypeName = OTEXT("SYS.RAW");
         
@@ -636,7 +636,7 @@ namespace TestCppApi
     // Issue 388 : copy assignment operators of value types were declared noexcept
     // while their implementations can throw (OCI calls), leading to std::terminate
 
-    TEST(ReportedIssuesCpp, Issue388)
+    TEST(ReportedIssuesCpp, Issue388_TypeAssignments_AreNotNoexcept)
     {
         static_assert(!std::is_nothrow_assignable<Number&, const Number&>::value,
             "Number copy assignment must not be declared noexcept (issue #388)");
@@ -676,7 +676,7 @@ namespace TestCppApi
 
     static std::atomic<int> Issue391ErrorCount{ 0 };
 
-    TEST(ReportedIssuesCpp, Issue391)
+    TEST(ReportedIssuesCpp, Issue391_PoolGetConnectionFromManyThreads_DoesNotExhaustPool)
     {
         Environment env(Environment::Threaded);
 

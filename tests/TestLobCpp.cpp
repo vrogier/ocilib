@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestLobCpp, BlobReadWriteAndGettersCpp)
+    TEST(TestLobCpp, BlobWriteThenReadThenGetters_RoundTripsData)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);
@@ -49,7 +49,7 @@ namespace TestCppApi
         lob.EnableBuffering(false);
     }
 
-    TEST(TestLobCpp, ClobReadWriteAndGettersCpp)
+    TEST(TestLobCpp, ClobWriteThenReadThenGetters_RoundTripsData)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);

@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestHash, CreateStringHash)
+    TEST(TestHash, CreateStringHashTable_ReturnsTable)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -16,7 +16,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_HashTableFree(table));
     }
 
-    TEST(TestHash, AddAndGetString)
+    TEST(TestHash, AddThenGetString_ReturnsValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -32,7 +32,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_HashTableFree(table));
     }
 
-    TEST(TestHash, LookupAndGetValue)
+    TEST(TestHash, LookupStringKey_ReturnsValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -50,7 +50,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_HashTableFree(table));
     }
 
-    TEST(TestHash, AddAndGetInt)
+    TEST(TestHash, AddThenGetInt_ReturnsValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -62,7 +62,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_HashTableFree(itable));
     }
 
-    TEST(TestHash, AddAndGetPointer)
+    TEST(TestHash, AddThenGetPointer_ReturnsValue)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -81,7 +81,7 @@ namespace TestCApi
        chains (OcilibHashEntryValueCount / OcilibHashLookup /
        OcilibHashAddString paths) --- */
 
-    TEST(TestHash, AddStringLookupAndGet)
+    TEST(TestHash, AddStringKeysThenLookup_ReturnsValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -110,7 +110,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_HashTableFree(table));
     }
 
-    TEST(TestHash, NullHashErrors)
+    TEST(TestHash, HashFnsWithNullArgs_ReturnFailure)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -153,7 +153,6 @@ namespace TestCApi
             { "HashGetType", [] { return OCI_UNKNOWN == OCI_HashTableGetType(nullptr); } },
             { "HashGetValue", [] { return nullptr == OCI_HashTableGetValue(nullptr, OTEXT("x")); } },
             { "HashLookup", [] { return nullptr == OCI_HashTableLookup(nullptr, OTEXT("x"), FALSE); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

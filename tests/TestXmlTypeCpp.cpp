@@ -4,7 +4,7 @@ using namespace ocilib;
 
 namespace TestCppApi
 {
-    TEST(TestXmlTypeCpp, GetTypeInfoCpp)
+    TEST(TestXmlTypeCpp, TypeInfoOnXmlType_ReturnsXmlTypeInfo)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -17,7 +17,7 @@ namespace TestCppApi
         
     }
 
-    TEST(TestXmlTypeCpp, DescribeCpp)
+    TEST(TestXmlTypeCpp, DescribeXmlElementQuery_ReturnsXmlTypeColumn)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -43,7 +43,7 @@ namespace TestCppApi
     }
 
 
-    TEST(TestXmlTypeCpp, FetchCpp)
+    TEST(TestXmlTypeCpp, FetchXmlColumn_ReturnsXmlType)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -123,48 +123,48 @@ namespace TestCppApi
     }
 
 
-    TEST(TestXmlTypeCpp, FetchSmallBufferFetchSizeOneCpp)
+    TEST(TestXmlTypeCpp, FetchXmlWithSmallBufferAndFetchSizeOne_ReturnsAllRows)
     {
         TestXmlTypeFetchCustom(1, 20, Statement::FetchForward);
     }
 
-    TEST(TestXmlTypeCpp, FetchSmallBufferFetchSizeTwentyCpp)
+    TEST(TestXmlTypeCpp, FetchXmlWithSmallBufferAndFetchSizeTwenty_ReturnsAllRows)
     {
         TestXmlTypeFetchCustom(20, 20, Statement::FetchForward);
     }
 
-    TEST(TestXmlTypeCpp, FetchDefaultBufferFetchSizeOneCpp)
+    TEST(TestXmlTypeCpp, FetchXmlWithDefaultBufferAndFetchSizeOne_ReturnsAllRows)
     {
         TestXmlTypeFetchCustom(1, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchForward);
     }
 
-    TEST(TestXmlTypeCpp, FetchDefaultBufferFetchSizeTwentyCpp)
+    TEST(TestXmlTypeCpp, FetchXmlWithDefaultBufferAndFetchSizeTwenty_ReturnsAllRows)
     {
         TestXmlTypeFetchCustom(20, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchForward);
 
     }
 
-    TEST(TestXmlTypeCpp, FetchSmallBufferFetchSizeOneScrollableCpp)
+    TEST(TestXmlTypeCpp, FetchXmlScrollableWithSmallBufferAndFetchSizeOne_ReturnsAllRows)
     {
-        TestXmlTypeFetchCustom(1, 20, Statement::FetchForward);
+        TestXmlTypeFetchCustom(1, 20, Statement::FetchScrollable);
     }
 
-    TEST(TestXmlTypeCpp, FetchSmallBufferFetchSizeTwentyscrollableCpp)
+    TEST(TestXmlTypeCpp, FetchXmlScrollableWithSmallBufferAndFetchSizeTwenty_ReturnsAllRows)
     {
-        TestXmlTypeFetchCustom(20, 20, Statement::FetchForward);
+        TestXmlTypeFetchCustom(20, 20, Statement::FetchScrollable);
     }
 
-    TEST(TestXmlTypeCpp, FetchDefaultBufferFetchSizeOneScrollableCpp)
+    TEST(TestXmlTypeCpp, FetchXmlScrollableWithDefaultBufferAndFetchSizeOne_ReturnsAllRows)
     {
-        TestXmlTypeFetchCustom(1, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchForward);
+        TestXmlTypeFetchCustom(1, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchScrollable);
     }
 
-    TEST(TestXmlTypeCpp, FetchDefaultBufferFetchSizeTwentyScrollableCpp)
+    TEST(TestXmlTypeCpp, FetchXmlScrollableWithDefaultBufferAndFetchSizeTwenty_ReturnsAllRows)
     {
-        TestXmlTypeFetchCustom(20, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchForward);
+        TestXmlTypeFetchCustom(20, OCI_SIZE_PIECE_DYNAMIC_FETCH, Statement::FetchScrollable);
     }
 
-    TEST(TestXmlTypeCpp, FetchScrollableCpp)
+    TEST(TestXmlTypeCpp, FetchXmlScrollable_NavigatesFirstAndLast)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -193,7 +193,7 @@ namespace TestCppApi
         
     }
 
-    TEST(TestXmlTypeCpp, NullToString)
+    TEST(TestXmlTypeCpp, ToStringOnNullXmlType_ReturnsEmptyString)
     {
         ExecDML(OTEXT("CREATE TABLE TestXmlTypeNull (x XMLTYPE)"));
 

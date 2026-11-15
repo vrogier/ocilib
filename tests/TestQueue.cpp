@@ -231,7 +231,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_DequeueUnsubscribe(deq2));
     }
 
-    TEST(TestQueue, SingleRawMessage)
+    TEST(TestQueue, EnqueueThenDequeueSingleRawMessage_RoundTripsPayload)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -294,7 +294,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestQueue, SingleRawMessageEmptyPayload)
+    TEST(TestQueue, EnqueueThenDequeueEmptyRawMessage_HandlesEmptyPayload)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -362,7 +362,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestQueue, SingleMessageEmptyPayload)
+    TEST(TestQueue, EnqueueThenDequeueEmptyMessage_HandlesEmptyPayload)
     {
         ExecDML(OTEXT("create type TestQueueSingleMessageEmptyPayloadType as object(title varchar2(50), content varchar2(100))"));
 
@@ -506,7 +506,6 @@ namespace TestCApi
             { "QueueTableDrop", [] { return !OCI_QueueTableDrop(nullptr, OTEXT("x"), FALSE); } },
             { "QueueTableMigrate", [] { return !OCI_QueueTableMigrate(nullptr, OTEXT("x"), OTEXT("x")); } },
             { "QueueTablePurge", [] { return !OCI_QueueTablePurge(nullptr, OTEXT("x"), OTEXT("x"), FALSE, 1); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

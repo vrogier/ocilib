@@ -11,7 +11,7 @@ namespace TestCppApi
                                          TO_STRING(count) + OTEXT(")"));
     }
 
-    TEST(TestRowIterator, IterateAllRowsByIndex)
+    TEST(TestRowIterator, IterateAllRowsByIndex_VisitsEveryRow)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -29,7 +29,7 @@ namespace TestCppApi
         ASSERT_EQ(5u, count);
     }
 
-    TEST(TestRowIterator, IterateAllRowsByColumnName)
+    TEST(TestRowIterator, IterateAllRowsByColumnName_VisitsEveryRow)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -49,7 +49,7 @@ namespace TestCppApi
         ASSERT_EQ(3u, count);
     }
 
-    TEST(TestRowIterator, EmptyResultset)
+    TEST(TestRowIterator, IteratorOnEmptyResultset_YieldsNoRows)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -68,7 +68,7 @@ namespace TestCppApi
         ASSERT_TRUE(rs.Rows().begin() == rs.Rows().end());
     }
 
-    TEST(TestRowIterator, SingleRow)
+    TEST(TestRowIterator, IteratorOnSingleRowResultset_YieldsOneRow)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -83,7 +83,7 @@ namespace TestCppApi
         ASSERT_TRUE(it == rs.Rows().end());
     }
 
-    TEST(TestRowIterator, ScrollablePrev)
+    TEST(TestRowIterator, PrevOnScrollableIterator_MovesBackward)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -100,7 +100,7 @@ namespace TestCppApi
         ASSERT_EQ(2, (*it).Get<int>(0));
     }
 
-    TEST(TestRowIterator, ScrollableRelativeSeek)
+    TEST(TestRowIterator, RelativeSeekOnScrollableIterator_MovesByOffset)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -116,7 +116,7 @@ namespace TestCppApi
         ASSERT_EQ(6, (*it).Get<int>(0));
     }
 
-    TEST(TestRowIterator, ScrollableSubscript)
+    TEST(TestRowIterator, SubscriptOnScrollableResultset_ReturnsRowAtOffset)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -129,7 +129,7 @@ namespace TestCppApi
         ASSERT_EQ(4, it[3].Get<int>(0));
     }
 
-    TEST(TestRowIterator, ScrollableRangeFor)
+    TEST(TestRowIterator, RangeForOnScrollableResultset_VisitsEveryRow)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -148,7 +148,7 @@ namespace TestCppApi
         ASSERT_EQ(4u, count);
     }
 
-    TEST(TestRowIterator, NonScrollablePrevThrows)
+    TEST(TestRowIterator, PrevOnNonScrollableIterator_Throws)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -161,7 +161,7 @@ namespace TestCppApi
         ASSERT_THROW((void)(--it), Exception);
     }
 
-    TEST(TestRowIterator, NonScrollableSeekThrows)
+    TEST(TestRowIterator, SeekOnNonScrollableIterator_Throws)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -173,7 +173,7 @@ namespace TestCppApi
         ASSERT_THROW((void)(it += 2), Exception);
     }
 
-    TEST(TestRowIterator, NonScrollableSubscriptThrows)
+    TEST(TestRowIterator, SubscriptOnNonScrollableResultset_Throws)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -185,7 +185,7 @@ namespace TestCppApi
         ASSERT_THROW((void)(it[2]), Exception);
     }
 
-    TEST(TestRowIterator, GetStringViewByIndex)
+    TEST(TestRowIterator, GetStringViewByIndex_ReturnsColumnText)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -202,7 +202,7 @@ namespace TestCppApi
         }
     }
 
-    TEST(TestRowIterator, GetStringViewByName)
+    TEST(TestRowIterator, GetStringViewByName_ReturnsColumnText)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -216,7 +216,7 @@ namespace TestCppApi
         ASSERT_EQ(OTEXT("abc"), (*it).Get<StringView>(OTEXT("name")));
     }
 
-    TEST(TestRowIterator, GetStringViewNull)
+    TEST(TestRowIterator, GetStringViewOnNullColumn_ReturnsEmpty)
     {
         auto& env = GetEnvironmentCpp();
 

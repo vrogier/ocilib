@@ -3,33 +3,34 @@
 
 using namespace ocilib;
 
-enum DirectPathErrorTestMode
-{
-    Default = 0,
-    InsufficientBufferError = 1,
-    ConversionError = 2,
-    LoadError = 4,
-    ForceLoad = 8
-};
-
-class TestDirectPathErrorModes : public ::testing::TestWithParam<OCI_Int32> {};
-
-static std::vector<OCI_Int32> DirectPathErrorTestModes
-{ 
-    DirectPathErrorTestMode::Default,
-  //  DirectPathErrorTestMode::InsufficientBufferError,
-  //  DirectPathErrorTestMode::InsufficientBufferError | DirectPathErrorTestMode::ForceLoad,
-    DirectPathErrorTestMode::ConversionError,
-    DirectPathErrorTestMode::ConversionError | DirectPathErrorTestMode::ForceLoad,
-    DirectPathErrorTestMode::LoadError,
-    DirectPathErrorTestMode::LoadError | DirectPathErrorTestMode::ForceLoad
-};
-
 namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestDirectPathCpp, SimpleCpp)
+    enum DirectPathErrorTestMode
+    {
+        Default = 0,
+        InsufficientBufferError = 1,
+        ConversionError = 2,
+        LoadError = 4,
+        ForceLoad = 8
+    };
+
+    class TestDirectPathErrorModes : public ::testing::TestWithParam<OCI_Int32> {};
+
+    static std::vector<OCI_Int32> DirectPathErrorTestModes
+    {
+        DirectPathErrorTestMode::Default,
+      //  DirectPathErrorTestMode::InsufficientBufferError,
+      //  DirectPathErrorTestMode::InsufficientBufferError | DirectPathErrorTestMode::ForceLoad,
+        DirectPathErrorTestMode::ConversionError,
+        DirectPathErrorTestMode::ConversionError | DirectPathErrorTestMode::ForceLoad,
+        DirectPathErrorTestMode::LoadError,
+        DirectPathErrorTestMode::LoadError | DirectPathErrorTestMode::ForceLoad
+    };
+
+
+    TEST(TestDirectPathCpp, CreateThenConvertThenLoad_InsertsRows)
     {
         ExecDML(OTEXT("create table TestDirectPathTableCpp (val_int int, val_str varchar2(50), val_date date)"));
         ExecDML(OTEXT("truncate table TestDirectPathTableCpp"));

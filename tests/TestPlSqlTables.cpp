@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestPlSqlTables, BasicInOutStringTableBinding)
+    TEST(TestPlSqlTables, BindInOutStringTable_RoundTripsStrings)
     {
         ExecDML
         (

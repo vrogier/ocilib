@@ -110,8 +110,7 @@ namespace TestCApi
             DeqAttrCase{ "Navigation",  DeqAttrNavigation },
             DeqAttrCase{ "WaitTime",    DeqAttrWaitTime },
             DeqAttrCase{ "Consumer",    DeqAttrConsumer },
-            DeqAttrCase{ "Correlation", DeqAttrCorrelation }),
-        ::testing::PrintToStringParamName());
+            DeqAttrCase{ "Correlation", DeqAttrCorrelation }));
 
     TEST_F(TestDeqOps, EnqueueThenDequeue_ReturnsMessagePayload)
     {
@@ -442,8 +441,7 @@ namespace TestCApi
             DeqNullCase{ "DequeueCreate",   NullDequeueCreate },
             DeqNullCase{ "QueueStop",       NullQueueStop },
             DeqNullCase{ "QueueDrop",       NullQueueDrop },
-            DeqNullCase{ "QueueTableDrop",  NullQueueTableDrop }),
-        ::testing::PrintToStringParamName());
+            DeqNullCase{ "QueueTableDrop",  NullQueueTableDrop }));
 
     class TestDequeueNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
@@ -476,7 +474,6 @@ namespace TestCApi
             { "DequeueSetWaitTime", [] { return !OCI_DequeueSetWaitTime(nullptr, 1); } },
             { "DequeueSubscribe", [] { return !OCI_DequeueSubscribe(nullptr, nullptr, 1, 1, nullptr); } },
             { "DequeueUnsubscribe", [] { return !OCI_DequeueUnsubscribe(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

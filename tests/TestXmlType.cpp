@@ -5,7 +5,7 @@ using namespace ocilib;
 
 namespace TestCApi
 {
-    TEST(TestXmlType, GetTypeInfo)
+    TEST(TestXmlType, GetTypeInfoOnXmlType_ReturnsTypeInfo)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -25,7 +25,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestXmlType, Describe)
+    TEST(TestXmlType, DescribeXmlTypeColumn_ReturnsXmlType)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -62,7 +62,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestXmlType, Fetch)
+    TEST(TestXmlType, FetchXmlTypeColumn_ReturnsXml)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -105,7 +105,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestXmlType, FetchScrollable)
+    TEST(TestXmlType, FetchXmlTypeColumnScrollable_ReturnsXml)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -142,7 +142,7 @@ namespace TestCApi
        arms (OcilibXmlType* internals are exercised transitively by the
        Select* XML-column fetch tests) --- */
 
-    TEST(TestXmlType, NullXmlTypeErrors)
+    TEST(TestXmlType, XmlTypeFnsWithNullArgs_ReturnFailure)
     {
         ASSERT_EQ(nullptr, OCI_XmlTypeGetContent(nullptr));
         ASSERT_EQ(0u, OCI_XmlTypeGetContentSize(nullptr));
@@ -162,7 +162,6 @@ namespace TestCApi
         {
             { "XmlTypeGetContent", [] { return nullptr == OCI_XmlTypeGetContent(nullptr); } },
             { "XmlTypeGetContentSize", [] { return 0 == OCI_XmlTypeGetContentSize(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

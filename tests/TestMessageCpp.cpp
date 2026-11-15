@@ -6,7 +6,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestMessageCpp, RawPayloadAndPropertiesCpp)
+    TEST(TestMessageCpp, SetThenGetRawPayloadAndProperties_RoundTripsValues)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);
@@ -47,7 +47,7 @@ namespace TestCppApi
         (void)msg.GetID();
     }
 
-    TEST(TestMessageCpp, ResetCpp)
+    TEST(TestMessageCpp, ResetOnMessage_ClearsProperties)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);

@@ -7,7 +7,7 @@ using namespace ocilib;
 
 namespace TestCApi
 {
-    TEST(TestJsonNodeObject, ObjectAccessC)
+    TEST(TestJsonNodeObject, ObjectFieldAccess_ReturnsValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -52,7 +52,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonNodeObject, FieldNameC)
+    TEST(TestJsonNodeObject, GetFieldNameAtIndex_ReturnsName)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -125,7 +125,6 @@ namespace TestCApi
             { "JsonNodeRemoveField", [] { return !OCI_JsonNodeRemoveField(nullptr, OTEXT("x")); } },
             { "JsonNodeRenameField", [] { return !OCI_JsonNodeRenameField(nullptr, OTEXT("x"), OTEXT("x")); } },
             { "JsonNodeSetField", [] { return !OCI_JsonNodeSetField(nullptr, OTEXT("x"), nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

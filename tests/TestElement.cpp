@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestElement, GetAndSet)
+    TEST(TestElement, GetThenSetOnElement_RoundTripsValue)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestElement_StrVarray AS VARRAY(10) OF VARCHAR2(50)"));
 
@@ -456,7 +456,7 @@ namespace TestCApi
         }
     };
 
-    TEST_P(TestElemGetSet, FetchedElemRoundTripsAndLocalElemAcceptsType)
+    TEST_P(TestElemGetSet, GetThenSetOnEachElementType_RoundTripsValue)
     {
         GetParam().run(env, conn, stmt);
     }
@@ -473,8 +473,7 @@ namespace TestCApi
             ElemCase{ "CollVarray", ElemCollVarray },
             ElemCase{ "LobColl",    ElemLobColl },
             ElemCase{ "FileColl",   ElemFileColl },
-            ElemCase{ "RefColl",    ElemRefColl }),
-        ::testing::PrintToStringParamName());
+            ElemCase{ "RefColl",    ElemRefColl }));
 
     /* -------------------------------------------------------------------------
        Parameterized: numeric elem setter/getter round-trip per subtype
@@ -579,8 +578,7 @@ namespace TestCApi
             ElemNumCase{ "BigInt",  ElemNumSetBigInt },
             ElemNumCase{ "UBigInt", ElemNumSetUBigInt },
             ElemNumCase{ "Float",   ElemNumSetFloat },
-            ElemNumCase{ "Double",  ElemNumSetDouble }),
-        ::testing::PrintToStringParamName());
+            ElemNumCase{ "Double",  ElemNumSetDouble }));
 
     TEST_F(TestElemNum, FetchedNumElem_CoercesToAllNumericGetters)
     {
@@ -736,10 +734,9 @@ namespace TestCApi
             ElemNullCase{ "Number",    ElemNullSetNumber },
             ElemNullCase{ "Date",      ElemNullSetDate },
             ElemNullCase{ "Timestamp", ElemNullSetTimestamp },
-            ElemNullCase{ "Interval",  ElemNullSetInterval }),
-        ::testing::PrintToStringParamName());
+            ElemNullCase{ "Interval",  ElemNullSetInterval }));
 
-    TEST(TestElement, GetElem2NullObject)
+    TEST(TestElement, GetElem2OnNullObject_ReturnsFalse)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestElement_ObjForNullT AS OBJECT(code int)"));
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestElement_ObjForNullColl AS VARRAY(1) OF TestElement_ObjForNullT"));
@@ -832,7 +829,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestElement, GetIntFromTextElement)
+    TEST(TestElement, GetIntOnTextElement_ConvertsToInt)
     {
         /* text element read as a number goes through the string conversion arm */
 
@@ -860,7 +857,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestElement_TextColl"));
     }
 
-    TEST(TestElement, GetIntFromIncompatibleType)
+    TEST(TestElement, GetIntOnIncompatibleElement_ReturnsDefault)
     {
         /* a non numeric / non text element read as a number throws TypeNotCompatible */
 
@@ -949,7 +946,6 @@ namespace TestCApi
             { "ElemSetUnsignedBigInt", [] { return !OCI_ElementSetUInt64(nullptr, 1); } },
             { "ElemSetUnsignedInt", [] { return !OCI_ElementSetUInt32(nullptr, 1); } },
             { "ElemSetUnsignedShort", [] { return !OCI_ElementSetUInt16(nullptr, 1); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

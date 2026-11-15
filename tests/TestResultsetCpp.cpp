@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestResultsetCpp, ReleaseResultsetsFreesLiveChild)
+    TEST(TestResultsetCpp, ReleaseResultsetsOnLiveChild_FreesChild)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -19,7 +19,7 @@ namespace TestCppApi
         ASSERT_TRUE(rs.IsNull());
     }
 
-    TEST(TestResultsetCpp, ReleaseResultsetsErasesExpiredChild)
+    TEST(TestResultsetCpp, ReleaseResultsetsOnExpiredChild_ErasesIt)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);

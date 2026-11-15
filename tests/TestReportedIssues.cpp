@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(ReportedIssues, Issue216)
+    TEST(ReportedIssues, Issue216_BindDateArrayInBatches_InsertsAllRows)
     {
         ExecDML(OTEXT("CREATE TABLE ISSUE_216(ID NUMBER, DATEVALUE DATE)"));
 
@@ -71,7 +71,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE ISSUE_216"));
     }
 
-    TEST(ReportedIssues, Issue222)
+    TEST(ReportedIssues, Issue222_PoolGetConnectionWithSysdba_ReturnsConnection)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -88,7 +88,7 @@ namespace TestCApi
 
     }
 
-    TEST(ReportedIssues, Issue225)
+    TEST(ReportedIssues, Issue225_BindNumberArrayInOut_PreservesServerOutput)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -158,7 +158,7 @@ namespace TestCApi
 
 #ifdef OCI_CHARSET_MBCS
 
-    TEST(ReportedIssues, Issue238)
+    TEST(ReportedIssues, Issue238_FetchClobAsStringWithUtf8NlsLang_ReturnsContent)
     {
         ExecDML(OTEXT("create table FetchLobAsString(value clob)"));
 
@@ -214,7 +214,7 @@ namespace TestCApi
         contextIssue247NoNullPointerException.Errs.emplace_back(Error{ OCI_ErrorGetCode(err), OCI_ErrorGetCategory(err) });
     }
 
-    TEST_P(ReportedIssues247, NoNullPointerException)
+    TEST_P(ReportedIssues247, Issue247_SysTimestampOnEachType_RaisesNoError)
     {
         auto env = GetEnvironment(AddErrorIssue247NoNullPointerException);
         ASSERT_NE(nullptr, env);
@@ -227,7 +227,7 @@ namespace TestCApi
 
     }
 
-    TEST(ReportedIssues, Issue262)
+    TEST(ReportedIssues, Issue262_FetchUrowidFromIndexOrganizedTable_ReturnsRowid)
     {
         ExecDML(OTEXT("CREATE TABLE test_urowid(name VARCHAR2(256 CHAR) NOT NULL, CONSTRAINT test_urowid PRIMARY KEY (name) ) ORGANIZATION INDEX"));
         ExecDML(OTEXT("INSERT INTO test_urowid VALUES (LPAD('a', 200, 'a'))"));
@@ -264,7 +264,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE test_urowid"));
     }
 
-    TEST(ReportedIssues, Issue288)
+    TEST(ReportedIssues, Issue288_FetchLargeRawRows_ReturnsAllRows)
     {
         ExecDML(OTEXT("drop table TestIssue288"));
         ExecDML(OTEXT("create table TestIssue288 (id number, val raw(2000))"));
@@ -319,7 +319,7 @@ namespace TestCApi
     }
 
 
-    TEST(ReportedIssues, Issue308)
+    TEST(ReportedIssues, Issue308_CallPackageFuncWithOutRecord_ReturnsValues)
     {
         ExecDML(OTEXT("create table TestTableIssue308(num number, id number)"));
 
@@ -389,7 +389,7 @@ namespace TestCApi
     }
 
 
-    TEST(ReportedIssues, Issue313)
+    TEST(ReportedIssues, Issue313_FetchNullAndEmptyClobs_DistinguishesStates)
     {
         ExecDML(OTEXT("drop table TestIssue313"));
         ExecDML(OTEXT("create table TestIssue313(test int, value clob)"));
@@ -647,7 +647,7 @@ namespace TestCApi
         return msgBlob;
     }
 
-    TEST(ReportedIssues, Issue316)
+    TEST(ReportedIssues, Issue316_EnqueueDequeueJmsBytesMessage_Succeeds)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -696,7 +696,7 @@ namespace TestCApi
 
     }
 
-    TEST(ReportedIssues, Issue326)
+    TEST(ReportedIssues, Issue326_SetThenGetNetworkTimeouts_RoundTripsValues)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -719,7 +719,7 @@ namespace TestCApi
 
     }
 
-    TEST(ReportedIssues, Issue347)
+    TEST(ReportedIssues, Issue347_EnqueueJmsBytesMessageWithDateAttr_Succeeds)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -741,18 +741,5 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
     }
-/*
-    TEST(ReportedIssues, Issue370)
-    {
-        ASSERT_EQ(nullptr, OCI_HandleGetUserData(nullptr));
-
-        const auto err = OCI_GetLastError();
-        ASSERT_NE(nullptr, err);
-
-        ASSERT_EQ(OCI_ERR_TYPE_ERROR, OCI_ErrorGetCode(err));
-        ASSERT_EQ(OCI_ERR_CAT_LIB, OCI_ErrorGetCategory(err));
-    }
-    */
-
     INSTANTIATE_TEST_CASE_P(ReportedIssues, ReportedIssues247, ::testing::ValuesIn(TimestampTypes));
 }

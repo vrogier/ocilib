@@ -15,7 +15,7 @@ static void CleanupTestRef()
 }
 namespace TestCppApi
 {
-    TEST(TestRefCpp, ToStringCpp)
+    TEST(TestRefCpp, ToStringOnRef_RendersRef)
     {
         IniTestRef();
 
@@ -39,7 +39,7 @@ namespace TestCppApi
         CleanupTestRef();
     }
 
-    TEST(TestRefCpp, EmptyReferenceToStringAndDeleter)
+    TEST(TestRefCpp, ToStringOnEmptyRefAndCustomDeleter_Work)
     {
         IniTestRef();
 
@@ -53,7 +53,7 @@ namespace TestCppApi
         CleanupTestRef();
     }
 
-    TEST(TestRefCpp, NullReferenceToString)
+    TEST(TestRefCpp, ToStringOnNullRef_ReturnsEmptyString)
     {
         Reference ref;
         ASSERT_EQ(String(OTEXT("NULL")), ref.ToString());

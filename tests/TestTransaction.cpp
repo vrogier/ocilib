@@ -26,7 +26,7 @@ namespace TestCApi
         memcpy(xid->data, buf, 16);
     }
 
-    TEST(TestTransaction, CreateAndGetters)
+    TEST(TestTransaction, CreateTransactionThenGetters_ReturnAttributes)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -50,7 +50,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestTransaction, LocalAutoCommitTransaction)
+    TEST(TestTransaction, RunLocalAutoCommitTransaction_CommitsChanges)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -76,7 +76,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestTransaction, GlobalTransactionLifecycle)
+    TEST(TestTransaction, GlobalTransactionStartJoinEnd_LifecycleWorks)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -105,7 +105,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestTransaction, GlobalTransactionWithWork)
+    TEST(TestTransaction, GlobalTransactionWithStatementWork_Commits)
     {
         ExecDML(OTEXT("drop table TestXaWork"));
         ExecDML(OTEXT("create table TestXaWork(code int)"));
@@ -150,7 +150,7 @@ namespace TestCApi
     /* --- public-API error paths: NULL transaction handles hit the CHECK_PTR
        arms the dropped fault tests covered --- */
 
-    TEST(TestTransaction, NullTransactionErrors)
+    TEST(TestTransaction, TransactionFnsWithNullArgs_ReturnFailure)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -185,7 +185,6 @@ namespace TestCApi
             { "TransactionResume", [] { return !OCI_TransactionResume(nullptr); } },
             { "TransactionStart", [] { return !OCI_TransactionStart(nullptr); } },
             { "TransactionStop", [] { return !OCI_TransactionStop(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

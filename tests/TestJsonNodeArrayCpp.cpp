@@ -7,7 +7,7 @@ using namespace ocilib;
 namespace TestCppApi
 {
 
-    TEST(TestJsonNodeArrayCpp, ArrayAccess)
+    TEST(TestJsonNodeArrayCpp, ArrayItemAccess_ReturnsElements)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -43,7 +43,7 @@ namespace TestCppApi
         JsonNode verify = json.GetRoot();
         ASSERT_EQ(2u, verify.GetItemCount());
     }
-    TEST(TestJsonNodeArrayCpp, BadPaths)
+    TEST(TestJsonNodeArrayCpp, GetItemsWithBadPaths_ReturnNull)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -94,7 +94,7 @@ namespace TestCppApi
         ASSERT_THROW((void)(obj2.GetFieldName(100)), Exception);
     }
 
-    TEST(TestJsonNodeArrayCpp, RemoveItems)
+    TEST(TestJsonNodeArrayCpp, RemoveItemsOnArray_ShrinksArray)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -118,7 +118,7 @@ namespace TestCppApi
         ASSERT_EQ(String(OTEXT("d")), arr.GetItem(1).GetString());
     }
 
-    TEST(TestJsonNodeArrayCpp, RemoveItemsOutOfRange)
+    TEST(TestJsonNodeArrayCpp, RemoveItemsWithOutOfRangeRange_Throws)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);

@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestResultset, FetchValuesAndColumns)
+    TEST(TestResultset, FetchRowsThenGetColumnMetadata_ReturnsValuesAndTypes)
     {
         ExecDML(OTEXT("drop table TestResultsetData"));
         ExecDML(OTEXT("create table TestResultsetData (id number, name varchar2(50))"));
@@ -70,7 +70,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestResultsetData"));
     }
 
-    TEST(TestResultset, ScrollableFetch)
+    TEST(TestResultset, FetchWithScrollableMode_NavigatesFirstLastAndSeek)
     {
         ExecDML(OTEXT("drop table TestResultsetScroll"));
         ExecDML(OTEXT("create table TestResultsetScroll (id number)"));
@@ -115,7 +115,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestResultsetScroll"));
     }
 
-    TEST(TestResultset, GetDataAndNull)
+    TEST(TestResultset, FetchMixedColumns_ReturnsValuesAndNullFlags)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -149,7 +149,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestResultset, FetchTypes)
+    TEST(TestResultset, FetchTypedColumns_ReturnsMatchingValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -176,7 +176,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestResultset, FetchNativeCdt)
+    TEST(TestResultset, FetchNativeTypeColumns_ReturnsTypedValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -205,7 +205,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestResultset, FetchIntervalTimestampAndRowid)
+    TEST(TestResultset, FetchIntervalTimestampRowidColumns_ReturnsHandles)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -231,7 +231,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestResultset, FetchNestedCursor)
+    TEST(TestResultset, FetchCursorExpressionColumn_ReturnsNestedResultset)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -260,7 +260,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestResultset, FetchStruct)
+    TEST(TestResultset, GetStructOnFetchedRows_FillsStructFields)
     {
         ExecDML(OTEXT("drop table TestResultsetStruct"));
         ExecDML(OTEXT("create table TestResultsetStruct (id number, name varchar2(50))"));
@@ -305,7 +305,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestResultsetStruct"));
     }
 
-    TEST(TestResultset, GetByName)
+    TEST(TestResultset, GetByNameOnTypedColumns_ReturnsValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -341,7 +341,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestResultset, GetStructAllTypes)
+    TEST(TestResultset, GetStructOnAllColumnTypes_FillsStructFields)
     {
         ExecDML(OTEXT("drop table TestRsStruct"));
         ExecDML(OTEXT("drop type TestRsStructColl"));
@@ -458,7 +458,7 @@ namespace TestCApi
         OCI_Resultset*  rs{ nullptr };
     };
 
-    TEST_P(TestResultsetStringCvt, ConvertsToString)
+    TEST_P(TestResultsetStringCvt, GetStringOnEachColumnType_ConvertsToString)
     {
         ASSERT_NE(nullptr, OCI_ResultsetGetString(rs, GetParam()));
     }
@@ -730,7 +730,7 @@ namespace TestCApi
        OCI_StatementGetFetchMode / OCI_ResultsetFetchSeek / OCI_ResultsetFetchPrev / OCI_ResultsetFetchFirst /
        OCI_ResultsetFetchLast / OCI_ResultsetGetRowCount --- */
 
-    TEST(TestResultset, FetchModeGetSet)
+    TEST(TestResultset, SetThenGetFetchMode_RoundTripsMode)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -753,7 +753,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestResultset, FetchSeekRoundtrip)
+    TEST(TestResultset, FetchSeekOnScrollableResultset_RepositionsCursor)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -903,7 +903,6 @@ namespace TestCApi
             { "ResultsetGetStatement", [] { return nullptr == OCI_ResultsetGetStatement(nullptr); } },
             { "SetStructNumericType", [] { return !OCI_ResultsetSetStructNumericType(nullptr, 1, 1); } },
             { "SetStructNumericTypeByName", [] { return !OCI_ResultsetSetStructNumericTypeByName(nullptr, OTEXT("x"), 1); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

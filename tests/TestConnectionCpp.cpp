@@ -6,7 +6,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestConnectionCpp, CreateOpenCloseAndBasicInfo)
+    TEST(TestConnectionCpp, ConnectionLifecycleAndGetters_Work)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -39,7 +39,7 @@ namespace TestCppApi
         ASSERT_TRUE(conn.IsNull());
     }
 
-    TEST(TestConnectionCpp, AutoCommitAndRollback)
+    TEST(TestConnectionCpp, SetAutoCommitThenRollback_AppliesTransactionMode)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);
@@ -65,7 +65,7 @@ namespace TestCppApi
         ASSERT_TRUE(conn.GetAutoCommit());
     }
 
-    TEST(TestConnectionCpp, ServerOutputAndTrace)
+    TEST(TestConnectionCpp, ServerOutputAndTrace_CaptureAndRoundTrip)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);
@@ -91,7 +91,7 @@ namespace TestCppApi
         ASSERT_EQ(String(OTEXT("TestModule")), conn.GetTrace(Connection::TraceModule));
     }
 
-    TEST(TestConnectionCpp, FormatAndSessionSettings)
+    TEST(TestConnectionCpp, FormatAndSessionSettings_RoundTripValues)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);
@@ -118,7 +118,7 @@ namespace TestCppApi
         (void)conn.IsTAFCapable();
     }
 
-    TEST(TestConnectionCpp, Timeouts)
+    TEST(TestConnectionCpp, SetThenGetTimeouts_RoundTripValues)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);

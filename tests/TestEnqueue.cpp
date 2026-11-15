@@ -86,8 +86,7 @@ namespace TestCApi
     INSTANTIATE_TEST_CASE_P(EnqAttr, TestEnqOps,
         ::testing::Values(
             EnqAttrCase{ "Visibility",        EnqAttrVisibility },
-            EnqAttrCase{ "SequenceDeviation", EnqAttrSeqDev }),
-        ::testing::PrintToStringParamName());
+            EnqAttrCase{ "SequenceDeviation", EnqAttrSeqDev }));
 
     TEST_F(TestEnqOps, SetRelativeMsgID_GetterReportsValue)
     {
@@ -230,7 +229,7 @@ namespace TestCApi
        the CHECK_PTR / CHECK_OCI arms the dropped fault tests covered --- */
 
 
-    TEST(TestEnqueue, NullTypeInfoAndMsgErrors)
+    TEST(TestEnqueue, EnqueueFnsWithNullArgs_ReturnFailure)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -265,7 +264,6 @@ namespace TestCApi
             { "EnqueueSetRelativeMsgID", [] { return !OCI_EnqueueSetRelativeMsgID(nullptr, NullArgBuffer(), 1); } },
             { "EnqueueSetSequenceDeviation", [] { return !OCI_EnqueueSetSequenceDeviation(nullptr, 1); } },
             { "EnqueueSetVisibility", [] { return !OCI_EnqueueSetVisibility(nullptr, 1); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

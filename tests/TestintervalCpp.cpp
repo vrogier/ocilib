@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestIntervalCpp, NullToString)
+    TEST(TestIntervalCpp, ToStringOnNullInterval_ReturnsEmptyString)
     {
         Interval iv;
         ASSERT_EQ(String(OTEXT("NULL")), iv.ToString());

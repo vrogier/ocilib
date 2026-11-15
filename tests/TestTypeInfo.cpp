@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestTypeInfo, Metadata)
+    TEST(TestTypeInfo, TypeInfoGetters_ReturnMetadata)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestCApiCovType AS OBJECT(code NUMBER, name VARCHAR2(50))"));
 
@@ -32,7 +32,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestCApiCovType"));
     }
 
-    TEST(TestTypeInfo, CollectionType)
+    TEST(TestTypeInfo, GetTypeInfoOnCollectionType_ReturnsCollectionAttrs)
     {
         /* named collection types hit the SQLT_NCO arm of OcilibTypeInfoGet() */
 
@@ -54,7 +54,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TYPE TestCApiCovColl"));
     }
 
-    TEST(TestTypeInfo, SynonymResolution)
+    TEST(TestTypeInfo, GetTypeInfoOnSynonym_ResolvesType)
     {
         /* describing a synonym walks the OCI_PTYPE_SYN arm and resolves
            the underlying object */
@@ -469,7 +469,6 @@ namespace TestCApi
             { "TypeInfoGetSuperType", [] { return nullptr == OCI_TypeInfoGetSuperType(nullptr); } },
             { "TypeInfoGetType", [] { return OCI_UNKNOWN == OCI_TypeInfoGetType(nullptr); } },
             { "TypeInfoIsFinalType", [] { return !OCI_TypeInfoIsFinalType(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

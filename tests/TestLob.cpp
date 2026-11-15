@@ -37,7 +37,7 @@ namespace TestCApi
         return size;
     }
 
-    TEST_P(TestLob, CreateAndFree)
+    TEST_P(TestLob, CreateWithEachType_ReturnsFreeableLob)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -53,7 +53,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestLob, ArrayCreateAndFree)
+    TEST_P(TestLob, ArrayCreateWithEachType_ReturnsLobArray)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -73,7 +73,7 @@ namespace TestCApi
     }
 
 
-    TEST_P(TestLob, AssignEmpty)
+    TEST_P(TestLob, AssignEmptyLob_CopiesEmptyState)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -90,7 +90,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestLob, AssignNotEmpty)
+    TEST_P(TestLob, AssignNonEmptyLob_CopiesContent)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -122,7 +122,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestLob, SeekAndGetOffset)
+    TEST_P(TestLob, SeekThenGetOffset_ReturnsNewPosition)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -161,7 +161,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestLob, Truncate)
+    TEST_P(TestLob, TruncateOnLob_ShortensContent)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -208,7 +208,7 @@ namespace TestCApi
     }
 
 
-    TEST_P(TestLob, AppendCopyEraseAndMore)
+    TEST_P(TestLob, WriteThenGetLength_ReportsWrittenSize)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -227,11 +227,55 @@ namespace TestCApi
         ASSERT_EQ(size, (type == OCI_BLOB) ? byte_count : char_count);
         ASSERT_EQ(size, OCI_LobGetLength(lob));
 
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+    }
+
+    TEST_P(TestLob, AppendAfterWrite_DoublesContentLength)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        auto type = GetParam();
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto lob = OCI_LobCreate(conn, type);
+        ASSERT_NE(nullptr, lob);
+
+        void* buffer = GetBufferData();
+        OCI_UInt32 size = GetBufferSize(type);
+
+        OCI_UInt32 char_count = (type == OCI_BLOB) ? 0 : size;
+        OCI_UInt32 byte_count = (type == OCI_BLOB) ? size : 0;
+        ASSERT_TRUE(OCI_LobWrite(lob, buffer, &char_count, &byte_count));
+
         char_count = (type == OCI_BLOB) ? 0 : size;
         byte_count = (type == OCI_BLOB) ? size : 0;
         ASSERT_TRUE(OCI_LobAppend(lob, buffer, &char_count, &byte_count));
         ASSERT_EQ(size, (type == OCI_BLOB) ? byte_count : char_count);
         ASSERT_EQ(size + size, OCI_LobGetLength(lob));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+    }
+
+    TEST_P(TestLob, CopyToOtherLob_CopiesContentButNotIdentity)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        auto type = GetParam();
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto lob = OCI_LobCreate(conn, type);
+        ASSERT_NE(nullptr, lob);
+
+        void* buffer = GetBufferData();
+        OCI_UInt32 size = GetBufferSize(type);
+
+        OCI_UInt32 char_count = (type == OCI_BLOB) ? 0 : size;
+        OCI_UInt32 byte_count = (type == OCI_BLOB) ? size : 0;
+        ASSERT_TRUE(OCI_LobWrite(lob, buffer, &char_count, &byte_count));
 
         const auto lob2 = OCI_LobCreate(conn, type);
         ASSERT_NE(nullptr, lob2);
@@ -240,22 +284,80 @@ namespace TestCApi
         ASSERT_EQ(full, OCI_LobGetLength(lob2));
         ASSERT_FALSE(OCI_LobIsEqual(lob, lob2));
 
-        ASSERT_TRUE(OCI_LobIsTemporary(lob));
-        ASSERT_GT(OCI_LobGetChunkSize(lob), 0u);
-        ASSERT_GT(OCI_LobGetMaxSize(lob), 0u);
-        ASSERT_EQ(conn, OCI_LobGetConnection(lob));
-        ASSERT_FALSE(OCI_LobIsRemote(lob));
-
-        ASSERT_EQ(size / 2, OCI_LobErase(lob, 0, size / 2));
-        ASSERT_EQ(size + size, OCI_LobGetLength(lob));
-
         ASSERT_TRUE(OCI_LobFree(lob2));
         ASSERT_TRUE(OCI_LobFree(lob));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
     }
 
-    TEST_P(TestLob, OpenCloseAndReadWrite2)
+    TEST_P(TestLob, MetadataGettersOnNewLob_ReturnExpectedValues)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        auto type = GetParam();
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto lob = OCI_LobCreate(conn, type);
+        ASSERT_NE(nullptr, lob);
+
+        ASSERT_TRUE(OCI_LobIsTemporary(lob));
+        ASSERT_GT(OCI_LobGetChunkSize(lob), 0u);
+        ASSERT_GT(OCI_LobGetMaxSize(lob), 0u);
+        ASSERT_EQ(conn, OCI_LobGetConnection(lob));
+        ASSERT_FALSE(OCI_LobIsRemote(lob));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+    }
+
+    TEST_P(TestLob, EraseOnLob_RemovesBytesWithoutShrinking)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        auto type = GetParam();
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto lob = OCI_LobCreate(conn, type);
+        ASSERT_NE(nullptr, lob);
+
+        void* buffer = GetBufferData();
+        OCI_UInt32 size = GetBufferSize(type);
+
+        OCI_UInt32 char_count = (type == OCI_BLOB) ? 0 : size;
+        OCI_UInt32 byte_count = (type == OCI_BLOB) ? size : 0;
+        ASSERT_TRUE(OCI_LobWrite(lob, buffer, &char_count, &byte_count));
+        char_count = (type == OCI_BLOB) ? 0 : size;
+        byte_count = (type == OCI_BLOB) ? size : 0;
+        ASSERT_TRUE(OCI_LobAppend(lob, buffer, &char_count, &byte_count));
+
+        ASSERT_EQ(size / 2, OCI_LobErase(lob, 0, size / 2));
+        ASSERT_EQ(size + size, OCI_LobGetLength(lob));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+    }
+
+    TEST_P(TestLob, EnableBufferingToggleOnLob_Succeeds)
+    {
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        auto type = GetParam();
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        const auto lob = OCI_LobCreate(conn, type);
+        ASSERT_NE(nullptr, lob);
+
+        ASSERT_TRUE(OCI_LobEnableBuffering(lob, TRUE));
+        ASSERT_TRUE(OCI_LobEnableBuffering(lob, FALSE));
+
+        ASSERT_TRUE(OCI_LobFree(lob));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+    }
+
+    TEST_P(TestLob, OpenWriteReadAndClose_RoundTripsContent)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -286,15 +388,12 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_LobClose(lob));
 
-        ASSERT_TRUE(OCI_LobEnableBuffering(lob, TRUE));
-        ASSERT_TRUE(OCI_LobEnableBuffering(lob, FALSE));
-
         ASSERT_TRUE(OCI_LobFree(lob));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
     }
 
-    TEST(TestLob, NCLOBAsText)
+    TEST(TestLob, WriteThenReadOnNclob_RoundTripsNationalText)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -347,7 +446,7 @@ namespace TestCApi
         }
     }
 
-    TEST_P(TestLob, Write2WithCharAndByteCounts)
+    TEST_P(TestLob, Write2WithCharAndByteCounts_WritesContent)
     {
         // Arrange
         auto env = GetEnvironment(nullptr);
@@ -398,7 +497,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestLob, Append2WithCharAndByteCounts)
+    TEST_P(TestLob, Append2WithCharAndByteCounts_AppendsContent)
     {
         // Arrange
         auto env = GetEnvironment(nullptr);
@@ -454,7 +553,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestLob, AppendLob)
+    TEST_P(TestLob, AppendLobToLob_ConcatenatesContent)
     {
         // Arrange
         auto env = GetEnvironment(nullptr);
@@ -510,7 +609,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestLob, BufferingAndFlush)
+    TEST_P(TestLob, WriteWithBufferingThenFlush_PersistsContent)
     {
         // Arrange
         auto env = GetEnvironment(nullptr);
@@ -545,7 +644,7 @@ namespace TestCApi
 
     }
 
-    TEST_P(TestLob, CopyFromFileFails)
+    TEST_P(TestLob, CopyFromFileWithInvalidBFile_DoesNotCrash)
     {
         // Arrange
         auto env = GetEnvironment(nullptr);
@@ -569,7 +668,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestLob, FetchedLobAndAssign)
+    TEST(TestLob, AssignFetchedLobToCreatedLob_Succeeds)
     {
         ExecDML(OTEXT("create table TestLob_Fetch (id int, c clob)"));
         ExecDML(OTEXT("insert into TestLob_Fetch values (1, EMPTY_CLOB())"));
@@ -628,7 +727,7 @@ namespace TestCApi
 
 
 
-    TEST(TestLob, CopyFromFileRealDirectory)
+    TEST(TestLob, CopyFromFileWithRealDirectory_CopiesContent)
     {
         // Successful OCI_LobCopyFromFile() requires a DIRECTORY object that
         // exists on the DB server host and a real file inside it.
@@ -863,7 +962,6 @@ namespace TestCApi
             { "LobSeek", [] { return !OCI_LobSeek(nullptr, 1, 1); } },
             { "LobTruncate", [] { return !OCI_LobTruncate(nullptr, 1); } },
             { "LobWrite", [] { return !OCI_LobWrite(nullptr, NullArgBuffer(), NullArgOut<OCI_UInt32>(), NullArgOut<OCI_UInt32>()); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

@@ -166,7 +166,7 @@ namespace TestCApi
         MultipleDMLEventCount++;
     }
 
-    TEST(TestNotifications, SingleDDL1)
+    TEST(TestNotifications, AlterWatchedTableOnce_RaisesOneNotification)
     {
         ExecDML(OTEXT("drop table TestTableSingleDDL1"));
         ExecDML(OTEXT("create table TestTableSingleDDL1(code number)"));
@@ -200,7 +200,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestTableSingleDDL1"));
     }
 
-    TEST(TestNotifications, SingleDDL2)
+    TEST(TestNotifications, AlterWatchedTableTwice_RaisesTwoNotifications)
     {
         ExecDML(OTEXT("drop table TestTableSingleDDL2"));
         ExecDML(OTEXT("create table TestTableSingleDDL2(code number)"));
@@ -235,7 +235,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestTableSingleDDL2"));
     }
 
-    TEST(TestNotifications, MultipleDDL)
+    TEST(TestNotifications, AlterTwoWatchedTables_RaisesNotificationForEach)
     {
         ExecDML(OTEXT("drop table TestTableMultipleDDLTable1"));
         ExecDML(OTEXT("drop table TestTableMultipleDDLTable2"));
@@ -277,7 +277,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestTableMultipleDDLTable2"));
     }
 
-    TEST(TestNotifications, MultipleDML)
+    TEST(TestNotifications, InsertUpdateDeleteOnWatchedTable_RaisesRowNotifications)
     {
         ExecDML(OTEXT("drop table TestTableMultipleDML"));
         ExecDML(OTEXT("create table TestTableMultipleDML(code number)"));

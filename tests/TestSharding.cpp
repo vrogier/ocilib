@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestSharding, KeyLifecycle)
+    TEST(TestSharding, ShardingKeyCreateSetColumnAndFree_Works)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -13,7 +13,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ShardingKeyFree(skey));
     }
 
-    TEST(TestSharding, KeyReset)
+    TEST(TestSharding, ShardingKeyReset_ClearsColumns)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -27,7 +27,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ShardingKeyFree(skey));
     }
 
-    TEST(TestSharding, AddColumns)
+    TEST(TestSharding, ShardingKeyAddColumns_StoresColumns)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -61,7 +61,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ShardingKeyFree(skey));
     }
 
-    TEST(TestSharding, ToText)
+    TEST(TestSharding, ShardingKeyToText_RendersColumns)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -77,7 +77,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ShardingKeyFree(skey));
     }
 
-    TEST(TestSharding, NullKeyConnectionCreate)
+    TEST(TestSharding, ConnectionCreateShardedWithNullKey_Fails)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -88,7 +88,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(con));
     }
 
-    TEST(TestSharding, ShardedConnection)
+    TEST(TestSharding, ConnectionCreateShardedWithKey_Connects)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -107,7 +107,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ShardingKeyFree(skey));
     }
 
-    TEST(TestSharding, ShardedPoolGetConnection)
+    TEST(TestSharding, PoolGetShardedConnection_ReturnsConnection)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -126,7 +126,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_PoolFree(env, pool));
     }
 
-    TEST(TestSharding, ErrorPaths)
+    TEST(TestSharding, ShardingKeyFnsWithNullArgs_ReturnFailure)
     {
         ASSERT_FALSE(OCI_ShardingKeyFree(NULL));
         ASSERT_FALSE(OCI_ShardingKeyReset(NULL));
@@ -174,7 +174,6 @@ namespace TestCApi
             { "ShardingKeyFree", [] { return !OCI_ShardingKeyFree(nullptr); } },
             { "ShardingKeyReset", [] { return !OCI_ShardingKeyReset(nullptr); } },
             { "ShardingKeyToText", [] { return nullptr == OCI_ShardingKeyToText(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

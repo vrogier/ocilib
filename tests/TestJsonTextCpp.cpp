@@ -14,7 +14,7 @@ namespace TestCppApi
         return json;
     }
 
-    TEST(TestJsonTextCpp, LoadTextAndToText)
+    TEST(TestJsonTextCpp, LoadJsonTextThenToText_RoundTripsText)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -36,7 +36,7 @@ namespace TestCppApi
         json3.LoadText(OTEXT("[1,2,3]"));
         ASSERT_NE(String::npos, json3.ToString().find(OTEXT("1")));
     }
-    TEST(TestJsonTextCpp, BinaryRoundTrip)
+    TEST(TestJsonTextCpp, SaveAndLoadBinary_RoundTripsJson)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -49,7 +49,7 @@ namespace TestCppApi
         dest.LoadBinary(bin);
         ASSERT_EQ(src.ToString(), dest.ToString());
     }
-    TEST(TestJsonTextCpp, Clone)
+    TEST(TestJsonTextCpp, CloneOnJson_DuplicatesContent)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);

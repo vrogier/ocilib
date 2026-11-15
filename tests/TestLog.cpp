@@ -43,7 +43,7 @@ namespace TestCApi
 
     /* --- level / env-var parsing --- */
 
-    TEST(TestLog, DisabledWithoutEnvVar)
+    TEST(TestLog, InitWithoutEnvVar_DisablesLogging)
     {
         /* no OCILIB_LOG variable -> logging stays disabled */
 
@@ -51,7 +51,7 @@ namespace TestCApi
         ShutdownLogger();
     }
 
-    TEST(TestLog, InvalidLevelName)
+    TEST(TestLog, InitWithInvalidLevelName_DisablesLogging)
     {
         /* invalid level name -> treated like disabled */
 
@@ -59,7 +59,7 @@ namespace TestCApi
         ShutdownLogger();
     }
 
-    TEST(TestLog, ValidLevelEnablesLogging)
+    TEST(TestLog, InitWithValidLevel_EnablesLogging)
     {
         ReinitLogger("DEBUG", nullptr, "STDERR");
         ShutdownLogger();
@@ -67,7 +67,7 @@ namespace TestCApi
 
     /* --- output routing (OcilibLogOpenFile / env-var parsing) --- */
 
-    TEST(TestLog, OutputToFile)
+    TEST(TestLog, LogWithFileOutput_WritesToFile)
     {
         /* file output exercises OcilibLogOpenFile(); env cleanup closes
            the owned file in OcilibLogCleanup() */
@@ -78,13 +78,13 @@ namespace TestCApi
         ShutdownLogger();
     }
 
-    TEST(TestLog, OutputToStdout)
+    TEST(TestLog, LogWithStdoutOutput_WritesToStdout)
     {
         ReinitLogger("DEBUG", "OCI", "STDOUT");
         ShutdownLogger();
     }
 
-    TEST(TestLog, OutputToStderr)
+    TEST(TestLog, LogWithStderrOutput_WritesToStderr)
     {
         ReinitLogger("DEBUG", nullptr, "STDERR");
         ShutdownLogger();
@@ -96,7 +96,7 @@ namespace TestCApi
        OcilibLogLevelName / OcilibLogCategoryName
        through the public surface --- */
 
-    TEST(TestLog, TraceWritesToLog)
+    TEST(TestLog, LogTrace_WritesToLog)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -118,7 +118,7 @@ namespace TestCApi
         ShutdownLogger();
     }
 
-    TEST(TestLog, ErrorWritesToLog)
+    TEST(TestLog, LogError_WritesToLog)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);

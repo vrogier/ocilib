@@ -10,7 +10,7 @@ namespace TestCApi
 
 #ifdef OCI_CHARSET_MBCS
 
-    TEST(TestSubscription, RegisterSecureMode)
+    TEST(TestSubscription, RegisterSubscriptionInSecureMode_Subscribes)
     {
         ExecDML(OTEXT("drop table TestRegisterSecureMode"));
         ExecDML(OTEXT("create table TestRegisterSecureMode(id number)"));
@@ -59,8 +59,7 @@ namespace TestCApi
             { "SubscriptionGetTimeout", [] { return 0 == OCI_SubscriptionGetTimeout(nullptr); } },
             { "SubscriptionRegister", [] { return nullptr == OCI_SubscriptionCreate(nullptr, OTEXT("x"), 1, nullptr, 1, 1); } },
             { "SubscriptionUnregister", [] { return !OCI_SubscriptionUnregister(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }
 
@@ -73,7 +72,7 @@ namespace TestCppApi
 
 #ifdef OCI_CHARSET_MBCS
 
-    TEST(TestSubscription, RegisterWithSecureNotification)
+    TEST(TestSubscription, RegisterWithSecureNotification_Subscribes)
     {
         ExecDML(OTEXT("drop table TestSubscriptionData"));
         ExecDML(OTEXT("create table TestSubscriptionData (id number)"));

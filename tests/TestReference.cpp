@@ -16,7 +16,7 @@ static void CleanupTestRef()
 }
 namespace TestCApi
 {
-    TEST(TestRef, CreateAndFree)
+    TEST(TestRef, Create_ReturnsFreeableRef)
     {
         IniTestRef();
 
@@ -36,7 +36,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, ArrayCreateAndFree)
+    TEST(TestRef, ArrayCreate_ReturnsArrayOfRefs)
     {
         IniTestRef();
 
@@ -60,7 +60,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, Assign)
+    TEST(TestRef, AssignFromOtherRef_CopiesValue)
     {
         IniTestRef();
 
@@ -88,7 +88,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, GetTypeInfo)
+    TEST(TestRef, GetTypeInfoOnRef_ReturnsRefTypeInfo)
     {
         IniTestRef();
 
@@ -107,7 +107,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, GetObjectFetch)
+    TEST(TestRef, GetObjectOnFetchedRef_ReturnsObject)
     {
         IniTestRef();
 
@@ -133,7 +133,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, GetObjectNull)
+    TEST(TestRef, GetObjectOnNullRef_ReturnsNull)
     {
         IniTestRef();
 
@@ -154,7 +154,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, IsNullTrue)
+    TEST(TestRef, IsNullOnNullRef_ReturnsTrue)
     {
         IniTestRef();
 
@@ -175,7 +175,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, IsNullFalse)
+    TEST(TestRef, IsNullOnFetchedRef_ReturnsFalse)
     {
         IniTestRef();
 
@@ -200,7 +200,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, ToTextNotNull)
+    TEST(TestRef, ToTextOnFetchedRef_ReturnsHexText)
     {
         IniTestRef();
 
@@ -230,7 +230,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, ToTextNull)
+    TEST(TestRef, ToTextOnNullRef_ReturnsEmptyText)
     {
         IniTestRef();
 
@@ -254,7 +254,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, SetNullWhenNotNullWithoutPinningOject)
+    TEST(TestRef, SetNullOnNonNullRefWithoutPinning_MakesRefNull)
     {
         IniTestRef();
 
@@ -281,7 +281,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, RefFetch)
+    TEST(TestRef, FetchRefColumn_ReturnsReference)
     {
         IniTestRef();
 
@@ -306,7 +306,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, RefBindInOut)
+    TEST(TestRef, BindRefInQueryPredicate_MatchesRow)
     {
         IniTestRef();
 
@@ -339,7 +339,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, RefRegister)
+    TEST(TestRef, RegisterRefOnReturningInto_ReturnsInsertedRef)
     {
         IniTestRef();
 
@@ -376,7 +376,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, SetNullWhenNotNullWithPinningOject)
+    TEST(TestRef, SetNullOnNonNullRefAfterPinning_MakesRefNull)
     {
         IniTestRef();
 
@@ -405,7 +405,7 @@ namespace TestCApi
         CleanupTestRef();
     }
 
-    TEST(TestRef, SetNullWhenNull)
+    TEST(TestRef, SetNullOnAlreadyNullRef_KeepsRefNull)
     {
         IniTestRef();
 
@@ -448,7 +448,6 @@ namespace TestCApi
             { "RefIsNull", [] { return !OCI_ReferenceIsNull(nullptr); } },
             { "RefSetNull", [] { return !OCI_ReferenceSetNull(nullptr); } },
             { "RefToText", [] { return !OCI_ReferenceToText(nullptr, 1, NullArgText()); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

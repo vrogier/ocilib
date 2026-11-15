@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestImplicitResultset, Fetch)
+    TEST(TestImplicitResultset, FetchImplicitResultset_ReturnsRows)
     {
         auto env = GetEnvironment(nullptr);
 

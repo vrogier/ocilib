@@ -7,7 +7,7 @@ using namespace ocilib;
 
 namespace TestCApi
 {
-    TEST(TestJsonCreate, CreateAndFree)
+    TEST(TestJsonCreate, JsonCreate_ReturnsJson)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -23,7 +23,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonCreate, ArrayCreateAndFree)
+    TEST(TestJsonCreate, JsonArrayCreate_ReturnsJsonArray)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -80,7 +80,6 @@ namespace TestCApi
             { "JsonIsMutable", [] { return !OCI_JsonIsMutable(nullptr); } },
             { "JsonSetMutable", [] { return !OCI_JsonSetMutable(nullptr, FALSE); } },
             { "JsonSetRoot", [] { return !OCI_JsonSetRoot(nullptr, nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

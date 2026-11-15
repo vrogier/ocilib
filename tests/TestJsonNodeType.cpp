@@ -162,8 +162,7 @@ namespace TestCApi
             JntCase{ "Binary",    JntBinary },
             JntCase{ "Date",      JntDate },
             JntCase{ "Timestamp", JntTimestamp },
-            JntCase{ "Interval",  JntInterval }),
-        ::testing::PrintToStringParamName());
+            JntCase{ "Interval",  JntInterval }));
     /* -------------------------------------------------------------------------
        Parameterized: timestamp-with-timezone node round-trips per offset
        ------------------------------------------------------------------------- */
@@ -239,9 +238,8 @@ namespace TestCApi
     INSTANTIATE_TEST_CASE_P(TsOffset, TestJntTsTz,
         ::testing::Values(
             TsTzCase{ "Positive", 2024, 3, 1,  8, 15, OTEXT("+02:00"), 2,  0 },
-            TsTzCase{ "Negative", 2024, 6, 20, 23, 45, OTEXT("-05:30"), -5, -30 }),
-        ::testing::PrintToStringParamName());
-    TEST(TestJsonNodeType, TimestampTzFetchedFieldC)
+            TsTzCase{ "Negative", 2024, 6, 20, 23, 45, OTEXT("-05:30"), -5, -30 }));
+    TEST(TestJsonNodeType, GetTimestampTzOnFetchedField_ReturnsTimestamp)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -284,7 +282,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonNodeType, IntervalDaySecondC)
+    TEST(TestJsonNodeType, GetIntervalDaySecondOnNode_ReturnsInterval)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -323,7 +321,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonNodeType, IntervalDaySecondFetchedFieldC)
+    TEST(TestJsonNodeType, GetIntervalDaySecondOnFetchedField_ReturnsInterval)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -361,7 +359,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonNodeType, GenericCreateC)
+    TEST(TestJsonNodeType, CreateGenericTypedNodes_ReturnsTypedNodes)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -394,7 +392,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_JsonFree(json));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
-    TEST(TestJsonNodeType, CachedStringReuseC)
+    TEST(TestJsonNodeType, GetStringOnSameNodeTwice_ReusesBuffer)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -567,8 +565,7 @@ namespace TestCApi
             JsonScalarCase{ "Binary",    ScalarGetBinary },
             JsonScalarCase{ "Date",      ScalarGetDate },
             JsonScalarCase{ "Timestamp", ScalarGetTimestamp },
-            JsonScalarCase{ "Interval",  ScalarGetInterval }),
-        ::testing::PrintToStringParamName());
+            JsonScalarCase{ "Interval",  ScalarGetInterval }));
 
     /* -------------------------------------------------------------------------
        Parameterized: created node reports its declared type
@@ -698,8 +695,7 @@ namespace TestCApi
             JsonTypeCase{ "Timestamp", TypeTimestamp },
             JsonTypeCase{ "Interval",  TypeInterval },
             JsonTypeCase{ "Null",      TypeNull },
-            JsonTypeCase{ "String",    TypeString }),
-        ::testing::PrintToStringParamName());
+            JsonTypeCase{ "String",    TypeString }));
 
     TEST_F(TestJsonScalarType, SetBooleanOnNumberNode_IsRejectedAndTypeUnchanged)
     {
@@ -780,7 +776,6 @@ namespace TestCApi
             { "JsonNodeSetTimestamp", [] { return !OCI_JsonNodeSetTimestamp(nullptr, nullptr); } },
             { "JsonNodeSetUInt", [] { return !OCI_JsonNodeSetUInt32(nullptr, 1); } },
             { "JsonNodeSetUShort", [] { return !OCI_JsonNodeSetUInt16(nullptr, 1); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

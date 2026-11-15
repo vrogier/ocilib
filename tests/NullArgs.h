@@ -54,9 +54,9 @@ inline void RunNullArgCase(const NullArgCase& c)
     }
 }
 
-inline std::string NullArgCaseName(const ::testing::TestParamInfo<NullArgCase>& info)
+inline void PrintTo(const NullArgCase& c, std::ostream* os)
 {
-    return info.param.Api;
+    *os << c.Api;
 }
 
 /* plausible non-NULL filler arguments for calls under test */
@@ -108,6 +108,9 @@ inline T* NullArgOut()
     }
 
     INSTANTIATE_TEST_CASE_P(NullArgs, Test<Feature>NullArgs,
-        ::testing::ValuesIn(NullArgCases{ ... }),
-        &NullArgCaseName);
+        ::testing::ValuesIn(NullArgCases{ ... }));
+
+    NB: no param-name generator on purpose — the VS gtest adapter only
+    resolves source locations (and namespace grouping) for numeric /N
+    param suffixes; PrintTo() still renders the API name as [ApiName].
 */

@@ -7,7 +7,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestQueueCpp, SingleRawMessageCpp)
+    TEST(TestQueueCpp, EnqueueThenDequeueSingleRawMessage_RoundTripsPayload)
     {
         const String queueTableName = OTEXT("TestQueueCppRawTable");
         const String queueName = OTEXT("TestQueueCppRaw");

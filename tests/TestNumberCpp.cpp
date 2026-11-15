@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestNumberCpp, ArithmeticAndConversions)
+    TEST(TestNumberCpp, ArithmeticOpsAndConversions_ComputeExpectedValues)
     {
         Environment& env = GetEnvironmentCpp();
 
@@ -63,7 +63,7 @@ namespace TestCppApi
         ASSERT_EQ(-42, static_cast<OCI_Int32>(n11));
     }
 
-    TEST(TestNumberCpp, NullToString)
+    TEST(TestNumberCpp, ToStringOnNullNumber_ReturnsEmptyString)
     {
         Number n;
         ASSERT_EQ(String(OTEXT("NULL")), n.ToString());

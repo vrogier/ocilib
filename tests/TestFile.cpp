@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestFile, CreateAndGetters)
+    TEST(TestFile, CreateFileThenGetters_ReturnAttributes)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -29,7 +29,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestFile, ArrayCreateAndFree)
+    TEST(TestFile, ArrayCreate_ReturnsFileArray)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -50,7 +50,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestFile, AssignAndEquality)
+    TEST(TestFile, AssignThenIsEqual_ComparesFiles)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -283,7 +283,6 @@ namespace TestCApi
             { "FileRead", [] { return 0 == OCI_FileRead(nullptr, NullArgBuffer(), 1); } },
             { "FileSeek", [] { return !OCI_FileSeek(nullptr, 1, 1); } },
             { "FileSetName", [] { return !OCI_FileSetName(nullptr, OTEXT("x"), OTEXT("x")); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

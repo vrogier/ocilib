@@ -474,8 +474,7 @@ namespace TestCApi
             ObjNumCase{ "BigInt",  ObjNumBigInt },
             ObjNumCase{ "UBigInt", ObjNumUBigInt },
             ObjNumCase{ "Float",   ObjNumFloat },
-            ObjNumCase{ "Double",  ObjNumDouble }),
-        ::testing::PrintToStringParamName());
+            ObjNumCase{ "Double",  ObjNumDouble }));
 
     TEST_F(TestObjectNumeric, GetNumericOnStringAttr_CoercesValue)
     {
@@ -494,7 +493,7 @@ namespace TestCApi
         EXPECT_EQ(0, OCI_ObjectGetInt32(obj, OTEXT("N")));
     }
 
-    TEST(TestObject, SelfRef)
+    TEST(TestObject, ObjectWithSelfReference_Resolves)
     {
         ExecDML(OTEXT("create or replace type TestObject_SelfRefT as object(code int)"));
         ExecDML(OTEXT("create table TestObject_SelfRefTable of TestObject_SelfRefT"));
@@ -539,7 +538,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type TestObject_SelfRefT"));
     }
 
-    TEST(TestObject, InheritedObject)
+    TEST(TestObject, FetchInheritedObject_ReturnsSubtypeValues)
     {
         ExecDML(OTEXT("create or replace type TestObject_BaseNF as object(code int) not final"));
         ExecDML(OTEXT("create or replace type TestObject_SubNF under TestObject_BaseNF(name varchar2(20))"));
@@ -732,8 +731,7 @@ namespace TestCApi
             ObjNullCase{ "Coll",      ObjNullColl },
             ObjNullCase{ "Ref",       ObjNullRef },
             ObjNullCase{ "File",      ObjNullFile },
-            ObjNullCase{ "Nested",    ObjNullNested }),
-        ::testing::PrintToStringParamName());
+            ObjNullCase{ "Nested",    ObjNullNested }));
 
     TEST_F(TestObjectNullAttrs, ObjectToTextOnNullObject_RendersNonEmptyText)
     {
@@ -836,7 +834,7 @@ namespace TestCApi
         EXPECT_GT(size, 0u);
     }
 
-    TEST(TestObject, GetStringOnNonTextAttributes)
+    TEST(TestObject, GetStringOnNonTextAttrs_ConvertsToText)
     {
         ExecDML(OTEXT("create or replace type TestObject_StrT as object(n number, r raw(10), s varchar2(20))"));
 
@@ -873,7 +871,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type TestObject_StrT"));
     }
 
-    TEST(TestObject, NumericSubtypeAttributes)
+    TEST(TestObject, NumericAttrsOnObject_RoundTripSubtypes)
     {
         ExecDML(OTEXT("create or replace type TestObject_SubNumT as object(i int, n number)"));
 
@@ -899,7 +897,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type TestObject_SubNumT"));
     }
 
-    TEST(TestObject, GetStructFromObjectTable)
+    TEST(TestObject, GetStructOnObjectTableRow_FillsStruct)
     {
         ExecDML(OTEXT("create or replace type TestObject_StructT as object(code int, name varchar2(20))"));
         ExecDML(OTEXT("create table TestObject_StructTable of TestObject_StructT"));
@@ -931,7 +929,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type TestObject_StructT"));
     }
 
-    TEST(TestObject, IndicatorOffsetForNestedObject)
+    TEST(TestObject, StructIndicatorOnNestedObject_MapsOffsets)
     {
         ExecDML(OTEXT("create or replace type TestObject_IndTgtT as object(code int, label varchar2(20))"));
         ExecDML(OTEXT("create or replace type TestObject_IndT as object(code int, nested TestObject_IndTgtT, flag int)"));
@@ -960,7 +958,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type TestObject_IndTgtT"));
     }
 
-    TEST(TestObject, BinaryFloatDoubleObject)
+    TEST(TestObject, BinaryFloatDoubleAttrs_RoundTripValues)
     {
         ExecDML(OTEXT("create or replace type TestObject_BinNumT as object(bf binary_float, bd binary_double)"));
         ExecDML(OTEXT("create table TestObject_BinNumTable of TestObject_BinNumT"));
@@ -1000,7 +998,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop type TestObject_BinNumT"));
     }
 
-    TEST(TestObject, BoolAttribute)
+    TEST(TestObject, BoolAttrOnObject_RoundTripsValue)
     {
         ExecDML(OTEXT("create or replace type TestObject_BoolT as object(b boolean)"));
 
@@ -1160,7 +1158,6 @@ namespace TestCApi
             { "ObjectSetUnsignedInt", [] { return !OCI_ObjectSetUInt32(nullptr, OTEXT("x"), 1); } },
             { "ObjectSetUnsignedShort", [] { return !OCI_ObjectSetUInt16(nullptr, OTEXT("x"), 1); } },
             { "ObjectToText", [] { return !OCI_ObjectToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

@@ -12,7 +12,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestPoolCpp, GettersAndSettersCpp)
+    TEST(TestPoolCpp, PoolGettersAndSetters_RoundTripValues)
     {
         Environment& env = GetEnvironmentCpp();
         Pool pool(env, DBS, USR, PWD, Pool::SessionPool, 1, 5, 1);
@@ -42,7 +42,7 @@ namespace TestCppApi
         ASSERT_EQ(0u, pool.GetBusyConnectionsCount());
     }
 
-    TEST(TestPoolCpp, GetConnectionWithTagCpp)
+    TEST(TestPoolCpp, GetConnectionWithTag_ReturnsTaggedConnection)
     {
         Environment& env = GetEnvironmentCpp();
         Pool pool(env, DBS, USR, PWD, Pool::SessionPool, 1, 3, 1);
@@ -58,7 +58,7 @@ namespace TestCppApi
         ASSERT_EQ(String(OTEXT("mytag")), conn2.GetSessionTag());
     }
 
-    TEST(TestPoolCpp, OpenCloseCpp)
+    TEST(TestPoolCpp, PoolOpenThenGetConnectionThenClose_Works)
     {
         Environment& env = GetEnvironmentCpp();
         Pool pool;

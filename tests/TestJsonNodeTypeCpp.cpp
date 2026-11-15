@@ -7,7 +7,7 @@ using namespace ocilib;
 namespace TestCppApi
 {
 
-    TEST(TestJsonNodeTypeCpp, TypeAndNull)
+    TEST(TestJsonNodeTypeCpp, TypeGettersAndNullCheck_ReportNodeType)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -57,7 +57,7 @@ namespace TestCppApi
         JsonNode ivNode = json.CreateInterval(iv);
         ASSERT_EQ(Json::NodeInterval, ivNode.GetType());
     }
-    TEST(TestJsonNodeTypeCpp, ScalarSetters)
+    TEST(TestJsonNodeTypeCpp, SetScalarValuesThenGet_RoundTripsValues)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);

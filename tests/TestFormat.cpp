@@ -60,7 +60,7 @@ namespace TestCApi
         OCI_Statement*  stmt{ nullptr };
     };
 
-    TEST(TestFormat, ExecuteStmtFmt)
+    TEST(TestFormat, ExecuteSqlWithFormatArgs_ExecutesStatement)
     {
         ExecDML(OTEXT("create table TestFormatTable (id int, name varchar2(50), d date, val number)"));
 

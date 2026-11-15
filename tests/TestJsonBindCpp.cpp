@@ -14,7 +14,7 @@ namespace TestCppApi
         return json;
     }
 
-    TEST(TestJsonBindCpp, BindAndFetch)
+    TEST(TestJsonBindCpp, BindJsonOnInsertThenFetch_ReturnsJson)
     {
         ExecDML(OTEXT("CREATE TABLE TestJson_CppBind (id NUMBER, value JSON)"));
 
@@ -46,7 +46,7 @@ namespace TestCppApi
 
         ExecDML(OTEXT("DROP TABLE TestJson_CppBind"));
     }
-    TEST(TestJsonBindCpp, BindArray)
+    TEST(TestJsonBindCpp, BindJsonArray_InsertsRows)
     {
         ExecDML(OTEXT("CREATE TABLE TestJson_CppBindArray (id NUMBER, value JSON)"));
 
@@ -69,7 +69,7 @@ namespace TestCppApi
 
         ExecDML(OTEXT("DROP TABLE TestJson_CppBindArray"));
     }
-    TEST(TestJsonBindCpp, RegisterReturning)
+    TEST(TestJsonBindCpp, RegisterJsonReturningInto_ReturnsJson)
     {
         ExecDML(OTEXT("CREATE TABLE TestJson_CppRegister (id NUMBER, value JSON)"));
         ExecDML(OTEXT("INSERT INTO TestJson_CppRegister VALUES (1, '{\"x\":1}')"));

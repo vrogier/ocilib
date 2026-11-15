@@ -19,7 +19,7 @@ namespace TestCApi
         ASSERT_EQ(type, OCI_ColumnGetType(col));
     }
 
-    TEST(TestDescribe, Type)
+    TEST(TestDescribe, DescribeNamedType_ReturnsTypeInfo)
     {
         ExecDML
         (
@@ -75,7 +75,7 @@ namespace TestCApi
     }
 
 
-    TEST(TestDescribe, Table)
+    TEST(TestDescribe, DescribeTable_ReturnsColumns)
     {
         ExecDML
         (

@@ -7,7 +7,7 @@ using namespace ocilib;
 namespace TestCppApi
 {
 
-    TEST(TestJsonNodeObjectCpp, ObjectAccess)
+    TEST(TestJsonNodeObjectCpp, ObjectFieldAccess_ReturnsValues)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -35,7 +35,7 @@ namespace TestCppApi
         JsonNode verify = json.GetRoot();
         ASSERT_EQ(1u, verify.GetFieldCount());
     }
-    TEST(TestJsonNodeObjectCpp, FieldName)
+    TEST(TestJsonNodeObjectCpp, GetFieldNameAtIndex_ReturnsName)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -52,7 +52,7 @@ namespace TestCppApi
         ASSERT_EQ(String(OTEXT("only")), name);
     }
 
-    TEST(TestJsonNodeObjectCpp, RenameAssignClone)
+    TEST(TestJsonNodeObjectCpp, RenameThenAssignThenClone_PropagatesValues)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);

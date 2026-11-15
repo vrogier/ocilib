@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestIterator, ForwardAndBackward)
+    TEST(TestIterator, IterateForwardAndBackward_VisitsAllItems)
     {
         ExecDML(OTEXT("create or replace type TestIterator_VarArr as varray(10) of number"));
 
@@ -71,7 +71,6 @@ namespace TestCApi
             { "IterGetCurrent", [] { return nullptr == OCI_IteratorGetCurrent(nullptr); } },
             { "IterGetNext", [] { return nullptr == OCI_IteratorGetNext(nullptr); } },
             { "IterGetPrev", [] { return nullptr == OCI_IteratorGetPrev(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestDirectPath, BasicLoad)
+    TEST(TestDirectPath, ConvertThenLoadAllRows_CompletesAndReportsRowCount)
     {
         ExecDML(OTEXT("create table TestDirpath_Table1 (val_int int, val_str varchar2(50))"));
         ExecDML(OTEXT("truncate table TestDirpath_Table1"));
@@ -52,7 +52,7 @@ namespace TestCApi
 
         ExecDML(OTEXT("drop table TestDirpath_Table1"));
     }
-    TEST(TestDirectPath, ColumnTypeArms)
+    TEST(TestDirectPath, SetColumnOnSupportedTypes_SucceedsAndRejectsInvalid)
     {
         /* exercises the column datatype switch in OCI_DirectPathSetColumn():
            numeric with format, raw/binary types, date with format,
@@ -91,7 +91,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestDirpath_Table2"));
     }
 
-    TEST(TestDirectPath, SettersGettersAndStatusArms)
+    TEST(TestDirectPath, SettersGettersAndStatusAcrossPrepareStates_ReturnExpectedResults)
     {
         ExecDML(OTEXT("create table TestDirpath_Table3 (val_num number(10,2), val_str varchar2(50), val_date date) "
                       "partition by range (val_num) (partition P1 values less than (100), partition PM values less than (maxvalue))"));
@@ -193,7 +193,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestDirpath_Table3"));
     }
 
-    TEST(TestDirectPath, AbortAndEmptyLoad)
+    TEST(TestDirectPath, LoadStreamWithNoConvertedRows_ReturnsEmpty)
     {
         ExecDML(OTEXT("create table TestDirpath_Table4 (val_str varchar2(50))"));
         ExecDML(OTEXT("truncate table TestDirpath_Table4"));
@@ -224,14 +224,32 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_DirectPathFree(dp));
 
-        /* abort on a prepared dirpath */
+        ASSERT_TRUE(OCI_TypeInfoFree(typinf));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
 
-        const auto dp2 = OCI_DirectPathCreate(typinf, nullptr, 1, 1);
-        ASSERT_NE(nullptr, dp2);
-        ASSERT_TRUE(OCI_DirectPathSetColumn(dp2, 0, OTEXT("val_str"), 50, nullptr));
-        ASSERT_TRUE(OCI_DirectPathPrepare(dp2));
-        ASSERT_TRUE(OCI_DirectPathAbort(dp2));
-        ASSERT_TRUE(OCI_DirectPathFree(dp2));
+        ExecDML(OTEXT("drop table TestDirpath_Table4"));
+    }
+
+    TEST(TestDirectPath, AbortOnPreparedDirPath_Succeeds)
+    {
+        ExecDML(OTEXT("create table TestDirpath_Table4 (val_str varchar2(50))"));
+        ExecDML(OTEXT("truncate table TestDirpath_Table4"));
+
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestDirpath_Table4"), OCI_TIF_TABLE);
+        ASSERT_NE(nullptr, typinf);
+
+        const auto dp = OCI_DirectPathCreate(typinf, nullptr, 1, 1);
+        ASSERT_NE(nullptr, dp);
+        ASSERT_TRUE(OCI_DirectPathSetColumn(dp, 0, OTEXT("val_str"), 50, nullptr));
+        ASSERT_TRUE(OCI_DirectPathPrepare(dp));
+        ASSERT_TRUE(OCI_DirectPathAbort(dp));
+        ASSERT_TRUE(OCI_DirectPathFree(dp));
 
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -318,7 +336,6 @@ namespace TestCApi
             { "DirPathSetEntry", [] { return !OCI_DirectPathSetEntry(nullptr, 1, 1, NullArgBuffer(), 1, FALSE); } },
             { "DirPathSetNoLog", [] { return !OCI_DirectPathSetNoLog(nullptr, FALSE); } },
             { "DirPathSetParallel", [] { return !OCI_DirectPathSetParallel(nullptr, FALSE); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

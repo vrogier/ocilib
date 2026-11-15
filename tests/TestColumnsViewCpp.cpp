@@ -15,7 +15,7 @@ namespace TestCppApi
     /* ResultsetColumns — ColumnView<Resultset>              */
     /* ---------------------------------------------------- */
 
-    TEST(TestColumnsView, Size)
+    TEST(TestColumnsView, SizeOnColumnsView_ReturnsColumnCount)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -25,7 +25,7 @@ namespace TestCppApi
         ASSERT_EQ(4u, rs.Columns().Size());
     }
 
-    TEST(TestColumnsView, SubscriptByIndexIsZeroBased)
+    TEST(TestColumnsView, SubscriptByIndex_IsZeroBased)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -41,7 +41,7 @@ namespace TestCppApi
         ASSERT_EQ(cols[0].GetName(), rs.GetColumn(0).GetName());
     }
 
-    TEST(TestColumnsView, SubscriptByName)
+    TEST(TestColumnsView, SubscriptByName_ReturnsColumn)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -53,7 +53,7 @@ namespace TestCppApi
         ASSERT_EQ(String(OTEXT("SAL")),   cols[OTEXT("SAL")].GetName());
     }
 
-    TEST(TestColumnsView, AtIsBoundsChecked)
+    TEST(TestColumnsView, AtWithOutOfBoundsIndex_Throws)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -65,7 +65,7 @@ namespace TestCppApi
         ASSERT_THROW((void)cols.At(cols.Size()), Exception);
     }
 
-    TEST(TestColumnsView, Contains)
+    TEST(TestColumnsView, ContainsWithExistingAndMissingNames_ReturnsExpected)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -78,7 +78,7 @@ namespace TestCppApi
         ASSERT_FALSE(cols.Contains(OTEXT("NOSUCHCOL")));
     }
 
-    TEST(TestColumnsView, IndexOf)
+    TEST(TestColumnsView, IndexOfWithKnownAndUnknownNames_ReturnsExpectedIndexes)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -92,7 +92,7 @@ namespace TestCppApi
         ASSERT_EQ(-1, cols.IndexOf(OTEXT("NOSUCHCOL")));
     }
 
-    TEST(TestColumnsView, IterateAll)
+    TEST(TestColumnsView, IterateAllColumns_VisitsEveryColumn)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -112,7 +112,7 @@ namespace TestCppApi
         ASSERT_EQ(cols.Size(), i);
     }
 
-    TEST(TestColumnsView, IteratorIsRandomAccess)
+    TEST(TestColumnsView, IteratorArithmetic_BehavesAsRandomAccess)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -151,7 +151,7 @@ namespace TestCppApi
     /* ResultsetRows                                         */
     /* ---------------------------------------------------- */
 
-    TEST(TestResultsetRows, IterateAll)
+    TEST(TestResultsetRows, IterateAllRows_VisitsEveryRow)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -168,7 +168,7 @@ namespace TestCppApi
         ASSERT_EQ(5u, count);
     }
 
-    TEST(TestResultsetRows, SizeTracksFetchedRows)
+    TEST(TestResultsetRows, SizeAfterFetching_TracksFetchedRows)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -184,7 +184,7 @@ namespace TestCppApi
         ASSERT_EQ(2u, rows.Size());
     }
 
-    TEST(TestResultsetRows, SubscriptOnScrollable)
+    TEST(TestResultsetRows, SubscriptOnScrollableResultset_ReturnsRow)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -199,7 +199,7 @@ namespace TestCppApi
         ASSERT_EQ(1, rows[0].Get<int>(0));
     }
 
-    TEST(TestResultsetRows, SubscriptOnForwardOnlyThrows)
+    TEST(TestResultsetRows, SubscriptOnForwardOnlyResultset_Throws)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -210,7 +210,7 @@ namespace TestCppApi
         ASSERT_THROW((void)rs.Rows()[0], Exception);
     }
 
-    TEST(TestResultsetRows, EndIsSentinel)
+    TEST(TestResultsetRows, EndIterator_ActsAsSentinel)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -224,7 +224,7 @@ namespace TestCppApi
     /* TypeInfoColumns — ColumnView<TypeInfo>                */
     /* ---------------------------------------------------- */
 
-    TEST(TestTypeInfoColumns, IterateTableColumns)
+    TEST(TestTypeInfoColumns, IterateTableColumns_VisitsEveryColumn)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -245,7 +245,7 @@ namespace TestCppApi
         ASSERT_EQ(1u, count);
     }
 
-    TEST(TestTypeInfoColumns, IndexOfMiss)
+    TEST(TestTypeInfoColumns, IndexOfWithUnknownName_ReturnsMinusOne)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -260,7 +260,7 @@ namespace TestCppApi
     /* Zero-based [] regression — JsonNode / Collection      */
     /* ---------------------------------------------------- */
 
-    TEST(TestZeroBased, CollectionSubscriptFirstElement)
+    TEST(TestZeroBased, CollectionSubscriptAtZero_ReturnsFirstElement)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -276,7 +276,7 @@ namespace TestCppApi
         ASSERT_EQ(String(OTEXT("c")), static_cast<String>(coll[2]));
     }
 
-    TEST(TestZeroBased, JsonNodeSubscriptFirstItem)
+    TEST(TestZeroBased, JsonNodeSubscriptAtZero_ReturnsFirstItem)
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);

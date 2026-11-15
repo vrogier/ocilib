@@ -6,7 +6,7 @@ using namespace ocilib;
 
 namespace TestCppApi
 {
-    TEST(TestShardingCpp, KeyLifecycle)
+    TEST(TestShardingCpp, ShardingKeyCreateSetColumnAndFree_Works)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -18,7 +18,7 @@ namespace TestCppApi
         ASSERT_FALSE(skey.ToString().empty());
     }
 
-    TEST(TestShardingCpp, AddColumnAllTypes)
+    TEST(TestShardingCpp, AddColumnsOfAllSupportedTypes_StoresColumns)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -37,7 +37,7 @@ namespace TestCppApi
         ASSERT_FALSE(skey.ToString().empty());
     }
 
-    TEST(TestShardingCpp, ShardedConnection)
+    TEST(TestShardingCpp, ConnectionCreateShardedWithKey_Connects)
     {
         auto& env = GetEnvironmentCpp();
 
@@ -52,7 +52,7 @@ namespace TestCppApi
 
     }
 
-    TEST(TestShardingCpp, ShardedPoolGetConnection)
+    TEST(TestShardingCpp, PoolGetShardedConnection_ReturnsConnection)
     {
         auto& env = GetEnvironmentCpp();
 

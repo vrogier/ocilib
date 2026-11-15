@@ -29,7 +29,7 @@ namespace TestCApi
         ++ConnCreatedCount;
     }
 
-    TEST(TestPool, SessionPoolGetMultipleConnections)
+    TEST(TestPool, GetMultipleConnectionsFromSessionPool_ReturnsConnections)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -139,7 +139,7 @@ namespace TestCApi
         ASSERT_EQ(0u, OCI_PoolGetBusyCount(pool));
     }
 
-    TEST(TestPool, SessionPoolWithTag)
+    TEST(TestPool, GetConnectionWithTag_ReturnsTaggedConnection)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -253,7 +253,7 @@ namespace TestCApi
     /* --- public-API error paths: NULL pool handles hit the CHECK_PTR arms
        the dropped fault tests covered --- */
 
-    TEST(TestPool, NullPoolErrors)
+    TEST(TestPool, PoolFnsWithNullArgs_ReturnFailure)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -298,7 +298,6 @@ namespace TestCApi
             { "PoolSetNoWait", [] { return !OCI_PoolSetNoWait(nullptr, FALSE); } },
             { "PoolSetStatementCacheSize", [] { return !OCI_PoolSetStatementCacheSize(nullptr, 1); } },
             { "PoolSetTimeout", [] { return !OCI_PoolSetTimeout(nullptr, 1); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

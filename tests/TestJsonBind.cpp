@@ -45,7 +45,7 @@ namespace
 
 namespace TestCApi
 {
-    TEST(TestJsonBind, BindAndFetch)
+    TEST(TestJsonBind, BindJsonOnInsertThenFetch_ReturnsJson)
     {
         ExecDML(OTEXT("CREATE TABLE TestJson_CApiBind (id NUMBER, value JSON)"));
 
@@ -90,7 +90,7 @@ namespace TestCApi
 
         ExecDML(OTEXT("DROP TABLE TestJson_CApiBind"));
     }
-    TEST(TestJsonBind, BindArray)
+    TEST(TestJsonBind, BindJsonArray_InsertsRows)
     {
         ExecDML(OTEXT("CREATE TABLE TestJson_CApiBindArray (id NUMBER, value JSON)"));
 
@@ -121,7 +121,7 @@ namespace TestCApi
 
         ExecDML(OTEXT("DROP TABLE TestJson_CApiBindArray"));
     }
-    TEST(TestJsonBind, RegisterReturning)
+    TEST(TestJsonBind, RegisterJsonReturningInto_ReturnsJson)
     {
         ExecDML(OTEXT("CREATE TABLE TestJson_CApiRegister (id NUMBER, value JSON)"));
         ExecDML(OTEXT("INSERT INTO TestJson_CApiRegister VALUES (1, '{\"x\":1}')"));

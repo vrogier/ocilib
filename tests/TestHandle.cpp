@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestHandle, HandleGetEnvironment)
+    TEST(TestHandle, GetEnvironmentOnHandle_ReturnsEnv)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -24,7 +24,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestHandle, UserData)
+    TEST(TestHandle, SetThenGetUserData_RoundTripsPointer)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -62,7 +62,6 @@ namespace TestCApi
             { "GetUserData", [] { return nullptr == OCI_HandleGetUserData(nullptr); }, NoNullPointerError }, // handle.c
             { "HandleGetEnvironment", [] { return nullptr == OCI_HandleGetEnvironment(nullptr); }, NoNullPointerError }, // manual
             { "SetUserData", [] { return !OCI_HandleSetUserData(nullptr, NullArgBuffer()); }, NoNullPointerError }, // handle.c
-        }),
-        &NullArgCaseName);
+        }));
 
 }

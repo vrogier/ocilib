@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestAgent, CreateAndSet)
+    TEST(TestAgent, CreateAgentThenSetAttributes_ConfiguresAgent)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -44,7 +44,6 @@ namespace TestCApi
             { "AgentGetName", [] { return nullptr == OCI_AgentGetName(nullptr); } },
             { "AgentSetAddress", [] { return !OCI_AgentSetAddress(nullptr, OTEXT("x")); } },
             { "AgentSetName", [] { return !OCI_AgentSetName(nullptr, OTEXT("x")); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

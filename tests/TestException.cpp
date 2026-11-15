@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestException, BadConnection)
+    TEST(TestException, ConnectWithBadCredentials_RaisesError)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -19,7 +19,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestException, SqlError)
+    TEST(TestException, ExecuteInvalidSql_RaisesError)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);

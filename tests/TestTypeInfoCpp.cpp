@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestTypeInfoCpp, MetadataCpp)
+    TEST(TestTypeInfoCpp, TypeInfoGetters_ReturnMetadata)
     {
         ExecDML(OTEXT("CREATE OR REPLACE TYPE TestTypeInfoCovType AS OBJECT(code NUMBER, name VARCHAR2(50))"));
 

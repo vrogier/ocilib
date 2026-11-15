@@ -14,7 +14,7 @@ namespace TestCppApi
         return json;
     }
 
-    TEST(TestJsonDomCpp, MutableAndRoot)
+    TEST(TestJsonDomCpp, MutableFlagAndRootNode_ReflectState)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -45,7 +45,7 @@ namespace TestCppApi
         JsonNode nameField2 = verify.GetField(OTEXT("name"));
         ASSERT_EQ(String(OTEXT("test")), nameField2.GetString());
     }
-    TEST(TestJsonDomCpp, DomNavigation)
+    TEST(TestJsonDomCpp, NavigateDomNodes_ReachesExpectedNodes)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -81,7 +81,7 @@ namespace TestCppApi
         JsonNode item3 = items[2];
         ASSERT_EQ(Json::NodeNumber, item3.GetType());
     }
-    TEST(TestJsonDomCpp, JsonNodeIterator)
+    TEST(TestJsonDomCpp, IterateJsonNodes_VisitsAllNodes)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
@@ -268,8 +268,7 @@ namespace TestCppApi
             JsonCppTypeCase{ "Binary",    CppNodeBinary },
             JsonCppTypeCase{ "Date",      CppNodeDate },
             JsonCppTypeCase{ "Timestamp", CppNodeTimestamp },
-            JsonCppTypeCase{ "Interval",  CppNodeInterval }),
-        ::testing::PrintToStringParamName());
+            JsonCppTypeCase{ "Interval",  CppNodeInterval }));
 
     TEST_F(TestJsonDomCppCreate, CreateGenericNodeWithStringType_ReturnsStringNode)
     {
@@ -424,7 +423,7 @@ namespace TestCppApi
         EXPECT_EQ(0u, obj.GetFieldCount());
     }
 
-    TEST(TestJsonDomCpp, Validate)
+    TEST(TestJsonDomCpp, ValidateDocumentAgainstSchema_EnforcesSchema)
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);

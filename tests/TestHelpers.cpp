@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestHelpers, BindTimestampAndInterval)
+    TEST(TestHelpers, BindHelpersOnTimestampAndInterval_BindValues)
     {
         ExecDML(OTEXT("create table TestHelpersTable (id int, ts timestamp, itv interval day to second)"));
 
@@ -45,7 +45,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestHelpersTable"));
     }
 
-    TEST(TestHelpers, FetchLong)
+    TEST(TestHelpers, FetchLongColumn_ReturnsData)
     {
         ExecDML(OTEXT("create table TestHelpersLongTable (id int, content long)"));
         ExecDML(OTEXT("insert into TestHelpersLongTable values (1, 'hello world')"));

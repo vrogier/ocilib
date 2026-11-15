@@ -28,7 +28,7 @@ namespace TestCApi
         TestEventCount++;
     }
 
-    TEST(TestEvent, ObjectChanged)
+    TEST(TestEvent, ObjectChangeNotification_ReportsEvent)
     {
         TestEventCount = 0;
 
@@ -82,7 +82,6 @@ namespace TestCApi
             { "EventGetRowid", [] { return nullptr == OCI_EventGetRowid(nullptr); } },
             { "EventGetSubscription", [] { return nullptr == OCI_EventGetSubscription(nullptr); } },
             { "EventGetType", [] { return OCI_UNKNOWN == OCI_EventGetType(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

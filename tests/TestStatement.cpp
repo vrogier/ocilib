@@ -3,7 +3,7 @@
 
 namespace TestCApi
 {
-    TEST(TestStatement, Metadata)
+    TEST(TestStatement, StatementMetadataGetters_ReturnExpectedValues)
     {
         ExecDML(OTEXT("CREATE TABLE TestCApiCovMeta(id NUMBER)"));
 
@@ -137,10 +137,9 @@ namespace TestCApi
             StmtPropCase{ "PieceSize",      StmtPropPieceSize },
             StmtPropCase{ "LongMode",       StmtPropLongMode },
             StmtPropCase{ "BindArraySize",  StmtPropBindArraySize },
-            StmtPropCase{ "Rebinding",      StmtPropRebinding }),
-        ::testing::PrintToStringParamName());
+            StmtPropCase{ "Rebinding",      StmtPropRebinding }));
 
-    TEST(TestStatement, ParseAndDescribe)
+    TEST(TestStatement, ParseAndDescribeSelect_ReturnsResultset)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -179,7 +178,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestStatement, ExecuteStmtFmt)
+    TEST(TestStatement, ExecuteSqlWithFormatArgs_ExecutesStatement)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -202,7 +201,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestStatement, ParseAndDescribeFmt)
+    TEST(TestStatement, ParseWithFormatArgsThenDescribe_ReturnsResultset)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -370,8 +369,7 @@ namespace TestCApi
             StmtBindCase{ "Raw",       StmtBindRaw },
             StmtBindCase{ "Date",      StmtBindDate },
             StmtBindCase{ "Timestamp", StmtBindTimestamp },
-            StmtBindCase{ "Interval",  StmtBindInterval }),
-        ::testing::PrintToStringParamName());
+            StmtBindCase{ "Interval",  StmtBindInterval }));
 
     TEST_F(TestStmtBind, BoundStmt_ReportsBindCountAndHandles)
     {
@@ -552,8 +550,7 @@ namespace TestCApi
             StmtArrBindCase{ "Raw",       ArrBindRaw },
             StmtArrBindCase{ "Date",      ArrBindDate },
             StmtArrBindCase{ "Timestamp", ArrBindTimestamp },
-            StmtArrBindCase{ "Interval",  ArrBindInterval }),
-        ::testing::PrintToStringParamName());
+            StmtArrBindCase{ "Interval",  ArrBindInterval }));
 
     TEST_F(TestStmtArrBind, ExecuteInsertWithAllArrayBinds_InsertsOneRow)
     {
@@ -731,10 +728,9 @@ namespace TestCApi
             StmtRegCase{ "String",    RegString },
             StmtRegCase{ "Date",      RegDate },
             StmtRegCase{ "Timestamp", RegTimestamp },
-            StmtRegCase{ "Interval",  RegInterval }),
-        ::testing::PrintToStringParamName());
+            StmtRegCase{ "Interval",  RegInterval }));
 
-    TEST(TestStatement, ExecuteAndGetResultset)
+    TEST(TestStatement, ExecuteSelectThenGetResultset_ReturnsRows)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -763,7 +759,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestStatement, PrepareFmt)
+    TEST(TestStatement, PrepareWithFormatArgs_PreparesStatement)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -788,7 +784,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestStatement, SqlCommandAndVerb)
+    TEST(TestStatement, GetSqlCommandAndVerb_ReturnsTypes)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1077,8 +1073,7 @@ namespace TestCApi
             ImmCase{ "Interval",  ImmInterval },
             ImmCase{ "Object",    ImmObject },
             ImmCase{ "Coll",      ImmColl },
-            ImmCase{ "Ref",       ImmRef }),
-        ::testing::PrintToStringParamName());
+            ImmCase{ "Ref",       ImmRef }));
 
     TEST_F(TestStatementImmediate, ImmediateWithTextSizeArg_FetchesSizedText)
     {
@@ -1431,7 +1426,7 @@ namespace TestCApi
     }
 
 
-    TEST(TestStatement, PrefetchMemoryOnHandle)
+    TEST(TestStatement, SetPrefetchMemoryOnStatement_ConfiguresSize)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1460,7 +1455,7 @@ namespace TestCApi
        OCI_StatementRegisterUInt64 / OCI_StatementExecutePrepared / OCI_ResultsetGetStruct /
        OCI_ResultsetGetCursor / OCI_SetPrefetch* / OCI_GetPrefetch* --- */
 
-    TEST(TestStatement, RegisterOutBindsFetchPublic)
+    TEST(TestStatement, RegisterOutBindThenFetch_ReturnsValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1491,7 +1486,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestRegisterOutTbl"));
     }
 
-    TEST(TestStatement, FetchModeScrollableGetSet)
+    TEST(TestStatement, SetThenGetFetchMode_RoundTripsMode)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1663,7 +1658,6 @@ namespace TestCApi
             { "SetPrefetchSize", [] { return !OCI_StatementSetPrefetchSize(nullptr, 1); } },
             { "StatementFree", [] { return !OCI_StatementFree(nullptr); } },
             { "StatementGetConnection", [] { return nullptr == OCI_StatementGetConnection(nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

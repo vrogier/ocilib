@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestTransactionCpp, CreateAndGettersCpp)
+    TEST(TestTransactionCpp, CreateTransactionThenGetters_ReturnAttributes)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);
@@ -14,7 +14,7 @@ namespace TestCppApi
         ASSERT_EQ(Transaction::TransactionFlags(Transaction::New | Transaction::ReadWrite), trans.GetFlags());
     }
 
-    TEST(TestTransactionCpp, StartStopCpp)
+    TEST(TestTransactionCpp, StartThenStopGlobalTransaction_Works)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);
@@ -25,7 +25,7 @@ namespace TestCppApi
         trans.Stop();
     }
 
-    TEST(TestTransactionCpp, ConnectionGetSetTransactionCpp)
+    TEST(TestTransactionCpp, SetThenGetTransactionOnConnection_RoundTrips)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);
@@ -37,7 +37,7 @@ namespace TestCppApi
         ASSERT_FALSE(current.IsNull());
     }
 
-    TEST(TestTransactionCpp, GlobalTransactionCreateAndGettersCpp)
+    TEST(TestTransactionCpp, CreateGlobalTransactionThenGetters_ReturnAttributes)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);

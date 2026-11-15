@@ -4,7 +4,7 @@ namespace TestCppApi
 {
     using namespace ocilib;
 
-    TEST(TestAgentCpp, CreateAndGettersSettersCpp)
+    TEST(TestAgentCpp, AgentGettersAndSetters_RoundTripValues)
     {
         Environment& env = GetEnvironmentCpp();
         Connection conn(env, DBS, USR, PWD);

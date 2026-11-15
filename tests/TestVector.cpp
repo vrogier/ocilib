@@ -31,7 +31,7 @@ static void CheckColumnFullType
 
 namespace TestCApi
 {
-    TEST(TestVector, DescribeTableVector)
+    TEST(TestVector, DescribeTableVectorColumn_ReturnsVectorInfo)
     {
         ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
         ExecDML
@@ -72,7 +72,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
     }
 
-    TEST(TestVector, Create)
+    TEST(TestVector, CreateVector_ReturnsTypedVector)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -89,7 +89,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestVector, ArrayCreateAndFree)
+    TEST(TestVector, ArrayCreate_ReturnsVectorArray)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -110,7 +110,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestVector, SetValue)
+    TEST(TestVector, SetValueOnVector_StoresValues)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -150,7 +150,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestVector, ToText)
+    TEST(TestVector, ToTextOnVector_RendersValues)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -181,7 +181,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestVector, FromText)
+    TEST(TestVector, FromTextOnVector_ParsesValues)
     {
         auto env = GetEnvironment(nullptr);
 
@@ -217,7 +217,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestVector, Bind)
+    TEST(TestVector, BindVectorOnInsert_BindsValues)
     {
         ExecDML(OTEXT("CREATE TABLE TestBindVector (value VECTOR(*, FLOAT32))"));
 
@@ -276,7 +276,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE  TestBindVector"));
     }
 
-    TEST(TestVector, Fetch)
+    TEST(TestVector, FetchVectorColumn_ReturnsVector)
     {
         ExecDML(OTEXT("CREATE TABLE TestFetchVector (value VECTOR(*, FLOAT32))"));
         ExecDML(OTEXT("INSERT INTO TestFetchVector values('[1.1, 2.2, 3.3, 4.4]')"));
@@ -323,7 +323,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE  TestFetchVector"));
     }
 
-    TEST(TestVector, FetchAsString)
+    TEST(TestVector, FetchVectorAsString_ReturnsText)
     {
         ExecDML(OTEXT("CREATE TABLE TestFetchVectorAsString (value VECTOR(*, INT8))"));
         ExecDML(OTEXT("INSERT INTO TestFetchVectorAsString values('[1, 2, 3, 4]')"));
@@ -355,7 +355,7 @@ namespace TestCApi
         ExecDML(OTEXT("DROP TABLE  TestFetchVectorAsString"));
     }
 
-    TEST(TestVector, RegisterVector)
+    TEST(TestVector, RegisterVectorOnReturningInto_ReturnsVector)
     {
          ExecDML(OTEXT("CREATE TABLE TestRegisterVector (code int, value VECTOR(*, INT8))"));
         ExecDML(OTEXT("TRUNCATE TABLE TestRegisterVector"));
@@ -426,7 +426,6 @@ namespace TestCApi
             { "VectorGetValues", [] { return !OCI_VectorGetValues(nullptr, NullArgBuffer()); } },
             { "VectorSetValues", [] { return !OCI_VectorSetValues(nullptr, 1, 1, NullArgBuffer()); } },
             { "VectorToText", [] { return !OCI_VectorToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

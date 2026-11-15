@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestStringutils, GetStringConversions)
+    TEST(TestStringutils, GetStringOnTypedColumns_ConvertsToText)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -32,7 +32,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestStringutils, NumberAndDateToString)
+    TEST(TestStringutils, ToStringOnNumberAndDate_FormatsValues)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -58,7 +58,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestStringutils, UnicodeAndRawConversions)
+    TEST(TestStringutils, UnicodeAndRawConversions_PreserveData)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -84,7 +84,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestStringutils, GetStringForNumericSubtypes)
+    TEST(TestStringutils, GetStringOnNumericSubtypes_ConvertsToText)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -111,7 +111,7 @@ namespace TestCApi
 
     }
 
-    TEST(TestStringutils, BindAndGetString)
+    TEST(TestStringutils, BindStringThenGetString_RoundTripsText)
     {
         ExecDML(OTEXT("drop table TestStringutilsData"));
         ExecDML(OTEXT("create table TestStringutilsData (value varchar2(50))"));
@@ -156,7 +156,7 @@ namespace TestCApi
        OcilibStringGetFullTypeName / OcilibStringTranslate ---
        through the public surface --- */
 
-    TEST(TestStringutils, ParseFmtStringAppendBuffer)
+    TEST(TestStringutils, ParseFmtStringOnStatement_AppendsToBuffer)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -182,7 +182,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestStringutils, ColumnGetSqlTypeNames)
+    TEST(TestStringutils, GetSQLTypeNameOnColumns_ReturnsNames)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);

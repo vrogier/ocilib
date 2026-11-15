@@ -2,7 +2,7 @@
 
 namespace TestCApi
 {
-    TEST(TestRowId, Fetch)
+    TEST(TestRowId, FetchRowidColumn_ReturnsRowid)
     {
         ExecDML(OTEXT("create table TestRowIdFetch(code int, name varchar2(50))"));
         ExecDML(OTEXT("truncate table TestRowIdFetch"));
@@ -32,7 +32,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestRowIdFetch"));
     }
 
-    TEST(TestRowId, Bind)
+    TEST(TestRowId, BindRowid_BindsValue)
     {
         ExecDML(OTEXT("create table TestRowIdBind(code int, name varchar2(50))"));
         ExecDML(OTEXT("truncate table TestRowIdBind"));

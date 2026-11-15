@@ -185,7 +185,7 @@ namespace TestCApi
         EXPECT_EQ(15, day);
     }
 
-    TEST(TestBind, NullAndDataSize)
+    TEST(TestBind, BindNullThenSetDataSize_HandlesNullState)
     {
         ExecDML(OTEXT("create table TestBind_Null (id int, name varchar2(50))"));
 
@@ -382,8 +382,7 @@ namespace TestCApi
             BindTypeCase{ "Date",   BindDate },
             BindTypeCase{ "Raw",    BindRaw },
             BindTypeCase{ "Lob",    BindLob },
-            BindTypeCase{ "Object", BindObject }),
-        ::testing::PrintToStringParamName());
+            BindTypeCase{ "Object", BindObject }));
 
     TEST_F(TestBindTypes, ExecuteInsertWithAllTypedBinds_InsertsOneRow)
     {
@@ -422,7 +421,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
     }
 
-    TEST(TestBind, ArrayBind)
+    TEST(TestBind, BindArrayOnInsert_InsertsRows)
     {
         ExecDML(OTEXT("create table TestBind_Array (id int)"));
 
@@ -528,8 +527,7 @@ namespace TestCApi
             BindRegCase{ "Float",     BindRegFloat },
             BindRegCase{ "Date",      BindRegDate },
             BindRegCase{ "Timestamp", BindRegTimestamp },
-            BindRegCase{ "Interval",  BindRegInterval }),
-        ::testing::PrintToStringParamName());
+            BindRegCase{ "Interval",  BindRegInterval }));
 
     TEST_F(TestBindReg, BindNullDataInInternalMode_BindsAndReportsIndex)
     {
@@ -633,8 +631,7 @@ namespace TestCApi
             BindRegCxCase{ "Object", BindRegCxObject },
             BindRegCxCase{ "Ref",    BindRegCxRef },
             BindRegCxCase{ "Vector", BindRegCxVector },
-            BindRegCxCase{ "Json",   BindRegCxJson }),
-        ::testing::PrintToStringParamName());
+            BindRegCxCase{ "Json",   BindRegCxJson }));
 
     /* -------------------------------------------------------------------------
        Parameterized: each OCI_BindArrayOfX call registers an internal-alloc
@@ -760,8 +757,7 @@ namespace TestCApi
             BindArrCase{ "Intervals",  ArrIntervals },
             BindArrCase{ "Lobs",       ArrLobs },
             BindArrCase{ "Objects",    ArrObjects },
-            BindArrCase{ "Jsons",      ArrJsons }),
-        ::testing::PrintToStringParamName());
+            BindArrCase{ "Jsons",      ArrJsons }));
 
     TEST_F(TestBindArr, PrepareScalarCollInsert_Succeeds)
     {
@@ -776,7 +772,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_StatementFree(stmt2));
     }
 
-    TEST(TestBind, PlsqlTableBind)
+    TEST(TestBind, BindPlsqlTableOnCall_PassesTable)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -800,7 +796,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestBind, BindByPosition)
+    TEST(TestBind, BindByPositionWithoutName_BindsValue)
     {
         ExecDML(OTEXT("create table TestBind_Pos (id int, val varchar2(30))"));
 
@@ -837,7 +833,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestBind_Pos"));
     }
 
-    TEST(TestBind, Rebinding)
+    TEST(TestBind, RebindOnSameStatement_RebindsValues)
     {
         ExecDML(OTEXT("create table TestBind_Rebind (id number)"));
 
@@ -884,7 +880,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestBind_Rebind"));
     }
 
-    TEST(TestBind, LongAndNClobBind)
+    TEST(TestBind, BindLongAndNclob_BindsData)
     {
         ExecDML(OTEXT("create table TestBind_Long (l clob, n nclob)"));
 
@@ -915,7 +911,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestBind_Long"));
     }
 
-    TEST(TestBind, TextBindSizeAndCharset)
+    TEST(TestBind, BindTextWithSizeAndCharset_BindsText)
     {
         ExecDML(OTEXT("create table TestBind_Sz (id int, s varchar2(30))"));
 
@@ -970,7 +966,7 @@ namespace TestCApi
        OCI_StatementExecutePrepared drives the internal-alloc bind creation path
        transitively — no introspection on unallocated bind internals --- */
 
-    TEST(TestBind, InternalAllocBindOps)
+    TEST(TestBind, BindWithInternalAlloc_ReallocatesBuffer)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1014,7 +1010,7 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestBind_InternalAllocBindOps"));
     }
 
-    TEST(TestBind, InternalAllocRejectsExternalData)
+    TEST(TestBind, SetDataOnInternalAllocBind_ReturnsFalse)
     {
         Guard guard(context.Lock);
         context.Errs.clear();
@@ -1165,7 +1161,6 @@ namespace TestCApi
             { "BindUnsignedInt", [] { return nullptr == OCI_StatementBindUInt32(nullptr, OTEXT("x"), NullArgOut<OCI_UInt32>()); } },
             { "BindUnsignedShort", [] { return nullptr == OCI_StatementBindUInt16(nullptr, OTEXT("x"), NullArgOut<OCI_UInt16>()); } },
             { "BindVector", [] { return nullptr == OCI_StatementBindVector(nullptr, OTEXT("x"), nullptr); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

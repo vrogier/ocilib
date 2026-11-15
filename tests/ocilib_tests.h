@@ -33,13 +33,22 @@
 
 #include "../include/ocilib.h"
 
-#define DBSNAME OTEXT("FREE")
-#define DBS OTEXT("192.168.0.11:1522/FREEPDB1")
-#define USR OTEXT("usr")
-#define PWD OTEXT("pwd")
-#define SYS_USR OTEXT("sys")
-#define SYS_PWD OTEXT("pwd")
-#define HOME OTEXT("")
+/* Test configuration — loaded once at startup in main.cpp from these
+   environment variables (all required; OCI_TEST_HOME may be set empty):
+     OCI_TEST_DB       connection string  (e.g. localhost:1523/FREEPDB1)
+     OCI_TEST_USR      application user
+     OCI_TEST_PWD      application user password
+     OCI_TEST_SYS_USR  sysdba user
+     OCI_TEST_SYS_PWD  sysdba password
+     OCI_TEST_DBSNAME  database/service name as reported by events
+     OCI_TEST_HOME     Oracle client library dir ('' = PATH lookup) */
+extern const otext* DBSNAME;
+extern const otext* DBS;
+extern const otext* USR;
+extern const otext* PWD;
+extern const otext* SYS_USR;
+extern const otext* SYS_PWD;
+extern const otext* HOME;
 #define PWD_WRONG OTEXT("pwd_wrong")
 #define ARRAY_SIZE 10
 #define STRING_SIZE 20

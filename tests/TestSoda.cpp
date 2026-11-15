@@ -22,7 +22,7 @@ namespace
 
 namespace TestCApi
 {
-    TEST(TestSoda, CreateDb)
+    TEST(TestSoda, SodaDatabaseCreateOnConnection_ReturnsDatabase)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -37,7 +37,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, CreateAndDropCollection)
+    TEST(TestSoda, CreateCollectionThenDrop_RemovesCollection)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -59,7 +59,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, InsertAndFindOneByKey)
+    TEST(TestSoda, InsertDocumentThenFindOneByKey_ReturnsSameDoc)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -111,7 +111,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, FindAndGetJson)
+    TEST(TestSoda, FindDocThenGetJson_ReturnsJsonHandle)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -173,7 +173,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, DbGetConnection)
+    TEST(TestSoda, SodaDatabaseGetConnection_ReturnsOwnerConnection)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -190,7 +190,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, CollectionProperties)
+    TEST(TestSoda, CollectionGetters_ReturnNameMetadataAndConnection)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -225,7 +225,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, CreateCollWithMetadata)
+    TEST(TestSoda, CreateCollectionWithClientKeyMetadata_UsesClientKeys)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -275,7 +275,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, OpenCollection)
+    TEST(TestSoda, OpenCollectionByName_ReturnsExistingCollection)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -306,7 +306,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, GetCollectionsCursor)
+    TEST(TestSoda, GetCollectionsCursor_ListsCreatedCollections)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -356,7 +356,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, DocumentMetadata)
+    TEST(TestSoda, InsertDocument_PopulatesGeneratedMetadata)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -406,7 +406,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, DocCreateFromJson)
+    TEST(TestSoda, CreateDocumentFromJson_StoresJsonContent)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -612,7 +612,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
     }
 
-    TEST(TestSoda, DocCount)
+    TEST(TestSoda, DocumentCountWithAndWithoutFilter_ReturnsMatchingCounts)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -667,7 +667,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, ReplaceOneByKey)
+    TEST(TestSoda, ReplaceOneByKey_ReplacesContentAndRefreshesMetadata)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -823,7 +823,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SodaDocumentFree(newDoc));
         ASSERT_TRUE(OCI_SodaOptionsFree(options));
     }
-    TEST(TestSoda, RemoveOneByKey)
+    TEST(TestSoda, RemoveOneByKey_DeletesDoc)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -866,7 +866,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, RemoveWithOptions)
+    TEST(TestSoda, RemoveWithFilter_DeletesMatchingDocs)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -916,7 +916,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
-    TEST(TestSoda, Truncate)
+    TEST(TestSoda, TruncateCollection_RemovesAllDocs)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1470,7 +1470,7 @@ namespace TestCApi
     /* --- public-API error paths: NULL handles, invalid args and bad state
        hit the CHECK_PTR / CHECK_OCI arms the dropped fault tests covered --- */
 
-    TEST(TestSoda, NullCollErrors)
+    TEST(TestSoda, CollectionFnsWithNullHandle_ReturnFailure)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1496,7 +1496,7 @@ namespace TestCApi
         ASSERT_EQ(0u, OCI_SodaCollectionDocumentCountWithFilter(nullptr, nullptr));
     }
 
-    TEST(TestSoda, NullDbErrors)
+    TEST(TestSoda, DatabaseFnsWithNullArgs_ReturnFailure)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1509,7 +1509,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_SodaDatabaseFree(nullptr));
     }
 
-    TEST(TestSoda, NullDocErrors)
+    TEST(TestSoda, DocumentFnsWithNullArgs_ReturnFailure)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1527,7 +1527,7 @@ namespace TestCApi
         ASSERT_EQ(nullptr, OCI_SodaDocumentCreateFromText(nullptr, nullptr, 0, nullptr));
     }
 
-    TEST(TestSoda, NullOptionsErrors)
+    TEST(TestSoda, OptionsFnsWithNullHandle_ReturnFailure)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1542,7 +1542,7 @@ namespace TestCApi
         ASSERT_FALSE(OCI_SodaOptionsSetVersion(nullptr, nullptr));
     }
 
-    TEST(TestSoda, InvalidNameErrors)
+    TEST(TestSoda, OpenCollectionWithUnknownName_DoesNotCrash)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1754,7 +1754,7 @@ namespace TestCApi
        inside the Oracle client (ORA-40671 / OCI-22303, IndexDrop even SEGVs) —
        the real assertions live here, BulkSaveIndexAndMeta keeps diagnostic-only
        calls that run in both modes */
-    TEST(TestSoda, IndexCreateDropList)
+    TEST(TestSoda, CreateListAndDropIndex_ManagesIndexes)
     {
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -1921,7 +1921,6 @@ namespace TestCApi
             { "SodaOptionsSetLock", [] { return !OCI_SodaOptionsSetLock(nullptr, FALSE); } },
             { "SodaOptionsSetSkip", [] { return !OCI_SodaOptionsSetSkip(nullptr, 1); } },
             { "SodaOptionsSetVersion", [] { return !OCI_SodaOptionsSetVersion(nullptr, OTEXT("x")); } },
-        }),
-        &NullArgCaseName);
+        }));
 
 }

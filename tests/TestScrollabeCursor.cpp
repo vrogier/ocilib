@@ -10,7 +10,7 @@ namespace TestCApi
         ASSERT_EQ(String(OTEXT("Row ")) + TO_STRING(index), String(OCI_ResultsetGetString(rslt, 1)));
     }
 
-    TEST(TestScrollableCursor, Fetch)
+    TEST(TestScrollableCursor, FetchScrollableCursor_NavigatesRows)
     {
         const OCI_UInt32 RowCount = 65;
 
