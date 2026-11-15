@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 namespace TestCApi
@@ -1090,6 +1091,8 @@ namespace TestCApi
 
     TEST_F(TestStatementImmediate, ImmediateWithJsonArg_FetchesJson)
     {
+        SKIP_IF_FEATURE_UNAVAILABLE(env, con, OCI_FEATURE_JSON);
+
         const auto json = OCI_JsonCreate(con);
         ASSERT_NE(nullptr, json);
 
@@ -1106,6 +1109,8 @@ namespace TestCApi
 
     TEST_F(TestStatementImmediate, ImmediateWithVectorArg_FetchesVector)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
+
         const auto vect = OCI_VectorCreate(con);
         ASSERT_NE(nullptr, vect);
 
@@ -1303,6 +1308,8 @@ namespace TestCApi
 
     TEST_F(TestStatementComplexArrays, BindArrayOfVectorsOnInsert_BindsVectors)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
+
         PrepareArrayBind(OTEXT("begin :v := :v; end;"));
 
         const auto vects = OCI_VectorArrayCreate(con, 2);

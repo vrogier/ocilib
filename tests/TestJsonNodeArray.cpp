@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 #include <cstring>
@@ -22,6 +23,7 @@ namespace TestCApi
 {
     TEST(TestJsonNodeArray, ArrayItemAccess_ReturnsElements)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -78,6 +80,7 @@ namespace TestCApi
     }
     TEST(TestJsonNodeArray, GetItemsWithBadPaths_ReturnNull)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -142,6 +145,7 @@ namespace TestCApi
 
     TEST(TestJsonNodeArray, GetItem_OutOfRangeIndex_ReturnsNull)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         const auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto json = OCI_JsonCreate(conn);

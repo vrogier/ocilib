@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 #include <sstream>
@@ -24,6 +25,7 @@ namespace TestCApi
 {
     TEST(TestSoda, SodaDatabaseCreateOnConnection_ReturnsDatabase)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -39,6 +41,7 @@ namespace TestCApi
 
     TEST(TestSoda, CreateCollectionThenDrop_RemovesCollection)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -61,6 +64,7 @@ namespace TestCApi
 
     TEST(TestSoda, InsertDocumentThenFindOneByKey_ReturnsSameDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -113,6 +117,7 @@ namespace TestCApi
 
     TEST(TestSoda, FindDocThenGetJson_ReturnsJsonHandle)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -175,6 +180,7 @@ namespace TestCApi
 
     TEST(TestSoda, SodaDatabaseGetConnection_ReturnsOwnerConnection)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -192,6 +198,7 @@ namespace TestCApi
 
     TEST(TestSoda, CollectionGetters_ReturnNameMetadataAndConnection)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -227,6 +234,7 @@ namespace TestCApi
 
     TEST(TestSoda, CreateCollectionWithClientKeyMetadata_UsesClientKeys)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -277,6 +285,7 @@ namespace TestCApi
 
     TEST(TestSoda, OpenCollectionByName_ReturnsExistingCollection)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -308,6 +317,7 @@ namespace TestCApi
 
     TEST(TestSoda, GetCollectionsCursor_ListsCreatedCollections)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -358,6 +368,7 @@ namespace TestCApi
 
     TEST(TestSoda, InsertDocument_PopulatesGeneratedMetadata)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -408,8 +419,15 @@ namespace TestCApi
 
     TEST(TestSoda, CreateDocumentFromJson_StoresJsonContent)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
+
+        /* the collection content column uses the JSON SQL type (21.1+) —
+           19c servers reject it with ORA-40636; skip before creating
+           handles so nothing leaks */
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
 
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
@@ -466,6 +484,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_SODA)) return;
             conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
             ASSERT_NE(nullptr, conn);
             sdb = OCI_SodaDatabaseCreate(conn);
@@ -497,6 +516,7 @@ namespace TestCApi
 
     TEST_F(TestSodaFind, SodaOptionsSettersOnNewOptions_ReturnTrue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
 
@@ -511,6 +531,7 @@ namespace TestCApi
 
     TEST_F(TestSodaFind, SodaOptionsSetHintWithBareHint_ReturnsTrue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
 
@@ -521,6 +542,7 @@ namespace TestCApi
 
     TEST_F(TestSodaFind, FindWithQbeFilter_ReturnsMatchingDocsOnly)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
         ASSERT_TRUE(OCI_SodaOptionsSetFilter(options, OTEXT("{\"parity\":\"even\"}")));
@@ -555,6 +577,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_SODA)) return;
             conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
             ASSERT_NE(nullptr, conn);
             sdb = OCI_SodaDatabaseCreate(conn);
@@ -584,6 +607,7 @@ namespace TestCApi
 
     TEST_F(TestSodaFindOne, FindOneWithKeyOption_ReturnsSeededDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
         ASSERT_TRUE(OCI_SodaOptionsSetKey(options, key.c_str()));
@@ -599,6 +623,7 @@ namespace TestCApi
 
     TEST_F(TestSodaFindOne, FindOneWithKeysOption_ReturnsSeededDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
         const otext* keys[] = { key.c_str() };
@@ -614,6 +639,7 @@ namespace TestCApi
 
     TEST(TestSoda, DocumentCountWithAndWithoutFilter_ReturnsMatchingCounts)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -669,6 +695,7 @@ namespace TestCApi
 
     TEST(TestSoda, ReplaceOneByKey_ReplacesContentAndRefreshesMetadata)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -761,6 +788,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_SODA)) return;
             conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
             ASSERT_NE(nullptr, conn);
             sdb = OCI_SodaDatabaseCreate(conn);
@@ -795,6 +823,7 @@ namespace TestCApi
 
     TEST_F(TestSodaReplace, ReplaceOneByKeyOption_ReplacesDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
         ASSERT_TRUE(OCI_SodaOptionsSetKey(options, key.c_str()));
@@ -809,6 +838,7 @@ namespace TestCApi
 
     TEST_F(TestSodaReplace, ReplaceOneByKeyAndVersion_ReturnsUpdatedDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
         ASSERT_TRUE(OCI_SodaOptionsSetKey(options, key.c_str()));
@@ -825,6 +855,7 @@ namespace TestCApi
     }
     TEST(TestSoda, RemoveOneByKey_DeletesDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -868,6 +899,7 @@ namespace TestCApi
 
     TEST(TestSoda, RemoveWithFilter_DeletesMatchingDocs)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -918,6 +950,15 @@ namespace TestCApi
 
     TEST(TestSoda, TruncateCollection_RemovesAllDocs)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
+
+        /* OcilibSodaCollectionTruncate gates at min(client,server) >= 20.1
+           (CHECK_FEATURE(..., OCI_FEATURE_SODA, OCI_20_1)) — Oracle's SODA
+           matrix documents client >= 19.11, but OCILIB's floor applies */
+
+        SKIP_UNLESS(GetTestCaps().client_ver >= OCI_20_1 && GetTestCaps().server_ver >= OCI_20_1,
+                    "OCI_SodaCollectionTruncate requires client and server >= 20.1");
+
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -964,6 +1005,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_SODA)) return;
             const auto env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
 
@@ -994,6 +1036,7 @@ namespace TestCApi
 
     TEST_F(TestSodaErrors, SodaDbFnsWithNullArgs_ReturnFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         ASSERT_EQ(nullptr, OCI_SodaDatabaseCreateCollection(NULL, OTEXT("X"), NULL));
         ASSERT_EQ(nullptr, OCI_SodaDatabaseOpenCollection(NULL, OTEXT("X")));
         ASSERT_EQ(nullptr, OCI_SodaDatabaseOpenCollection(sdb, NULL));
@@ -1003,12 +1046,14 @@ namespace TestCApi
 
     TEST_F(TestSodaErrors, SodaDocCreateWithNullArgs_ReturnsNull)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         ASSERT_EQ(nullptr, OCI_SodaDocumentCreateFromText(NULL, OTEXT("{}"), 2, NULL));
         ASSERT_EQ(nullptr, OCI_SodaDocumentCreateFromJson(NULL, NULL, NULL));
     }
 
     TEST_F(TestSodaErrors, SodaDocCreateWithNullContent_ReturnsDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         /* NULL content is valid - creates an empty document */
         OCI_SodaDocument* emptyDoc = OCI_SodaDocumentCreateFromText(sdb, NULL, 0, NULL);
         ASSERT_NE(nullptr, emptyDoc);
@@ -1017,6 +1062,7 @@ namespace TestCApi
 
     TEST_F(TestSodaErrors, CollFnsOnNullHandle_ReturnFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         ASSERT_EQ(nullptr, OCI_SodaCollectionGetName(NULL));
         ASSERT_EQ(nullptr, OCI_SodaCollectionGetMetadata(NULL));
         ASSERT_EQ(nullptr, OCI_SodaCollectionGetConnection(NULL));
@@ -1028,6 +1074,7 @@ namespace TestCApi
 
     TEST_F(TestSodaErrors, DocFnsOnNullHandle_ReturnFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         ASSERT_EQ(nullptr, OCI_SodaDocumentGetKey(NULL));
         ASSERT_EQ(nullptr, OCI_SodaDocumentGetVersion(NULL));
         ASSERT_EQ(nullptr, OCI_SodaDocumentGetCreatedOn(NULL));
@@ -1040,6 +1087,7 @@ namespace TestCApi
 
     TEST_F(TestSodaErrors, OptionsFnsOnNullHandle_ReturnFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         ASSERT_EQ(nullptr, OCI_SodaOptionsCreate(NULL));
         ASSERT_FALSE(OCI_SodaOptionsFree(NULL));
         ASSERT_FALSE(OCI_SodaOptionsSetKey(NULL, OTEXT("k")));
@@ -1052,6 +1100,7 @@ namespace TestCApi
 
     TEST_F(TestSodaErrors, CursorFnsOnNullHandle_ReturnFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         ASSERT_EQ(nullptr, OCI_SodaCollectionCursorGetNext(NULL));
         ASSERT_FALSE(OCI_SodaCollectionCursorFree(NULL));
         ASSERT_EQ(nullptr, OCI_SodaDocumentCursorGetNext(NULL));
@@ -1060,6 +1109,7 @@ namespace TestCApi
 
     TEST_F(TestSodaErrors, CollOpsWithNullArgs_ReturnFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         ASSERT_FALSE(OCI_SodaCollectionInsertDocument(NULL, NULL));
         ASSERT_FALSE(OCI_SodaCollectionInsertDocument(coll, NULL));
         ASSERT_EQ(nullptr, OCI_SodaCollectionFind(NULL, NULL));
@@ -1090,6 +1140,7 @@ namespace TestCApi
 
         static void SetUpTestCase()
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_SODA)) return;
             const auto env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
 
@@ -1152,6 +1203,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_SODA)) return;
             const auto env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
 
@@ -1186,6 +1238,7 @@ namespace TestCApi
 
     TEST_F(TestSodaMultiKey, FindWithKeyList_ReturnsDocs)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         /* materializes all matching docs (>8 also covers the document
            array growth arm) */
         auto* options = OCI_SodaOptionsCreate(sdb);
@@ -1210,6 +1263,7 @@ namespace TestCApi
 
     TEST_F(TestSodaMultiKey, FindOneWithMixedKeys_ReturnsMatchingDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         /* first keys miss, a later one hits */
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
@@ -1226,6 +1280,7 @@ namespace TestCApi
 
     TEST_F(TestSodaMultiKey, FindOneWithMissingKeys_ReturnsDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         /* full miss loop + doc cleanup */
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
@@ -1239,6 +1294,7 @@ namespace TestCApi
 
     TEST_F(TestSodaMultiKey, DocCountWithKeyList_ReturnsCount)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         /* per-key counts are summed */
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
@@ -1251,6 +1307,7 @@ namespace TestCApi
 
     TEST_F(TestSodaMultiKey, ReplaceOneWithKeyList_UpdatesDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         const String repl = OTEXT("{\"idx\":2}");
         auto* replDoc = OCI_SodaDocumentCreateFromText
         (
@@ -1272,6 +1329,7 @@ namespace TestCApi
 
     TEST_F(TestSodaMultiKey, ReplaceOneAndGetWithKeyList_ReturnsDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         const String repl = OTEXT("{\"idx\":2}");
         auto* replDoc = OCI_SodaDocumentCreateFromText
         (
@@ -1293,6 +1351,7 @@ namespace TestCApi
 
     TEST_F(TestSodaMultiKey, RemoveWithKeyList_RemovesDocs)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         /* per-key removes are summed */
         auto* options = OCI_SodaOptionsCreate(sdb);
         ASSERT_NE(nullptr, options);
@@ -1314,6 +1373,7 @@ namespace TestCApi
 
         static void SetUpTestCase()
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_SODA)) return;
             const auto env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
 
@@ -1366,6 +1426,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_SODA)) return;
             const auto env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
 
@@ -1394,6 +1455,7 @@ namespace TestCApi
 
     TEST_F(TestSodaNullOptions, FindWithNullOptions_UsesDefaults)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         /* NULL options: internal temporary options are created */
         auto* cursor = OCI_SodaCollectionFind(coll, NULL);
         ASSERT_NE(nullptr, cursor);
@@ -1411,6 +1473,7 @@ namespace TestCApi
 
     TEST_F(TestSodaNullOptions, FindOneWithNullOptions_UsesDefaults)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto* found = OCI_SodaCollectionFindOne(coll, NULL);
         ASSERT_NE(nullptr, found);
         ASSERT_TRUE(OCI_SodaDocumentFree(found));
@@ -1418,17 +1481,20 @@ namespace TestCApi
 
     TEST_F(TestSodaNullOptions, DocCountWithNullOptions_CountsAll)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         ASSERT_EQ(1u, OCI_SodaCollectionDocumentCount(coll, NULL));
     }
 
     TEST_F(TestSodaNullOptions, FindOneByUnknownKey_ReturnsNull)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         /* NO_DATA cleanup arm */
         ASSERT_EQ(nullptr, OCI_SodaCollectionFindOneByKey(coll, OTEXT("no_such_key")));
     }
 
     TEST_F(TestSodaNullOptions, ReplaceOneWithNullOptions_UsesDefaults)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         /* NULL options exercises the temporary-options arm; an empty
            filter does not replace the doc, so only the call matters */
         const String repl = OTEXT("{\"name\":\"nopts2\"}");
@@ -1447,6 +1513,7 @@ namespace TestCApi
 
     TEST_F(TestSodaNullOptions, ReplaceOneAndGetWithNullOptions_UsesDefaults)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         const String repl = OTEXT("{\"name\":\"nopts2\"}");
 
         auto* replDoc = OCI_SodaDocumentCreateFromText
@@ -1463,6 +1530,7 @@ namespace TestCApi
 
     TEST_F(TestSodaNullOptions, RemoveWithNullOptions_UsesDefaults)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         OCI_UInt64 removed = 0;
         (void) OCI_SodaCollectionRemove(coll, NULL, &removed);
     }
@@ -1472,6 +1540,7 @@ namespace TestCApi
 
     TEST(TestSoda, CollectionFnsWithNullHandle_ReturnFailure)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -1498,6 +1567,7 @@ namespace TestCApi
 
     TEST(TestSoda, DatabaseFnsWithNullArgs_ReturnFailure)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -1511,6 +1581,7 @@ namespace TestCApi
 
     TEST(TestSoda, DocumentFnsWithNullArgs_ReturnFailure)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -1529,6 +1600,7 @@ namespace TestCApi
 
     TEST(TestSoda, OptionsFnsWithNullHandle_ReturnFailure)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -1544,6 +1616,7 @@ namespace TestCApi
 
     TEST(TestSoda, OpenCollectionWithUnknownName_DoesNotCrash)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -1577,6 +1650,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_SODA)) return;
             conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
             ASSERT_NE(nullptr, conn);
             sdb = OCI_SodaDatabaseCreate(conn);
@@ -1602,6 +1676,7 @@ namespace TestCApi
 
     TEST_F(TestSodaOps, SodaCollInsertMany_InsertsDocs)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         OCI_SodaDocument* docs[3] = {
             MakeDoc(OTEXT("{\"a\":1}"), OTEXT("k1")),
             MakeDoc(OTEXT("{\"a\":2}"), OTEXT("k2")),
@@ -1620,6 +1695,7 @@ namespace TestCApi
 
     TEST_F(TestSodaOps, SodaDocGetIsJsonOnJsonDoc_ReturnsTrue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         OCI_SodaDocument* d = MakeDoc(OTEXT("{\"a\":1}"), OTEXT("k1"));
         ASSERT_NE(nullptr, d);
 
@@ -1630,6 +1706,7 @@ namespace TestCApi
 
     TEST_F(TestSodaOps, SodaCollInsertManyWithMeta_ReturnsDocVersion)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         OCI_SodaDocument* e = MakeDoc(OTEXT("{\"a\":1}"), OTEXT("k4"));
         ASSERT_NE(nullptr, e);
         OCI_SodaDocument* edocs[1] = { e };
@@ -1643,6 +1720,7 @@ namespace TestCApi
 
     TEST_F(TestSodaOps, SodaCollSave_UpsertsAndReturnsVersion)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         OCI_SodaDocument* sv = MakeDoc(OTEXT("{\"a\":99}"), OTEXT("k1"));
         ASSERT_NE(nullptr, sv);
 
@@ -1655,6 +1733,7 @@ namespace TestCApi
 
     TEST_F(TestSodaOps, SodaCollSaveWithRefresh_PopulatesDocMetadata)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         OCI_SodaDocument* sv = MakeDoc(OTEXT("{\"a\":100}"), OTEXT("ksr"));
         ASSERT_NE(nullptr, sv);
 
@@ -1694,6 +1773,7 @@ namespace TestCApi
 
     TEST_F(TestSodaOps, SodaCollCreateAndDropIndex_WorksWhenClientSupports)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         DropCollIfExists(sdb, OTEXT("OCILIB_SODA_IDX_COLL"));
         OCI_SodaCollection* coll2 = OCI_SodaDatabaseCreateCollection(sdb, OTEXT("OCILIB_SODA_IDX_COLL"), NULL);
         ASSERT_NE(nullptr, coll2);
@@ -1717,6 +1797,7 @@ namespace TestCApi
 
     TEST_F(TestSodaOps, SodaCollGetDataGuideWithoutGuide_NoError)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         OCI_SodaDocument* dg = OCI_SodaCollectionGetDataGuide(coll);
 
         if (NULL != dg)
@@ -1727,6 +1808,7 @@ namespace TestCApi
 
     TEST_F(TestSodaOps, SodaDbGetCollectionNames_ReturnsNamesList)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         OCI_UInt32 ncount = 0;
 
         otext** collNames = OCI_SodaDatabaseGetCollectionNames(sdb, &ncount);
@@ -1737,6 +1819,7 @@ namespace TestCApi
 
     TEST_F(TestSodaOps, SodaCollListIndexes_NoErrorWhenSupported)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         OCI_UInt32 ncount = 0;
 
         /* fails inside the OCI call in wide builds (OCI-22303) — tolerant */
@@ -1756,6 +1839,10 @@ namespace TestCApi
        calls that run in both modes */
     TEST(TestSoda, CreateListAndDropIndex_ManagesIndexes)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
+        /* JSON search index needs the Oracle Text indextype (missing on
+           -slim docker images → ORA-29833) */
+        SKIP_UNLESS(GetTestCaps().ctxsys, "CTXSYS.CONTEXT indextype missing");
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -1801,6 +1888,7 @@ namespace TestCApi
 
     TEST(TestSoda, CollInsertDoc_MalformedDoc_ReturnsFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         const auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto sdb = OCI_SodaDatabaseCreate(conn);
@@ -1821,6 +1909,7 @@ namespace TestCApi
 
     TEST(TestSoda, CollCreateIndex_MalformedSpec_ReturnsFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SODA);
         const auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto sdb = OCI_SodaDatabaseCreate(conn);
@@ -1840,16 +1929,40 @@ namespace TestCApi
     {
         /* SODA is an 18.1+ client feature */
 
-        const auto env = GetSpecificEnvironment(nullptr, OCI_12_2);
+        const auto env = GetSpecificEnvironment(nullptr, OCI_12_1);
         ASSERT_NE(nullptr, env);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         ASSERT_EQ(nullptr, OCI_SodaDatabaseCreate(conn));
-        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+    /* same contract through the real server-version path — runs only on
+       servers older than 18.1 */
+
+    TEST(TestSoda, DbCreate_RealServer_NotAvailable)
+    {
+        SKIP_IF_FEATURE_SUPPORTED(OCI_FEATURE_SODA);
+
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_EQ(nullptr, OCI_SodaDatabaseCreate(conn));
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
 

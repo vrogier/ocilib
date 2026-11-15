@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 using namespace ocilib;
@@ -33,6 +34,7 @@ namespace TestCApi
 {
     TEST(TestVector, DescribeTableVectorColumn_ReturnsVectorInfo)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         ExecDML(OTEXT("DROP TABLE TestDescribeVector"));
         ExecDML
         (
@@ -74,6 +76,7 @@ namespace TestCApi
 
     TEST(TestVector, CreateVector_ReturnsTypedVector)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -91,6 +94,7 @@ namespace TestCApi
 
     TEST(TestVector, ArrayCreate_ReturnsVectorArray)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -112,6 +116,7 @@ namespace TestCApi
 
     TEST(TestVector, SetValueOnVector_StoresValues)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -152,6 +157,7 @@ namespace TestCApi
 
     TEST(TestVector, ToTextOnVector_RendersValues)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -183,6 +189,7 @@ namespace TestCApi
 
     TEST(TestVector, ToTextOnFloat64Vector_SizeQueryIsLargeEnough)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         /* the size returned by a NULL buffer query must be large enough for
            OCIVectorToText to succeed, including for long FLOAT64 values */
 
@@ -233,6 +240,7 @@ namespace TestCApi
 
     TEST(TestVector, FromTextOnVector_ParsesValues)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -269,6 +277,7 @@ namespace TestCApi
 
     TEST(TestVector, BindVectorOnInsert_BindsValues)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         ExecDML(OTEXT("CREATE TABLE TestBindVector (value VECTOR(*, FLOAT32))"));
 
         auto env = GetEnvironment(nullptr);
@@ -328,6 +337,7 @@ namespace TestCApi
 
     TEST(TestVector, FetchVectorColumn_ReturnsVector)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         ExecDML(OTEXT("CREATE TABLE TestFetchVector (value VECTOR(*, FLOAT32))"));
         ExecDML(OTEXT("INSERT INTO TestFetchVector values('[1.1, 2.2, 3.3, 4.4]')"));
 
@@ -375,6 +385,7 @@ namespace TestCApi
 
     TEST(TestVector, FetchVectorAsString_ReturnsText)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         ExecDML(OTEXT("CREATE TABLE TestFetchVectorAsString (value VECTOR(*, INT8))"));
         ExecDML(OTEXT("INSERT INTO TestFetchVectorAsString values('[1, 2, 3, 4]')"));
 
@@ -407,6 +418,7 @@ namespace TestCApi
 
     TEST(TestVector, RegisterVectorOnReturningInto_ReturnsVector)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
          ExecDML(OTEXT("CREATE TABLE TestRegisterVector (code int, value VECTOR(*, INT8))"));
         ExecDML(OTEXT("TRUNCATE TABLE TestRegisterVector"));
         ExecDML(OTEXT("INSERT INTO TestRegisterVector values(1, '[1, 2, 3, 4]')"));
@@ -444,16 +456,40 @@ namespace TestCApi
     {
         /* vectors are a 23ai feature */
 
-        const auto env = GetSpecificEnvironment(nullptr, OCI_21_3);
+        const auto env = GetSpecificEnvironment(nullptr, OCI_12_1);
         ASSERT_NE(nullptr, env);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         ASSERT_EQ(nullptr, OCI_VectorCreate(conn));
-        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+    /* same contract through the real server-version path — runs only on
+       servers older than 23.4 */
+
+    TEST(TestVector, Create_RealServer_NotAvailable)
+    {
+        SKIP_IF_FEATURE_SUPPORTED(OCI_FEATURE_VECTOR);
+
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_EQ(nullptr, OCI_VectorCreate(conn));
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
     /* sparse vectors require both client and server >= Oracle 23.7 */
@@ -466,6 +502,7 @@ namespace TestCApi
 
     TEST(TestVector, IsSparseOnDenseVector_ReturnsFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -488,6 +525,7 @@ namespace TestCApi
 
     TEST(TestVector, SetSparseValuesThenIsSparse_ReturnsTrue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -524,6 +562,7 @@ namespace TestCApi
 
     TEST(TestVector, GetSparseValuesOnSparseVector_ReturnsNonZeroEntries)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -563,6 +602,7 @@ namespace TestCApi
 
     TEST(TestVector, GetSparseValuesWithInsufficientCapacity_Fails)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -596,6 +636,7 @@ namespace TestCApi
 
     TEST(TestVector, SetSparseValuesWithFloat16Format_Fails)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -625,6 +666,7 @@ namespace TestCApi
 
     TEST(TestVector, DescribeSparseVectorColumn_ReportsSparseFlag)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -659,6 +701,7 @@ namespace TestCApi
 
     TEST(TestVector, BindSparseVectorOnInsert_PreservesSparseStorage)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -711,6 +754,7 @@ namespace TestCApi
 
     TEST(TestVector, ImmediateWithSparseVectorArg_PreservesSparsity)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
         auto env = GetEnvironment(nullptr);
 
         ASSERT_NE(nullptr, env);
@@ -748,6 +792,11 @@ namespace TestCApi
     {
         /* sparse vectors are a 23.7 feature */
 
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
+
+        /* emulate 23.4: vector works, sparse (23.7) does not — safe because the
+           gate above ensures the real client is 23.4+ */
+
         const auto env = GetSpecificEnvironment(nullptr, OCI_23_4);
         ASSERT_NE(nullptr, env);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -760,7 +809,10 @@ namespace TestCApi
         OCI_Float  values[1]  = { 1.5f };
 
         EXPECT_FALSE(OCI_VectorSetSparseValues(vect, OCI_VEC_FLOAT32, 1, 1, indices, values));
-        EXPECT_NE(nullptr, OCI_GetLastError());
+
+        const auto err = OCI_GetLastError();
+        EXPECT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
 
         ASSERT_TRUE(OCI_VectorFree(vect));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -770,6 +822,11 @@ namespace TestCApi
     TEST(TestVector, GetSparseValues_PreClient23_7_Fails)
     {
         /* sparse vectors are a 23.7 feature */
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
+
+        /* emulate 23.4: vector works, sparse (23.7) does not — safe because the
+           gate above ensures the real client is 23.4+ */
 
         const auto env = GetSpecificEnvironment(nullptr, OCI_23_4);
         ASSERT_NE(nullptr, env);
@@ -784,7 +841,10 @@ namespace TestCApi
         OCI_UInt32 count      = 1;
 
         EXPECT_FALSE(OCI_VectorGetSparseValues(vect, indices, values, &count));
-        EXPECT_NE(nullptr, OCI_GetLastError());
+
+        const auto err = OCI_GetLastError();
+        EXPECT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
 
         ASSERT_TRUE(OCI_VectorFree(vect));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

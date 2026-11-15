@@ -603,7 +603,9 @@ namespace TestCppApi
         }
 
         ASSERT_EQ(false, errMessage.empty());
-        ASSERT_EQ(28098, errCode);
+        /* the password-expiry warning is ORA-28002 on pre-23c servers
+           and ORA-28098 on 23c+ */
+        ASSERT_TRUE(28098 == errCode || 28002 == errCode);
 
 
         

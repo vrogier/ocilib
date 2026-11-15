@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 namespace TestCApi
@@ -780,6 +781,12 @@ namespace TestCApi
 
     TEST_F(TestElementBool, GetBooleanOnFetchedElem_ReturnsValue)
     {
+        /* SQL BOOLEAN type is 23c-only — the DDL above/below fails on
+           older servers and leaves the schema object missing */
+        SKIP_UNLESS(GetTestCaps().client_ver >= OCI_VER_MAKE(23, 1, 0) &&
+                    GetTestCaps().server_ver >= OCI_VER_MAKE(23, 1, 0),
+                    "SQL BOOLEAN type requires client+server >= 23c");
+
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -809,6 +816,12 @@ namespace TestCApi
 
     TEST_F(TestElementBool, SetBooleanOnLocalElem_RoundTrips)
     {
+        /* SQL BOOLEAN type is 23c-only — the DDL above/below fails on
+           older servers and leaves the schema object missing */
+        SKIP_UNLESS(GetTestCaps().client_ver >= OCI_VER_MAKE(23, 1, 0) &&
+                    GetTestCaps().server_ver >= OCI_VER_MAKE(23, 1, 0),
+                    "SQL BOOLEAN type requires client+server >= 23c");
+
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 

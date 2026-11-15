@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 
@@ -665,7 +666,8 @@ namespace TestCApi
             ASSERT_TRUE(OCI_StatementDescribe(stmt, OTEXT("select * from TestColMapTbl")));
             rs = OCI_StatementGetResultset(stmt);
             ASSERT_NE(nullptr, rs);
-            ASSERT_EQ(10u, OCI_ResultsetGetColumnCount(rs));
+            ASSERT_EQ(FeatureAvailableCaps(OCI_FEATURE_VECTOR) ? 10u : 9u,
+                      OCI_ResultsetGetColumnCount(rs));
         }
 
         void TearDown() override
@@ -678,7 +680,10 @@ namespace TestCApi
         static void SetUpTestCase()
         {
             ExecDML(OTEXT("drop table TestColMapTbl"));
-            ExecDML(OTEXT("create table TestColMapTbl (num number(10,2), str varchar2(30), rawc raw(8), dt date, cl clob, bl blob, ts timestamp, iv interval day to second, rowid_col rowid, vec vector)"));
+            /* the vec column exists only on client+server >= 23.4 */
+            ExecDML(FeatureAvailableCaps(OCI_FEATURE_VECTOR)
+                ? OTEXT("create table TestColMapTbl (num number(10,2), str varchar2(30), rawc raw(8), dt date, cl clob, bl blob, ts timestamp, iv interval day to second, rowid_col rowid, vec vector)")
+                : OTEXT("create table TestColMapTbl (num number(10,2), str varchar2(30), rawc raw(8), dt date, cl clob, bl blob, ts timestamp, iv interval day to second, rowid_col rowid)"));
         }
 
         static void TearDownTestCase()

@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 #include <cstring>
@@ -25,6 +26,7 @@ namespace TestCApi
 {
     TEST(TestJsonDom, MutableFlagAndRootNode_ReflectState)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
@@ -72,6 +74,7 @@ namespace TestCApi
 
     TEST(TestJsonDom, NavigateDomNodes_ReachesExpectedNodes)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
@@ -294,6 +297,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
             conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -316,6 +320,7 @@ namespace TestCApi
 
     TEST_P(TestJsonNodeCreate, CreateSetGetAndAttach_RoundTripsValue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         GetParam().run(env, json, root);
 
         EXPECT_EQ(1u, OCI_JsonNodeGetFieldCount(root));
@@ -342,6 +347,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
             conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -364,6 +370,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomCreate, CreateNodeWithStringType_ReturnsStringNode)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* generic = OCI_JsonNodeCreate(json, OCI_JNT_STRING);
         ASSERT_NE(nullptr, generic);
         EXPECT_EQ(OCI_JNT_STRING, OCI_JsonNodeGetType(generic));
@@ -375,6 +382,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomCreate, ArrayOpsOnCreatedArray_ManageItems)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* arr = OCI_JsonNodeCreateArray(json);
         ASSERT_NE(nullptr, arr);
         EXPECT_EQ(OCI_JNT_ARRAY, OCI_JsonNodeGetType(arr));
@@ -411,6 +419,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomCreate, SetRootOnJson_AttachesObjectAsRoot)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         ASSERT_TRUE(OCI_JsonSetRoot(json, root));
 
         OCI_JsonNode* fetched = OCI_JsonGetRoot(json);
@@ -432,6 +441,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
             conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -460,6 +470,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, GetFieldByNameOnExistingField_ReturnsFieldValue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         ASSERT_TRUE(OCI_JsonNodeHasField(obj, OTEXT("name")));
 
         OCI_JsonNode* name = OCI_JsonNodeGetFieldByName(obj, OTEXT("name"));
@@ -472,11 +483,13 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, HasFieldOnUnknownField_ReturnsFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         EXPECT_FALSE(OCI_JsonNodeHasField(obj, OTEXT("missing")));
     }
 
     TEST_F(TestJsonDomOps, RemoveFieldOnExistingField_RemovesIt)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         ASSERT_TRUE(OCI_JsonNodeRemoveField(obj, OTEXT("name")));
 
         EXPECT_FALSE(OCI_JsonNodeHasField(obj, OTEXT("name")));
@@ -484,6 +497,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, GetByPathOnArrayItem_ReturnsItem)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* node = OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[0]"));
 
         ASSERT_NE(nullptr, node);
@@ -494,12 +508,14 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, GetByPathOnOutOfRangeIndex_ReturnsNull)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         EXPECT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.arr[5]")));
         EXPECT_EQ(nullptr, OCI_GetLastError());
     }
 
     TEST_F(TestJsonDomOps, SetStringOnAttachedField_UpdatesDocument)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* name = OCI_JsonNodeGetFieldByName(obj, OTEXT("name"));
 
         ASSERT_NE(nullptr, name);
@@ -516,6 +532,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, SetStringOnAttachedArrayItem_ReplacesElement)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* arr  = GetArr();
         OCI_JsonNode* item = OCI_JsonNodeGetItem(arr, 0);
 
@@ -535,6 +552,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, SetStringOnDetachedNode_StillWorks)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* node = OCI_JsonNodeCreateString(json, OTEXT("before"), 0);
 
         ASSERT_NE(nullptr, node);
@@ -552,12 +570,14 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, GetByPathOnUnknownField_ReturnsNull)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         EXPECT_EQ(nullptr, OCI_JsonNodeGetByPath(obj, OTEXT("$.missing")));
         EXPECT_EQ(nullptr, OCI_GetLastError());
     }
 
     TEST_F(TestJsonDomOps, AppendItemOnArray_AddsItemAtEnd)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* arr = GetArr();
         ASSERT_NE(nullptr, arr);
         ASSERT_EQ(2u, OCI_JsonNodeGetItemCount(arr));
@@ -574,6 +594,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, InsertItemOnArray_InsertsItemAtIndex)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* arr = GetArr();
         ASSERT_NE(nullptr, arr);
         OCI_JsonNode* s2 = OCI_JsonNodeCreateString(json, OTEXT("inserted"), 0);
@@ -593,6 +614,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, RemoveItemOnArray_RemovesItemAtIndex)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* arr = GetArr();
         ASSERT_NE(nullptr, arr);
         ASSERT_EQ(2u, OCI_JsonNodeGetItemCount(arr));
@@ -606,6 +628,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, GetParentOnArrayItem_ReturnsArrayNode)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* arr = GetArr();
         ASSERT_NE(nullptr, arr);
         OCI_JsonNode* it = OCI_JsonNodeGetItem(arr, 0);
@@ -623,11 +646,13 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, GetParentOnRootNode_ReturnsNull)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         EXPECT_EQ(nullptr, OCI_JsonNodeGetParent(obj));
     }
 
     TEST_F(TestJsonDomOps, SetFieldOnObject_AddsNewField)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* s = OCI_JsonNodeCreateString(json, OTEXT("v"), 0);
         ASSERT_NE(nullptr, s);
 
@@ -640,6 +665,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, ClearOnArray_RemovesAllItems)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         OCI_JsonNode* arr = GetArr();
         ASSERT_NE(nullptr, arr);
 
@@ -652,6 +678,7 @@ namespace TestCApi
 
     TEST_F(TestJsonDomOps, ClearOnObject_RemovesAllFields)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         ASSERT_TRUE(OCI_JsonNodeClear(obj));
 
         EXPECT_EQ(0u, OCI_JsonNodeGetFieldCount(obj));
@@ -736,6 +763,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
             conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -761,6 +789,7 @@ namespace TestCApi
 
     TEST_P(TestJsonNumScalar, SetThenGet_RoundTripsValue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         GetParam().run(node);
     }
 
@@ -777,13 +806,17 @@ namespace TestCApi
 
     TEST(TestJsonDom, ValidateDocumentAgainstSchema_EnforcesSchema)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
+
+        /* OCIJsonSchemaValidate is gated at 23.4 in the library, above the
+           21.1 JSON baseline — check caps before creating handles (an
+           early return here would leak them) */
+        SKIP_UNLESS(GetTestCaps().client_ver >= OCI_VER_MAKE(23, 4, 0) &&
+                    GetTestCaps().server_ver >= OCI_VER_MAKE(23, 4, 0),
+                    "OCIJsonSchemaValidate requires client+server >= 23.4");
+
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
-
-        if (OCI_EnvironmentGetOCIRuntimeVersion(env) < OCI_VER_MAKE(23, 4, 0))
-        {
-            return; /* OCIJsonSchemaValidate requires 23ai+ */
-        }
 
         auto schema = JsonFromText(conn, OTEXT("{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"number\"}},\"required\":[\"a\"]}"));
         ASSERT_TRUE(NULL != schema);
@@ -839,6 +872,7 @@ namespace TestCApi
 
     TEST(TestJsonDom, NodeGetSetOps_RoundTripValues)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
 
@@ -874,6 +908,7 @@ namespace TestCApi
 
     TEST(TestJsonDom, RemoveNodeItemsWithOutOfRangeRange_Fails)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
 
@@ -905,6 +940,7 @@ namespace TestCApi
 
     TEST(TestJsonDom, Lifetime_NodeCycles_StatsBounded)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         /* C1-class guard: repeated Json/node create->use->destroy must not grow env stats */
 
         const auto env = GetEnvironment(nullptr);
@@ -940,6 +976,7 @@ namespace TestCApi
 
     TEST(TestJsonDom, GetRoot_OnEmptyJson_ReturnsNullAndRaisesError)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         /* CHECK_JSON arm: DOM has no root -> OcilibExceptionJson */
 
         const auto env = GetEnvironment(nullptr);
@@ -957,6 +994,7 @@ namespace TestCApi
 
     TEST(TestJsonDom, NodeGetFieldByName_MissingField_RaisesJznError)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         /* JsonDomGetFieldByName returns NULL for a missing field ->
            CHECK_JSON -> OcilibExceptionJson (OCI_ERR_CAT_JZN) */
 

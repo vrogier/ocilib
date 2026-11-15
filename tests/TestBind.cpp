@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 
@@ -621,6 +622,15 @@ namespace TestCApi
 
     TEST_P(TestBindRegCx, RegisterByName_ReturnsTrue)
     {
+        if (0 == strcmp(GetParam().name, "Vector"))
+        {
+            SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
+        }
+        if (0 == strcmp(GetParam().name, "Json"))
+        {
+            SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
+        }
+
         GetParam().run(stmt, typinf);
     }
 
@@ -742,6 +752,10 @@ namespace TestCApi
 
     TEST_P(TestBindArr, BindArrayOfX_ReturnsValidHandle)
     {
+        if (0 == strcmp(GetParam().name, "Jsons"))
+        {
+            SKIP_IF_FEATURE_UNAVAILABLE(GetEnvironment(nullptr), conn, OCI_FEATURE_JSON);
+        }
         GetParam().run(stmt, typinf_obj);
     }
 

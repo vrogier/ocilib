@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 
 using namespace ocilib;
 
@@ -20,6 +21,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -30,6 +32,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -40,6 +43,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -61,6 +65,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -81,6 +86,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -110,6 +116,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -138,6 +145,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -166,6 +174,12 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
+
+        /* the collection content column uses the JSON SQL type (21.1+)
+           — 19c servers reject it with ORA-40636 */
+
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         SodaDatabase sdb(con);
 
@@ -202,6 +216,12 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
+
+        /* the collection content column uses the JSON SQL type (21.1+)
+           — 19c servers reject it with ORA-40636 */
+
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         SodaDatabase sdb(con);
 
@@ -257,6 +277,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -278,6 +299,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -310,6 +332,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -345,6 +368,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -369,6 +393,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -391,6 +416,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -415,6 +441,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -441,6 +468,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -465,6 +493,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -502,6 +531,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -523,6 +553,14 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
+
+        /* OcilibSodaCollectionTruncate gates at min(client,server) >= 20.1
+           (CHECK_FEATURE(..., OCI_FEATURE_SODA, OCI_20_1)) — Oracle's SODA
+           matrix documents client >= 19.11, but OCILIB's floor applies */
+
+        SKIP_UNLESS(GetTestCaps().client_ver >= OCI_20_1 && GetTestCaps().server_ver >= OCI_20_1,
+                    "OCI_SodaCollectionTruncate requires client and server >= 20.1");
 
         SodaDatabase sdb(con);
 
@@ -540,6 +578,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -590,6 +629,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -612,6 +652,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -632,6 +673,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -651,6 +693,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -670,6 +713,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
 
         SodaDatabase sdb(con);
 
@@ -695,6 +739,10 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_SODA);
+        /* JSON search index needs the Oracle Text indextype (missing on
+           -slim docker images → ORA-29833) */
+        SKIP_UNLESS(GetTestCaps().ctxsys, "CTXSYS.CONTEXT indextype missing");
 
         SodaDatabase sdb(con);
         DropCollIfExistsCpp(sdb, OTEXT("OCILIB_SODA_CPP_IDX"));
@@ -715,4 +763,27 @@ namespace TestCppApi
     }
 
 #endif
+
+    /* SODA requires client and server >= 18.1 — verify the exception
+       contract on a real unsupported environment */
+
+    TEST(TestSodaCpp, DbCreate_NotAvailable)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        SKIP_IF_FEATURE_AVAILABLE(env, &con, OCI_FEATURE_SODA);
+
+        try
+        {
+            SodaDatabase sdb(con);
+            FAIL() << "expected ocilib::Exception";
+        }
+        catch (const Exception& ex)
+        {
+            EXPECT_EQ(Exception::OcilibError, ex.GetCategory());
+            EXPECT_EQ(static_cast<UInt32>(OCI_ERR_NOT_AVAILABLE), ex.GetCode());
+        }
+    }
+
 }

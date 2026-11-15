@@ -1,10 +1,16 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
+
 
 namespace TestCApi
 {
     TEST(TestSharding, ShardingKeyCreateSetColumnAndFree_Works)
     {
+        SKIP_UNLESS(GetTestCaps().shardingkey_ops,
+                    "Oracle client 12.2.0.x crashes in OCIDescriptorFree(OCI_DTYPE_SHARDING_KEY) (Oracle defect)");
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SHARDING);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -15,6 +21,10 @@ namespace TestCApi
 
     TEST(TestSharding, ShardingKeyReset_ClearsColumns)
     {
+        SKIP_UNLESS(GetTestCaps().shardingkey_ops,
+                    "Oracle client 12.2.0.x crashes in OCIDescriptorFree(OCI_DTYPE_SHARDING_KEY) (Oracle defect)");
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SHARDING);
         auto env = GetEnvironment(nullptr);
 
         OCI_ShardingKey* skey = OCI_ShardingKeyCreate(env);
@@ -29,6 +39,10 @@ namespace TestCApi
 
     TEST(TestSharding, ShardingKeyAddColumns_StoresColumns)
     {
+        SKIP_UNLESS(GetTestCaps().shardingkey_ops,
+                    "Oracle client 12.2.0.x crashes in OCIDescriptorFree(OCI_DTYPE_SHARDING_KEY) (Oracle defect)");
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SHARDING);
         auto env = GetEnvironment(nullptr);
 
         OCI_ShardingKey* skey = OCI_ShardingKeyCreate(env);
@@ -63,6 +77,10 @@ namespace TestCApi
 
     TEST(TestSharding, ShardingKeyToText_RendersColumns)
     {
+        SKIP_UNLESS(GetTestCaps().shardingkey_ops,
+                    "Oracle client 12.2.0.x crashes in OCIDescriptorFree(OCI_DTYPE_SHARDING_KEY) (Oracle defect)");
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SHARDING);
         auto env = GetEnvironment(nullptr);
 
         OCI_ShardingKey* skey = OCI_ShardingKeyCreate(env);
@@ -79,6 +97,7 @@ namespace TestCApi
 
     TEST(TestSharding, ConnectionCreateShardedWithNullKey_Fails)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SHARDING);
         auto env = GetEnvironment(nullptr);
 
         /* NULL keys must behave like OCI_ConnectionCreate() */
@@ -90,6 +109,10 @@ namespace TestCApi
 
     TEST(TestSharding, ConnectionCreateShardedWithKey_Connects)
     {
+        SKIP_UNLESS(GetTestCaps().shardingkey_ops,
+                    "Oracle client 12.2.0.x crashes in OCIDescriptorFree(OCI_DTYPE_SHARDING_KEY) (Oracle defect)");
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SHARDING);
         auto env = GetEnvironment(nullptr);
 
         OCI_ShardingKey* skey = OCI_ShardingKeyCreate(env);
@@ -109,6 +132,10 @@ namespace TestCApi
 
     TEST(TestSharding, PoolGetShardedConnection_ReturnsConnection)
     {
+        SKIP_UNLESS(GetTestCaps().shardingkey_ops,
+                    "Oracle client 12.2.0.x crashes in OCIDescriptorFree(OCI_DTYPE_SHARDING_KEY) (Oracle defect)");
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SHARDING);
         auto env = GetEnvironment(nullptr);
 
         OCI_Pool* pool = OCI_PoolCreate(env, DBS, USR, PWD, OCI_POOL_SESSION, OCI_SESSION_DEFAULT, 1, 4, 1);
@@ -128,6 +155,10 @@ namespace TestCApi
 
     TEST(TestSharding, ShardingKeyFnsWithNullArgs_ReturnFailure)
     {
+        SKIP_UNLESS(GetTestCaps().shardingkey_ops,
+                    "Oracle client 12.2.0.x crashes in OCIDescriptorFree(OCI_DTYPE_SHARDING_KEY) (Oracle defect)");
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SHARDING);
         ASSERT_FALSE(OCI_ShardingKeyFree(NULL));
         ASSERT_FALSE(OCI_ShardingKeyReset(NULL));
         ASSERT_FALSE(OCI_ShardingKeyAddString(NULL, OTEXT("x")));
@@ -149,7 +180,10 @@ namespace TestCApi
         const auto env = GetSpecificEnvironment(nullptr, OCI_12_1);
         ASSERT_NE(nullptr, env);
         ASSERT_EQ(nullptr, OCI_ShardingKeyCreate(env));
-        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
 
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }

@@ -1,4 +1,5 @@
 ﻿#include "ocilib_tests.h"
+#include "TestFeatures.h"
 
 using namespace ocilib;
 
@@ -50,6 +51,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         TypeInfo tif(con,  OTEXT("TestDescribeVector"), TypeInfo::Table);
 
         CheckColumnFullType(0, tif, OTEXT("V1"), OTEXT("VECTOR(*, *)"), TypeVector, Vector::Flex, 0);
@@ -70,6 +72,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Vector vect(con);
 
         
@@ -80,6 +83,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Vector vect(con);
 
         std::array<char, 4> values1 = { 1, 3, 2, 4 };
@@ -109,6 +113,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Vector vect(con);
 
         static std::vector<char> values1 = { 1, 3, 2, 4 };
@@ -132,6 +137,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Vector vect(con);
 
         static std::vector<char> values1 = { 1, 3, 2, 4 };
@@ -148,6 +154,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Vector vect(con);
 
         vect.FromString(OTEXT("[1.1,2.2,3.3,4.4]"), Vector::Float32, 4);
@@ -170,6 +177,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Vector vect(con);
 
         static std::vector<char> values1 = { 1, 3, 2, 4 };
@@ -210,6 +218,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Statement stmt(con);
 
         stmt.Execute(OTEXT("select value from TestFetchVector"));
@@ -240,6 +249,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Statement stmt(con);
 
         stmt.Execute(OTEXT("select value from TestFetchVectorAsString"));
@@ -261,6 +271,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Statement stmt(con);
         stmt.Prepare(OTEXT("update TestRegisterVector set code = 2 returning value into :value"));
         stmt.Register<Vector>(OTEXT(":value"));
@@ -293,6 +304,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
         Vector vect(con);
 
         static std::vector<char> values = { 1, 3, 2, 4 };
@@ -306,6 +318,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
 
         if (!IsSparseVectorSupported(env, con))
         {
@@ -329,6 +342,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
 
         if (!IsSparseVectorSupported(env, con))
         {
@@ -360,6 +374,7 @@ namespace TestCppApi
         Environment& env = GetEnvironmentCpp();
 
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_VECTOR);
 
         if (!IsSparseVectorSupported(env, con))
         {
@@ -379,10 +394,27 @@ namespace TestCppApi
 
         ExecDML(OTEXT("DROP TABLE TestDescribeSparseVector"));
     }
+
+    /* VECTOR requires client and server >= 23.4 — verify the exception
+       contract on a real unsupported environment */
+
+    TEST(TestVectorCpp, Create_NotAvailable)
+    {
+        Environment& env = GetEnvironmentCpp();
+        Connection con(env, DBS, USR, PWD);
+
+        SKIP_IF_FEATURE_AVAILABLE(env, &con, OCI_FEATURE_VECTOR);
+
+        try
+        {
+            Vector vect(con);
+            FAIL() << "expected ocilib::Exception";
+        }
+        catch (const Exception& ex)
+        {
+            EXPECT_EQ(Exception::OcilibError, ex.GetCategory());
+            EXPECT_EQ(static_cast<UInt32>(OCI_ERR_NOT_AVAILABLE), ex.GetCode());
+        }
+    }
+
 }
-
-
-
-
-
-

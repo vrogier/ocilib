@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 #include <cstring>
@@ -48,6 +49,7 @@ namespace TestCApi
 {
     TEST(TestJsonText, LoadJsonTextThenToText_RoundTripsText)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
@@ -70,6 +72,7 @@ namespace TestCApi
     }
     TEST(TestJsonText, SaveAndLoadBinary_RoundTripsJson)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
@@ -100,6 +103,7 @@ namespace TestCApi
     }
     TEST(TestJsonText, CloneOnJson_DuplicatesContent)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
@@ -125,6 +129,7 @@ namespace TestCApi
 
     TEST(TestJsonText, LoadText_MalformedJson_ReturnsFalse)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         const auto env = GetEnvironment(nullptr);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         const auto json = OCI_JsonCreate(conn);

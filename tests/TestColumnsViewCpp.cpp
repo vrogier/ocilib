@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 
 using namespace ocilib;
 
@@ -280,6 +281,8 @@ namespace TestCppApi
     {
         auto& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json doc(con);
         doc.LoadText(OTEXT("[10, 20, 30]"));

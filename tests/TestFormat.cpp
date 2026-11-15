@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 
 /* OCILIB uses its own %i %s %t %n %m ... format tokens, not printf — silence GCC */
 #if defined(__GNUC__)
@@ -372,6 +373,8 @@ namespace TestCApi
     {
         /* %j -> quoted JSON text literal */
 
+        SKIP_IF_FEATURE_UNAVAILABLE(GetEnvironment(nullptr), con, OCI_FEATURE_JSON);
+
         const auto json = OCI_JsonCreate(con);
         ASSERT_NE(nullptr, json);
 
@@ -390,6 +393,8 @@ namespace TestCApi
     TEST_F(TestFormatHandles, FormatVectorToken_ProducesVectorLiteral)
     {
         /* %V -> quoted '[...]' vector text literal */
+
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_VECTOR);
 
 #ifdef OCI_CHARSET_WIDE
         /* the formatted literal relies on OCIVectorToText, whose output is

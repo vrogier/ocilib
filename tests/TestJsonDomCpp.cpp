@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 
 #include <cstring>
 
@@ -18,6 +19,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json json(con);
         json.SetMutable(true);
@@ -49,6 +51,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json json = MakeJson(con, OTEXT("{\"name\":\"test\",\"items\":[1,2,3]}"));
         json.SetMutable(true);
@@ -85,6 +88,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json json = MakeJson(con, OTEXT("{\"name\":\"test\",\"items\":[1,2,3]}"));
         json.SetMutable(true);
@@ -244,6 +248,7 @@ namespace TestCppApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             con = Connection(GetEnvironmentCpp(), DBS, USR, PWD);
             json = Json(con);
             json.SetMutable(true);
@@ -254,6 +259,7 @@ namespace TestCppApi
 
     TEST_P(TestJsonDomCppCreate, CreateSetGetAndAttach_RoundTripsValue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         GetParam().run(GetEnvironmentCpp(), json, root);
 
         EXPECT_EQ(1u, root.GetFieldCount());
@@ -272,6 +278,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppCreate, CreateGenericNodeWithStringType_ReturnsStringNode)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode generic = json.CreateNode(Json::NodeString);
 
         EXPECT_EQ(Json::NodeString, generic.GetType());
@@ -283,6 +290,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppCreate, ArrayOpsOnCreatedArray_ManageItems)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode arr = json.CreateArray();
         EXPECT_EQ(Json::NodeArray, arr.GetType());
         Number n1(GetEnvironmentCpp(), 1.0);
@@ -305,6 +313,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppCreate, SetRootThenGetRoot_ReturnsAttachedDoc)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         json.SetRoot(root);
 
         EXPECT_NE(JsonNode(), json.GetRoot());
@@ -322,6 +331,7 @@ namespace TestCppApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             con = Connection(GetEnvironmentCpp(), DBS, USR, PWD);
             json = Json(con);
             json.SetMutable(true);
@@ -331,6 +341,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppOps, SetFieldOnObject_AddsFieldWithValue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode obj = json.CreateObject();
         JsonNode name = json.CreateString(OTEXT("test"));
 
@@ -342,6 +353,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppOps, RemoveFieldOnObject_RemovesField)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode obj = json.CreateObject();
         obj.SetField(OTEXT("name"), json.CreateString(OTEXT("test")));
 
@@ -352,6 +364,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppOps, AppendItemOnArray_AddsItemAtEnd)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode arr = json.CreateArray();
         arr.AppendItem(json.CreateString(OTEXT("one")));
 
@@ -362,6 +375,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppOps, InsertItemOnArray_InsertsItemAtIndex)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode arr = json.CreateArray();
         arr.AppendItem(json.CreateString(OTEXT("one")));
         arr.AppendItem(json.CreateString(OTEXT("three")));
@@ -374,6 +388,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppOps, RemoveItemOnArray_RemovesItemAtIndex)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode arr = json.CreateArray();
         arr.AppendItem(json.CreateString(OTEXT("one")));
         arr.AppendItem(json.CreateString(OTEXT("two")));
@@ -387,6 +402,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppOps, SetNumericIntOnNumberNode_RoundTripsValue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode num = json.CreateNode(Json::NodeNumber);
 
         num.SetNumeric(Int32(-7));
@@ -396,6 +412,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppOps, SetNumericDoubleOnNumberNode_RoundTripsValue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode num = json.CreateNode(Json::NodeNumber);
 
         num.SetNumeric(2.5);
@@ -405,6 +422,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppOps, ClearOnArray_RemovesAllItems)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode arr = json.CreateArray();
         arr.AppendItem(json.CreateString(OTEXT("one")));
 
@@ -415,6 +433,7 @@ namespace TestCppApi
 
     TEST_F(TestJsonDomCppOps, ClearOnObject_RemovesAllFields)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         JsonNode obj = json.CreateObject();
         obj.SetField(OTEXT("name"), json.CreateString(OTEXT("test")));
 
@@ -425,8 +444,15 @@ namespace TestCppApi
 
     TEST(TestJsonDomCpp, ValidateDocumentAgainstSchema_EnforcesSchema)
     {
+        /* OCIJsonSchemaValidate is gated at 23.4 in the library, above the
+           21.1 JSON baseline */
+        SKIP_UNLESS(GetTestCaps().client_ver >= OCI_VER_MAKE(23, 4, 0) &&
+                    GetTestCaps().server_ver >= OCI_VER_MAKE(23, 4, 0),
+                    "OCIJsonSchemaValidate requires client+server >= 23.4");
+
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json schema(con);
         schema.LoadText(OTEXT("{\"type\":\"object\",\"properties\":{\"a\":{\"type\":\"number\"}},\"required\":[\"a\"]}"));

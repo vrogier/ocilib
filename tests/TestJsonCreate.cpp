@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 #include <cstring>
@@ -9,6 +10,7 @@ namespace TestCApi
 {
     TEST(TestJsonCreate, JsonCreate_ReturnsJson)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -25,6 +27,7 @@ namespace TestCApi
     }
     TEST(TestJsonCreate, JsonArrayCreate_ReturnsJsonArray)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -47,16 +50,40 @@ namespace TestCApi
     {
         /* JSON text parse client API is 21.1+ */
 
-        const auto env = GetSpecificEnvironment(nullptr, OCI_18_1);
+        const auto env = GetSpecificEnvironment(nullptr, OCI_12_1);
         ASSERT_NE(nullptr, env);
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
         ASSERT_NE(nullptr, conn);
 
         ASSERT_EQ(nullptr, OCI_JsonCreate(conn));
-        ASSERT_NE(nullptr, OCI_GetLastError());
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
 
         ASSERT_TRUE(OCI_ConnectionFree(conn));
         ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+    /* same contract through the real server-version path — runs only on
+       servers older than 21.1 */
+
+    TEST(TestJsonCreate, Create_RealServer_NotAvailable)
+    {
+        SKIP_IF_FEATURE_SUPPORTED(OCI_FEATURE_JSON);
+
+        auto env = GetEnvironment(nullptr);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        ASSERT_EQ(nullptr, OCI_JsonCreate(conn));
+
+        const auto err = OCI_GetLastError();
+        ASSERT_NE(nullptr, err);
+        EXPECT_EQ(OCI_ERR_NOT_AVAILABLE, OCI_ErrorGetCode(err));
+
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
 

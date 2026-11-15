@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 
 #include <cstring>
 
@@ -11,6 +12,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json json(con);
         json.SetMutable(true);
@@ -39,6 +41,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json json(con);
         json.SetMutable(true);
@@ -56,6 +59,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json json(con);
         json.SetMutable(true);

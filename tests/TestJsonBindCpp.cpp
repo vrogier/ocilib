@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 
 #include <cstring>
 
@@ -20,6 +21,7 @@ namespace TestCppApi
 
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json json = MakeJson(con, OTEXT("{\"cpp\":true}"));
 
@@ -52,6 +54,7 @@ namespace TestCppApi
 
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         static std::vector<OCI_Int32> ids = { 1, 2 };
         static std::vector<Json> jsons;
@@ -76,6 +79,7 @@ namespace TestCppApi
 
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json json = MakeJson(con, OTEXT("{\"updated\":true}"));
 

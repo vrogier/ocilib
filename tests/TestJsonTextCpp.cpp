@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 
 #include <cstring>
 
@@ -18,6 +19,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json json = MakeJson(con, OTEXT("{\"name\":\"test\",\"value\":42}"));
         String text = json.ToString();
@@ -40,6 +42,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json src = MakeJson(con, OTEXT("[1,2,3]"));
         Raw bin = src.ToBinary();
@@ -53,6 +56,7 @@ namespace TestCppApi
     {
         Environment& env = GetEnvironmentCpp();
         Connection con(env, DBS, USR, PWD);
+        SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_JSON);
 
         Json src = MakeJson(con, OTEXT("{\"clone\":true}"));
         Json dest(con);

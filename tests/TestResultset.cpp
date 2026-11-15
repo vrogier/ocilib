@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 namespace TestCApi
@@ -360,14 +361,22 @@ namespace TestCApi
         const auto stmt = OCI_StatementCreate(conn);
         ASSERT_NE(nullptr, stmt);
 
-        ASSERT_TRUE(OCI_StatementExecute(stmt,
-            OTEXT("select 1 as num_col, 'txt' as txt_col, hextoraw('AABB') as raw_col, "
-                  "sysdate as date_col, cursor(select 1 from dual) as cur_col, "
-                  "to_clob('x') as lob_col, bfilename('FAKE_DIR', 'f.txt') as file_col, "
-                  "systimestamp as ts_col, interval '1 02:03:04' day to second as iv_col, "
-                  "value(t) as obj_col, TestRsStructColl(1, 2) as coll_col, ref(t) as ref_col, "
-                  "xmltype('<a>1</a>') as xml_col, json('{\"k\":1}') as json_col "
-                  "from dual, TestRsStruct t")));
+        /* JSON requires client+server >= 21.1 — substitute a plain string
+           column so OCI_ResultsetGetStruct still sees 14 populated fields */
+
+        const auto hasJson = FeatureAvailable(env, conn, OCI_FEATURE_JSON);
+
+        std::basic_ostringstream<otext> sql;
+        sql << OTEXT("select 1 as num_col, 'txt' as txt_col, hextoraw('AABB') as raw_col, "
+                     "sysdate as date_col, cursor(select 1 from dual) as cur_col, "
+                     "to_clob('x') as lob_col, bfilename('FAKE_DIR', 'f.txt') as file_col, "
+                     "systimestamp as ts_col, interval '1 02:03:04' day to second as iv_col, "
+                     "value(t) as obj_col, TestRsStructColl(1, 2) as coll_col, ref(t) as ref_col, "
+                     "xmltype('<a>1</a>') as xml_col, ")
+            << (hasJson ? OTEXT("json('{\"k\":1}')") : OTEXT("'j'"))
+            << OTEXT(" as json_col from dual, TestRsStruct t");
+
+        ASSERT_TRUE(OCI_StatementExecute(stmt, sql.str().c_str()));
 
         const auto rs = OCI_StatementGetResultset(stmt);
         ASSERT_NE(nullptr, rs);
@@ -429,18 +438,28 @@ namespace TestCApi
             conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
             ASSERT_NE(nullptr, conn);
 
+            /* VECTOR requires client+server >= 23.4 and JSON >= 21.1 —
+               keep the column positions with NULL placeholders when
+               unavailable */
+            hasVector = FeatureAvailable(env, conn, OCI_FEATURE_VECTOR);
+            hasJson   = FeatureAvailable(env, conn, OCI_FEATURE_JSON);
+
             stmt = OCI_StatementCreate(conn);
             ASSERT_NE(nullptr, stmt);
 
-            ASSERT_TRUE(OCI_StatementExecute(stmt,
-                OTEXT("select rowid as rid_col, 42 as num_col, sysdate as date_col, "
-                      "systimestamp as ts_col, interval '1 02:03:04' day to second as iv_col, "
-                      "hextoraw('AABB') as raw_col, ref(t) as ref_col, "
-                      "to_blob(hextoraw('0102')) as blob_col, to_clob('clobval') as clob_col, "
-                      "bfilename('FAKE_DIR', 'f.txt') as file_col, "
-                      "value(t) as obj_col, TestRsCvtColl(1, 2) as coll_col, "
-                      "vector('[1.0,2.0,3.0]') as vec_col, json('{\"k\":1}') as json_col "
-                      "from TestRsCvt t")));
+            std::basic_ostringstream<otext> sql;
+            sql << OTEXT("select rowid as rid_col, 42 as num_col, sysdate as date_col, "
+                         "systimestamp as ts_col, interval '1 02:03:04' day to second as iv_col, "
+                         "hextoraw('AABB') as raw_col, ref(t) as ref_col, "
+                         "to_blob(hextoraw('0102')) as blob_col, to_clob('clobval') as clob_col, "
+                         "bfilename('FAKE_DIR', 'f.txt') as file_col, "
+                         "value(t) as obj_col, TestRsCvtColl(1, 2) as coll_col, ")
+                << (hasVector ? OTEXT("vector('[1.0,2.0,3.0]')") : OTEXT("cast(null as varchar2(1))"))
+                << OTEXT(" as vec_col, ")
+                << (hasJson ? OTEXT("json('{\"k\":1}')") : OTEXT("cast(null as varchar2(1))"))
+                << OTEXT(" as json_col from TestRsCvt t");
+
+            ASSERT_TRUE(OCI_StatementExecute(stmt, sql.str().c_str()));
 
             rs = OCI_StatementGetResultset(stmt);
             ASSERT_NE(nullptr, rs);
@@ -456,10 +475,25 @@ namespace TestCApi
         OCI_Connection* conn{ nullptr };
         OCI_Statement*  stmt{ nullptr };
         OCI_Resultset*  rs{ nullptr };
+        bool            hasVector{ false };
+        bool            hasJson{ false };
     };
 
     TEST_P(TestResultsetStringCvt, GetStringOnEachColumnType_ConvertsToString)
     {
+        /* vec_col (index 12) / json_col (index 13) are NULL placeholders
+           when the feature is unavailable */
+        if (12u == GetParam() && !hasVector)
+        {
+            SkipTest("unsupported client/server version: OCI_FEATURE_VECTOR");
+            return;
+        }
+        if (13u == GetParam() && !hasJson)
+        {
+            SkipTest("unsupported client/server version: OCI_FEATURE_JSON");
+            return;
+        }
+
         ASSERT_NE(nullptr, OCI_ResultsetGetString(rs, GetParam()));
     }
 
@@ -580,16 +614,24 @@ namespace TestCApi
             conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
             ASSERT_NE(nullptr, conn);
 
+            /* VECTOR requires client+server >= 23.4 — keep the column
+               position with a NULL placeholder when it is unavailable */
+            hasVector = FeatureAvailable(env, conn, OCI_FEATURE_VECTOR);
+
             stmt = OCI_StatementCreate(conn);
             ASSERT_NE(nullptr, stmt);
 
-            ASSERT_TRUE(OCI_StatementExecute(stmt,
-                OTEXT("select 42 as num_col, 'sized' as txt_col, "
-                      "value(t) as obj_col, TestRsByNameColl(1, 2) as coll_col, ref(t) as ref_col, "
-                      "xmltype('<a>1</a>') as xml_col, vector('[1.0,2.0]') as vec_col, "
-                      "cursor(select 1 from dual) as cur_col, "
-                      "bfilename('FAKE_DIR', 'f.txt') as file_col "
-                      "from dual, TestRsByName t")));
+            std::basic_ostringstream<otext> sql;
+            sql << OTEXT("select 42 as num_col, 'sized' as txt_col, "
+                         "value(t) as obj_col, TestRsByNameColl(1, 2) as coll_col, ref(t) as ref_col, "
+                         "xmltype('<a>1</a>') as xml_col, ")
+                << (hasVector ? OTEXT("vector('[1.0,2.0]')") : OTEXT("cast(null as varchar2(1))"))
+                << OTEXT(" as vec_col, "
+                         "cursor(select 1 from dual) as cur_col, "
+                         "bfilename('FAKE_DIR', 'f.txt') as file_col "
+                         "from dual, TestRsByName t");
+
+            ASSERT_TRUE(OCI_StatementExecute(stmt, sql.str().c_str()));
 
             rs = OCI_StatementGetResultset(stmt);
             ASSERT_NE(nullptr, rs);
@@ -605,6 +647,7 @@ namespace TestCApi
         OCI_Connection* conn{ nullptr };
         OCI_Statement*  stmt{ nullptr };
         OCI_Resultset*  rs{ nullptr };
+        bool            hasVector{ false };
     };
 
     TEST_F(TestResultsetByName, GetUnsignedBigIntByIndex_ReturnsValue)
@@ -639,6 +682,8 @@ namespace TestCApi
 
     TEST_F(TestResultsetByName, GetVectorByName_ReturnsVector)
     {
+        SKIP_UNLESS(hasVector, "unsupported client/server version: OCI_FEATURE_VECTOR");
+
         ASSERT_NE(nullptr, OCI_ResultsetGetVectorByName(rs, OTEXT("VEC_COL")));
     }
 

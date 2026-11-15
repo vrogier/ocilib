@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 #include "NullArgs.h"
 
 #include <cstring>
@@ -131,6 +132,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
             ASSERT_NE(nullptr, conn);
             json = OCI_JsonCreate(conn);
@@ -148,6 +150,7 @@ namespace TestCApi
 
     TEST_P(TestJntCreate, CreateNode_ReportsExpectedType)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         GetParam().run(GetEnvironment(nullptr), json);
     }
 
@@ -185,6 +188,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             conn = OCI_ConnectionCreate(GetEnvironment(nullptr), DBS, USR, PWD, OCI_SESSION_DEFAULT);
             ASSERT_NE(nullptr, conn);
             json = OCI_JsonCreate(conn);
@@ -202,6 +206,7 @@ namespace TestCApi
 
     TEST_P(TestJntTsTz, CreateTimestampNode_RoundTripsDateTimeAndOffset)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         const auto& p = GetParam();
         auto env = GetEnvironment(nullptr);
 
@@ -241,6 +246,7 @@ namespace TestCApi
             TsTzCase{ "Negative", 2024, 6, 20, 23, 45, OTEXT("-05:30"), -5, -30 }));
     TEST(TestJsonNodeType, GetTimestampTzOnFetchedField_ReturnsTimestamp)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -284,6 +290,7 @@ namespace TestCApi
     }
     TEST(TestJsonNodeType, GetIntervalDaySecondOnNode_ReturnsInterval)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -323,6 +330,7 @@ namespace TestCApi
     }
     TEST(TestJsonNodeType, GetIntervalDaySecondOnFetchedField_ReturnsInterval)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -361,6 +369,7 @@ namespace TestCApi
     }
     TEST(TestJsonNodeType, CreateGenericTypedNodes_ReturnsTypedNodes)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -394,6 +403,7 @@ namespace TestCApi
     }
     TEST(TestJsonNodeType, GetStringOnSameNodeTwice_ReusesBuffer)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 
@@ -535,6 +545,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
             conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -554,6 +565,7 @@ namespace TestCApi
 
     TEST_P(TestJsonScalarGet, CreateThenGet_RoundTripsValue)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         GetParam().run(env, json);
     }
 
@@ -665,6 +677,7 @@ namespace TestCApi
 
         void SetUp() override
         {
+        if (!FeatureAvailableCaps(OCI_FEATURE_JSON)) return;
             env = GetEnvironment(nullptr);
             ASSERT_NE(nullptr, env);
             conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -684,6 +697,7 @@ namespace TestCApi
 
     TEST_P(TestJsonScalarType, CreatedNode_ReportsDeclaredType)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         GetParam().run(env, json);
     }
 
@@ -699,6 +713,7 @@ namespace TestCApi
 
     TEST_F(TestJsonScalarType, SetBooleanOnNumberNode_IsRejectedAndTypeUnchanged)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         const auto n = OCI_JsonNodeCreate(json, OCI_JNT_NUMBER);
         ASSERT_NE(nullptr, n);
 
@@ -710,6 +725,7 @@ namespace TestCApi
 
     TEST_F(TestJsonScalarType, SetNullOnNumberNode_ConvertsToNull)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         const auto n = OCI_JsonNodeCreate(json, OCI_JNT_NUMBER);
         ASSERT_NE(nullptr, n);
 

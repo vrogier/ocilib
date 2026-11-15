@@ -1,4 +1,5 @@
 #include "ocilib_tests.h"
+#include "TestFeatures.h"
 
 #include <cstring>
 
@@ -47,6 +48,7 @@ namespace TestCApi
 {
     TEST(TestJsonBind, BindJsonOnInsertThenFetch_ReturnsJson)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         ExecDML(OTEXT("CREATE TABLE TestJson_CApiBind (id NUMBER, value JSON)"));
 
         auto env = GetEnvironment(nullptr);
@@ -92,6 +94,7 @@ namespace TestCApi
     }
     TEST(TestJsonBind, BindJsonArray_InsertsRows)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         ExecDML(OTEXT("CREATE TABLE TestJson_CApiBindArray (id NUMBER, value JSON)"));
 
         auto env = GetEnvironment(nullptr);
@@ -123,6 +126,7 @@ namespace TestCApi
     }
     TEST(TestJsonBind, RegisterJsonReturningInto_ReturnsJson)
     {
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_JSON);
         ExecDML(OTEXT("CREATE TABLE TestJson_CApiRegister (id NUMBER, value JSON)"));
         ExecDML(OTEXT("INSERT INTO TestJson_CApiRegister VALUES (1, '{\"x\":1}')"));
 
