@@ -34,7 +34,7 @@ Each family links to the tutorial page that teaches it.
 
 ## `OCI_Column* — Column` → [column-metadata](column-metadata.html)
 
-`OCI_ColumnGetCharUsed`, `OCI_ColumnGetCharsetForm`, `OCI_ColumnGetCollationID`, `OCI_ColumnGetDimension`, `OCI_ColumnGetFractionalPrecision`, `OCI_ColumnGetFullSqlType`, `OCI_ColumnGetLeadingPrecision`, `OCI_ColumnGetName`, `OCI_ColumnGetNullable`, `OCI_ColumnGetPrecision`, `OCI_ColumnGetPropertyFlags`, `OCI_ColumnGetSqlType`, `OCI_ColumnGetScale`, `OCI_ColumnGetSize`, `OCI_ColumnGetSubType`, `OCI_ColumnGetType`, `OCI_ColumnGetTypeInfo`, `OCI_ColumnHasJsonSchema`
+`OCI_ColumnGetCharUsed`, `OCI_ColumnGetCharsetForm`, `OCI_ColumnGetCollationID`, `OCI_ColumnGetDimension`, `OCI_ColumnGetFractionalPrecision`, `OCI_ColumnGetFullSqlType`, `OCI_ColumnGetLeadingPrecision`, `OCI_ColumnGetName`, `OCI_ColumnGetNullable`, `OCI_ColumnGetPrecision`, `OCI_ColumnGetPropertyFlags`, `OCI_ColumnGetSqlType`, `OCI_ColumnGetScale`, `OCI_ColumnGetSize`, `OCI_ColumnGetSubType`, `OCI_ColumnGetType`, `OCI_ColumnGetTypeInfo`, `OCI_ColumnHasJsonSchema`, `OCI_ColumnIsVectorSparse`
 
 ## `OCI_ConnectionCommit*`
 
@@ -258,7 +258,7 @@ Each family links to the tutorial page that teaches it.
 
 ## `OCI_Vector* — Vector` → [vectors](vectors.html)
 
-`OCI_VectorArrayCreate`, `OCI_VectorArrayFree`, `OCI_VectorCreate`, `OCI_VectorFree`, `OCI_VectorFromText`, `OCI_VectorGetInfo`, `OCI_VectorGetValues`, `OCI_VectorSetValues`, `OCI_VectorToText`
+`OCI_VectorArrayCreate`, `OCI_VectorArrayFree`, `OCI_VectorCreate`, `OCI_VectorFree`, `OCI_VectorFromText`, `OCI_VectorGetInfo`, `OCI_VectorGetSparseValues`, `OCI_VectorGetValues`, `OCI_VectorIsSparse`, `OCI_VectorSetSparseValues`, `OCI_VectorSetValues`, `OCI_VectorToText`
 
 ## `OCI_XmlType* — XmlType` → [xmltype](xmltype.html)
 

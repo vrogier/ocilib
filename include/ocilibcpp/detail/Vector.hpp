@@ -82,6 +82,34 @@ namespace ocilib
         return values;
     }
 
+    inline bool Vector::IsSparse()
+    {
+        return (core::Check(OCI_VectorIsSparse(*this)) == TRUE);
+    }
+
+    template<class T, core::SupportedVectorNumericT<T>*>
+    void Vector::SetSparse(const std::vector<UInt32>& indices, const std::vector<T>& values, UInt32 dimensions)
+    {
+        core::Check(OCI_VectorSetSparseValues(*this, support::VectorFormatResolver<T>::Value, dimensions,
+                                              static_cast<UInt32>(values.size()),
+                                              const_cast<UInt32*>(indices.data()),
+                                              const_cast<T*>(values.data())));
+    }
+
+    template<class T, core::SupportedVectorNumericT<T>*>
+    void Vector::GetSparse(std::vector<UInt32>& indices, std::vector<T>& values)
+    {
+        UInt32 count = GetDimensionCount();
+
+        indices.resize(static_cast<Size>(count));
+        values.resize(static_cast<Size>(count));
+
+        core::Check(OCI_VectorGetSparseValues(*this, indices.data(), values.data(), &count));
+
+        indices.resize(static_cast<Size>(count));
+        values.resize(static_cast<Size>(count));
+    }
+
     inline UInt32 Vector::GetDimensionCount()
     {
         UInt32 dimensions{};

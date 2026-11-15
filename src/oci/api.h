@@ -2679,6 +2679,32 @@ typedef sword(*OCIVECTORFROMTEXT)
     ub4 mode
 );
 
+/* API introduced in 23.7 */
+
+typedef sword(*OCIVECTORFROMSPARSEARRAY)
+(
+    OCIVector *vectord,
+    OCIError *errhp,
+    ub1 vformat,
+    ub4 vdim,
+    ub4 indices,
+    void *indarray,
+    void *vecarray,
+    ub4 mode
+);
+
+typedef sword(*OCIVECTORTOSPARSEARRAY)
+(
+    OCIVector *vectord,
+    OCIError *errhp,
+    ub1 vformat,
+    ub4 *vdim,
+    ub4 *indices,
+    void *indarray,
+    void *vecarray,
+    ub4 mode
+);
+
 typedef sword(*OCIJSONSCHEMAVALIDATE)
 (
     OCISvcCtx *svchp,
@@ -3036,6 +3062,8 @@ typedef struct OCI_Symbols
     OCIVECTORFROMARRAY                       OCIVectorFromArray;
     OCIVECTORTOTEXT                          OCIVectorToText;
     OCIVECTORFROMTEXT                        OCIVectorFromText;
+    OCIVECTORFROMSPARSEARRAY                 OCIVectorFromSparseArray;
+    OCIVECTORTOSPARSEARRAY                   OCIVectorToSparseArray;
     OCIJSONSCHEMAVALIDATE                    OCIJsonSchemaValidate;
 
     OCIJSONTEXTBUFFERPARSE                   OCIJsonTextBufferParse;

@@ -139,7 +139,6 @@ String ToUpper(String str)
 
 int main(OCI_Int32 argc, char** argv)
 {
-    std::fprintf(stderr, "DBG main entered\n");
     ::testing::InitGoogleTest(&argc, argv);
 
     if (!LoadTestConfig())

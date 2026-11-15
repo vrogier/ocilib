@@ -109,6 +109,11 @@ OCI_SYM_LOCAL OCI_ColumnPropFlags OcilibColumnGetPropertyFlags
     OCI_Column* col
 );
 
+OCI_SYM_LOCAL OCI_Boolean OcilibColumnIsVectorSparse
+(
+    OCI_Column* col
+);
+
 OCI_SYM_LOCAL OCI_CollationID OcilibColumnGetCollationID
 (
     OCI_Column* col

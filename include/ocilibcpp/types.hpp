@@ -5110,6 +5110,8 @@ namespace ocilib
         {
             /** Flexible format */
             Flex = OCI_VEC_FLEX,
+            /** 16-bit floating point format (descriptor only, not usable for columns) */
+            Float16 = OCI_VEC_FLOAT16,
             /** 8-bit integer format */
             Int8 = OCI_VEC_INT8,
             /** 32-bit floating point format */
@@ -5204,6 +5206,60 @@ namespace ocilib
          */
         template<class T, core::SupportedVectorNumericT<T>* = nullptr>
         [[nodiscard]] std::vector<T> Get();
+
+        /**
+         * @brief
+         * Returns whether the vector is stored in sparse format
+         *
+         * @note
+         * Sparse vectors are supported from Oracle 23ai RU 23.7.
+         * For earlier versions, it always returns false.
+         *
+         */
+        [[nodiscard]] bool IsSparse();
+
+        /**
+         * @brief
+         * Set the sparse Vector content from dimension indices and non-zero values
+         *
+         * @param indices    - 1-based dimension positions of the non-zero values
+         * @param values     - non-zero values at those positions
+         * @param dimensions - total number of dimensions of the vector
+         *
+         * @note
+         * Sparse vectors are supported from Oracle 23ai RU 23.7.
+         *
+         * @warning
+         * T Type must match the format of the Vector content :
+         * - VectorFormat::Int8 => char
+         * - VectorFormat::Float32 => Float
+         * - VectorFormat::Float64 => Double
+         * - VectorFormat::Binary => unsigned char
+         *
+         */
+        template<class T, core::SupportedVectorNumericT<T>* = nullptr>
+        void SetSparse(const std::vector<UInt32>& indices, const std::vector<T>& values, UInt32 dimensions);
+
+        /**
+         * @brief
+         * Fills indices and values with the sparse Vector content
+         *
+         * @param indices - receives the 1-based dimension positions of the non-zero values
+         * @param values  - receives the non-zero values at those positions
+         *
+         * @note
+         * Sparse vectors are supported from Oracle 23ai RU 23.7.
+         *
+         * @warning
+         * T Type must match the format of the Vector current content :
+         * - VectorFormat::Int8 => char
+         * - VectorFormat::Float32 => Float
+         * - VectorFormat::Float64 => Double
+         * - VectorFormat::Binary => unsigned char
+         *
+         */
+        template<class T, core::SupportedVectorNumericT<T>* = nullptr>
+        void GetSparse(std::vector<UInt32>& indices, std::vector<T>& values);
 
         /**
         * @brief
@@ -8665,6 +8721,17 @@ namespace ocilib
         *
         */
         [[nodiscard]] bool HasJsonSchema() const;
+
+        /**
+        * @brief
+        * Return true if the column is a vector column declared with SPARSE storage
+        *
+        * @note
+        * Sparse vector storage requires Oracle 23ai RU 23.7.
+        * For earlier versions and non-vector columns, it always returns false.
+        *
+        */
+        [[nodiscard]] bool IsVectorSparse() const;
 
         /**
         * @brief

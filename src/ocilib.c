@@ -626,6 +626,14 @@ OCI_Boolean OCI_API OCI_ColumnHasJsonSchema
     CALL_IMPL(OcilibColumnHasJsonSchema, col);
 }
 
+OCI_Boolean OCI_API OCI_ColumnIsVectorSparse
+(
+    OCI_Column * col
+)
+{
+    CALL_IMPL(OcilibColumnIsVectorSparse, col);
+}
+
 OCI_SubType OCI_API OCI_ColumnGetSubType
 (
     OCI_Column* col
@@ -4763,6 +4771,38 @@ OCI_Boolean OCI_API OCI_VectorToText
 )
 {
     CALL_IMPL(OcilibVectorToString, vect, size, str);
+}
+
+OCI_Boolean OCI_API OCI_VectorIsSparse
+(
+    OCI_Vector *vect
+)
+{
+    CALL_IMPL(OcilibVectorIsSparse, vect);
+}
+
+OCI_Boolean OCI_API OCI_VectorGetSparseValues
+(
+    OCI_Vector *vect,
+    OCI_UInt32 *indices,
+    void       *values,
+    OCI_UInt32 *count
+)
+{
+    CALL_IMPL(OcilibVectorGetSparseValues, vect, indices, values, count);
+}
+
+OCI_Boolean OCI_API OCI_VectorSetSparseValues
+(
+    OCI_Vector      *vect,
+    OCI_VectorFormat format,
+    OCI_UInt32       dimensions,
+    OCI_UInt32       count,
+    OCI_UInt32      *indices,
+    void            *values
+)
+{
+    CALL_IMPL(OcilibVectorSetSparseValues, vect, format, dimensions, count, indices, values);
 }
 
 /* --------------------------------------------------------------------------------------------- *

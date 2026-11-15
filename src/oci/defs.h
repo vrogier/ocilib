@@ -460,6 +460,7 @@
 #define OCI_ATTR_VECTOR_DIMENSION          695   /* Dimension of vector type */
 #define OCI_ATTR_VECTOR_DATA_FORMAT        696   /* Format of data in vector */
 #define OCI_ATTR_VECTOR_PROPERTY           697          /* vector properties */
+#define OCI_ATTR_VECTOR_SPARSE_DIMENSION   717  /* Sparse dimension of vector */
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */
 
@@ -1226,6 +1227,7 @@ typedef uword OCIObjectMarkStatus;
 
 /*-------------- Flags coresponding to the vector column properties ---------*/
 #define OCI_ATTR_VECTOR_COL_PROPERTY_IS_FLEX        0x01
+#define OCI_ATTR_VECTOR_COL_PROPERTY_IS_SPARSE      0x02
 
 /*-------------- storage type coresponding to the vector column  ------------*/
 #define OCI_ATTR_VECTOR_FORMAT_FLEX         0
@@ -1234,6 +1236,9 @@ typedef uword OCIObjectMarkStatus;
 #define OCI_ATTR_VECTOR_FORMAT_FLOAT64      3
 #define OCI_ATTR_VECTOR_FORMAT_INT8         4
 #define OCI_ATTR_VECTOR_FORMAT_BINARY       5
+
+/*-------------- mode flag for OCIVector sparse APIs (Oracle 23.7) ----------*/
+#define OCI_VECTOR_SPARSE_CONTIGUOUS        0x01
 
 /*-----------------Macros to get the various version number components------ */
 

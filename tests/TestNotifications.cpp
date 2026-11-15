@@ -21,101 +21,119 @@ namespace TestCApi
         OCI_UInt32 Operation;
     };
 
-    static std::array< Event, SingleDDL1ExpectedEventsCount> SingleDDL1ExpectedEvents
+    /* deferred to first use: DBSNAME/USR are populated by LoadTestConfig() in main(),
+       after dynamic initializers have run */
+    static const std::array< Event, SingleDDL1ExpectedEventsCount>& SingleDDL1ExpectedEvents()
     {
-        Event
+        static const std::array< Event, SingleDDL1ExpectedEventsCount> events
         {
-            OTEXT("sub-1"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableSingleDDL1"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_ALTER
-        }
-    };
-
-    static std::array< Event, SingleDDL2ExpectedEventsCount> SingleDDL2ExpectedEvents
-    {
-        Event
-        {
-            OTEXT("sub-2"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableSingleDDL2"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_ALTER
-        },
-        Event
-        {
-            OTEXT("sub-2"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableSingleDDL2"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_ALTER
-        }
-    };
-
-    static std::array< Event, MultipleDDLExpectedEventsCount> MultipleDDLExpectedEvents
-    {
-        Event
-        {
-            OTEXT("sub-3"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableMultipleDDLTable1"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_ALTER
-        },
-        Event
-        {
-            OTEXT("sub-3"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableMultipleDDLTable2"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_ALTER
-        }
-    };
-
-    static std::array< Event, MultipleDMLExpectedEventsCount> MultipleDMLExpectedEvents
-    {
-        Event
-        {
-            OTEXT("sub-4"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableMultipleDML"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_INSERT
-        },
-        Event
-        {
-            OTEXT("sub-4"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableMultipleDML"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_INSERT
-        },
-        Event
-        {
-            OTEXT("sub-4"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableMultipleDML"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_UPDATE
-        },
-        Event
-        {
-            OTEXT("sub-4"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableMultipleDML"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_DELETE
-        },
             Event
+            {
+                OTEXT("sub-1"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableSingleDDL1"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_ALTER
+            }
+        };
+        return events;
+    }
+
+    static const std::array< Event, SingleDDL2ExpectedEventsCount>& SingleDDL2ExpectedEvents()
+    {
+        static const std::array< Event, SingleDDL2ExpectedEventsCount> events
         {
-            OTEXT("sub-4"),
-            DBSNAME,
-            String(USR) + OTEXT(".TestTableMultipleDML"),
-            OCI_ENT_OBJECT_CHANGED,
-            OCI_ONT_DELETE
-        }
-    };
+            Event
+            {
+                OTEXT("sub-2"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableSingleDDL2"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_ALTER
+            },
+            Event
+            {
+                OTEXT("sub-2"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableSingleDDL2"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_ALTER
+            }
+        };
+        return events;
+    }
+
+    static const std::array< Event, MultipleDDLExpectedEventsCount>& MultipleDDLExpectedEvents()
+    {
+        static const std::array< Event, MultipleDDLExpectedEventsCount> events
+        {
+            Event
+            {
+                OTEXT("sub-3"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableMultipleDDLTable1"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_ALTER
+            },
+            Event
+            {
+                OTEXT("sub-3"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableMultipleDDLTable2"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_ALTER
+            }
+        };
+        return events;
+    }
+
+    static const std::array< Event, MultipleDMLExpectedEventsCount>& MultipleDMLExpectedEvents()
+    {
+        static const std::array< Event, MultipleDMLExpectedEventsCount> events
+        {
+            Event
+            {
+                OTEXT("sub-4"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableMultipleDML"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_INSERT
+            },
+            Event
+            {
+                OTEXT("sub-4"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableMultipleDML"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_INSERT
+            },
+            Event
+            {
+                OTEXT("sub-4"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableMultipleDML"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_UPDATE
+            },
+            Event
+            {
+                OTEXT("sub-4"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableMultipleDML"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_DELETE
+            },
+            Event
+            {
+                OTEXT("sub-4"),
+                DBSNAME,
+                String(USR) + OTEXT(".TestTableMultipleDML"),
+                OCI_ENT_OBJECT_CHANGED,
+                OCI_ONT_DELETE
+            }
+        };
+        return events;
+    }
 
     static void CheckEvent(const Event& evt, OCI_Event* event)
     {
@@ -131,18 +149,18 @@ namespace TestCApi
 
     static void SingleDDL1EventEventHandler(OCI_Event* event)
     {
-        EXPECT_TRUE(SingleDDL1EventCount < SingleDDL1ExpectedEvents.size());
+        EXPECT_TRUE(SingleDDL1EventCount < SingleDDL1ExpectedEvents().size());
 
-        CheckEvent(SingleDDL1ExpectedEvents[SingleDDL1EventCount], event);
+        CheckEvent(SingleDDL1ExpectedEvents()[SingleDDL1EventCount], event);
 
         SingleDDL1EventCount++;
     }
 
     static void SingleDDL2EventEventHandler(OCI_Event* event)
     {
-        EXPECT_TRUE(SingleDDL2EventCount < SingleDDL2ExpectedEvents.size());
+        EXPECT_TRUE(SingleDDL2EventCount < SingleDDL2ExpectedEvents().size());
 
-        CheckEvent(SingleDDL2ExpectedEvents[SingleDDL2EventCount], event);
+        CheckEvent(SingleDDL2ExpectedEvents()[SingleDDL2EventCount], event);
 
         SingleDDL2EventCount++;
     }
@@ -150,18 +168,18 @@ namespace TestCApi
 
     static void MultipleDDLEventEventHandler(OCI_Event* event)
     {
-        EXPECT_TRUE(MultipleDDLEventCount < MultipleDDLExpectedEvents.size());
+        EXPECT_TRUE(MultipleDDLEventCount < MultipleDDLExpectedEvents().size());
 
-        CheckEvent(MultipleDDLExpectedEvents[MultipleDDLEventCount], event);
+        CheckEvent(MultipleDDLExpectedEvents()[MultipleDDLEventCount], event);
 
         MultipleDDLEventCount++;
     }
 
     static void MultipleDMLEventEventHandler(OCI_Event* event)
     {
-        EXPECT_TRUE(MultipleDMLEventCount < MultipleDMLExpectedEvents.size());
+        EXPECT_TRUE(MultipleDMLEventCount < MultipleDMLExpectedEvents().size());
 
-        CheckEvent(MultipleDMLExpectedEvents[MultipleDMLEventCount], event);
+        CheckEvent(MultipleDMLExpectedEvents()[MultipleDMLEventCount], event);
 
         MultipleDMLEventCount++;
     }
@@ -191,7 +209,7 @@ namespace TestCApi
 
         Sleep(1000);
 
-        ASSERT_EQ(SingleDDL1ExpectedEvents.size(), SingleDDL1EventCount);
+        ASSERT_EQ(SingleDDL1ExpectedEvents().size(), SingleDDL1EventCount);
 
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -226,7 +244,7 @@ namespace TestCApi
 
         Sleep(1000);
 
-        ASSERT_EQ(SingleDDL2ExpectedEvents.size(), SingleDDL2EventCount);
+        ASSERT_EQ(SingleDDL2ExpectedEvents().size(), SingleDDL2EventCount);
 
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -267,7 +285,7 @@ namespace TestCApi
 
         Sleep(1000);
 
-        ASSERT_EQ(MultipleDDLExpectedEvents.size(), MultipleDDLEventCount);
+        ASSERT_EQ(MultipleDDLExpectedEvents().size(), MultipleDDLEventCount);
 
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));
@@ -310,7 +328,7 @@ namespace TestCApi
 
         Sleep(2000);
 
-        ASSERT_EQ(MultipleDMLExpectedEvents.size(), MultipleDMLEventCount);
+        ASSERT_EQ(MultipleDMLExpectedEvents().size(), MultipleDMLEventCount);
 
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));

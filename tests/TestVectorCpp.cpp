@@ -279,6 +279,106 @@ namespace TestCppApi
         Vector v;
         ASSERT_EQ(String(OTEXT("NULL")), v.ToString());
     }
+
+    /* sparse vectors require both client and server >= Oracle 23.7 */
+
+    static bool IsSparseVectorSupported(Environment& env, Connection& con)
+    {
+        return OCI_EnvironmentGetOCIRuntimeVersion(env.GetHandle()) >= OCI_23_7 &&
+               OCI_ConnectionGetVersion(con) >= OCI_23_7;
+    }
+
+    TEST(TestVectorCpp, IsSparseOnDenseVector_ReturnsFalse)
+    {
+        Environment& env = GetEnvironmentCpp();
+
+        Connection con(env, DBS, USR, PWD);
+        Vector vect(con);
+
+        static std::vector<char> values = { 1, 3, 2, 4 };
+        vect.Set(values);
+
+        EXPECT_FALSE(vect.IsSparse());
+    }
+
+    TEST(TestVectorCpp, SetSparseThenIsSparse_ReturnsTrue)
+    {
+        Environment& env = GetEnvironmentCpp();
+
+        Connection con(env, DBS, USR, PWD);
+
+        if (!IsSparseVectorSupported(env, con))
+        {
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        Vector vect(con);
+
+        static std::vector<OCI_UInt32> indices = { 2, 4 };
+        static std::vector<OCI_Float>  values  = { 1.5f, 2.5f };
+
+        vect.SetSparse(indices, values, 5);
+
+        EXPECT_TRUE(vect.IsSparse());
+        EXPECT_EQ(5, vect.GetDimensionCount());
+        EXPECT_EQ(Vector::Float32, vect.GetFormat());
+    }
+
+    TEST(TestVectorCpp, SetSparseThenGetSparse_ReturnsNonZeroEntries)
+    {
+        Environment& env = GetEnvironmentCpp();
+
+        Connection con(env, DBS, USR, PWD);
+
+        if (!IsSparseVectorSupported(env, con))
+        {
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        Vector vect(con);
+
+        static std::vector<OCI_UInt32> indices_in = { 2, 4 };
+        static std::vector<OCI_Float>  values_in  = { 1.5f, 2.5f };
+
+        vect.SetSparse(indices_in, values_in, 5);
+
+        std::vector<OCI_UInt32> indices_out;
+        std::vector<OCI_Float>  values_out;
+
+        vect.GetSparse(indices_out, values_out);
+
+        ASSERT_EQ(2, indices_out.size());
+        ASSERT_EQ(2, values_out.size());
+        EXPECT_EQ(2, indices_out[0]);
+        EXPECT_EQ(4, indices_out[1]);
+        EXPECT_FLOAT_EQ(1.5f, values_out[0]);
+        EXPECT_FLOAT_EQ(2.5f, values_out[1]);
+    }
+
+    TEST(TestVectorCpp, DescribeSparseVectorColumn_ReportsSparseFlag)
+    {
+        Environment& env = GetEnvironmentCpp();
+
+        Connection con(env, DBS, USR, PWD);
+
+        if (!IsSparseVectorSupported(env, con))
+        {
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        ExecDML(OTEXT("CREATE TABLE TestDescribeSparseVector (value VECTOR(8, FLOAT32, SPARSE))"));
+
+        TypeInfo tif(con, OTEXT("TestDescribeSparseVector"), TypeInfo::Table);
+
+        CheckColumnFullType(0, tif, OTEXT("VALUE"), OTEXT("VECTOR(8, FLOAT32, SPARSE)"),
+                            TypeVector, Vector::Float32, 8);
+
+        const auto col = tif.GetColumn(0);
+
+        EXPECT_TRUE(col.IsVectorSparse());
+
+        ExecDML(OTEXT("DROP TABLE TestDescribeSparseVector"));
+    }
 }
 
 

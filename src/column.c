@@ -40,6 +40,8 @@ const otext* OcilibColumnGetVectorFormatString
     {
         case OCI_VEC_FLEX:
             return OTEXT("*");
+        case OCI_VEC_FLOAT16:
+            return OTEXT("FLOAT16");
         case OCI_VEC_FLOAT32:
             return OTEXT("FLOAT32");
         case OCI_VEC_FLOAT64:
@@ -535,6 +537,16 @@ OCI_Boolean OcilibColumnRetrieveInfo
                 param, &col->json_schema, NULL,
                 con->err
             );
+
+            if (SQLT_VEC == col->sqlcode)
+            {
+                CHECK_ATTRIB_GET
+                (
+                    OCI_DTYPE_PARAM, OCI_ATTR_VECTOR_PROPERTY,
+                    param, &col->vec_props, NULL,
+                    con->err
+                );
+            }
         }
     }
 
@@ -1366,6 +1378,28 @@ OCI_ColumnPropFlags OcilibColumnGetPropertyFlags
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibColumnIsVectorSparse
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibColumnIsVectorSparse
+(
+    OCI_Column *col
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_COLUMN, col
+    );
+
+    CHECK_PTR(OCI_IPC_COLUMN, col);
+
+    SET_RETVAL(0 != (col->vec_props & OCI_ATTR_VECTOR_COL_PROPERTY_IS_SPARSE));
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
 * OcilibColumnGetCollationID
 * --------------------------------------------------------------------------------------------- */
 
@@ -1933,7 +1967,8 @@ OCI_UInt32 OcilibColumnGetFullSqlType
                 OcilibStringFormat(str_dim, OCI_SIZE_FORMAT, OTEXT("%i"), col->dimension);
             }
 
-            const otext *fmt = OTEXT("VECTOR(%s, %s)");
+            const otext *fmt = (col->vec_props & OCI_ATTR_VECTOR_COL_PROPERTY_IS_SPARSE) ?
+                               OTEXT("VECTOR(%s, %s, SPARSE)") : OTEXT("VECTOR(%s, %s)");
 
             size = (OCI_UInt32) OcilibStringFormat(buffer, (OCI_Int32)len, fmt, str_dim, str_fmt);
 

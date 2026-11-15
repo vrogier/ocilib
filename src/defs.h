@@ -33,7 +33,7 @@
 
 /* for runtime loading, set compile time version to the highest known OCI version */
 
-#define OCI_VERSION_COMPILE OCI_23_6
+#define OCI_VERSION_COMPILE OCI_23_7
 
 /* set runtime version to unknown, it will be guessed from symbols loading */
 
@@ -230,8 +230,9 @@ typedef OCI_UInt16 dbtext;
 #define OCI_FEATURE_JSON                13
 #define OCI_FEATURE_SECURE_NOTIFICATION 14
 #define OCI_FEATURE_SHARDING            15
+#define OCI_FEATURE_SPARSE_VECTOR       16
 
-#define OCI_FEATURE_COUNT               OCI_FEATURE_SHARDING
+#define OCI_FEATURE_COUNT               OCI_FEATURE_SPARSE_VECTOR
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types

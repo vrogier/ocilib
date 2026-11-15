@@ -395,6 +395,7 @@ struct OCI_Column
     OCI_SqlType         datatype;     /* internal datatype */
     OCI_CharsetForm     csfrm;        /* charset form */
     OCI_ColumnPropFlags props;        /* column properties */
+    ub4                 vec_props;    /* vector column properties (23.7+) */
     ub4                 collation_id; /* collation id */
     ub4                 dimension;    /* dimension */
     ub2                 sqlcode;      /* Oracle SQL code */

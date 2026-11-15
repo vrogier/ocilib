@@ -478,6 +478,10 @@ ocilib_exit_label:                  \
                                   \
         CHECK_FEATURE(con, OCI_FEATURE_VECTOR, OCI_23_4)
 
+#define CHECK_SPARSE_VECTOR_ENABLED(con) \
+                                         \
+        CHECK_FEATURE(con, OCI_FEATURE_SPARSE_VECTOR, OCI_23_7)
+
 #define CHECK_SODA_ENABLED(con) \
                                 \
         CHECK_FEATURE(con, OCI_FEATURE_SODA, OCI_18_1)

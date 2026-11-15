@@ -745,6 +745,32 @@ The OCI-client-side figure is no longer exposed.
   compiling as C11 or later — pre-C11 C callers keep explicit `OCI_ARG_*` tags,
   and the C++ API does not expose the variadic helpers.
 
+- **Sparse vector support** (pure additions, requires Oracle 23ai RU 23.7 client
+  *and* server — `FALSE`/error on older versions):
+
+  ```c
+  OCI_Boolean OCI_VectorIsSparse(OCI_Vector *vect);
+  OCI_Boolean OCI_VectorGetSparseValues(OCI_Vector *vect, OCI_UInt32 *indices,
+                                        void *values, OCI_UInt32 *count);
+  OCI_Boolean OCI_VectorSetSparseValues(OCI_Vector *vect, OCI_VectorFormat format,
+                                        OCI_UInt32 dimensions, OCI_UInt32 count,
+                                        OCI_UInt32 *indices, void *values);
+  OCI_Boolean OCI_ColumnIsVectorSparse(OCI_Column *col);
+  ```
+
+  Sparse vectors (`VECTOR(n, format, SPARSE)` columns) store only non-zero
+  dimensions: `indices` are **1-based** dimension positions, and `count` is the
+  buffer capacity on input / actual non-zero count on output.
+  `OCI_ColumnGetFullSqlType()` reports `VECTOR(n, format, SPARSE)` on sparse
+  columns, and vector assignment (`OCI_ARG_VECTOR` output, `OCI_Immediate*`)
+  now preserves sparse storage instead of de-sparsifying through a text
+  round-trip.
+
+- **`OCI_VEC_FLOAT16`** — new vector element format (value 1), descriptor-only:
+  usable client-side with `OCI_VectorSetValues`/`OCI_VectorFromText`, but not a
+  valid column format even on 26ai (Oracle rejects `VECTOR(…, FLOAT16)` with
+  `ORA-51802`). Not usable with the sparse APIs.
+
 ---
 
 ## 17. Migration checklist (agent-friendly order)

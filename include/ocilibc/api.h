@@ -5935,6 +5935,27 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ColumnHasJsonSchema
 
 /**
  * @brief
+ * Return whether a vector column is declared with SPARSE storage
+ *
+ * @param col - Column handle
+ *
+ * @note
+ * Only relevant for vector columns (OCI_CDT_VECTOR).
+ * Sparse vector storage requires Oracle 23ai RU 23.7.
+ * For earlier versions and non-vector columns, it always returns FALSE.
+ *
+ * @return
+ * TRUE if the column is declared VECTOR(n, format, SPARSE), otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ColumnIsVectorSparse
+(
+    OCI_Column * col
+);
+
+/**
+ * @brief
  * Return the OCILIB object subtype of a column
  *
  * @param col - Column handle
@@ -14406,6 +14427,99 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorToText
     OCI_Vector * vect,
     OCI_UInt32 * size,
     otext      * str
+);
+
+/**
+ * @brief
+ * Returns whether the vector is stored in sparse format
+ *
+ * @param vect - Vector handle
+ *
+ * @warning
+ * Sparse vectors are supported from Oracle 23ai RU 23.7.
+ * For earlier versions, it always returns FALSE.
+ *
+ * @return
+ * TRUE if the vector is sparse, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorIsSparse
+(
+    OCI_Vector * vect
+);
+
+/**
+ * @brief
+ * Returns the content of a sparse vector
+ *
+ * @param vect    - Vector handle
+ * @param indices - Pointer to an array receiving the 1-based dimension
+ *                  indices of the non-zero values
+ * @param values  - Pointer to an array receiving the non-zero values
+ * @param count   - IN: capacity of the indices and values arrays.
+ *                  OUT: actual number of non-zero values
+ *
+ * @warning
+ * Sparse vectors are supported from Oracle 23ai RU 23.7.
+ *
+ * @note
+ * The indices and values arrays must be large enough to receive the
+ * non-zero values. The number of non-zero values is always lower or
+ * equal to the total number of dimensions returned by OCI_VectorGetInfo().
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorGetSparseValues
+(
+    OCI_Vector * vect,
+    OCI_UInt32 * indices,
+    void       * values,
+    OCI_UInt32 * count
+);
+
+/**
+ * @brief
+ * Set the content of a sparse vector
+ *
+ * @param vect       - Vector handle
+ * @param format     - Vector format
+ * @param dimensions - Vector total number of dimensions
+ * @param count      - Number of non-zero values (size of the indices and
+ *                     values arrays)
+ * @param indices    - Array of 1-based dimension indices of the non-zero values
+ * @param values     - Array of non-zero values to set
+ *
+ * @warning
+ * Sparse vectors are supported from Oracle 23ai RU 23.7.
+ *
+ * @note
+ * Depending on the vector format:
+ *
+ * - OCI_VEC_FLOAT32 : array value type is OCI_Float.
+ * - OCI_VEC_FLOAT64 : array value type is OCI_Double.
+ * - OCI_VEC_INT8    : array value type is char.
+ * - OCI_VEC_BINARY  : binary format.
+ *
+ * @warning
+ * OCI_VEC_FLOAT16 is not supported for sparse vectors.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorSetSparseValues
+(
+    OCI_Vector      * vect,
+    OCI_VectorFormat  format,
+    OCI_UInt32        dimensions,
+    OCI_UInt32        count,
+    OCI_UInt32      * indices,
+    void            * values
 );
 
 /**

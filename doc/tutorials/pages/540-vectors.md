@@ -13,6 +13,7 @@ oracle: "23"
 - create `VECTOR` values from typed arrays or text
 - bind and fetch embeddings for AI Vector Search
 - read vector format/dimension metadata
+- create and read sparse vectors (23ai RU 23.7+)
 
 ## In context — why vectors exist in the database
 
@@ -55,6 +56,9 @@ A `Vector` carries a typed numeric array plus a **format** (element type) and **
 | `OCI_VectorGetInfo` | `GetFormat`/`GetDimensionCount` | format + dimension count |
 | `OCI_VectorFromText` | `FromString` | `'[0.1, 0.2]'` → vector |
 | `OCI_VectorToText` | `ToString` | vector → text |
+| `OCI_VectorIsSparse` | `IsSparse` | sparse storage flag (23.7+) |
+| `OCI_VectorSetSparseValues` | `SetSparse` | indices + non-zero values → sparse vector |
+| `OCI_VectorGetSparseValues` | `GetSparse` | sparse vector → indices + values |
 
 Formats select the element type:
 
@@ -264,6 +268,69 @@ v2.FromString(s, Vector::Float32, 3);
 ```
 :::
 
+## Scenario — sparse vectors (23ai RU 23.7)
+
+Some embedding models produce very high-dimensional vectors where almost every
+dimension is zero — learned sparse lexical representations like SPLADE, or plain
+bag-of-words features that can reach tens of thousands of dimensions.
+
+Storing those densely would waste space and bandwidth: Oracle 23ai RU **23.7**
+added `VECTOR(n, format, SPARSE)` columns that persist only the non-zero
+dimensions, as a list of **1-based** dimension indices plus the values at those
+positions.
+
+A sparse vector's textual form spells the storage out:
+`'[5,[2,4],[1.0,1.0]]'` means a 5-dimension vector whose only non-zero
+components are 1.0 at positions 2 and 4.
+
+Reading a sparse vector is a capacity-based call — you hand over arrays sized
+for the worst case (the non-zero count is at most the total dimension count)
+and get back how many entries were actually populated; setting one takes the
+dimension count and the non-zero list in one shot:
+
+:::sample
+```c
+OCI_UInt32 idx[2] = { 2, 4 };            /* 1-based positions */
+float      val[2] = { 1.5f, 2.5f };
+
+OCI_Vector *v = OCI_VectorCreate(cn);
+OCI_VectorSetSparseValues(v, OCI_VEC_FLOAT32, 5, 2, idx, val);
+
+/* read back: count goes in as buffer capacity, out as actual count */
+
+OCI_UInt32 idx_out[8];
+float      val_out[8];
+OCI_UInt32 count = 8;
+
+OCI_VectorGetSparseValues(v, idx_out, val_out, &count);   /* count == 2 */
+
+if (OCI_VectorIsSparse(v)) { /* stored sparsely */ }
+```
+
+```cpp
+std::vector<UInt32> idx{ 2, 4 };          /* 1-based positions */
+std::vector<float>  val{ 1.5f, 2.5f };
+
+Vector v(con);
+v.SetSparse<float>(idx, val, 5);
+
+std::vector<UInt32> idx_out;
+std::vector<float>  val_out;
+v.GetSparse<float>(idx_out, val_out);     /* resized to actual count */
+
+bool sparse = v.IsSparse();
+```
+:::
+
+A described `VECTOR(…, SPARSE)` column surfaces the declaration too:
+`OCI_ColumnIsVectorSparse` reports it (C++: `Column::IsVectorSparse`), and the
+full SQL type name reports `VECTOR(8, FLOAT32, SPARSE)`.
+
+!!! oracle "Version gate"
+    Sparse vectors need Oracle **23ai RU 23.7** client **and** server.
+    On older versions the sparse calls fail like any unsupported feature —
+    gate on `OCI_ConnectionGetVersion` / `GetOCIRuntimeVersion` first.
+
 ## Putting it together — the typical sequence
 
 A vector round-trip has four stages, and each has its own pitfall to avoid:
@@ -295,10 +362,16 @@ to row, so switch on `GetInfo` rather than assuming; and the whole feature is
 - **Dimension mismatch** — `vector(768)` rejects other sizes; `vector(*)` accepts any.
 - **Using it on pre-23ai** — feature-gate; see the version matrix appendix.
 - **Under-sized `GetValues` buffer** — read `dims` from `GetInfo` first.
+- **Under-sized sparse arrays** — `GetSparseValues` takes the *capacity* in `count`;
+  size it to the dimension count and read the actual non-zero count it returns.
+- **0-based indices** — sparse indices are **1-based** dimension positions, not C offsets.
 
 ## Recap
 
 - `OCI_Vector` = format + dims + typed values; `SetValues`/`FromText` to build,
   `GetValues`/`ToText`/`GetInfo` to read; bind/fetch like any column.
+- Sparse vectors (23.7+) store only non-zero dims — `SetSparseValues` with
+  1-based indices, `GetSparseValues` with capacity-in/count-out, `IsSparse` to
+  check what you fetched.
 
 **Next:** LOBs — the streaming workhorse for big text and binary.

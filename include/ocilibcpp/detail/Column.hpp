@@ -116,6 +116,11 @@ namespace ocilib
         return (core::Check(OCI_ColumnHasJsonSchema(*this)) == TRUE);
     }
 
+    inline bool Column::IsVectorSparse() const
+    {
+        return (core::Check(OCI_ColumnIsVectorSparse(*this)) == TRUE);
+    }
+
     inline bool Column::IsCharSemanticUsed() const
     {
         return (core::Check(OCI_ColumnGetCharUsed(*this)) == TRUE);

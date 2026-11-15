@@ -41,6 +41,7 @@
 <li>create <code>VECTOR</code> values from typed arrays or text</li>
 <li>bind and fetch embeddings for AI Vector Search</li>
 <li>read vector format/dimension metadata</li>
+<li>create and read sparse vectors (23ai RU 23.7+)</li>
 </ul>
 <h2 id="in-context-why-vectors-exist-in-the-database">In context — why vectors exist in the database</h2>
 <p>Oracle 23ai added the <code>VECTOR</code> type to support <strong>AI Vector Search</strong>: modern
@@ -114,6 +115,21 @@ type, which removes the classic "wrong format tag" mistake.</p>
 <td><code>OCI_VectorToText</code></td>
 <td><code>ToString</code></td>
 <td>vector → text</td>
+</tr>
+<tr>
+<td><code>OCI_VectorIsSparse</code></td>
+<td><code>IsSparse</code></td>
+<td>sparse storage flag (23.7+)</td>
+</tr>
+<tr>
+<td><code>OCI_VectorSetSparseValues</code></td>
+<td><code>SetSparse</code></td>
+<td>indices + non-zero values → sparse vector</td>
+</tr>
+<tr>
+<td><code>OCI_VectorGetSparseValues</code></td>
+<td><code>GetSparse</code></td>
+<td>sparse vector → indices + values</td>
 </tr>
 </tbody>
 </table>
@@ -314,6 +330,59 @@ then pick the right element type:</p>
 <span class="n">v2</span><span class="p">.</span><span class="n">FromString</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="w"> </span><span class="n">Vector</span><span class="o">::</span><span class="n">Float32</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">);</span>
 </pre></div>
 </div></div>
+<h2 id="scenario-sparse-vectors-23ai-ru-237">Scenario — sparse vectors (23ai RU 23.7)</h2>
+<p>Some embedding models produce very high-dimensional vectors where almost every
+dimension is zero — learned sparse lexical representations like SPLADE, or plain
+bag-of-words features that can reach tens of thousands of dimensions.</p>
+<p>Storing those densely would waste space and bandwidth: Oracle 23ai RU <strong>23.7</strong>
+added <code>VECTOR(n, format, SPARSE)</code> columns that persist only the non-zero
+dimensions, as a list of <strong>1-based</strong> dimension indices plus the values at those
+positions.</p>
+<p>A sparse vector's textual form spells the storage out:
+<code>'[5,[2,4],[1.0,1.0]]'</code> means a 5-dimension vector whose only non-zero
+components are 1.0 at positions 2 and 4.</p>
+<p>Reading a sparse vector is a capacity-based call — you hand over arrays sized
+for the worst case (the non-zero count is at most the total dimension count)
+and get back how many entries were actually populated; setting one takes the
+dimension count and the non-zero list in one shot:</p>
+<div class="code-sample" data-langs="c cpp"><div class="code-tabs"><button type="button" class="code-tab active" data-lang="c">C</button><button type="button" class="code-tab" data-lang="cpp">C++</button><button type="button" class="code-copy" title="Copy code">Copy</button></div><div class="code-pane active" data-lang="c"><div class="highlight"><pre><span></span><span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">idx</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">};</span><span class="w">            </span><span class="cm">/* 1-based positions */</span>
+<span class="kt">float</span><span class="w">      </span><span class="n">val</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="mf">1.5f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.5f</span><span class="w"> </span><span class="p">};</span>
+
+<span class="n">OCI_Vector</span><span class="w"> </span><span class="o">*</span><span class="n">v</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">OCI_VectorCreate</span><span class="p">(</span><span class="n">cn</span><span class="p">);</span>
+<span class="n">OCI_VectorSetSparseValues</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">OCI_VEC_FLOAT32</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="p">);</span>
+
+<span class="cm">/* read back: count goes in as buffer capacity, out as actual count */</span>
+
+<span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">idx_out</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+<span class="kt">float</span><span class="w">      </span><span class="n">val_out</span><span class="p">[</span><span class="mi">8</span><span class="p">];</span>
+<span class="n">OCI_UInt32</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">8</span><span class="p">;</span>
+
+<span class="n">OCI_VectorGetSparseValues</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="w"> </span><span class="n">idx_out</span><span class="p">,</span><span class="w"> </span><span class="n">val_out</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">count</span><span class="p">);</span><span class="w">   </span><span class="cm">/* count == 2 */</span>
+
+<span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">OCI_VectorIsSparse</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="cm">/* stored sparsely */</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+</div><div class="code-pane" data-lang="cpp" hidden><div class="highlight"><pre><span></span><span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">UInt32</span><span class="o">&gt;</span><span class="w"> </span><span class="n">idx</span><span class="p">{</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="p">};</span><span class="w">          </span><span class="cm">/* 1-based positions */</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w">  </span><span class="n">val</span><span class="p">{</span><span class="w"> </span><span class="mf">1.5f</span><span class="p">,</span><span class="w"> </span><span class="mf">2.5f</span><span class="w"> </span><span class="p">};</span>
+
+<span class="n">Vector</span><span class="w"> </span><span class="nf">v</span><span class="p">(</span><span class="n">con</span><span class="p">);</span>
+<span class="n">v</span><span class="p">.</span><span class="n">SetSparse</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="p">,</span><span class="w"> </span><span class="mi">5</span><span class="p">);</span>
+
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="n">UInt32</span><span class="o">&gt;</span><span class="w"> </span><span class="n">idx_out</span><span class="p">;</span>
+<span class="n">std</span><span class="o">::</span><span class="n">vector</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="w">  </span><span class="n">val_out</span><span class="p">;</span>
+<span class="n">v</span><span class="p">.</span><span class="n">GetSparse</span><span class="o">&lt;</span><span class="kt">float</span><span class="o">&gt;</span><span class="p">(</span><span class="n">idx_out</span><span class="p">,</span><span class="w"> </span><span class="n">val_out</span><span class="p">);</span><span class="w">     </span><span class="cm">/* resized to actual count */</span>
+
+<span class="kt">bool</span><span class="w"> </span><span class="n">sparse</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">v</span><span class="p">.</span><span class="n">IsSparse</span><span class="p">();</span>
+</pre></div>
+</div></div>
+<p>A described <code>VECTOR(…, SPARSE)</code> column surfaces the declaration too:
+<code>OCI_ColumnIsVectorSparse</code> reports it (C++: <code>Column::IsVectorSparse</code>), and the
+full SQL type name reports <code>VECTOR(8, FLOAT32, SPARSE)</code>.</p>
+<div class="admonition oracle">
+<p class="admonition-title">Version gate</p>
+<p>Sparse vectors need Oracle <strong>23ai RU 23.7</strong> client <strong>and</strong> server.
+On older versions the sparse calls fail like any unsupported feature —
+gate on <code>OCI_ConnectionGetVersion</code> / <code>GetOCIRuntimeVersion</code> first.</p>
+</div>
 <h2 id="putting-it-together-the-typical-sequence">Putting it together — the typical sequence</h2>
 <p>A vector round-trip has four stages, and each has its own pitfall to avoid:</p>
 <ol>
@@ -343,11 +412,17 @@ to row, so switch on <code>GetInfo</code> rather than assuming; and the whole fe
 <li><strong>Dimension mismatch</strong> — <code>vector(768)</code> rejects other sizes; <code>vector(*)</code> accepts any.</li>
 <li><strong>Using it on pre-23ai</strong> — feature-gate; see the version matrix appendix.</li>
 <li><strong>Under-sized <code>GetValues</code> buffer</strong> — read <code>dims</code> from <code>GetInfo</code> first.</li>
+<li><strong>Under-sized sparse arrays</strong> — <code>GetSparseValues</code> takes the <em>capacity</em> in <code>count</code>;
+  size it to the dimension count and read the actual non-zero count it returns.</li>
+<li><strong>0-based indices</strong> — sparse indices are <strong>1-based</strong> dimension positions, not C offsets.</li>
 </ul>
 <h2 id="recap">Recap</h2>
 <ul>
 <li><code>OCI_Vector</code> = format + dims + typed values; <code>SetValues</code>/<code>FromText</code> to build,
   <code>GetValues</code>/<code>ToText</code>/<code>GetInfo</code> to read; bind/fetch like any column.</li>
+<li>Sparse vectors (23.7+) store only non-zero dims — <code>SetSparseValues</code> with
+  1-based indices, <code>GetSparseValues</code> with capacity-in/count-out, <code>IsSparse</code> to
+  check what you fetched.</li>
 </ul>
 <p><strong>Next:</strong> LOBs — the streaming workhorse for big text and binary.</p>
     <nav class="prev-next"><a class="pn-link pn-prev" href="raw.html"><span class="pn-dir">← Previous</span>RAW</a><a class="pn-link pn-next" href="lobs-basics.html"><span class="pn-dir">Next →</span>LOBs basics</a></nav>

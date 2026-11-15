@@ -744,6 +744,7 @@ namespace TestCApi
             { "ColumnGetType", [] { return OCI_UNKNOWN == OCI_ColumnGetType(nullptr); } },
             { "ColumnGetTypeInfo", [] { return nullptr == OCI_ColumnGetTypeInfo(nullptr); } },
             { "ColumnHasJsonSchema", [] { return !OCI_ColumnHasJsonSchema(nullptr); } },
+            { "ColumnIsVectorSparse", [] { return !OCI_ColumnIsVectorSparse(nullptr); } },
         }));
 
 }

@@ -70,6 +70,15 @@
 
 - `OCI_SubscriptionCreate()` gains an `OCI_SubscriptionMode mode` parameter (`OCI_SRM_DEFAULT` / `OCI_SRM_SECURE_NOTIFICATION`) letting the client initiate the notification listener connection on Oracle client 12c+ (#383)
 
+- Oracle VECTOR additions
+  - Sparse vector storage support (requires Oracle 23ai RU 23.7 client and database)
+    - Added `OCI_VectorIsSparse()` — reports whether a vector uses sparse storage
+    - Added `OCI_VectorSetSparseValues()` / `OCI_VectorGetSparseValues()` — build/read sparse vectors as 1-based dimension indices plus non-zero values (`count` is buffer capacity in / actual non-zero count out)
+    - Added `OCI_ColumnIsVectorSparse()` — reports whether a VECTOR column is declared with SPARSE storage
+    - `OCI_ColumnGetFullSqlType()` now reports `VECTOR(n, format, SPARSE)` for sparse columns
+  - Added `OCI_VEC_FLOAT16` element format — a client-side descriptor format only, not a valid column format
+  - Vector assignment (including `OCI_ARG_VECTOR` fetch output and `OCI_ConnectionImmediate*`) now copies through the OCI array conversion functions instead of a text round-trip — lossless for dense vectors and preserves sparse storage
+
 ### Enhancements (C++ API)
 
 - Migrated the C++ wrapper baseline from C++03 to C++17
@@ -102,6 +111,12 @@
     - `ocilib::JsonNode` exposes `begin()`/`end()` input iterators over array items and object fields
     - SODA cursors (`SodaCollectionCursor`/`SodaDocumentCursor`) expose `begin()`/`end()` for range-for
 - Added `Statement::ExecuteAndGetResultset()` convenience methods
+
+- Sparse vector additions (see C API — requires Oracle 23ai RU 23.7 client and database)
+  - `Vector::IsSparse()` — reports whether a vector uses sparse storage
+  - `Vector::SetSparse<T>(indices, values, dimensions)` / `Vector::GetSparse<T>(indices, values)` — sparse vector content as `std::vector<UInt32>` 1-based indices plus `std::vector<T>` non-zero values
+  - `Column::IsVectorSparse()` — reports a VECTOR column declared with SPARSE storage
+  - `Vector::Float16` element format (descriptor only, not a column format)
 
 ### Changes (C API)
 

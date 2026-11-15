@@ -406,6 +406,341 @@ namespace TestCApi
         ASSERT_TRUE(OCI_EnvironmentFree(env));
     }
 
+    /* sparse vectors require both client and server >= Oracle 23.7 */
+
+    static bool IsSparseVectorSupported(OCI_Environment* env, OCI_Connection* conn)
+    {
+        return OCI_EnvironmentGetOCIRuntimeVersion(env) >= OCI_23_7 &&
+               OCI_ConnectionGetVersion(conn) >= OCI_23_7;
+    }
+
+    TEST(TestVector, IsSparseOnDenseVector_ReturnsFalse)
+    {
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        char values[4] = { 1, 3, 2, 4 };
+
+        ASSERT_TRUE(OCI_VectorSetValues(vect, OCI_VEC_INT8, 4, values));
+
+        EXPECT_FALSE(OCI_VectorIsSparse(vect));
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestVector, SetSparseValuesThenIsSparse_ReturnsTrue)
+    {
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        if (!IsSparseVectorSupported(env, conn))
+        {
+            ASSERT_TRUE(OCI_ConnectionFree(conn));
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        const auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        OCI_UInt32 indices[2] = { 2, 4 };
+        OCI_Float  values[2]  = { 1.5f, 2.5f };
+
+        ASSERT_TRUE(OCI_VectorSetSparseValues(vect, OCI_VEC_FLOAT32, 5, 2, indices, values));
+
+        EXPECT_TRUE(OCI_VectorIsSparse(vect));
+
+        OCI_UInt32 dimensions = 0;
+        OCI_UInt32 format     = OCI_VEC_FLEX;
+
+        ASSERT_TRUE(OCI_VectorGetInfo(vect, &format, &dimensions));
+        EXPECT_EQ(5u, dimensions);
+        EXPECT_EQ(static_cast<OCI_UInt32>(OCI_VEC_FLOAT32), format);
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestVector, GetSparseValuesOnSparseVector_ReturnsNonZeroEntries)
+    {
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        if (!IsSparseVectorSupported(env, conn))
+        {
+            ASSERT_TRUE(OCI_ConnectionFree(conn));
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        const auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        OCI_UInt32 indices_in[2] = { 2, 4 };
+        OCI_Float  values_in[2]  = { 1.5f, 2.5f };
+
+        ASSERT_TRUE(OCI_VectorSetSparseValues(vect, OCI_VEC_FLOAT32, 5, 2, indices_in, values_in));
+
+        OCI_UInt32 indices_out[5] = { 0 };
+        OCI_Float  values_out[5]  = { 0.0f };
+        OCI_UInt32 count          = 5;
+
+        ASSERT_TRUE(OCI_VectorGetSparseValues(vect, indices_out, values_out, &count));
+
+        EXPECT_EQ(2u, count);
+        EXPECT_EQ(2u, indices_out[0]);
+        EXPECT_EQ(4u, indices_out[1]);
+        EXPECT_FLOAT_EQ(1.5f, values_out[0]);
+        EXPECT_FLOAT_EQ(2.5f, values_out[1]);
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestVector, GetSparseValuesWithInsufficientCapacity_Fails)
+    {
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        if (!IsSparseVectorSupported(env, conn))
+        {
+            ASSERT_TRUE(OCI_ConnectionFree(conn));
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        const auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        OCI_UInt32 indices_in[2] = { 2, 4 };
+        OCI_Float  values_in[2]  = { 1.5f, 2.5f };
+
+        ASSERT_TRUE(OCI_VectorSetSparseValues(vect, OCI_VEC_FLOAT32, 5, 2, indices_in, values_in));
+
+        OCI_UInt32 indices_out[1] = { 0 };
+        OCI_Float  values_out[1]  = { 0.0f };
+        OCI_UInt32 count          = 1; /* capacity < actual non-zero count */
+
+        EXPECT_FALSE(OCI_VectorGetSparseValues(vect, indices_out, values_out, &count));
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestVector, SetSparseValuesWithFloat16Format_Fails)
+    {
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        if (!IsSparseVectorSupported(env, conn))
+        {
+            ASSERT_TRUE(OCI_ConnectionFree(conn));
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        const auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        OCI_UInt32 indices[1] = { 1 };
+        OCI_Float  values[1]  = { 1.5f };
+
+        /* FLOAT16 is not a valid format for sparse vectors */
+
+        EXPECT_FALSE(OCI_VectorSetSparseValues(vect, OCI_VEC_FLOAT16, 1, 1, indices, values));
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+    }
+
+    TEST(TestVector, DescribeSparseVectorColumn_ReportsSparseFlag)
+    {
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        if (!IsSparseVectorSupported(env, conn))
+        {
+            ASSERT_TRUE(OCI_ConnectionFree(conn));
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        ExecDML(OTEXT("CREATE TABLE TestDescribeSparseVector (value VECTOR(8, FLOAT32, SPARSE))"));
+
+        const auto typinf = OCI_TypeInfoGet(conn, OTEXT("TestDescribeSparseVector"), OCI_TIF_TABLE);
+        ASSERT_NE(nullptr, typinf);
+
+        CheckColumnFullType(0, typinf, OTEXT("VALUE"), OTEXT("VECTOR(8, FLOAT32, SPARSE)"),
+                            OCI_CDT_VECTOR, OCI_VEC_FLOAT32, 8);
+
+        const auto col = OCI_TypeInfoGetColumn(typinf, 0);
+        ASSERT_NE(nullptr, col);
+
+        EXPECT_TRUE(OCI_ColumnIsVectorSparse(col));
+
+        ASSERT_TRUE(OCI_TypeInfoFree(typinf));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+        ExecDML(OTEXT("DROP TABLE TestDescribeSparseVector"));
+    }
+
+    TEST(TestVector, BindSparseVectorOnInsert_PreservesSparseStorage)
+    {
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        if (!IsSparseVectorSupported(env, conn))
+        {
+            ASSERT_TRUE(OCI_ConnectionFree(conn));
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        ExecDML(OTEXT("CREATE TABLE TestBindSparseVector (value VECTOR(8, FLOAT32, SPARSE))"));
+
+        auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        OCI_UInt32 indices[2] = { 2, 5 };
+        OCI_Float  values[2]  = { 1.5f, 2.5f };
+
+        ASSERT_TRUE(OCI_VectorSetSparseValues(vect, OCI_VEC_FLOAT32, 8, 2, indices, values));
+
+        const auto stmt = OCI_StatementCreate(conn);
+        ASSERT_NE(nullptr, stmt);
+
+        ASSERT_TRUE(OCI_StatementPrepare(stmt, OTEXT("INSERT INTO TestBindSparseVector values(:v)")));
+        ASSERT_NE(nullptr, OCI_StatementBindVector(stmt, OTEXT(":v"), vect));
+        ASSERT_TRUE(OCI_StatementExecutePrepared(stmt));
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+
+        ASSERT_TRUE(OCI_StatementExecute(stmt, OTEXT("select value from TestBindSparseVector")));
+
+        const auto rs = OCI_StatementGetResultset(stmt);
+        ASSERT_NE(nullptr, rs);
+
+        ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
+
+        vect = OCI_ResultsetGetVector(rs, 0);
+        ASSERT_NE(nullptr, vect);
+
+        EXPECT_TRUE(OCI_VectorIsSparse(vect));
+
+        ASSERT_TRUE(OCI_StatementFree(stmt));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+        ExecDML(OTEXT("DROP TABLE TestBindSparseVector"));
+    }
+
+    TEST(TestVector, ImmediateWithSparseVectorArg_PreservesSparsity)
+    {
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        if (!IsSparseVectorSupported(env, conn))
+        {
+            ASSERT_TRUE(OCI_ConnectionFree(conn));
+            return; /* sparse vectors require Oracle 23.7+ */
+        }
+
+        ExecDML(OTEXT("CREATE TABLE TestAssignSparseVector (value VECTOR(8, FLOAT32, SPARSE))"));
+        ExecDML(OTEXT("INSERT INTO TestAssignSparseVector values('[8,[2,5],[1.5,2.5]]')"));
+
+        const auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        /* OCI_ARG_VECTOR fetch goes through OcilibVectorAssign */
+
+        ASSERT_TRUE(OCI_ConnectionImmediate(conn,
+            OTEXT("select value from TestAssignSparseVector"),
+            OCI_ARG_VECTOR, vect));
+
+        EXPECT_TRUE(OCI_VectorIsSparse(vect));
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+
+        ExecDML(OTEXT("DROP TABLE TestAssignSparseVector"));
+    }
+
+    TEST(TestVector, SetSparseValues_PreClient23_7_Fails)
+    {
+        /* sparse vectors are a 23.7 feature */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_23_4);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        OCI_UInt32 indices[1] = { 1 };
+        OCI_Float  values[1]  = { 1.5f };
+
+        EXPECT_FALSE(OCI_VectorSetSparseValues(vect, OCI_VEC_FLOAT32, 1, 1, indices, values));
+        EXPECT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
+    TEST(TestVector, GetSparseValues_PreClient23_7_Fails)
+    {
+        /* sparse vectors are a 23.7 feature */
+
+        const auto env = GetSpecificEnvironment(nullptr, OCI_23_4);
+        ASSERT_NE(nullptr, env);
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        OCI_UInt32 indices[1] = { 0 };
+        OCI_Float  values[1]  = { 0.0f };
+        OCI_UInt32 count      = 1;
+
+        EXPECT_FALSE(OCI_VectorGetSparseValues(vect, indices, values, &count));
+        EXPECT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
+    }
+
 
     class TestVectorNullArgs : public ::testing::TestWithParam<NullArgCase> {};
 
@@ -423,7 +758,10 @@ namespace TestCApi
             { "VectorFree", [] { return !OCI_VectorFree(nullptr); } },
             { "VectorFromText", [] { return !OCI_VectorFromText(nullptr, OTEXT("x"), 1, 1, 1); } },
             { "VectorGetInfo", [] { return !OCI_VectorGetInfo(nullptr, nullptr /* OCI_VectorFormat * */, NullArgOut<OCI_UInt32>()); } },
+            { "VectorGetSparseValues", [] { return !OCI_VectorGetSparseValues(nullptr, NullArgOut<OCI_UInt32>(), NullArgBuffer(), NullArgOut<OCI_UInt32>()); } },
             { "VectorGetValues", [] { return !OCI_VectorGetValues(nullptr, NullArgBuffer()); } },
+            { "VectorIsSparse", [] { return !OCI_VectorIsSparse(nullptr); } },
+            { "VectorSetSparseValues", [] { return !OCI_VectorSetSparseValues(nullptr, 1, 1, 1, NullArgOut<OCI_UInt32>(), NullArgBuffer()); } },
             { "VectorSetValues", [] { return !OCI_VectorSetValues(nullptr, 1, 1, NullArgBuffer()); } },
             { "VectorToText", [] { return !OCI_VectorToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
         }));

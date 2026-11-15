@@ -199,7 +199,8 @@ static const otext * OracleFeatures[OCI_FEATURE_COUNT] =
     OTEXT("Oracle 18.1 SODA support"),
     OTEXT("Oracle 21.1 JSON support"),
     OTEXT("Oracle 19.4 client-side secure notification mode"),
-    OTEXT("Oracle 12c R2 sharding support")
+    OTEXT("Oracle 12c R2 sharding support"),
+    OTEXT("Oracle 23.7 sparse vectors support")
 };
 
 typedef struct StatementState

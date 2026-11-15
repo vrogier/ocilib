@@ -575,6 +575,18 @@ is no longer supported through OCILIB.
 - **`ocilib::String` / `ocilib::StringView` added** — `ocilib::String` is the new
   canonical name for the string type (`ostring` remains as an alias);
   `StringView` is `std::basic_string_view<otext>`.
+- **Sparse vector additions** (pure additions, require Oracle 23ai RU 23.7
+  client *and* server):
+
+  ```cpp
+  bool sparse = v.IsSparse();
+  v.SetSparse(indices, values, dims);     // std::vector<UInt32> indices (1-based), std::vector<T> values
+  v.GetSparse(indices_out, values_out);   // resized to the actual non-zero count
+  bool sparseCol = col.IsVectorSparse();  // VECTOR(n, fmt, SPARSE) column
+  ```
+
+  `Vector::Float16` is also new — a client-side descriptor format only, not a
+  valid column format (and not usable with `SetSparse`).
 - **`Environment::CharsetAnsi` → `Environment::CharsetMbcs`** — the `OCI_CHARSET_ANSI`
   build flag is now `OCI_CHARSET_MBCS` (multibyte: ANSI codepages *or* UTF-8).
   `OCI_CHAR_ANSI` maps to `OCI_CHAR_MBCS` via `compat.h`. Windows binaries are

@@ -504,6 +504,7 @@ static OCI_UInt32 OcilibEnvironmentComputeRuntimeVersion
 
         return (OCI_UInt32) OCI_VER_MAKE(maj, min, rev);
     }
+    else if (env->api->OCIVectorToSparseArray)       return OCI_23_7;
     else if (env->api->OCIVectorToArray)             return OCI_23_4;
     else if (env->api->OCIServerDataLengthGet)       return OCI_21_3;
     else if (env->api->OCIJsonTextBufferParse)       return OCI_21_1;
@@ -531,6 +532,12 @@ static void OcilibEnvironmentClearSymbolsAbove
     OCI_UInt32       version
 )
 {
+    if (version < OCI_23_7)
+    {
+        env->api->OCIVectorFromSparseArray = NULL;
+        env->api->OCIVectorToSparseArray   = NULL;
+    }
+
     if (version < OCI_23_4)
     {
         env->api->OCIVectorToArray      = NULL;
@@ -1005,6 +1012,10 @@ static void OcilibEnvironmentLoadSymbols
     env->api->OCIVectorToText       = OCIVectorToText;
     env->api->OCIJsonSchemaValidate = OCIJsonSchemaValidate;
 #endif
+#if OCI_VERSION_COMPILE >= OCI_23_7
+    env->api->OCIVectorFromSparseArray = OCIVectorFromSparseArray;
+    env->api->OCIVectorToSparseArray   = OCIVectorToSparseArray;
+#endif
 #else /* OCI_IMPORT_RUNTIME */
 
     /* Now loading all symbols - no check is performed on each function,
@@ -1262,6 +1273,8 @@ static void OcilibEnvironmentLoadSymbols
     LIB_SYMBOL(env->lib_handle, "OCIVectorFromArray", env->api->OCIVectorFromArray, OCIVECTORFROMARRAY);
     LIB_SYMBOL(env->lib_handle, "OCIVectorToText", env->api->OCIVectorToText, OCIVECTORTOTEXT);
     LIB_SYMBOL(env->lib_handle, "OCIVectorFromText", env->api->OCIVectorFromText, OCIVECTORFROMTEXT);
+    LIB_SYMBOL(env->lib_handle, "OCIVectorFromSparseArray", env->api->OCIVectorFromSparseArray, OCIVECTORFROMSPARSEARRAY);
+    LIB_SYMBOL(env->lib_handle, "OCIVectorToSparseArray", env->api->OCIVectorToSparseArray, OCIVECTORTOSPARSEARRAY);
     LIB_SYMBOL(env->lib_handle, "OCIJsonSchemaValidate", env->api->OCIJsonSchemaValidate, OCIJSONSCHEMAVALIDATE);
 
     LIB_SYMBOL(env->lib_handle, "OCIJsonTextBufferParse", env->api->OCIJsonTextBufferParse, OCIJSONTEXTBUFFERPARSE);
