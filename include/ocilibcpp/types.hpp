@@ -1223,6 +1223,11 @@ namespace ocilib
          * All subscriptions within the same environment share the same port.
          *
          * @warning
+         * Incompatible with secure notification mode: the Oracle client raises
+         * ORA-24912 when a subscription is registered with
+         * Subscription::ModeSecureNotification while a port has been configured.
+         *
+         * @warning
          * This call is supported from Oracle 10gR2.
          *
          */
@@ -1248,6 +1253,11 @@ namespace ocilib
          * @note
          * This call must be made before the first subscription is registered.
          * All subscriptions within the same environment share the same address.
+         *
+         * @warning
+         * Incompatible with secure notification mode: the Oracle client raises
+         * ORA-24912 when a subscription is registered with
+         * Subscription::ModeSecureNotification while an address has been configured.
          *
          * @warning
          * This call is supported from Oracle 10gR2.
@@ -9053,6 +9063,13 @@ namespace ocilib
         * @note
         * The notification port is configured on the environment by calling
         * Environment::SetSubscriptionPort() before the first subscription is registered.
+        *
+        * @warning
+        * With ModeSecureNotification, the notification callback address and
+        * port must NOT be configured on the environment (see
+        * Environment::SetSubscriptionAddress() and
+        * Environment::SetSubscriptionPort()): the Oracle client rejects the
+        * registration with ORA-24912 in that case.
         *
         * @note
         * Requires Oracle Client 10gR2 or above

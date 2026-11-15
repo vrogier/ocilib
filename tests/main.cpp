@@ -119,9 +119,9 @@ ocilib::Environment& GetEnvironmentCpp()
     return GetEnvironmentManager().GetEnvironmentCppApi();
 }
 
-OCI_Environment* GetSpecificEnvironment(POCI_ERROR err_handler, OCI_UInt32 version)
+OCI_Environment* GetSpecificEnvironment(POCI_ERROR err_handler, OCI_UInt32 version, OCI_EnvMode mode)
 {
-    return OcilibEnvironmentCreate(err_handler, HOME, OCI_ENV_DEFAULT, version);
+    return OcilibEnvironmentCreate(err_handler, HOME, mode, version);
 }
 
 void ExecDML(String dml)

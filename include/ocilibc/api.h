@@ -328,6 +328,11 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnvironmentSetHAHandler
  * All subscriptions within the same environment share the same port.
  *
  * @warning
+ * Incompatible with secure notification mode: the Oracle client raises
+ * ORA-24912 when a subscription is registered with OCI_SRM_SECURE_NOTIFICATION
+ * while a port has been configured on the environment handle.
+ *
+ * @warning
  * This feature requires Oracle 10gR2 or later.
  * For earlier versions, the function returns FALSE without raising an exception.
  *
@@ -381,6 +386,11 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_EnvironmentGetSubscriptionPort
  * container or when the machine has virtual network adapters). Setting this
  * address to an IP that the server can reach fixes notification delivery in
  * such setups.
+ *
+ * @warning
+ * Incompatible with secure notification mode: the Oracle client raises
+ * ORA-24912 when a subscription is registered with OCI_SRM_SECURE_NOTIFICATION
+ * while an address has been configured on the environment handle.
  *
  * @warning
  * This feature requires Oracle 11gR2 or later.
@@ -18201,6 +18211,13 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_QueueTableMigrate
    * itself when the library is built in OCI_CHARSET_WIDE mode (wide
    * builds). MBCS builds work correctly. Verified with Oracle 23ai; a future
    * Oracle client release may fix this.
+   *
+   * @warning
+   * With OCI_SRM_SECURE_NOTIFICATION, the notification callback address and
+   * port must NOT be configured on the environment handle (see
+   * OCI_EnvironmentSetSubscriptionAddress() and
+   * OCI_EnvironmentSetSubscriptionPort()): the Oracle client rejects the
+   * registration with ORA-24912 in that case.
    *
    * @note
    * Parameter 'timeout' is optional (use value 0 as optional value).

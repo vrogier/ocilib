@@ -85,7 +85,7 @@ void ExecDML(String dml);
 String ToUpper(String str);
 
 OCI_Environment * GetEnvironment(POCI_ERROR err_handler);
-OCI_Environment * GetSpecificEnvironment(POCI_ERROR err_handler, OCI_UInt32 version);
+OCI_Environment * GetSpecificEnvironment(POCI_ERROR err_handler, OCI_UInt32 version, OCI_EnvMode mode = OCI_ENV_DEFAULT);
 ocilib::Environment& GetEnvironmentCpp();
 
 /* Known Oracle client issue: in UTF-16 (OCI_CHARSET_WIDE) environments,

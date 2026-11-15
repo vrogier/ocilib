@@ -15,7 +15,10 @@ namespace TestCApi
         ExecDML(OTEXT("drop table TestRegisterSecureMode"));
         ExecDML(OTEXT("create table TestRegisterSecureMode(id number)"));
 
-        auto env = GetEnvironment(nullptr);
+        /* dedicated env: OCI_SECURE_NOTIFICATION registrations reject the
+           callback address/port attrs that the shared env sets from
+           OCILIB_TEST_SUBSCR_ADDR (ORA-24912) */
+        const auto env = GetSpecificEnvironment(nullptr, OCI_UNKNOWN, OCI_ENV_DEFAULT | OCI_ENV_THREADED | OCI_ENV_EVENTS);
         ASSERT_NE(nullptr, env);
 
         const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
@@ -37,6 +40,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_SubscriptionUnregister(sub));
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
+        ASSERT_TRUE(OCI_EnvironmentFree(env));
 
         ExecDML(OTEXT("drop table TestRegisterSecureMode"));
     }
@@ -77,7 +81,10 @@ namespace TestCppApi
         ExecDML(OTEXT("drop table TestSubscriptionData"));
         ExecDML(OTEXT("create table TestSubscriptionData (id number)"));
 
-        ocilib::Environment& env = GetEnvironmentCpp();
+        /* dedicated env: OCI_SECURE_NOTIFICATION registrations reject the
+           callback address/port attrs that the shared env sets from
+           OCILIB_TEST_SUBSCR_ADDR (ORA-24912) */
+        ocilib::Environment env(ocilib::Environment::Default | ocilib::Environment::Threaded | ocilib::Environment::Events, HOME ? HOME : OTEXT(""));
         ocilib::Connection con(env, DBS, USR, PWD);
         ocilib::Statement stmt(con);
 
