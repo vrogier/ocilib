@@ -185,7 +185,7 @@ OCI_Boolean OcilibShardingKeyAddString
         skey->env->err,
         (dbtext *) (value),
         (ub4)OcilibStringDBSize(value),
-        (ub2)SQLT_STR,
+        (ub2)SQLT_CHR,
         OCI_DEFAULT
     );
 
