@@ -391,6 +391,16 @@ namespace TestCApi
     {
         /* %V -> quoted '[...]' vector text literal */
 
+#ifdef OCI_CHARSET_WIDE
+        /* the formatted literal relies on OCIVectorToText, whose output is
+           truncated by Oracle clients >= 23.7 in WIDE builds — a truncated
+           literal cannot be parsed back by to_vector() */
+        if (OCI_EnvironmentGetOCIRuntimeVersion(GetEnvironment(nullptr)) >= OCI_23_7)
+        {
+            return; /* vector text literal truncated on this client (known Oracle issue) */
+        }
+#endif
+
         const auto vect = OCI_VectorCreate(con);
         ASSERT_NE(nullptr, vect);
 

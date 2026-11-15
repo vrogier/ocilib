@@ -9,15 +9,15 @@
 
 /* Test configuration backing storage — populated by LoadTestConfig() */
 
-static String g_dbsname, g_dbs, g_usr, g_pwd, g_sys_usr, g_sys_pwd, g_home;
+static String g_dbs, g_usr, g_pwd, g_sys_usr, g_sys_pwd, g_home, g_subscr_addr;
 
-const otext* DBSNAME = nullptr;
-const otext* DBS     = nullptr;
-const otext* USR     = nullptr;
-const otext* PWD     = nullptr;
-const otext* SYS_USR = nullptr;
-const otext* SYS_PWD = nullptr;
-const otext* HOME    = nullptr;
+const otext* DBS         = nullptr;
+const otext* USR         = nullptr;
+const otext* PWD         = nullptr;
+const otext* SYS_USR     = nullptr;
+const otext* SYS_PWD     = nullptr;
+const otext* HOME        = nullptr;
+const otext* SUBSCR_ADDR = nullptr;
 
 /* the manager owns the shared environments; it must be constructed lazily,
    after LoadTestConfig() has populated HOME */
@@ -75,13 +75,13 @@ static bool LoadTestConfig()
 
     const TestVar vars[] =
     {
-        { "OCI_TEST_DB",       &g_dbs,     &DBS,     false },
-        { "OCI_TEST_USR",      &g_usr,     &USR,     false },
-        { "OCI_TEST_PWD",      &g_pwd,     &PWD,     false },
-        { "OCI_TEST_SYS_USR",  &g_sys_usr, &SYS_USR, false },
-        { "OCI_TEST_SYS_PWD",  &g_sys_pwd, &SYS_PWD, false },
-        { "OCI_TEST_DBSNAME",  &g_dbsname, &DBSNAME, false },
-        { "OCI_TEST_HOME",     &g_home,    &HOME,    true  },
+        { "OCILIB_TEST_DB",      &g_dbs,     &DBS,     false },
+        { "OCILIB_TEST_USR",     &g_usr,     &USR,     false },
+        { "OCILIB_TEST_PWD",     &g_pwd,     &PWD,     false },
+        { "OCILIB_TEST_SYS_USR", &g_sys_usr, &SYS_USR, false },
+        { "OCILIB_TEST_SYS_PWD", &g_sys_pwd, &SYS_PWD, false },
+        { "OCILIB_TEST_HOME",    &g_home,    &HOME,    true  },
+        { "OCILIB_TEST_SUBSCR_ADDR", &g_subscr_addr, &SUBSCR_ADDR, true  },
     };
 
     bool ok = true;
@@ -90,10 +90,13 @@ static bool LoadTestConfig()
     {
         const char* value = std::getenv(var.envName);
 
-        if (nullptr == value || (!var.allowEmpty && 0 == *value))
+        if (nullptr == value || 0 == *value)
         {
-            std::fprintf(stderr, "error: required environment variable %s is not set\n", var.envName);
-            ok = false;
+            if (!var.allowEmpty)
+            {
+                std::fprintf(stderr, "error: required environment variable %s is not set\n", var.envName);
+                ok = false;
+            }
             continue;
         }
 
@@ -140,6 +143,14 @@ String ToUpper(String str)
 int main(OCI_Int32 argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
+
+    /* test discovery must work without the test environment variables
+       (VS Test Explorer runs the binary with --gtest_list_tests)      */
+
+    if (::testing::GTEST_FLAG(list_tests))
+    {
+        return RUN_ALL_TESTS();
+    }
 
     if (!LoadTestConfig())
     {

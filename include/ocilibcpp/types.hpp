@@ -1238,6 +1238,23 @@ namespace ocilib
          */
         [[nodiscard]] UInt32 GetSubscriptionPort() const;
 
+        /**
+         * @brief
+         * Set the IP address advertised to the database server for notification callbacks
+         *
+         * @param address - Dotted-decimal IP address to listen on
+         *                  (empty string for automatic address selection)
+         *
+         * @note
+         * This call must be made before the first subscription is registered.
+         * All subscriptions within the same environment share the same address.
+         *
+         * @warning
+         * This call is supported from Oracle 10gR2.
+         *
+         */
+        void SetSubscriptionAddress(const String& address);
+
     private:
 
         class EnvironmentHandle : core::HandleHolder<OCI_Environment*>

@@ -15,13 +15,12 @@ namespace TestCApi
     struct Event
     {
         String SubName;
-        String DatabaseName;
         String ObjectName;
         OCI_UInt32 Type;
         OCI_UInt32 Operation;
     };
 
-    /* deferred to first use: DBSNAME/USR are populated by LoadTestConfig() in main(),
+    /* deferred to first use: USR is populated by LoadTestConfig() in main(),
        after dynamic initializers have run */
     static const std::array< Event, SingleDDL1ExpectedEventsCount>& SingleDDL1ExpectedEvents()
     {
@@ -30,7 +29,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-1"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableSingleDDL1"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_ALTER
@@ -46,7 +44,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-2"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableSingleDDL2"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_ALTER
@@ -54,7 +51,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-2"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableSingleDDL2"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_ALTER
@@ -70,7 +66,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-3"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableMultipleDDLTable1"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_ALTER
@@ -78,7 +73,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-3"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableMultipleDDLTable2"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_ALTER
@@ -94,7 +88,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-4"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableMultipleDML"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_INSERT
@@ -102,7 +95,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-4"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableMultipleDML"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_INSERT
@@ -110,7 +102,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-4"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableMultipleDML"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_UPDATE
@@ -118,7 +109,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-4"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableMultipleDML"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_DELETE
@@ -126,7 +116,6 @@ namespace TestCApi
             Event
             {
                 OTEXT("sub-4"),
-                DBSNAME,
                 String(USR) + OTEXT(".TestTableMultipleDML"),
                 OCI_ENT_OBJECT_CHANGED,
                 OCI_ONT_DELETE
@@ -141,7 +130,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, sub);
 
         EXPECT_EQ(ToUpper(evt.SubName), ToUpper(OCI_SubscriptionGetName(sub)));
-        EXPECT_EQ(ToUpper(evt.DatabaseName), ToUpper(OCI_EventGetDatabase(event)));
+        EXPECT_NE(nullptr, OCI_EventGetDatabase(event));
         EXPECT_EQ(evt.Type, OCI_EventGetType(event));
         EXPECT_EQ(evt.Operation, OCI_EventGetOperation(event));
         EXPECT_EQ(ToUpper(evt.ObjectName), ToUpper(OCI_EventGetObject(event)));

@@ -364,6 +364,40 @@ OCI_SYM_PUBLIC OCI_UInt32 OCI_API OCI_EnvironmentGetSubscriptionPort
 );
 
 /**
+ * @brief
+ * Set the IP address advertised to the database server for notification callbacks
+ *
+ * @param env     - Environment handle
+ * @param address - Dotted-decimal IPv4 or IPv6 address to listen on
+ *                  (NULL or empty string for automatic address selection)
+ *
+ * @note
+ * This call must be made before the first subscription is registered.
+ * All subscriptions within the same environment share the same address.
+ *
+ * @note
+ * By default, the Oracle client automatically picks a local address, which may
+ * be unreachable from the database server (e.g. when the server runs inside a
+ * container or when the machine has virtual network adapters). Setting this
+ * address to an IP that the server can reach fixes notification delivery in
+ * such setups.
+ *
+ * @warning
+ * This feature requires Oracle 11gR2 or later.
+ * For earlier versions, the function returns FALSE without raising an exception.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_EnvironmentSetSubscriptionAddress
+(
+    OCI_Environment *env,
+    const otext    * address
+);
+
+/**
  * @} OcilibCApiInitialization
  */
 
@@ -14417,6 +14451,10 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorFromText
  * @warning
  * OCI_VEC_BINARY only supported from Oracle 23.5.
  *
+ * @warning
+ * Known Oracle client bug: in OCI_CHARSET_WIDE builds, Oracle clients >= 23.7
+ * truncate the returned text (only the first half is returned).
+ *
  * @return
  * TRUE on success, otherwise FALSE.
  *
@@ -14514,12 +14552,12 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorGetSparseValues
 
 OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_VectorSetSparseValues
 (
-    OCI_Vector      * vect,
-    OCI_VectorFormat  format,
-    OCI_UInt32        dimensions,
-    OCI_UInt32        count,
-    OCI_UInt32      * indices,
-    void            * values
+    OCI_Vector     * vect,
+    OCI_VectorFormat format,
+    OCI_UInt32       dimensions,
+    OCI_UInt32       count,
+    OCI_UInt32     * indices,
+    void           * values
 );
 
 /**

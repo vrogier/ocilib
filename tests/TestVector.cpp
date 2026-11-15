@@ -172,13 +172,63 @@ namespace TestCApi
         auto buffer = new otext[size+1];
         ASSERT_TRUE(OCI_VectorToText(vect, &size, buffer));
 
-        ASSERT_EQ(String(OTEXT("[1,3,2,4]")), String(buffer));
+        ASSERT_EQ(ExpectedVectorText(env, OTEXT("[1,3,2,4]")), String(buffer));
 
         delete[] buffer;
     
         ASSERT_TRUE(OCI_VectorFree(vect));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
+    }
+
+    TEST(TestVector, ToTextOnFloat64Vector_SizeQueryIsLargeEnough)
+    {
+        /* the size returned by a NULL buffer query must be large enough for
+           OCIVectorToText to succeed, including for long FLOAT64 values */
+
+        auto env = GetEnvironment(nullptr);
+
+        ASSERT_NE(nullptr, env);
+
+        const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+        ASSERT_NE(nullptr, conn);
+
+        const auto vect = OCI_VectorCreate(conn);
+        ASSERT_NE(nullptr, vect);
+
+        OCI_Double values1[8] = { -1.1, -2.2, -3.3, -4.4, -5.5, -6.6, -7.7, -8.8 };
+
+        ASSERT_TRUE(OCI_VectorSetValues(vect, OCI_VEC_FLOAT64, 8, values1));
+
+        OCI_UInt32 size = 0;
+        ASSERT_TRUE(OCI_VectorToText(vect, &size, NULL));
+        ASSERT_GT(size, 0u);
+
+        std::vector<otext> buffer(size + 1);
+        ASSERT_TRUE(OCI_VectorToText(vect, &size, buffer.data()));
+
+        const String text(buffer.data());
+
+        if (text == ExpectedVectorText(env, text))
+        {
+            const auto vect2 = OCI_VectorCreate(conn);
+            ASSERT_NE(nullptr, vect2);
+
+            ASSERT_TRUE(OCI_VectorFromText(vect2, text.c_str(), 0, OCI_VEC_FLOAT64, 8));
+
+            OCI_Double values2[8] = { 0 };
+            ASSERT_TRUE(OCI_VectorGetValues(vect2, values2));
+
+            for (int i = 0; i < 8; i++)
+            {
+                ASSERT_DOUBLE_EQ(values1[i], values2[i]);
+            }
+
+            ASSERT_TRUE(OCI_VectorFree(vect2));
+        }
+
+        ASSERT_TRUE(OCI_VectorFree(vect));
+        ASSERT_TRUE(OCI_ConnectionFree(conn));
     }
 
     TEST(TestVector, FromTextOnVector_ParsesValues)
@@ -347,7 +397,7 @@ namespace TestCApi
 
         auto str = OCI_ResultsetGetString(rs, 0);
 
-        ASSERT_EQ(String(OTEXT("[1,2,3,4]")), String(str));
+        ASSERT_EQ(ExpectedVectorText(env, OTEXT("[1,2,3,4]")), String(str));
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -382,7 +432,7 @@ namespace TestCApi
 
         auto str = OCI_ResultsetGetString(rslt, 0);
 
-        ASSERT_EQ(String(OTEXT("[1,2,3,4]")), str);
+        ASSERT_EQ(ExpectedVectorText(env, OTEXT("[1,2,3,4]")), str);
 
         ASSERT_TRUE(OCI_StatementFree(stmt));
         ASSERT_TRUE(OCI_ConnectionFree(conn));

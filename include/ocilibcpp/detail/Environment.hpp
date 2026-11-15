@@ -178,6 +178,11 @@ namespace ocilib
         return core::Check(OCI_EnvironmentGetSubscriptionPort(GetHandle()));
     }
 
+    inline void Environment::SetSubscriptionAddress(const String& address)
+    {
+        core::Check(OCI_EnvironmentSetSubscriptionAddress(GetHandle(), address.c_str()) == TRUE);
+    }
+
     inline Environment* Environment::GetInstance(OCI_Environment* env)
     {
         return env ? static_cast<Environment*>(OCI_HandleGetUserData(env)) : nullptr;

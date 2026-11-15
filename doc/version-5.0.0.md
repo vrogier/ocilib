@@ -179,6 +179,7 @@ In `src/callback.c`, the `OcilibCallbackNotifyChanges` callback now treats `OCI_
 
 ### Other fixes
 - Per-environment symbol loading fixes the runtime-import path when multiple environments or different library paths are used.
+- `OcilibStatementFetchIntoUserVariables` no longer swallows output-argument copy failures: `OCI_ConnectionImmediate()` and `OCI_ConnectionImmediateFormat()` now return `FALSE` (with the underlying error set) when an `OCI_ARG_*` assign fails — e.g. an incompatible destination object type — instead of reporting `TRUE` and leaving the destination unpopulated. An empty resultset still returns `TRUE`.
 - Handle environment retrieval is now uniform through `OCI_HandleGetEnvironment()`, removing the need for the old `OcilibEnvironmentGetFromObject()` switch.
 - Unicode / `OCI_CHARSET_WIDE` paths in notification unregistration are preserved.
 

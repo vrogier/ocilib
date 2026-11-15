@@ -67,8 +67,8 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorSetValues
 
 OCI_SYM_LOCAL OCI_Boolean OcilibVectorGetProperties
 (
-    OCI_Vector  *vect,
-    OCI_UInt32  *properties
+    OCI_Vector *vect,
+    OCI_UInt32 *properties
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibVectorIsSparse
@@ -78,10 +78,10 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorIsSparse
 
 OCI_SYM_LOCAL OCI_Boolean OcilibVectorGetSparseValues
 (
-    OCI_Vector  *vect,
-    OCI_UInt32  *indices,
-    void        *values,
-    OCI_UInt32  *count
+    OCI_Vector *vect,
+    OCI_UInt32 *indices,
+    void       *values,
+    OCI_UInt32 *count
 );
 
 OCI_SYM_LOCAL OCI_Boolean OcilibVectorSetSparseValues

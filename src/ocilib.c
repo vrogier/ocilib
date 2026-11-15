@@ -3049,6 +3049,15 @@ OCI_Boolean OCI_API OCI_EnvironmentSetSubscriptionPort
     CALL_IMPL_E(OcilibEnvironmentSetSubscriptionPort, env, port);
 }
 
+OCI_Boolean OCI_API OCI_EnvironmentSetSubscriptionAddress
+(
+    OCI_Environment *env,
+    const otext    * address
+)
+{
+    CALL_IMPL_E(OcilibEnvironmentSetSubscriptionAddress, env, address);
+}
+
 OCI_UInt32 OCI_API OCI_EnvironmentGetSubscriptionPort
 (
     OCI_Environment *env

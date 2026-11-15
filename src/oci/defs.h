@@ -345,6 +345,8 @@
 
 #define OCI_ATTR_SUBSCR_PORTNO         390       /* port no to listen        */
 
+#define OCI_ATTR_SUBSCR_IPADDR         452       /* ip address to listen on  */
+
 #define OCI_ATTR_HOSTNAME              390           /* SYS_CONTEXT hostname */
 #define OCI_ATTR_DBNAME                391             /* SYS_CONTEXT dbname */
 #define OCI_ATTR_INSTNAME              392      /* SYS_CONTEXT instance name */
@@ -460,6 +462,7 @@
 #define OCI_ATTR_VECTOR_DIMENSION          695   /* Dimension of vector type */
 #define OCI_ATTR_VECTOR_DATA_FORMAT        696   /* Format of data in vector */
 #define OCI_ATTR_VECTOR_PROPERTY           697          /* vector properties */
+#define OCI_ATTR_VECTOR_MAX_STRING_SIZE    712 /* max size of vector as text */
 #define OCI_ATTR_VECTOR_SPARSE_DIMENSION   717  /* Sparse dimension of vector */
 
 /*------- Temporary attribute value for UCS2/UTF16 character set ID -------- */

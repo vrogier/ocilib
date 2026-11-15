@@ -138,7 +138,7 @@ namespace TestCppApi
     
         vect.Set(values1);
 
-        ASSERT_EQ(String(OTEXT("[1,3,2,4]")), vect.ToString());
+        ASSERT_EQ(ExpectedVectorText(env.GetHandle(), OTEXT("[1,3,2,4]")), vect.ToString());
     
         
     }
@@ -247,7 +247,7 @@ namespace TestCppApi
         auto rs = stmt.GetResultset();
         rs.Next();
 
-        ASSERT_EQ(String(OTEXT("[1,2,3,4]")), rs.Get<String>(0));
+        ASSERT_EQ(ExpectedVectorText(env.GetHandle(), OTEXT("[1,2,3,4]")), rs.Get<String>(0));
 
         ExecDML(OTEXT("DROP TABLE  TestFetchVectorAsString"));
     }
@@ -269,7 +269,7 @@ namespace TestCppApi
         auto rs = stmt.GetResultset();
         rs.Next();
 
-        ASSERT_EQ(String(OTEXT("[1,2,3,4]")),  rs.Get<String>(0));
+        ASSERT_EQ(ExpectedVectorText(env.GetHandle(), OTEXT("[1,2,3,4]")),  rs.Get<String>(0));
 
         ExecDML(OTEXT("DROP TABLE TestRegisterVector"));
     }

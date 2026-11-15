@@ -44,6 +44,14 @@ static OCI_UInt32 VectorSparseFormatValues[] =
     OCI_VEC_BINARY
 };
 
+/* Oracle clients >= 23.7 exchange vector text in the environment charset
+   (UTF-16 in wide builds, sized in bytes) instead of always using MBCS.
+   Known Oracle client issue: in UTF-16 environments, OCIVectorToText only
+   writes as many bytes as there are characters, so its output is truncated */
+
+#define VECTOR_TEXT_USES_ENV_CHARSET(v) \
+        (IS_WIDE_ENV() && (v)->con->env->version_runtime >= OCI_23_7)
+
 /* --------------------------------------------------------------------------------------------- *
  * OcilibVectorGetFormatSize
  * --------------------------------------------------------------------------------------------- */
@@ -554,10 +562,10 @@ OCI_Boolean OcilibVectorGetSparseValues
 
 #if OCI_VERSION_COMPILE >= OCI_23_7
 
-    OCI_UInt32       format     = OCI_VEC_FLEX;
-    OCI_UInt32       dimensions = 0;
-    ub4              vdim       = (ub4) *count;
-    ub4              actual     = 0;
+    OCI_UInt32 format     = OCI_VEC_FLEX;
+    OCI_UInt32 dimensions = 0;
+    ub4        vdim       = (ub4) *count;
+    ub4        actual     = (ub4) *count;
 
     CHECK(OcilibVectorGetInfo(vect, &format, &dimensions));
 
@@ -677,20 +685,27 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
     CHECK_PTR(OCI_IPC_VOID, str);
     CHECK_VECTOR_ENABLED(vect->con);
 
-    ub4 mbcs_size = (ub4) (size == 0 ? ostrlen(str)  : size);
+    ub4 str_size = (ub4) (size == 0 ? ostrlen(str)  : size);
 
 #if OCI_VERSION_COMPILE >= OCI_23_4
 
+    const OraText *oci_str  = (const OraText *) str;
+    ub4            oci_size = str_size;
+
     CHECK_ENUM_VALUE(format, VectorFormatValues, OTEXT("Vector format"));
 
-    if (IS_WIDE_ENV())
+    if (VECTOR_TEXT_USES_ENV_CHARSET(vect))
     {
-        mbcs_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)mbcs_size+1, (OCI_Size)1, TRUE);
-        OcilibStringNativeToMbcs(str, mbcs_str, (OCI_Size) mbcs_size);
+        oci_size = (ub4) (str_size * sizeof(dbtext));
     }
-    else
+    else if (IS_WIDE_ENV())
     {
-        mbcs_str = (char*) str;
+        mbcs_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)str_size+1, (OCI_Size)1, TRUE);
+        CHECK_NULL(mbcs_str);
+
+        OcilibStringNativeToMbcs(str, mbcs_str, (OCI_Size) str_size);
+
+        oci_str = (const OraText *) mbcs_str;
     }
 
     CHECK_OCI
@@ -701,8 +716,8 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
         vect->con->err,
         (ub1) format,
         (ub4) dimensions,
-        (const OraText*) mbcs_str,
-        (ub4) mbcs_size,
+        oci_str,
+        oci_size,
         OCI_DEFAULT
     );
 
@@ -711,7 +726,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
 #else
 
     OCI_NOT_USED(str);
-    OCI_NOT_USED(size);
+    OCI_NOT_USED(str_size);
     OCI_NOT_USED(format);
     OCI_NOT_USED(dimensions);
 
@@ -721,7 +736,7 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorFromString
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (IS_WIDE_ENV())
+        if (NULL != mbcs_str)
         {
             OcilibMemoryFree(vect->con->env, mbcs_str);
         }
@@ -758,48 +773,73 @@ OCI_SYM_LOCAL OCI_Boolean OcilibVectorToString
 
     if (str == NULL)
     {
-        OCI_UInt32       dimensions = 0;
-        OCI_VectorFormat format     = OCI_VEC_FLEX;
+        size_t max_size = 0;
 
-        CHECK(OcilibVectorGetInfo(vect, &format, &dimensions));
+        CHECK_ATTRIB_GET
+        (
+            OCI_DTYPE_VECTOR, OCI_ATTR_VECTOR_MAX_STRING_SIZE,
+            vect->handle, &max_size, NULL,
+            vect->con->err
+        );
 
-        OCI_UInt32 elem_size = (format == OCI_VEC_FLOAT16 || format == OCI_VEC_FLOAT32 ||
-                                format == OCI_VEC_FLOAT64) ?
-                               OCI_SIZE_NUM_VECTOR_FLOAT : OCI_SIZE_NUM_VECTOR_INT;
-
-        mbcs_size = (ub4) (2 + (elem_size + 2) * dimensions);
+        mbcs_size = (ub4) max_size;
     }
     else
     {
         str[0] = 0;
 
-        if (IS_WIDE_ENV())
+        if (VECTOR_TEXT_USES_ENV_CHARSET(vect))
         {
-            mbcs_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)mbcs_size+1, (OCI_Size)1, TRUE);
-        }
-        else
-        {
-            mbcs_str = (char*) str;
-        }
+            /* the returned size is the number of bytes actually written */
 
-        CHECK_OCI
-        (
-            vect->con->err,
-            OCIVectorToText,
-            vect->handle,
-            vect->con->err,
-            (OraText*)mbcs_str,
-            &mbcs_size,
-            OCI_DEFAULT
-        );
+            mbcs_size = (ub4) (mbcs_size * sizeof(dbtext));
 
-        if (IS_WIDE_ENV())
-        {
-            OcilibStringMbcsToNative(mbcs_str, str, (OCI_Size) mbcs_size);
-        }
-        else
-        {
+            CHECK_OCI
+            (
+                vect->con->err,
+                OCIVectorToText,
+                vect->handle,
+                vect->con->err,
+                (OraText*)str,
+                &mbcs_size,
+                OCI_DEFAULT
+            );
+
+            mbcs_size = (ub4) (mbcs_size / sizeof(dbtext));
+
             str[mbcs_size] = 0;
+        }
+        else
+        {
+            if (IS_WIDE_ENV())
+            {
+                mbcs_str = OcilibMemoryAlloc(vect->con->env,OCI_IPC_STRING, (OCI_Size)mbcs_size+1, (OCI_Size)1, TRUE);
+                CHECK_NULL(mbcs_str);
+            }
+            else
+            {
+                mbcs_str = (char*) str;
+            }
+
+            CHECK_OCI
+            (
+                vect->con->err,
+                OCIVectorToText,
+                vect->handle,
+                vect->con->err,
+                (OraText*)mbcs_str,
+                &mbcs_size,
+                OCI_DEFAULT
+            );
+
+            if (IS_WIDE_ENV())
+            {
+                OcilibStringMbcsToNative(mbcs_str, str, (OCI_Size) mbcs_size);
+            }
+            else
+            {
+                str[mbcs_size] = 0;
+            }
         }
     }
 
@@ -873,7 +913,7 @@ OCI_Boolean OcilibVectorAssign
         {
             ub4 elem_size = OcilibVectorGetFormatSize(format);
             ub4 vdim      = (ub4) dimensions;
-            ub4 actual    = 0;
+            ub4 actual    = (ub4) dimensions;
 
             indarr = (ub4*) OcilibMemoryAlloc(vect->con->env, OCI_IPC_BUFF_ARRAY,
                                               (OCI_Size) sizeof(ub4), (OCI_Size) dimensions, TRUE);

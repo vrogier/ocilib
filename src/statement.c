@@ -936,8 +936,9 @@ OCI_Boolean OcilibStatementFetchIntoUserVariables
 
     CHECK_PTR(OCI_IPC_STATEMENT, stmt);
 
-    OCI_Resultset *rs  = NULL;
-    OCI_Boolean    res = FALSE;
+    OCI_Resultset *rs      = NULL;
+    OCI_Boolean    res     = FALSE;
+    OCI_Boolean    success = TRUE;
 
     /* get resultset */
 
@@ -1130,9 +1131,14 @@ OCI_Boolean OcilibStatementFetchIntoUserVariables
                 }
             }
         }
+
+        /* res is FALSE here only when a column copy failed;
+           an empty resultset is not an error */
+
+        success = res;
     }
 
-    SET_SUCCESS();
+    SET_RETVAL(success);
 
     EXIT_FUNC();
 }

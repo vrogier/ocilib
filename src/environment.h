@@ -92,6 +92,12 @@ OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentSetSubscriptionPort
     OCI_UInt32       port
 );
 
+OCI_SYM_LOCAL OCI_Boolean OcilibEnvironmentSetSubscriptionAddress
+(
+    OCI_Environment *env,
+    const otext    * address
+);
+
 OCI_SYM_LOCAL OCI_UInt32 OcilibEnvironmentGetSubscriptionPort
 (
     OCI_Environment *env

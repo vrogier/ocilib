@@ -831,8 +831,10 @@ namespace TestCApi
             ExecDML(OTEXT("drop table TestImmediateTbl"));
             ExecDML(OTEXT("drop type TestImmediateColl"));
             ExecDML(OTEXT("drop type TestImmediateObj"));
+            ExecDML(OTEXT("drop type TestImmediateObjMismatch"));
             ExecDML(OTEXT("create type TestImmediateObj as object(code int, name varchar2(30))"));
             ExecDML(OTEXT("create type TestImmediateColl as varray(4) of number"));
+            ExecDML(OTEXT("create type TestImmediateObjMismatch as object(x int)"));
             ExecDML(OTEXT("create table TestImmediateTbl of TestImmediateObj"));
             ExecDML(OTEXT("insert into TestImmediateTbl values (TestImmediateObj(7, 'seven'))"));
         }
@@ -842,6 +844,7 @@ namespace TestCApi
             ExecDML(OTEXT("drop table TestImmediateTbl"));
             ExecDML(OTEXT("drop type TestImmediateColl"));
             ExecDML(OTEXT("drop type TestImmediateObj"));
+            ExecDML(OTEXT("drop type TestImmediateObjMismatch"));
         }
 
         void SetUp() override
@@ -970,7 +973,7 @@ namespace TestCApi
     {
         const auto v = OCI_TimestampCreate(env, OCI_TIMESTAMP);
         ASSERT_NE(nullptr, v);
-        EXPECT_TRUE(OCI_ConnectionImmediate(con, OTEXT("select systimestamp from dual"), OCI_ARG_TIMESTAMP, v));
+        EXPECT_TRUE(OCI_ConnectionImmediate(con, OTEXT("select localtimestamp from dual"), OCI_ARG_TIMESTAMP, v));
         ASSERT_TRUE(OCI_TimestampFree(v));
     }
     static void ImmInterval(OCI_Environment* env, OCI_Connection* con)
@@ -1125,6 +1128,23 @@ namespace TestCApi
 
         // unknown arg tag -> mapping error
         ASSERT_FALSE(OCI_ConnectionImmediate(con, OTEXT("select 1 from dual"), 4242, &dummy));
+    }
+
+    TEST_F(TestStatementImmediate, ImmediateWithMismatchedObjectArg_Fails)
+    {
+        const auto typinf = OCI_TypeInfoGet(con, OTEXT("TestImmediateObjMismatch"), OCI_TIF_TYPE);
+        const auto v      = OCI_ObjectCreate(typinf);
+        ASSERT_NE(nullptr, v);
+
+        // copying the fetched TestImmediateObj into an incompatible
+        // destination object must fail instead of reporting success
+        EXPECT_FALSE(OCI_ConnectionImmediate(con,
+            OTEXT("select TestImmediateObj(1, 'o') from dual"),
+            OCI_ARG_OBJECT, v));
+        EXPECT_NE(nullptr, OCI_GetLastError());
+
+        ASSERT_TRUE(OCI_ObjectFree(v));
+        ASSERT_TRUE(OCI_TypeInfoFree(typinf));
     }
 
     /* --- PL/SQL boolean and cursor binds --- */

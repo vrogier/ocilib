@@ -178,6 +178,7 @@
 - Row-level change notifications (`OCI_CNT_ROWS`) now fire correctly; previously row events and rowids were silently dropped.
 - AQ dequeue registration now registers all dequeues in a single `OCISubscriptionRegister()` call, eliminating `ORA-24915` from repeated listener starts.
 - Per-environment OCI symbol loading now works correctly when multiple environments or different library paths are used.
+- `OCI_ConnectionImmediate()` and `OCI_ConnectionImmediateFormat()` now return `FALSE` when copying a fetched value into a user-supplied `OCI_ARG_*` output argument fails (for example, an incompatible destination object type); previously the copy error was silently swallowed, the call reported `TRUE`, and the destination stayed unpopulated.
 - Fixed several memory leaks and handle-leak tracking issues uncovered by the expanded test suite.
 
 ### Fixes (C++ API)

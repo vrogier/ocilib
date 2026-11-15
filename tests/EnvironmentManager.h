@@ -40,7 +40,20 @@ public:
         _statcpp = {};
 
         _envc = (OCI_EnvironmentCreate)(NULL, HOME, OCI_ENV_DEFAULT | OCI_ENV_THREADED | OCI_ENV_EVENTS);
-        _envcpp = new ocilib::Environment(ocilib::Environment::Default | ocilib::Environment::Threaded | ocilib::Environment::Events, HOME);
+        _envcpp = new ocilib::Environment(ocilib::Environment::Default | ocilib::Environment::Threaded | ocilib::Environment::Events, HOME ? HOME : OTEXT(""));
+
+        /* notification callback address override (needed when the server
+           cannot reach the auto-detected local address, e.g. a container) */
+
+        if (SUBSCR_ADDR && *SUBSCR_ADDR)
+        {
+            OCI_EnvironmentSetSubscriptionAddress(_envc, SUBSCR_ADDR);
+
+            if (_envcpp->GetHandle())
+            {
+                _envcpp->SetSubscriptionAddress(SUBSCR_ADDR);
+            }
+        }
 
         WarmupEnvironment(_envc);
         WarmupEnvironment(_envcpp->GetHandle());

@@ -83,10 +83,10 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ConnectionFree(conn));
 
     }
-#ifdef _WINDOWS
-    /* real BFILE I/O needs a DIRECTORY that the DB service account can
-       read: the Oracle home bin directory holding the loaded oci.dll is
-       guaranteed to exist and be readable on this local database */
+    /* real BFILE I/O needs a DIRECTORY pointing at an OS path on the
+       database server: reuse the server's own DATA_PUMP_DIR location and
+       write the test file server-side with UTL_FILE, so the fixture works
+       whether the DB is local, remote or containerized */
 
     class TestFileBfile : public ::testing::Test
     {
@@ -94,28 +94,40 @@ namespace TestCApi
 
         static void SetUpTestCase()
         {
-            char modpath[MAX_PATH] = { 0 };
-            const HMODULE hmod = GetModuleHandleA("oci.dll");
-            ASSERT_NE(nullptr, hmod);
-            ASSERT_NE(0u, GetModuleFileNameA(hmod, modpath, MAX_PATH));
+            const auto env = GetEnvironment(nullptr);
+            ASSERT_NE(nullptr, env);
 
-            char* sep = strrchr(modpath, '\\');
-            ASSERT_NE(nullptr, sep);
-            *sep = 0;
+            const auto conn = OCI_ConnectionCreate(env, DBS, USR, PWD, OCI_SESSION_DEFAULT);
+            ASSERT_NE(nullptr, conn);
 
-            otext dir[MAX_PATH];
-            for (OCI_Size i = 0; i < strlen(modpath) + 1; i++)
-            {
-                dir[i] = (otext) modpath[i];
-            }
+            otext dir[OCI_SIZE_BUFFER] = OTEXT("");
+
+            ASSERT_TRUE(OCI_ConnectionImmediate
+            (
+                conn,
+                OTEXT("select directory_path from all_directories where directory_name = 'DATA_PUMP_DIR'"),
+                OCI_ARG_TEXT_N, dir, (OCI_UInt32) OCI_SIZE_BUFFER
+            ));
+
+            ASSERT_TRUE(OCI_ConnectionFree(conn));
 
             otext ddl[1024];
+
             osprintf(ddl, OTEXT("create or replace directory TEST_FILE_DIR as '%s'"), dir);
             ExecDML(ddl);
+            ExecDML(OTEXT("declare f utl_file.file_type; begin "
+                          "f := utl_file.fopen('TEST_FILE_DIR', 'oci.dll', 'w'); "
+                          "for i in 1..128 loop "
+                          "utl_file.put_line(f, '0123456789012345678901234567890123456789'); "
+                          "end loop; "
+                          "utl_file.fclose(f); "
+                          "end;"));
         }
 
         static void TearDownTestCase()
         {
+            ExecDML(OTEXT("begin utl_file.fremove('TEST_FILE_DIR', 'oci.dll'); "
+                          "exception when others then null; end;"));
             ExecDML(OTEXT("drop directory TEST_FILE_DIR"));
         }
 
@@ -238,7 +250,6 @@ namespace TestCApi
         const OCI_UInt32 n2 = OCI_FileRead(file, buf, 1024);
         ASSERT_EQ(1024u, n2);
     }
-#endif
 
     TEST(TestFile, Read_WithoutOpen_ReturnsZero)
     {

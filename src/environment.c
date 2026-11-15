@@ -2095,6 +2095,59 @@ OCI_Boolean OcilibEnvironmentSetSubscriptionPort
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibEnvironmentSetSubscriptionAddress
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibEnvironmentSetSubscriptionAddress
+(
+    OCI_Environment *env,
+    const otext     *address
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_ENVIRONMENT, env
+    );
+
+    CHECK_PTR(OCI_IPC_ENVIRONMENT, env);
+
+#if OCI_VERSION_COMPILE >= OCI_11_2
+
+    /* OCI expects the callback host name / IP address as a byte string
+       whatever the environment charset (UTF-16 input fails at
+       registration time with ORA-24912); NULL / empty address resets
+       to automatic address selection */
+
+    char        mbcs_addr[OCI_SIZE_BUFFER];
+    const void *attr_value = NULL;
+    OCI_Size    attr_size  = 0;
+
+    if (NULL != address && 0 != address[0])
+    {
+        attr_value = mbcs_addr;
+        attr_size  = OcilibStringNativeToMbcs(address, mbcs_addr, sizeof(mbcs_addr) - 1);
+    }
+
+    CHECK_ATTRIB_SET
+    (
+        OCI_HTYPE_ENV, OCI_ATTR_SUBSCR_IPADDR,
+        env->handle, (void *) (void *) attr_value, (ub4) attr_size,
+        env->err
+    );
+
+    SET_SUCCESS();
+
+#else
+
+    OCI_NOT_USED(address);
+
+#endif
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibEnvironmentGetSubscriptionPort
  * --------------------------------------------------------------------------------------------- */
 
