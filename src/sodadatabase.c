@@ -51,7 +51,7 @@ OCI_SodaDatabase * OcilibSodaDatabaseCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != sdb)
         {
             OcilibSodaDatabaseFree(sdb);
             sdb = NULL;

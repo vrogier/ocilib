@@ -73,7 +73,7 @@ OCI_Enqueue * OcilibEnqueueCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != enqueue)
         {
             OcilibEnqueueFree(enqueue);
             enqueue = NULL;

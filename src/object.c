@@ -690,7 +690,7 @@ OCI_Object * OcilibObjectInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != obj)
         {
             OcilibObjectFree(obj);
             obj = NULL;

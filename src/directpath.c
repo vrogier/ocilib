@@ -413,7 +413,7 @@ OCI_DirectPath * OcilibDirectPathCreate
     CLEANUP_AND_EXIT_FUNC
     (
 
-        if (FAILURE)
+        if (FAILURE && NULL != dp)
         {
             OcilibDirectPathFree(dp);
             dp = NULL;

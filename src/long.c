@@ -67,7 +67,7 @@ OCI_Long * OcilibLongInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != lg)
         {
             OcilibLongFree(lg);
             lg = NULL;

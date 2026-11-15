@@ -254,7 +254,7 @@ OCI_Element * OcilibElementInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != elem)
         {
             OcilibElementFree(elem);
             elem = NULL;

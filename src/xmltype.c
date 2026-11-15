@@ -60,7 +60,7 @@ OCI_XmlType * OcilibXmlTypeInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != xmlType)
         {
             OcilibXmlTypeFree(xmlType);
             xmlType = NULL;

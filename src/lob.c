@@ -131,7 +131,7 @@ OCI_Lob * OcilibLobInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != lob)
         {
             OcilibLobFree(lob);
             lob = NULL;

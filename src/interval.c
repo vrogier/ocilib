@@ -88,7 +88,7 @@ OCI_Interval * OcilibIntervalInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != itv)
         {
             OcilibIntervalFree(itv);
             itv = NULL;

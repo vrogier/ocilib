@@ -101,7 +101,7 @@ OCI_Timestamp * OcilibTimestampInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != tmsp)
         {
             OcilibTimestampFree(tmsp);
             tmsp = NULL;

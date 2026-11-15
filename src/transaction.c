@@ -125,7 +125,7 @@ OCI_Transaction * OcilibTransactionCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != trans)
         {
             OcilibTransactionFree(trans);
             trans = NULL;

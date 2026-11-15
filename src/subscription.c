@@ -319,7 +319,7 @@ OCI_Subscription * OcilibSubscriptionCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != sub)
         {
             OcilibSubscriptionUnregister(sub);
             sub = NULL;

@@ -69,7 +69,7 @@ OCI_Iterator * OcilibIteratorCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != iter)
         {
             OcilibIteratorFree(iter);
             iter = NULL;

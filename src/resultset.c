@@ -309,7 +309,7 @@ OCI_Resultset * OcilibResultsetCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != rs)
         {
             OcilibResultsetFree(rs);
             rs = NULL;

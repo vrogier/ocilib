@@ -78,7 +78,7 @@ OCI_Reference * OcilibReferenceInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != ref)
         {
             OcilibReferenceFree(ref);
             ref = NULL;

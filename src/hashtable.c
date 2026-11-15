@@ -177,7 +177,7 @@ OCI_HashTable * OcilibHashTableCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != table)
         {
             OcilibHashTableFree(table);
             table = NULL;

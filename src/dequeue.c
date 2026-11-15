@@ -91,7 +91,7 @@ OCI_Dequeue * OcilibDequeueCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != dequeue)
         {
             OcilibDequeueFree(dequeue);
             dequeue = NULL;

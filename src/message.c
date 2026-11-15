@@ -76,7 +76,7 @@ OCI_Message * OcilibMessageCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != msg)
         {
             OcilibMessageFree(msg);
             msg = NULL;

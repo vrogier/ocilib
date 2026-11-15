@@ -67,7 +67,7 @@ OCI_ShardingKey * OcilibShardingKeyCreate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != skey)
         {
             OcilibShardingKeyFree(skey);
             skey = NULL;

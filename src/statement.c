@@ -1225,7 +1225,7 @@ OCI_Statement * OcilibStatementInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != stmt)
         {
             OcilibStatementFree(stmt);
             stmt = NULL;

@@ -82,7 +82,7 @@ OCI_Agent * OcilibAgentInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != agent)
         {
             OcilibAgentFree(agent);
             agent = NULL;

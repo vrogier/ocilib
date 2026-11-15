@@ -86,7 +86,7 @@ OCI_Date * OcilibDateInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != date)
         {
             OcilibDateFree(date);
             date = NULL;

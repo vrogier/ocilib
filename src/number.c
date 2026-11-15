@@ -592,7 +592,7 @@ OCI_Number * OcilibNumberInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != number)
         {
             OcilibNumberFree(number);
             number = NULL;

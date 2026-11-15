@@ -94,7 +94,7 @@ OCI_File * OcilibFileInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != file)
         {
             OcilibFileFree(file);
             file = NULL;

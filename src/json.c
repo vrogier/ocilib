@@ -90,7 +90,7 @@ OCI_Json * OcilibJsonInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != json)
         {
             OcilibJsonFree(json);
             json = NULL;
@@ -831,7 +831,7 @@ OCI_JsonNode * OcilibJsonGetRoot
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != node)
         {
             OcilibJsonNodeFree(node);
             node = NULL;

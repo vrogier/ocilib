@@ -145,7 +145,7 @@ OCI_Vector * OcilibVectorInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != vect)
         {
             OcilibVectorFree(vect);
             vect = NULL;

@@ -77,7 +77,7 @@ OCI_Collection * OcilibCollectionInitialize
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != coll)
         {
             OcilibCollectionFree(coll);
             coll = NULL;

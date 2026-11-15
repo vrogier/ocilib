@@ -205,7 +205,7 @@ OCI_Connection * OcilibConnectionAllocate
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != con)
         {
             OcilibConnectionFree(con);
             con = NULL;
@@ -1164,7 +1164,7 @@ OCI_Connection * OcilibConnectionCreateInternal
 
     CLEANUP_AND_EXIT_FUNC
     (
-        if (FAILURE)
+        if (FAILURE && NULL != con)
         {
             OcilibConnectionFree(con);
             con = NULL;
