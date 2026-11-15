@@ -288,8 +288,8 @@ OCI_Boolean OcilibJsonLoadText
         /* context */ OCI_IPC_JSON, json
     );
 
-    dbtext   *dbstr  = NULL;
     OCI_Int32 dbsize = (length == 0 ? -1 : (OCI_Int32)(length * sizeof(otext)));
+    char     *mbstr  = NULL;
 
     CHECK_PTR(OCI_IPC_JSON, json);
     CHECK_PTR(OCI_IPC_VOID, json_text);
@@ -298,10 +298,15 @@ OCI_Boolean OcilibJsonLoadText
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
 
-    dbstr  = (dbtext *) (json_text);
-    dbsize = (0 == length ? OcilibStringDBSize(json_text) : dbsize);
+    /* JZN text exchange is byte-oriented UTF-8 whatever the environment
+       charset: the helper borrows the buffer on MBCS builds and transcodes
+       otext to UTF-8 on wide builds (same convention as OcilibJsonNode
+       setters). Feeding raw UTF-16 relies on JZN_INPUT_DETECT sniffing a
+       BOM-less UTF-16 buffer — older clients (e.g. instant client 21.15)
+       silently parse it to an empty document. */
 
-    CHECK_NULL(dbstr);
+    mbstr = OcilibStringGetDBMbcsString(json->con->env, json_text, &dbsize);
+    CHECK_NULL(mbstr);
 
     CHECK_OCI
     (
@@ -309,10 +314,10 @@ OCI_Boolean OcilibJsonLoadText
         OCIJsonTextBufferParse,
         json->con->env->handle,
         json->handle,
-        dbstr,
+        mbstr,
         (oraub8) dbsize,
         (ub4) validation,
-        (ub2) encoding,
+        (ub2) (OCI_CHAR_WIDE == json->con->env->charset ? OCI_JTE_UTF8 : encoding),
         json->con->env->err,
         OCI_DEFAULT
     );
@@ -328,10 +333,17 @@ OCI_Boolean OcilibJsonLoadText
     OCI_NOT_USED(validation);
     OCI_NOT_USED(encoding);
     OCI_NOT_USED(dbsize);
+    OCI_NOT_USED(mbstr);
 
 #endif
 
-    EXIT_FUNC();
+    CLEANUP_AND_EXIT_FUNC
+    (
+        if (NULL != mbstr)
+        {
+            OcilibStringReleaseDBMbcsString(json->con->env, mbstr);
+        }
+    );
 }
 
 /* --------------------------------------------------------------------------------------------- *
@@ -402,12 +414,11 @@ OCI_Boolean OcilibJsonToText
         /* context */ OCI_IPC_JSON, json
     );
 
-    dbtext         *dbstr        = NULL;
+    char           *dbstr        = NULL;
     OCI_Int32       dbsize       = 0;
     OCI_Int32       attempt      = 0;
     sword           res          = OCI_ERROR;
     oraub8          bytes        = 0;
-    ub4             mode         = OCI_JSON_TEXT_ENV_NLS;
     const OCI_Int32 max_attempts = 16;
 
     CHECK_PTR(OCI_IPC_JSON, json);
@@ -416,6 +427,11 @@ OCI_Boolean OcilibJsonToText
     CHECK_FEATURE(json->con, OCI_FEATURE_JSON, OCI_21_1);
 
 #if OCI_VERSION_COMPILE >= OCI_21_1
+
+    /* request AL32UTF8 output: JZN text exchange is byte-oriented UTF-8
+       whatever the environment charset. OCI_JSON_TEXT_ENV_NLS asks for the
+       environment csid — UTF-16 on wide builds — which older clients (e.g.
+       instant client 21.15) silently fail to produce. */
 
     do
     {
@@ -427,11 +443,11 @@ OCI_Boolean OcilibJsonToText
         dbsize = (0 == dbsize) ? 1024 : (dbsize * 2);
         attempt++;
 
-        dbstr = (dbtext *) OcilibMemoryAlloc(json->con->env, OCI_IPC_STRING,
-                                             sizeof(dbtext), (OCI_Size) dbsize + 1, FALSE);
+        dbstr = (char *) OcilibMemoryAlloc(json->con->env, OCI_IPC_STRING,
+                                           sizeof(char), (OCI_Size) dbsize + 1, FALSE);
         CHECK_NULL(dbstr);
 
-        bytes = (oraub8) ((OCI_Size)(dbsize + 1) * sizeof(dbtext));
+        bytes = (oraub8) (OCI_Size)(dbsize + 1);
 
         res = json->con->env->api->OCIJsonToTextBuffer
               (
@@ -441,7 +457,7 @@ OCI_Boolean OcilibJsonToText
                   &bytes,
                   (ub4) print,
                   json->con->env->err,
-                  mode
+                  OCI_DEFAULT
               );
 
         if (res < 0)
@@ -461,23 +477,24 @@ OCI_Boolean OcilibJsonToText
     }
     while (res < 0);
 
-    dbsize = (OCI_Int32) (bytes / sizeof(dbtext));
+    /* dbstr holds AL32UTF8 — OcilibStringUTF8ToNative is a bounded copy on
+       MBCS builds and a real UTF-8 -> UTF-16 transcode on wide builds */
 
     if (NULL == buffer)
     {
-        *length = (OCI_UInt32) dbsize;
+        *length = (OCI_UInt32) OcilibStringUTF8ToNative(dbstr, (OCI_Size) bytes, NULL, 0);
         SET_SUCCESS();
     }
     else
     {
-        OCI_UInt32 outlen = (OCI_UInt32) dbsize;
+        OCI_UInt32 outlen = (OCI_UInt32) OcilibStringUTF8ToNative(
+            dbstr, (OCI_Size) bytes, buffer, (OCI_Size) *length + 1);
 
         if (outlen > *length)
         {
             outlen = *length;
         }
 
-        OcilibStringOracleToNative(dbstr, buffer, (OCI_Int32) outlen);
         buffer[outlen] = 0;
         *length        = outlen;
 
