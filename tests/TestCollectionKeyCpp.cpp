@@ -145,6 +145,14 @@ namespace TestCppApi
         Connection con(env, DBS, USR, PWD);
         SKIP_IF_FEATURE_UNAVAILABLE(env, &con, OCI_FEATURE_COLL_KEY);
 
+#ifdef OCI_CHARSET_WIDE
+        /* OCI defect: an IN OUT bind of an INDEX BY VARCHAR2 collection fails
+           at OCIStmtExecute with ORA-22141 in UTF-16 environments (reproduced
+           with raw OCI, no OCILIB involved) */
+        SkipTest("ORA-22141: INDEX BY VARCHAR2 IN OUT bind fails in UTF-16");
+        return;
+#endif
+
         auto coll = CreateColl(con);
 
         Statement stmt(con);

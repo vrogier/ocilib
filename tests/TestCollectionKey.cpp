@@ -368,6 +368,14 @@ namespace TestCApi
     {
         SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_COLL_KEY);
 
+#ifdef OCI_CHARSET_WIDE
+        /* OCI defect: an IN OUT bind of an INDEX BY VARCHAR2 collection fails
+           at OCIStmtExecute with ORA-22141 in UTF-16 environments (reproduced
+           with raw OCI, no OCILIB involved - see .vince/BugReport_IBVC_UTF16_INOUT.md) */
+        SkipTest("ORA-22141: INDEX BY VARCHAR2 IN OUT bind fails in UTF-16");
+        return;
+#endif
+
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
 

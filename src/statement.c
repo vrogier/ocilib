@@ -3482,6 +3482,12 @@ OCI_Bind* OcilibStatementBindCollection
     OCI_Collection *data
 )
 {
+    /* OCI defect: binding an INDEX BY VARCHAR2 collection as an IN OUT (or
+       OUT) PL/SQL parameter makes OCIStmtExecute() fail with ORA-22141 in
+       UTF-16 environments (reproduced with raw OCI, no OCILIB involved -
+       see .vince/BugReport_IBVC_UTF16_INOUT.md). IN binds and numeric-keyed
+       index-by tables are unaffected. */
+
     BIND_CALL_NULL_FORBIDDEN
     (
         OCI_IPC_COLLECTION, sizeof(OCIColl*), OCI_CDT_COLLECTION, SQLT_NTY, 0, data->typinf, 0
@@ -3501,6 +3507,11 @@ OCI_Bind* OcilibStatementBindCollectionArray
     OCI_UInt32       nbelem
 )
 {
+    /* see the ORA-22141 UTF-16 caveat on OcilibStatementBindCollection() -
+       the same OCI defect applies to string-indexed collections bound as
+       IN OUT/OUT PL/SQL parameters */
+
+
     BIND_CALL_NULL_FORBIDDEN
     (
         OCI_IPC_COLLECTION, sizeof(OCIColl*), OCI_CDT_COLLECTION, SQLT_NTY, 0, typinf, nbelem

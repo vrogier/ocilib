@@ -4342,6 +4342,12 @@ OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_StatementBindVectorArray
  * @note
  * Parameter 'data' CANNOT be NULL; the OCI_BAM_INTERNAL bind allocation mode is NOT supported for this function.
  *
+ * @warning
+ * Oracle client defect: a string-indexed collection (INDEX BY VARCHAR2) bound
+ * as an IN OUT or OUT PL/SQL parameter makes OCIStmtExecute() fail with
+ * ORA-22141 when the environment runs in UTF-16 (OCI_CHARSET_WIDE).
+ * IN binds and numeric-keyed index-by tables are unaffected.
+ *
  * @return
  * The bind handle on success, otherwise NULL.
  */
@@ -4373,6 +4379,12 @@ OCI_SYM_PUBLIC OCI_Bind* OCI_API OCI_StatementBindCollection
  * @note
  * Parameter 'data' can be NULL if the statement bind allocation mode
  * has been set to OCI_BAM_INTERNAL.
+ *
+ * @warning
+ * Oracle client defect: string-indexed collections (INDEX BY VARCHAR2) bound
+ * as IN OUT or OUT PL/SQL parameters make OCIStmtExecute() fail with
+ * ORA-22141 when the environment runs in UTF-16 (OCI_CHARSET_WIDE).
+ * See OCI_StatementBindCollection().
  *
  * @return
  * The bind handle on success, otherwise NULL.
@@ -5185,7 +5197,7 @@ OCI_SYM_PUBLIC OCI_BindAllocationMode OCI_API OCI_BindGetAllocationMode
   * OCI_Collection, OCI_Reference, OCI_File, OCI_Lob, OCI_Interval, OCI_Date,
   * OCI_Timestamp, OCI_Long, OCI_Element, ...) are owned by the result set and
   * released when the result set is freed. They must NOT be freed by the
-  * application. Calling OCI_XxxFree() on such handles is harmless — the
+  * application. Calling OCI_XxxFree() on such handles is harmless ï¿½ the
   * call is a no-op. Only handles created by OCI_XxxCreate()/
   * OCI_XxxCreateFromXxx() functions are caller-owned and must be freed.
   * Scalar getters (OCI_ResultsetGetString(), OCI_ResultsetGetRaw(), ...) return borrowed
@@ -20066,7 +20078,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollectionInsertMany
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexCreate() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (wide builds) — ORA-40671 is returned. MBCS
+ * OCI_CHARSET_WIDE mode (wide builds) ï¿½ ORA-40671 is returned. MBCS
  * builds work correctly. Verified with Oracle 23ai; a future Oracle client
  * release may fix this.
  *
@@ -20091,7 +20103,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollectionCreateIndex
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexDrop() OCI call
  * fails inside the Oracle client itself when the library is built in
-* OCI_CHARSET_WIDE mode (wide builds) — it can even crash the process.
+* OCI_CHARSET_WIDE mode (wide builds) ï¿½ it can even crash the process.
  * MBCS builds work correctly. Verified with Oracle 23ai; a future Oracle
  * client release may fix this.
  *
@@ -20138,7 +20150,7 @@ OCI_SYM_PUBLIC OCI_SodaDocument* OCI_API OCI_SodaCollectionGetDataGuide
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexList() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (wide builds) — OCI-22303 is returned. MBCS
+ * OCI_CHARSET_WIDE mode (wide builds) ï¿½ OCI-22303 is returned. MBCS
  * builds work correctly. Verified with Oracle 23ai; a future Oracle client
  * release may fix this.
  *
@@ -21577,12 +21589,12 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetDouble
  *
  * Every line carries a severity + category + function + message:
  *   `YYYY-MM-DD HH:MM:SS.mmm [LVL] [CAT] [step] fn: message`
- *   `[LVL]` 3 chars —`ERR` `WRN` `INF` `DBG` `TRC`; `[step]` is `ENTER`/`LEAVE`
+ *   `[LVL]` 3 chars ï¿½`ERR` `WRN` `INF` `DBG` `TRC`; `[step]` is `ENTER`/`LEAVE`
  *   on call-trace lines only.
  *
- * Levels are cumulative — a level shows itself plus every lower level:
+ * Levels are cumulative ï¿½ a level shows itself plus every lower level:
  *
- *   OCI_LOG_NONE    — logging disabled
+ *   OCI_LOG_NONE    ï¿½ logging disabled
  *   OCI_LOG_ERROR   â€” ocilib exceptions, memory leaks
  *   OCI_LOG_WARN    â€” OCI exception warnings
  *   OCI_LOG_INFO    â€” connect / disconnect, statement prepared / executed,
