@@ -560,6 +560,12 @@ OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterUInt64
     const otext  * name
 );
 
+OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterBoolean
+(
+    OCI_Statement* stmt,
+    const otext  * name
+);
+
 OCI_SYM_LOCAL OCI_Boolean OcilibStatementRegisterString
 (
     OCI_Statement* stmt,

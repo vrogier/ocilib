@@ -175,10 +175,22 @@
     <ClCompile Include="..\src\directpath.c">
       <Filter>Sources</Filter>
     </ClCompile>
+    <ClCompile Include="TestBoolean.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBooleanCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
     <ClCompile Include="TestCollection.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestCollectionCpp.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCollectionKey.cpp">
+      <Filter>Tests suite</Filter>
+    </ClCompile>
+    <ClCompile Include="TestCollectionKeyCpp.cpp">
       <Filter>Tests suite</Filter>
     </ClCompile>
     <ClCompile Include="TestArray.cpp">

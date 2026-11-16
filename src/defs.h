@@ -231,8 +231,10 @@ typedef OCI_UInt16 dbtext;
 #define OCI_FEATURE_SECURE_NOTIFICATION 14
 #define OCI_FEATURE_SHARDING            15
 #define OCI_FEATURE_SPARSE_VECTOR       16
+#define OCI_FEATURE_SQL_BOOLEAN         17
+#define OCI_FEATURE_COLL_KEY            18
 
-#define OCI_FEATURE_COUNT               OCI_FEATURE_SPARSE_VECTOR
+#define OCI_FEATURE_COUNT               OCI_FEATURE_COLL_KEY
 
 /* --------------------------------------------------------------------------------------------- *
  * handle types

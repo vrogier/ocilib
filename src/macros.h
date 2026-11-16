@@ -274,12 +274,15 @@ ocilib_exit_label:                  \
         }                                                          \
         while (0)
 
-#define CHECK_INDEX(v,                                                                                                                          \
-                    n)                                                                                                                do        \
-        {                                                                      if ((v) >=                                                       \
-                                                                                   (n))                                                    {    \
-                                                                                   THROW(OcilibExceptionOutOfBounds, (OCI_Int32)(v));           \
-                                                                               }                                                              } \
+#define CHECK_INDEX(v, n)                                       \
+                                                                \
+        do                                                      \
+        {                                                       \
+            if ((v) >= (n))                                     \
+            {                                                   \
+                THROW(OcilibExceptionOutOfBounds, (OCI_Int32)(v)); \
+            }                                                   \
+        }                                                       \
         while (0)
 
 #define CHECK_MIN(v, m)                                  \
@@ -516,8 +519,8 @@ ocilib_exit_label:                  \
 /* helpers macros */
 
 #define IS_WIDE_ENV()   (ocilib_call_context.env && (OCI_CHAR_WIDE == ocilib_call_context.env->charset))
-#define IS_MBCS_ENV()        (ocilib_call_context.env && (OCI_CHAR_MBCS == ocilib_call_context.env->charset))
-#define IS_UTF8_ENV()        (ocilib_call_context.env && (TRUE == ocilib_call_context.env->charset))
+#define IS_MBCS_ENV()   (ocilib_call_context.env && (OCI_CHAR_MBCS == ocilib_call_context.env->charset))
+#define IS_UTF8_ENV()   (ocilib_call_context.env && (TRUE == ocilib_call_context.env->nls_utf8))
 
 #define GET_PROP(rtype, rvalue, stype, sptr, prop) \
                                                    \
@@ -703,6 +706,12 @@ ocilib_exit_label:                  \
                 JUMP_CLEANUP();                                  \
             }                                                    \
         } while (0)
+
+/* lazily materialize the cached DOM document (json->jdoc) on first access */
+
+#define CHECK_JSON_DOC(json) \
+                             \
+        CHECK(OcilibJsonEnsureDoc(json))
 
 #define LIST_ATOMIC_OPERATION(list, exp)       \
                                                \

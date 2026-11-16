@@ -3268,7 +3268,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_StatementIsRebindingAllowed
 
 /**
 * @brief
-* Bind a OCI_Boolean variable (PL/SQL ONLY)
+* Bind a OCI_Boolean variable
 *
 * @param stmt - Statement handle
 * @param name - Variable name
@@ -3278,8 +3278,12 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_StatementIsRebindingAllowed
 * Parameter 'data' can be NULL if the statement bind allocation mode
 * has been set to OCI_BAM_INTERNAL.
 *
+* @note
+* With an Oracle 23ai or later server and client, this call also binds
+* SQL BOOLEAN values used in queries and PL/SQL blocks.
+*
 * @warning
-* - OCI_StatementBindBoolean() CAN ONLY BE USED for PL/SQL OCI_Boolean type when calling PL/SQL procedures/function
+* - OCI_StatementBindBoolean() can only be used for boolean type variables when calling PL/SQL procedures/functions or, on Oracle 23ai+, statements using SQL BOOLEAN values
 * - ONLY supported by Oracle 12c and above !
 *
 * @return
@@ -5181,7 +5185,7 @@ OCI_SYM_PUBLIC OCI_BindAllocationMode OCI_API OCI_BindGetAllocationMode
   * OCI_Collection, OCI_Reference, OCI_File, OCI_Lob, OCI_Interval, OCI_Date,
   * OCI_Timestamp, OCI_Long, OCI_Element, ...) are owned by the result set and
   * released when the result set is freed. They must NOT be freed by the
-  * application. Calling OCI_XxxFree() on such handles is harmless â€” the
+  * application. Calling OCI_XxxFree() on such handles is harmless — the
   * call is a no-op. Only handles created by OCI_XxxCreate()/
   * OCI_XxxCreateFromXxx() functions are caller-owned and must be freed.
   * Scalar getters (OCI_ResultsetGetString(), OCI_ResultsetGetRaw(), ...) return borrowed
@@ -6495,6 +6499,60 @@ OCI_SYM_PUBLIC OCI_UInt64 OCI_API OCI_ResultsetGetUInt64ByName
 
 /**
  * @brief
+ * Return the current boolean value of the column at the given index in the result set
+ *
+ * @param rs    - Result set handle
+ * @param index - Column position
+ *
+ * @note
+ * Column position is 0-based.
+ *
+ * @note
+ * SQL BOOLEAN columns (Oracle 23ai+) and PL/SQL BOOLEAN binds are both
+ * supported through this getter.
+ *
+ * @warning
+ * FALSE is returned for NULL columns as well. Use OCI_ResultsetIsColumnNull()
+ * to distinguish NULL from a real FALSE value.
+ *
+ * @return
+ * The column current row value or FALSE if index is out of bounds
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ResultsetGetBoolean
+(
+    OCI_Resultset* rs,
+    OCI_UInt32     index
+);
+
+/**
+ * @brief
+ * Return the current boolean value of the column from its name in the result set
+ *
+ * @param rs   - Result set handle
+ * @param name - Column name
+ *
+ * @note
+ * The column name is case-insensitive.
+ *
+ * @warning
+ * FALSE is returned for NULL columns as well. Use
+ * OCI_ResultsetIsColumnNullByName() to distinguish NULL from a real FALSE value.
+ *
+ * @return
+ * The column current row value or FALSE if the column name is not found
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ResultsetGetBooleanByName
+(
+    OCI_Resultset* rs,
+    const otext  * name
+);
+
+/**
+ * @brief
  * Return the current string value of the column at the given index in the result set
  *
  * @param rs    - Result set handle
@@ -7503,7 +7561,7 @@ OCI_SYM_PUBLIC const otext* OCI_API OCI_ConnectionGetServerOutput
   *
   * OCI (and thus OCILIB) offers the ability to access collection elements:
   *
-  * - Directly by index (OCI_CollectionGetElement() and OCI_CollectionSetElement()).
+  * - Directly by index (OCI_CollectionGetElementByIndex() and OCI_CollectionSetElementByIndex()).
   * - Using an iterator (OCI_Iterator) to iterate through the collection
   *   (OCI_IteratorGetNext(), OCI_IteratorGetPrev()).
   *
@@ -7753,12 +7811,16 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionClear
  * @note
  * Collection indexes start at position 0.
  *
+ * @warning
+ * This call fails if the collection is a string-indexed associative array
+ * (see OCI_CollectionGetKeyType()); use the ByKey() counterpart instead.
+ *
  * @return
  * The element handle on success, or NULL on failure.
  *
  */
 
-OCI_SYM_PUBLIC OCI_Element* OCI_API OCI_CollectionGetElement
+OCI_SYM_PUBLIC OCI_Element* OCI_API OCI_CollectionGetElementByIndex
 (
     OCI_Collection * coll,
     OCI_UInt32       index
@@ -7776,12 +7838,16 @@ OCI_SYM_PUBLIC OCI_Element* OCI_API OCI_CollectionGetElement
  * @note
  * Collection indexes start at position 0.
  *
+ * @warning
+ * This call fails if the collection is a string-indexed associative array
+ * (see OCI_CollectionGetKeyType()); use the ByKey() counterpart instead.
+ *
  * @return
  * TRUE on success, otherwise FALSE.
  *
  */
 
-OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionSetElement
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionSetElementByIndex
 (
     OCI_Collection * coll,
     OCI_UInt32       index,
@@ -7849,7 +7915,11 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionToText
  * Collection indexes start at position 0.
  *
  * @warning
- * OCI_CollectionDeleteElement() is only valid for nested tables.
+ * OCI_CollectionDeleteElementByIndex() is only valid for nested tables.
+ *
+ * @warning
+ * This call fails if the collection is a string-indexed associative array
+ * (see OCI_CollectionGetKeyType()); use the ByKey() counterpart instead.
  *
  * @return
  * - If the input collection is a Nested Table, it returns TRUE if the element
@@ -7858,11 +7928,150 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionToText
  *
  */
 
-OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionDeleteElement
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionDeleteElementByIndex
 (
     OCI_Collection * coll,
     OCI_UInt32       index
 );
+
+/**
+ * @brief
+ * Return the key type of an associative array (index-by table) collection
+ *
+ * @param coll - Collection handle
+ *
+ * @note
+ * Associative arrays (index-by tables) can be indexed either by numbers or by
+ * strings. The key functions OCI_CollectionKeyExists(),
+ * OCI_CollectionGetElementByKey(), OCI_CollectionSetElementByKey() and
+ * OCI_CollectionDeleteElementByKey() only apply to string-indexed associative arrays
+ * (aka IBVC - index-by varchar2 collections), for which this function returns
+ * OCI_CKT_STRING.
+ *
+ * @note
+ * This call works with any Oracle client version: OCI_CKT_NUMBER is returned
+ * for numeric-indexed associative arrays even on clients predating 23.6, since
+ * string-indexed collections cannot be manipulated by such clients anyway.
+ * Detecting an actual string key type requires Oracle client 23.6 or higher.
+ *
+ * @return
+ * - OCI_CKT_STRING if the collection is a string-indexed associative array.
+ * - OCI_CKT_NUMBER if the collection is a numeric-indexed associative array.
+ * - OCI_CKT_UNKNOWN for other collection types or on failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_CollKeyType OCI_API OCI_CollectionGetKeyType
+(
+    OCI_Collection * coll
+);
+
+/**
+ * @brief
+ * Test whether the given string key exists in a string-indexed associative array
+ *
+ * @param coll - Collection handle
+ * @param key  - Key string to look up
+ *
+ * @warning
+ * This call requires Oracle client 23.6 or higher and a string-indexed
+ * associative array (IBVC) collection.
+ *
+ * @return
+ * TRUE if the key exists, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionKeyExists
+(
+    OCI_Collection * coll,
+    const otext    * key
+);
+
+/**
+ * @brief
+ * Return the element associated with the given string key in a string-indexed
+ * associative array
+ *
+ * @param coll - Collection handle
+ * @param key  - Key string of the element to retrieve
+ *
+ * @warning
+ * This call requires Oracle client 23.6 or higher and a string-indexed
+ * associative array (IBVC) collection (see OCI_CollectionGetKeyType());
+ * it fails on numeric-indexed collections, varrays and nested tables.
+ *
+ * @return
+ * The element handle on success, or NULL if the key does not exist or on
+ * failure.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Element* OCI_API OCI_CollectionGetElementByKey
+(
+    OCI_Collection * coll,
+    const otext    * key
+);
+
+/**
+ * @brief
+ * Assign the given element value to the element associated with the given
+ * string key in a string-indexed associative array
+ *
+ * @param coll - Collection handle
+ * @param key  - Key string of the element to assign
+ * @param elem - Source element handle to assign
+ *
+ * @note
+ * If the key does not exist yet, it is created.
+ *
+ * @warning
+ * This call requires Oracle client 23.6 or higher and a string-indexed
+ * associative array (IBVC) collection (see OCI_CollectionGetKeyType());
+ * it fails on numeric-indexed collections, varrays and nested tables.
+ *
+ * @warning
+ * OCI does not preserve element null indicators in string-indexed associative
+ * arrays: assigning an element whose indicator is OCI_IND_NULL creates the
+ * key but the element reads back as NOT NULL with an undefined value.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionSetElementByKey
+(
+    OCI_Collection * coll,
+    const otext    * key,
+    OCI_Element    * elem
+);
+
+/**
+ * @brief
+ * Delete the element associated with the given string key in a string-indexed
+ * associative array
+ *
+ * @param coll - Collection handle
+ * @param key  - Key string of the element to delete
+ *
+ * @warning
+ * This call requires Oracle client 23.6 or higher and a string-indexed
+ * associative array (IBVC) collection (see OCI_CollectionGetKeyType());
+ * it fails on numeric-indexed collections, varrays and nested tables.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_CollectionDeleteElementByKey
+(
+    OCI_Collection * coll,
+    const otext    * key
+);
+
+
 
 /**
  * @brief
@@ -7954,6 +8163,34 @@ OCI_SYM_PUBLIC OCI_Element* OCI_API OCI_IteratorGetCurrent
     OCI_Iterator* iter
 );
 
+
+
+/**
+ * @brief
+ * Get the string key of the current element in a string-indexed associative array
+ *
+ * @param iter - Iterator handle
+ *
+ * @warning
+ * This call requires Oracle client 23.6 or higher and a string-indexed
+ * associative array (IBVC) collection.
+ *
+ * @par Returned string lifetime
+ * The returned pointer is owned by the OCI_Iterator handle and remains valid
+ * until the next iterator navigation/key call on the same iterator or until the
+ * iterator is freed. It must not be freed or modified by the caller.
+ *
+ * @return
+ * The current key, or NULL if the iterator is not positioned on an element or
+ * on error.
+ *
+ */
+
+OCI_SYM_PUBLIC const otext* OCI_API OCI_IteratorGetCurrentKey
+(
+    OCI_Iterator* iter
+);
+
 /**
  * @brief
  * Create a local collection element instance based on a collection type
@@ -8000,7 +8237,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_ElementFree
 * @param elem   - Element handle
 *
 * @warning
-* OCI_ElementGetBoolean() returns a valid value only for collection elements of PL/SQL OCI_Boolean type.
+* OCI_ElementGetBoolean() returns a valid value only for collection elements of OCI_Boolean type (PL/SQL BOOLEAN and, on Oracle 23ai+, SQL BOOLEAN).
 *
 * @return
 * The OCI_Boolean value, or FALSE on failure.
@@ -8349,7 +8586,7 @@ OCI_SYM_PUBLIC OCI_Reference* OCI_API OCI_ElementGetReference
 * @param value  - Boolean value
 *
 * @warning
-* OCI_ElementSetBoolean() is only valid for collection elements of PL/SQL OCI_Boolean type.
+* OCI_ElementSetBoolean() is only valid for collection elements of OCI_Boolean type (PL/SQL BOOLEAN and, on Oracle 23ai+, SQL BOOLEAN).
 *
 * @return
 * TRUE on success, otherwise FALSE.
@@ -8976,6 +9213,29 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_StatementRegisterInt64
  */
 
 OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_StatementRegisterUInt64
+(
+    OCI_Statement* stmt,
+    const otext  * name
+);
+
+/**
+ * @brief
+ * Register a boolean output bind placeholder
+ *
+ * @param stmt - Statement handle
+ * @param name - Output bind name
+ *
+ * @note
+ * Works for both PL/SQL BOOLEAN out parameters and, with an Oracle 23ai or
+ * later server and client, SQL BOOLEAN values produced by queries and PL/SQL
+ * blocks.
+ *
+ * @return
+ * TRUE on success, otherwise FALSE.
+ *
+ */
+
+OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_StatementRegisterBoolean
 (
     OCI_Statement* stmt,
     const otext  * name
@@ -12935,7 +13195,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_ObjectGetTypeInfo
 
 /**
  * @brief
- * Return the OCI_Boolean value of the given object attribute (ONLY for PL/SQL records)
+ * Return the OCI_Boolean value of the given object attribute
  *
  * @param obj  - Object handle
  * @param attr - Attribute name
@@ -12943,7 +13203,7 @@ OCI_SYM_PUBLIC OCI_TypeInfo* OCI_API OCI_ObjectGetTypeInfo
  * @note
  * If the attribute is found in the object descriptor attributes list, then a
  * data type check is performed for integrity.
- * OCI_ObjectGetBoolean() returns a valid value only for PL/SQL OCI_Boolean-based attributes.
+ * OCI_ObjectGetBoolean() returns a valid value only for OCI_Boolean-based attributes (PL/SQL BOOLEAN and, on Oracle 23ai+, SQL BOOLEAN).
  *
  * @warning
  * Only supported by Oracle 12c and above.
@@ -13431,7 +13691,7 @@ OCI_SYM_PUBLIC OCI_File* OCI_API OCI_ObjectGetFile
 
 /**
  * @brief
- * Set an object attribute of type OCI_Boolean (ONLY for PL/SQL records)
+ * Set an object attribute of type OCI_Boolean
  *
  * @param obj    - Object handle
  * @param attr   - Attribute name
@@ -19806,7 +20066,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollectionInsertMany
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexCreate() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (wide builds) â€” ORA-40671 is returned. MBCS
+ * OCI_CHARSET_WIDE mode (wide builds) — ORA-40671 is returned. MBCS
  * builds work correctly. Verified with Oracle 23ai; a future Oracle client
  * release may fix this.
  *
@@ -19831,7 +20091,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_SodaCollectionCreateIndex
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexDrop() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (wide builds) â€” it can even crash the process.
+* OCI_CHARSET_WIDE mode (wide builds) — it can even crash the process.
  * MBCS builds work correctly. Verified with Oracle 23ai; a future Oracle
  * client release may fix this.
  *
@@ -19878,7 +20138,7 @@ OCI_SYM_PUBLIC OCI_SodaDocument* OCI_API OCI_SodaCollectionGetDataGuide
  * @warning
  * Oracle client bug (not an OCILIB bug): the OCISodaIndexList() OCI call
  * fails inside the Oracle client itself when the library is built in
- * OCI_CHARSET_WIDE mode (wide builds) â€” OCI-22303 is returned. MBCS
+ * OCI_CHARSET_WIDE mode (wide builds) — OCI-22303 is returned. MBCS
  * builds work correctly. Verified with Oracle 23ai; a future Oracle client
  * release may fix this.
  *
@@ -21098,7 +21358,7 @@ OCI_SYM_PUBLIC OCI_JsonNode * OCI_API OCI_JsonNodeGetParent
  *
  * @warning
  * Array indices inside the path string are 0-BASED, following the JSONPath
- * convention used by Oracle's JSON_VALUE()/json_query() â€” '$.arr[0]' is the
+ * convention used by Oracle's JSON_VALUE()/json_query() '$.arr[0]' is the
  * FIRST item of 'arr'. This differs from the programmatic index arguments of
  * OCI_JsonNodeGetItem()/OCI_JsonNodeSetItem()/OCI_JsonNodeInsertItem()/
  * OCI_JsonNodeRemoveItem(), which are 1-BASED API indices.
@@ -21307,7 +21567,7 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetDouble
  * @{
  *
  * OCILIB emits structured, opt-in logging configured through environment
- * variables at `OCI_EnvironmentCreate()` time â€” no code changes needed.
+ * variables at `OCI_EnvironmentCreate()` time - no code changes needed.
  *
  * Configuration:
  *
@@ -21317,12 +21577,12 @@ OCI_SYM_PUBLIC OCI_Boolean OCI_API OCI_JsonNodeSetDouble
  *
  * Every line carries a severity + category + function + message:
  *   `YYYY-MM-DD HH:MM:SS.mmm [LVL] [CAT] [step] fn: message`
- *   `[LVL]` 3 chars â€” `ERR` `WRN` `INF` `DBG` `TRC`; `[step]` is `ENTER`/`LEAVE`
+ *   `[LVL]` 3 chars —`ERR` `WRN` `INF` `DBG` `TRC`; `[step]` is `ENTER`/`LEAVE`
  *   on call-trace lines only.
  *
- * Levels are cumulative â€” a level shows itself plus every lower level:
+ * Levels are cumulative — a level shows itself plus every lower level:
  *
- *   OCI_LOG_NONE    â€” logging disabled
+ *   OCI_LOG_NONE    — logging disabled
  *   OCI_LOG_ERROR   â€” ocilib exceptions, memory leaks
  *   OCI_LOG_WARN    â€” OCI exception warnings
  *   OCI_LOG_INFO    â€” connect / disconnect, statement prepared / executed,

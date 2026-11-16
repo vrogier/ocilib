@@ -89,13 +89,13 @@ OCI_SYM_LOCAL OCI_UInt32 OcilibCollectionGetCount
     OCI_Collection* coll
 );
 
-OCI_SYM_LOCAL OCI_Element* OcilibCollectionGetElement
+OCI_SYM_LOCAL OCI_Element* OcilibCollectionGetElementByIndex
 (
     OCI_Collection * coll,
     OCI_UInt32       index
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibCollectionSetElement
+OCI_SYM_LOCAL OCI_Boolean OcilibCollectionSetElementByIndex
 (
     OCI_Collection * coll,
     OCI_UInt32       index,
@@ -108,10 +108,40 @@ OCI_SYM_LOCAL OCI_Boolean OcilibCollectionAppend
     OCI_Element   * elem
 );
 
-OCI_SYM_LOCAL OCI_Boolean OcilibCollectionDeleteElement
+OCI_SYM_LOCAL OCI_Boolean OcilibCollectionDeleteElementByIndex
 (
     OCI_Collection * coll,
     OCI_UInt32       index
+);
+
+OCI_SYM_LOCAL OCI_CollKeyType OcilibCollectionGetKeyType
+(
+    OCI_Collection * coll
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibCollectionKeyExists
+(
+    OCI_Collection * coll,
+    const otext    * key
+);
+
+OCI_SYM_LOCAL OCI_Element* OcilibCollectionGetElementByKey
+(
+    OCI_Collection * coll,
+    const otext    * key
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibCollectionSetElementByKey
+(
+    OCI_Collection * coll,
+    const otext    * key,
+    OCI_Element    * elem
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibCollectionDeleteElementByKey
+(
+    OCI_Collection * coll,
+    const otext    * key
 );
 
 OCI_SYM_LOCAL OCI_TypeInfo* OcilibCollectionGetTypeInfo

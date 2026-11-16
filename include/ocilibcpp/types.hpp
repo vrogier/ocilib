@@ -6553,6 +6553,140 @@ namespace ocilib
         void Append(const T& value);
 
         /**
+         * @brief
+         * Associative array (index-by table) key type enumerated values
+         *
+         */
+        enum KeyTypeValues
+        {
+            /** Collection is not an associative array or key type is unknown */
+            KeyTypeUnknown = OCI_CKT_UNKNOWN,
+            /** Associative array indexed by strings (IBVC) */
+            KeyTypeString = OCI_CKT_STRING,
+            /** Associative array indexed by numbers */
+            KeyTypeNumber = OCI_CKT_NUMBER
+        };
+
+        /**
+        * @brief
+        * Associative array key type
+        *
+        * Possible values are Collection::KeyTypeValues
+        *
+        */
+        typedef core::Enum<KeyTypeValues> KeyType;
+
+        /**
+        * @brief
+        * Return the key type of the collection if it is an associative array
+        * (index-by table)
+        *
+        * @return
+        * - Collection::KeyTypeString for a string-indexed associative array.
+        * - Collection::KeyTypeNumber for a numeric-indexed associative array.
+        * - Collection::KeyTypeUnknown for other collection types.
+        *
+        */
+        [[nodiscard]] KeyType GetKeyType() const;
+
+        /**
+        * @brief
+        * check if the element associated with the given string key is null
+        *
+        * @param key - Key of the element
+        *
+        * @warning
+        * Only valid for string-indexed associative arrays
+        * (e.g. when collection key type is Collection::KeyTypeString)
+        *
+        */
+        [[nodiscard]] bool IsElementNull(const String& key) const;
+
+        /**
+        * @brief
+        * Nullify the element associated with the given string key
+        *
+        * @param key - Key of the element
+        *
+        * @warning
+        * Only valid for string-indexed associative arrays
+        * (e.g. when collection key type is Collection::KeyTypeString)
+        *
+        */
+        void SetElementNull(const String& key);
+
+        /**
+        * @brief
+        * Check if the given string key exists in the collection
+        *
+        * @param key - Key to look up
+        *
+        * @warning
+        * Only valid for string-indexed associative arrays
+        * (e.g. when collection key type is Collection::KeyTypeString)
+        *
+        */
+        [[nodiscard]] bool KeyExists(const String& key) const;
+
+        /**
+        * @brief
+        * Return all keys of a string-indexed associative array in lexical order
+        *
+        * @return
+        * The keys currently present in the collection (empty vector if the
+        * collection is empty or not string-indexed).
+        *
+        */
+        [[nodiscard]] std::vector<String> Keys() const;
+
+        /**
+        * @brief
+        * Return the collection element value associated with the given string key
+        *
+        * @param key - Key of the element
+        *
+        * @warning
+        * Only valid for string-indexed associative arrays
+        * (e.g. when collection key type is Collection::KeyTypeString)
+        *
+        */
+        [[nodiscard]] T Get(const String& key) const;
+
+        /**
+        * @brief
+        * Set the collection element value associated with the given string key
+        *
+        * @param key   - Key of the element
+        * @param value - Value to set
+        *
+        * @note
+        * If the key already exists, its value is updated. Otherwise a new
+        * key/value pair is added to the collection.
+        *
+        * @warning
+        * Only valid for string-indexed associative arrays
+        * (e.g. when collection key type is Collection::KeyTypeString)
+        *
+        */
+        void Set(const String& key, const T& value);
+
+        /**
+        * @brief
+        * Delete the element associated with the given string key
+        *
+        * @param key - Key of the element to delete
+        *
+        * @warning
+        * Only valid for string-indexed associative arrays
+        * (e.g. when collection key type is Collection::KeyTypeString)
+        *
+        * @return
+        * true if the element is successfully deleted
+        *
+        */
+        bool Delete(const String& key) const;
+
+        /**
         * @brief
         * Return the type information object associated to the collection
         *

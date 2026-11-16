@@ -19,9 +19,11 @@
  */
 
 #include "iterator.h"
+#include "collection.h"
 
 #include "element.h"
 #include "macros.h"
+#include "stringutils.h"
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibIteratorCreate
@@ -118,6 +120,9 @@ OCI_Boolean OcilibIteratorFree
         OcilibElementFree(iter->elem);
         iter->elem = NULL;
     }
+
+    FREE(iter->keybuf);
+    iter->keysize = 0;
 
     /* free iterator structure */
 
@@ -239,6 +244,63 @@ OCI_Element * OcilibIteratorGetCurrent
     CHECK(NULL != iter->elem && !iter->boc && !iter->eoc && !iter->dirty);
 
     SET_RETVAL(iter->elem);
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibIteratorGetCurrentKey
+ * --------------------------------------------------------------------------------------------- */
+
+const otext * OcilibIteratorGetCurrentKey
+(
+    OCI_Iterator *iter
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ const otext*, NULL,
+        /* context */ OCI_IPC_ITERATOR, iter
+    );
+
+    void *key    = NULL;
+    ub4   keylen = 0;
+
+    CHECK_PTR(OCI_IPC_ITERATOR, iter);
+    CHECK_ENV_FEATURE(OCI_FEATURE_COLL_KEY, OCI_23_6);
+
+    /* string keys only exist on INDEX BY VARCHAR2 collections */
+
+    CHECK_COMPAT(OCI_CKT_STRING == OcilibCollectionGetKeyType(iter->coll));
+    CHECK(!iter->boc && !iter->eoc && !iter->dirty);
+
+    CHECK_OCI
+    (
+        iter->coll->con->err,
+        OCIIterKeyGetCurrent,
+        iter->coll->con->env->handle,
+        iter->coll->con->err,
+        iter->handle, (const dvoid**) &key, &keylen
+    );
+
+    const otext* result = NULL;
+
+    if (NULL != key && keylen > 0)
+    {
+        /* key is a non NUL-terminated dbtext string: request keylen+1 otexts
+           in the iterator-owned reusable buffer, copy, terminate */
+
+        OCI_UInt32 bufsize = 0;
+
+        CHECK(OcilibStringCharsToBytes(iter->coll->con->env, dbcharcount((OCI_Int32) keylen), &bufsize));
+        CHECK(OcilibStringRequestBuffer(iter->coll->con->env, &iter->keybuf, &iter->keysize, bufsize));
+
+        OcilibStringOracleToNative(key, iter->keybuf, dbcharcount((OCI_Int32) keylen));
+
+        result = iter->keybuf;
+    }
+
+    SET_RETVAL(result);
 
     EXIT_FUNC();
 }

@@ -238,7 +238,7 @@ namespace TestCApi
 
         ASSERT_TRUE(OCI_IteratorFree(iter));
 
-        auto direct = OCI_CollectionGetElement(coll, 1);
+        auto direct = OCI_CollectionGetElementByIndex(coll, 1);
         ASSERT_NE(nullptr, direct);
         ASSERT_EQ(2, OCI_ElementGetInt32(direct));
         ASSERT_FALSE(OCI_ElementIsNull(direct));
@@ -281,7 +281,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_CollectionToText(coll, &collTextSize, collText));
         ASSERT_GT(collTextSize, 0u);
 
-        auto elem = OCI_CollectionGetElement(coll, 0);
+        auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_NE(nullptr, elem);
         const otext* str = OCI_ElementGetString(elem);
         ASSERT_NE(nullptr, str);
@@ -374,10 +374,10 @@ namespace TestCApi
         AppendInt(10);
         AppendInt(20);
 
-        auto e1 = OCI_CollectionGetElement(coll, 0);
+        auto e1 = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_NE(nullptr, e1);
         EXPECT_EQ(10, OCI_ElementGetInt32(e1));
-        auto e2 = OCI_CollectionGetElement(coll, 1);
+        auto e2 = OCI_CollectionGetElementByIndex(coll, 1);
         ASSERT_NE(nullptr, e2);
         EXPECT_EQ(20, OCI_ElementGetInt32(e2));
     }
@@ -388,10 +388,10 @@ namespace TestCApi
         AppendInt(20);
 
         ASSERT_TRUE(OCI_ElementSetInt32(elem, 30));
-        ASSERT_TRUE(OCI_CollectionSetElement(coll, 0, elem));
+        ASSERT_TRUE(OCI_CollectionSetElementByIndex(coll, 0, elem));
 
-        EXPECT_EQ(30, OCI_ElementGetInt32(OCI_CollectionGetElement(coll, 0)));
-        EXPECT_EQ(20, OCI_ElementGetInt32(OCI_CollectionGetElement(coll, 1)));
+        EXPECT_EQ(30, OCI_ElementGetInt32(OCI_CollectionGetElementByIndex(coll, 0)));
+        EXPECT_EQ(20, OCI_ElementGetInt32(OCI_CollectionGetElementByIndex(coll, 1)));
     }
 
     TEST_F(TestCollVarray, CollAssign_CopiesAllElements)
@@ -404,7 +404,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_CollectionAssign(coll2, coll));
 
         EXPECT_EQ(2u, OCI_CollectionGetCount(coll2));
-        EXPECT_EQ(20, OCI_ElementGetInt32(OCI_CollectionGetElement(coll2, 1)));
+        EXPECT_EQ(20, OCI_ElementGetInt32(OCI_CollectionGetElementByIndex(coll2, 1)));
 
         ASSERT_TRUE(OCI_CollectionFree(coll2));
     }
@@ -426,7 +426,7 @@ namespace TestCApi
         AppendInt(10);
         AppendInt(20);
 
-        ASSERT_TRUE(OCI_CollectionDeleteElement(coll, 0));
+        ASSERT_TRUE(OCI_CollectionDeleteElementByIndex(coll, 0));
 
         EXPECT_EQ(2u, OCI_CollectionGetCount(coll));
     }
@@ -525,7 +525,7 @@ namespace TestCApi
         AppendInt(2);
         AppendInt(3);
 
-        ASSERT_TRUE(OCI_CollectionDeleteElement(coll, 2));
+        ASSERT_TRUE(OCI_CollectionDeleteElementByIndex(coll, 2));
 
         EXPECT_LT(OCI_CollectionGetCount(coll), 3u);
     }
@@ -880,7 +880,7 @@ namespace TestCApi
         const auto coll = OCI_CollectionCreate(ti);
         ASSERT_NE(nullptr, coll);
 
-        ASSERT_EQ(nullptr, OCI_CollectionGetElement(coll, 0));
+        ASSERT_EQ(nullptr, OCI_CollectionGetElementByIndex(coll, 0));
 
         ASSERT_TRUE(OCI_CollectionFree(coll));
         ASSERT_TRUE(OCI_ConnectionFree(conn));
@@ -903,15 +903,15 @@ namespace TestCApi
             { "CollAssign", [] { return !OCI_CollectionAssign(nullptr, nullptr); } },
             { "CollClear", [] { return !OCI_CollectionClear(nullptr); } },
             { "CollCreate", [] { return nullptr == OCI_CollectionCreate(nullptr); } },
-            { "CollDeleteElem", [] { return !OCI_CollectionDeleteElement(nullptr, 1); } },
+            { "CollDeleteElem", [] { return !OCI_CollectionDeleteElementByIndex(nullptr, 1); } },
             { "CollFree", [] { return !OCI_CollectionFree(nullptr); } },
             { "CollGetCount", [] { return 0 == OCI_CollectionGetCount(nullptr); } },
-            { "CollGetElem", [] { return nullptr == OCI_CollectionGetElement(nullptr, 1); } },
+            { "CollGetElem", [] { return nullptr == OCI_CollectionGetElementByIndex(nullptr, 1); } },
             { "CollGetMax", [] { return 0 == OCI_CollectionGetMax(nullptr); } },
             { "CollGetSize", [] { return 0 == OCI_CollectionGetSize(nullptr); } },
             { "CollGetType", [] { return OCI_UNKNOWN == OCI_CollectionGetType(nullptr); } },
             { "CollGetTypeInfo", [] { return nullptr == OCI_CollectionGetTypeInfo(nullptr); } },
-            { "CollSetElem", [] { return !OCI_CollectionSetElement(nullptr, 1, nullptr); } },
+            { "CollSetElem", [] { return !OCI_CollectionSetElementByIndex(nullptr, 1, nullptr); } },
             { "CollToText", [] { return !OCI_CollectionToText(nullptr, NullArgOut<OCI_UInt32>(), NullArgText()); } },
             { "CollTrim", [] { return !OCI_CollectionTrim(nullptr, 1); } },
         }));

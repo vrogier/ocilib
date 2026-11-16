@@ -360,7 +360,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_CollectionAppend(coll, elem));
         ASSERT_TRUE(OCI_ElementFree(elem));   /* append copies — caller keeps ownership */
 
-        const auto got = OCI_CollectionGetElement(coll, 0);
+        const auto got = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_NE(nullptr, got);
 
         /* DATE element read as int -> OcilibExceptionTypeNotCompatible, source = element */

@@ -79,6 +79,17 @@
   - Added `OCI_VEC_FLOAT16` element format — a client-side descriptor format only, not a valid column format
   - Vector assignment (including `OCI_ARG_VECTOR` fetch output and `OCI_ConnectionImmediate*`) now copies through the OCI array conversion functions instead of a text round-trip — lossless for dense vectors and preserves sparse storage
 
+- Oracle 23ai SQL BOOLEAN additions
+  - Added `OCI_ResultsetGetBoolean()` / `OCI_ResultsetGetBooleanByName()` — typed getters for SQL BOOLEAN columns (and PL/SQL BOOLEAN binds)
+  - Added `OCI_StatementRegisterBoolean()` — out-bind registration for boolean values (e.g. DML `RETURNING flag INTO :b`)
+
+- Oracle 23ai string-indexed associative array (IBVC) additions (requires Oracle client 23.6+)
+  - Added `OCI_CollectionGetKeyType()` — reports `OCI_CKT_STRING`/`OCI_CKT_NUMBER`/`OCI_CKT_UNKNOWN`; works on any client version
+  - Added element access by string key: `OCI_CollectionKeyExists()`, `OCI_CollectionGetKeyElement()`, `OCI_CollectionSetKeyElement()`, `OCI_CollectionDeleteKey()`
+  - Added lexical key navigation: `OCI_CollectionGetFirstKey()`, `OCI_CollectionGetLastKey()`, `OCI_CollectionGetNextKey()`, `OCI_CollectionGetPrevKey()`
+  - Added `OCI_IteratorGetCurrentKey()` — key of the current element when iterating an IBVC collection
+  - Note: `OCITableKeyNext()`/`OCITableKeyPrev()` crash inside the Oracle client when the given key does not exist or has no successor/predecessor (verified on Oracle 23.6/23.26) — an OCI defect; OCILIB guards the native call and returns NULL in those cases
+
 ### Enhancements (C++ API)
 
 - Migrated the C++ wrapper baseline from C++03 to C++17
@@ -111,6 +122,15 @@
     - `ocilib::JsonNode` exposes `begin()`/`end()` input iterators over array items and object fields
     - SODA cursors (`SodaCollectionCursor`/`SodaDocumentCursor`) expose `begin()`/`end()` for range-for
 - Added `Statement::ExecuteAndGetResultset()` convenience methods
+
+- Oracle 23ai SQL BOOLEAN additions (see C API)
+  - `Resultset::Get<bool>(index|name)` and `Resultset::GetOptional<bool>` — typed SQL BOOLEAN accessors
+  - `Statement::Register<bool>(name)` — boolean out-bind registration
+
+- String-indexed associative array (IBVC) additions (see C API — requires Oracle client 23.6+)
+  - `Collection<T>::GetKeyType()` — `KeyTypeString`/`KeyTypeNumber`/`KeyTypeUnknown`
+  - `Collection<T>::KeyExists()`, `Get(key)`, `Set(key, value)`, `DeleteKey(key)`, `IsElementNull(key)`, `SetElementNull(key)`
+  - `Collection<T>::GetFirstKey()`, `GetLastKey()`, `GetNextKey(key)`, `GetPrevKey(key)`
 
 - Sparse vector additions (see C API — requires Oracle 23ai RU 23.7 client and database)
   - `Vector::IsSparse()` — reports whether a vector uses sparse storage

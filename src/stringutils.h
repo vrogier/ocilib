@@ -135,6 +135,13 @@ OCI_SYM_LOCAL otext * OcilibStringDuplicateFromDBString
     OCI_Int32        len
 );
 
+OCI_SYM_LOCAL OCI_Boolean OcilibStringCharsToBytes
+(
+    OCI_Environment *env,
+    OCI_UInt32       chars,
+    OCI_UInt32      *bytes
+);
+
 OCI_SYM_LOCAL otext * OcilibStringFromStringPtr
 (
     OCI_Environment *libenv,

@@ -76,15 +76,15 @@
 #define OCI_CollAssign                   OCI_CollectionAssign
 #define OCI_CollClear                    OCI_CollectionClear
 #define OCI_CollCreate                   OCI_CollectionCreate
-#define OCI_CollDeleteElem               OCI_CollectionDeleteElement
+#define OCI_CollDeleteElem               OCI_CollectionDeleteElementByIndex
 #define OCI_CollFree                     OCI_CollectionFree
 #define OCI_CollGetCount                 OCI_CollectionGetCount
-#define OCI_CollGetElem                  OCI_CollectionGetElement
+#define OCI_CollGetElem                  OCI_CollectionGetElementByIndex
 #define OCI_CollGetMax                   OCI_CollectionGetMax
 #define OCI_CollGetSize                  OCI_CollectionGetSize
 #define OCI_CollGetType                  OCI_CollectionGetType
 #define OCI_CollGetTypeInfo              OCI_CollectionGetTypeInfo
-#define OCI_CollSetElem                  OCI_CollectionSetElement
+#define OCI_CollSetElem                  OCI_CollectionSetElementByIndex
 #define OCI_CollToText                   OCI_CollectionToText
 #define OCI_CollTrim                     OCI_CollectionTrim
 

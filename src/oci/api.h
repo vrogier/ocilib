@@ -1624,6 +1624,10 @@ typedef sword (*OCITABLEDELETE)
     OCITable     *tbl
 );
 
+
+
+
+
 typedef sword (*OCIITERCREATE)
 (
     OCIEnv        *env,
@@ -2810,7 +2814,66 @@ typedef struct JsonDomDoc JsonDomDoc;
 typedef struct JsonDomNode JsonDomNode;
 #endif
 
+/* API introduced in 23.6 */
 
+typedef sword (*OCICOLLGETKEYTYPE)
+(
+    OCIEnv        *env,
+    OCIError      *err,
+    CONST OCIColl *coll,
+    ub2           *keytype
+);
+
+typedef sword (*OCICOLLKEYASSIGNELEM)
+(
+    OCIEnv      *env,
+    OCIError    *err,
+    CONST dvoid *key,
+    ub4          keylen,
+    CONST dvoid *elem,
+    CONST dvoid *elemind,
+    OCIColl     *coll
+);
+
+typedef sword (*OCICOLLKEYGETELEM)
+(
+    OCIEnv        *env,
+    OCIError      *err,
+    CONST OCIColl *coll,
+    CONST dvoid   *key,
+    ub4            keylen,
+    dvoid        **elem,
+    dvoid        **elemind
+);
+
+typedef sword (*OCITABLEKEYEXISTS)
+(
+    OCIEnv         *env,
+    OCIError       *err,
+    CONST dvoid    *key,
+    ub4             keylen,
+    CONST OCITable *tbl,
+    boolean        *exists
+);
+
+typedef sword (*OCITABLEKEYDELETE)
+(
+    OCIEnv      *env,
+    OCIError    *err,
+    CONST dvoid *key,
+    ub4          keylen,
+    OCITable    *tbl
+);
+
+
+typedef sword (*OCIITERKEYGETCURRENT)
+(
+    OCIEnv        *env,
+    OCIError      *err,
+    CONST OCIIter *itr,
+    CONST dvoid  **key,
+    ub4           *keylen
+);
 
 /* per-environment OCI symbol dispatch table */
 
@@ -3078,6 +3141,15 @@ typedef struct OCI_Symbols
     OCISHARDINGKEYCOLUMNADD                  OCIShardingKeyColumnAdd;
     OCISHARDINGKEYRESET                      OCIShardingKeyReset;
     OCISHARDINSTANCESGET                     OCIShardInstancesGet;
+
+    /* API introduced in 23.6 */
+
+    OCICOLLGETKEYTYPE                        OCICollGetKeytype;
+    OCICOLLKEYASSIGNELEM                     OCICollKeyAssignElem;
+    OCICOLLKEYGETELEM                        OCICollKeyGetElem;
+    OCITABLEKEYEXISTS                        OCITableKeyExists;
+    OCITABLEKEYDELETE                        OCITableKeyDelete;
+    OCIITERKEYGETCURRENT                     OCIIterKeyGetCurrent;
 
 #ifdef ORAXB8_DEFINED
     OCILOBCOPY2                              OCILobCopy2;

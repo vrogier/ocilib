@@ -21,7 +21,9 @@ enum
     OCI_FEATURE_JSON                = 13,
     OCI_FEATURE_SECURE_NOTIFICATION = 14,
     OCI_FEATURE_SHARDING            = 15,
-    OCI_FEATURE_SPARSE_VECTOR       = 16
+    OCI_FEATURE_SPARSE_VECTOR       = 16,
+    OCI_FEATURE_SQL_BOOLEAN         = 17,
+    OCI_FEATURE_COLL_KEY            = 18
 };
 
 /* runtime capabilities of the configured environment — probed once in

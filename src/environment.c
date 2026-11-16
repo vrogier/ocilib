@@ -505,6 +505,7 @@ static OCI_UInt32 OcilibEnvironmentComputeRuntimeVersion
         return (OCI_UInt32) OCI_VER_MAKE(maj, min, rev);
     }
     else if (env->api->OCIVectorToSparseArray)       return OCI_23_7;
+    else if (env->api->OCICollKeyAssignElem)         return OCI_23_6;
     else if (env->api->OCIVectorToArray)             return OCI_23_4;
     else if (env->api->OCIServerDataLengthGet)       return OCI_21_3;
     else if (env->api->OCIJsonTextBufferParse)       return OCI_21_1;
@@ -536,6 +537,16 @@ static void OcilibEnvironmentClearSymbolsAbove
     {
         env->api->OCIVectorFromSparseArray = NULL;
         env->api->OCIVectorToSparseArray   = NULL;
+    }
+
+    if (version < OCI_23_6)
+    {
+        env->api->OCICollGetKeytype    = NULL;
+        env->api->OCICollKeyAssignElem = NULL;
+        env->api->OCICollKeyGetElem    = NULL;
+        env->api->OCITableKeyExists    = NULL;
+        env->api->OCITableKeyDelete    = NULL;
+        env->api->OCIIterKeyGetCurrent = NULL;
     }
 
     if (version < OCI_23_4)
@@ -1012,6 +1023,14 @@ static void OcilibEnvironmentLoadSymbols
     env->api->OCIVectorToText       = OCIVectorToText;
     env->api->OCIJsonSchemaValidate = OCIJsonSchemaValidate;
 #endif
+#if OCI_VERSION_COMPILE >= OCI_23_6
+    env->api->OCICollGetKeytype    = OCICollGetKeytype;
+    env->api->OCICollKeyAssignElem = OCICollKeyAssignElem;
+    env->api->OCICollKeyGetElem    = OCICollKeyGetElem;
+    env->api->OCITableKeyExists    = OCITableKeyExists;
+    env->api->OCITableKeyDelete    = OCITableKeyDelete;
+    env->api->OCIIterKeyGetCurrent = OCIIterKeyGetCurrent;
+#endif
 #if OCI_VERSION_COMPILE >= OCI_23_7
     env->api->OCIVectorFromSparseArray = OCIVectorFromSparseArray;
     env->api->OCIVectorToSparseArray   = OCIVectorToSparseArray;
@@ -1187,13 +1206,19 @@ static void OcilibEnvironmentLoadSymbols
     LIB_SYMBOL(env->lib_handle, "OCICollAssign", env->api->OCICollAssign, OCICOLLASSIGN);
     LIB_SYMBOL(env->lib_handle, "OCICollAppend", env->api->OCICollAppend, OCICOLLAPPEND);
     LIB_SYMBOL(env->lib_handle, "OCICollTrim", env->api->OCICollTrim, OCICOLLTRIM);
+    LIB_SYMBOL(env->lib_handle, "OCICollGetKeytype", env->api->OCICollGetKeytype, OCICOLLGETKEYTYPE);
+    LIB_SYMBOL(env->lib_handle, "OCICollKeyAssignElem", env->api->OCICollKeyAssignElem, OCICOLLKEYASSIGNELEM);
+    LIB_SYMBOL(env->lib_handle, "OCICollKeyGetElem", env->api->OCICollKeyGetElem, OCICOLLKEYGETELEM);
     LIB_SYMBOL(env->lib_handle, "OCITableSize", env->api->OCITableSize, OCITABLESIZE);
     LIB_SYMBOL(env->lib_handle, "OCITableDelete", env->api->OCITableDelete, OCITABLEDELETE);
+    LIB_SYMBOL(env->lib_handle, "OCITableKeyExists", env->api->OCITableKeyExists, OCITABLEKEYEXISTS);
+    LIB_SYMBOL(env->lib_handle, "OCITableKeyDelete", env->api->OCITableKeyDelete, OCITABLEKEYDELETE);
     LIB_SYMBOL(env->lib_handle, "OCIIterCreate", env->api->OCIIterCreate, OCIITERCREATE);
     LIB_SYMBOL(env->lib_handle, "OCIIterDelete", env->api->OCIIterDelete, OCIITERDELETE);
     LIB_SYMBOL(env->lib_handle, "OCIIterInit", env->api->OCIIterInit, OCIITERINIT);
     LIB_SYMBOL(env->lib_handle, "OCIIterNext", env->api->OCIIterNext, OCIITERNEXT);
     LIB_SYMBOL(env->lib_handle, "OCIIterPrev", env->api->OCIIterPrev, OCIITERPREV);
+    LIB_SYMBOL(env->lib_handle, "OCIIterKeyGetCurrent", env->api->OCIIterKeyGetCurrent, OCIITERKEYGETCURRENT);
     LIB_SYMBOL(env->lib_handle, "OCIDirPathAbort", env->api->OCIDirPathAbort, OCIDIRPATHABORT);
     LIB_SYMBOL(env->lib_handle, "OCIDirPathDataSave", env->api->OCIDirPathDataSave, OCIDIRPATHDATASAVE);
     LIB_SYMBOL(env->lib_handle, "OCIDirPathFinish", env->api->OCIDirPathFinish, OCIDIRPATHFINISH);

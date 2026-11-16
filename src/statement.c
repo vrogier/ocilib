@@ -3644,6 +3644,30 @@ OCI_Boolean OcilibStatementRegisterUInt64
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibStatementRegisterBoolean
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibStatementRegisterBoolean
+(
+    OCI_Statement *stmt,
+    const otext   *name
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_STATEMENT, stmt
+    );
+
+    CHECK_REGISTER(stmt, name);
+    CHECK_FEATURE(stmt->con, OCI_FEATURE_SQL_BOOLEAN, OCI_23_1);
+
+    REGISTER_DATA(sizeof(OCI_Boolean), OCI_CDT_BOOLEAN, SQLT_BOL, 0, NULL, 0);
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibStatementRegisterString
  * --------------------------------------------------------------------------------------------- */
 

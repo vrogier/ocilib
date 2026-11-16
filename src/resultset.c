@@ -1571,6 +1571,56 @@ OCI_UInt64 OcilibResultsetGetUInt64ByName
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibResultsetGetBoolean
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibResultsetGetBoolean
+(
+    OCI_Resultset *rs,
+    OCI_UInt32     index
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_RESULTSET, rs
+    );
+
+    OCI_Define *def = NULL;
+
+    CHECK_PTR(OCI_IPC_RESULTSET, rs);
+    CHECK_FEATURE(rs->stmt->con, OCI_FEATURE_SQL_BOOLEAN, OCI_23_1);
+    CHECK_INDEX(index, rs->nb_defs);
+
+    def = OcilibDefineGet(rs, index);
+    CHECK_NULL(def);
+
+    OCI_Boolean result = FALSE;
+
+    if (MATCHING_TYPE(def, OCI_CDT_BOOLEAN))
+    {
+        result = *((OCI_Boolean *) OcilibDefineGetData(def));
+    }
+
+    SET_RETVAL(result);
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibResultsetGetBooleanByName
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibResultsetGetBooleanByName
+(
+    OCI_Resultset *rs,
+    const otext   *name
+)
+{
+    GET_BY_NAME(rs, name, OcilibResultsetGetBoolean, OCI_Boolean, FALSE);
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibResultsetGetString
  * --------------------------------------------------------------------------------------------- */
 
@@ -1620,7 +1670,10 @@ const otext * OcilibResultsetGetString
                 {
                     /* allocate column temporary buffer if needed */
 
-                    CHECK(OcilibStringRequestBuffer(rs->stmt->con->env, &def->buf.tmpbuf, &def->buf.tmpsize, rowid_length));
+                    OCI_UInt32 tmpbufsize = 0;
+
+                    CHECK(OcilibStringCharsToBytes(rs->stmt->con->env, rowid_length, &tmpbufsize));
+                    CHECK(OcilibStringRequestBuffer(rs->stmt->con->env, &def->buf.tmpbuf, &def->buf.tmpsize, tmpbufsize));
 
                     /* Retrieve ROWID as hex string */
 
@@ -1842,7 +1895,10 @@ const otext * OcilibResultsetGetString
 
             CHECK(NULL == err || OCI_UNKNOWN == err->type);
 
-            CHECK(OcilibStringRequestBuffer(rs->stmt->con->env, &def->buf.tmpbuf, &def->buf.tmpsize, buffer_size));
+            OCI_UInt32 tmpbufsize = 0;
+
+            CHECK(OcilibStringCharsToBytes(rs->stmt->con->env, buffer_size, &tmpbufsize));
+            CHECK(OcilibStringRequestBuffer(rs->stmt->con->env, &def->buf.tmpbuf, &def->buf.tmpsize, tmpbufsize));
 
             OcilibStringGetFromType(rs->stmt->con, &def->col, data, data_size, def->buf.tmpbuf, def->buf.tmpsize, FALSE);
 

@@ -26,7 +26,7 @@ namespace TestCApi
         const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
 
-        const auto elem1 = OCI_CollectionGetElement(coll, 0);
+        const auto elem1 = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_NE(nullptr, elem1);
         const otext* str = OCI_ElementGetString(elem1);
         ASSERT_NE(nullptr, str);
@@ -78,7 +78,7 @@ namespace TestCApi
         ASSERT_NE(nullptr, coll);
         ASSERT_EQ((OCI_UInt32) OCI_COLL_VARRAY, OCI_CollectionGetType(coll));
 
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_NE(nullptr, elem);
         ASSERT_FALSE(OCI_ElementIsNull(elem));
 
@@ -120,7 +120,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         EXPECT_EQ(String(OTEXT("alpha")), String(OCI_ElementGetString(elem)));
 
         const auto local = OCI_ElementCreate(OCI_CollectionGetTypeInfo(coll));
@@ -143,7 +143,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         const auto date = OCI_ElementGetDate(elem);
         ASSERT_NE(nullptr, date);
         OCI_Int32 y = 0, m = 0, d = 0;
@@ -175,7 +175,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         const auto ts = OCI_ElementGetTimestamp(elem);
         ASSERT_NE(nullptr, ts);
 
@@ -202,7 +202,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         const auto itv = OCI_ElementGetInterval(elem);
         ASSERT_NE(nullptr, itv);
         OCI_Int32 day = 0, hour = 0, min = 0, sec = 0, nsec = 0;
@@ -233,7 +233,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         unsigned char out[20] = {};
         ASSERT_EQ(4u, OCI_ElementGetRaw(elem, out, sizeof(out)));
         EXPECT_EQ(4u, OCI_ElementGetRawSize(elem));
@@ -262,7 +262,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         const auto obj = OCI_ElementGetObject(elem);
         ASSERT_NE(nullptr, obj);
         EXPECT_EQ(1, OCI_ObjectGetInt32(obj, OTEXT("CODE")));
@@ -295,7 +295,7 @@ namespace TestCApi
         ASSERT_TRUE(OCI_ResultsetFetchNext(rs));
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         const auto inner = OCI_ElementGetCollection(elem);
         ASSERT_NE(nullptr, inner);
         EXPECT_EQ(2u, OCI_CollectionGetCount(inner));
@@ -331,7 +331,7 @@ namespace TestCApi
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_NE(nullptr, elem);
         const auto lob = OCI_ElementGetLob(elem);
         ASSERT_NE(nullptr, lob);
@@ -367,7 +367,7 @@ namespace TestCApi
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_NE(nullptr, elem);
         const auto file = OCI_ElementGetFile(elem);
         ASSERT_NE(nullptr, file);
@@ -406,7 +406,7 @@ namespace TestCApi
 
         const auto coll = OCI_ResultsetGetColl(rs, 0);
         ASSERT_NE(nullptr, coll);
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_NE(nullptr, elem);
         const auto ref = OCI_ElementGetReference(elem);
         ASSERT_NE(nullptr, ref);
@@ -583,7 +583,7 @@ namespace TestCApi
 
     TEST_F(TestElemNum, FetchedNumElem_CoercesToAllNumericGetters)
     {
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_NE(nullptr, elem);
 
         EXPECT_EQ(3, OCI_ElementGetInt16(elem));
@@ -754,7 +754,7 @@ namespace TestCApi
         const auto coll = OCI_CollectionCreate(typinf);
         ASSERT_NE(nullptr, coll);
 
-        const auto elem = OCI_CollectionGetElement(coll, 0);
+        const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
         ASSERT_EQ(nullptr, elem);
         ASSERT_TRUE(OCI_CollectionFree(coll));
         ASSERT_TRUE(OCI_TypeInfoFree(typinf));
@@ -783,9 +783,7 @@ namespace TestCApi
     {
         /* SQL BOOLEAN type is 23c-only — the DDL above/below fails on
            older servers and leaves the schema object missing */
-        SKIP_UNLESS(GetTestCaps().client_ver >= OCI_VER_MAKE(23, 1, 0) &&
-                    GetTestCaps().server_ver >= OCI_VER_MAKE(23, 1, 0),
-                    "SQL BOOLEAN type requires client+server >= 23c");
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SQL_BOOLEAN);
 
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);
@@ -805,7 +803,7 @@ namespace TestCApi
             const auto coll = OCI_ResultsetGetColl(rs, 0);
             ASSERT_NE(nullptr, coll);
 
-            const auto elem = OCI_CollectionGetElement(coll, 0);
+            const auto elem = OCI_CollectionGetElementByIndex(coll, 0);
             ASSERT_NE(nullptr, elem);
             ASSERT_TRUE(OCI_ElementGetBoolean(elem));
         }
@@ -818,9 +816,7 @@ namespace TestCApi
     {
         /* SQL BOOLEAN type is 23c-only — the DDL above/below fails on
            older servers and leaves the schema object missing */
-        SKIP_UNLESS(GetTestCaps().client_ver >= OCI_VER_MAKE(23, 1, 0) &&
-                    GetTestCaps().server_ver >= OCI_VER_MAKE(23, 1, 0),
-                    "SQL BOOLEAN type requires client+server >= 23c");
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SQL_BOOLEAN);
 
         auto env = GetEnvironment(nullptr);
         ASSERT_NE(nullptr, env);

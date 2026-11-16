@@ -48,4 +48,9 @@ OCI_SYM_LOCAL OCI_Element* OcilibIteratorGetCurrent
     OCI_Iterator *iter
 );
 
+OCI_SYM_LOCAL const otext* OcilibIteratorGetCurrentKey
+(
+    OCI_Iterator *iter
+);
+
 #endif /* OCILIB_ITERATOR_H_INCLUDED */

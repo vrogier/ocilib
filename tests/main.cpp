@@ -165,6 +165,8 @@ static const FeatureGate FeatureGates[] =
     { OCI_FEATURE_SECURE_NOTIFICATION, OCI_19_4, true  },
     { OCI_FEATURE_SHARDING,            OCI_12_2, false },
     { OCI_FEATURE_SPARSE_VECTOR,       OCI_23_7, true  },
+    { OCI_FEATURE_SQL_BOOLEAN,         OCI_23_1, true  },
+    { OCI_FEATURE_COLL_KEY,            OCI_23_6, false },
 };
 
 bool FeatureAvailable(OCI_Environment* env, OCI_Connection* con, int feature)

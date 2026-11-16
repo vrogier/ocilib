@@ -1003,9 +1003,7 @@ namespace TestCApi
     {
         /* SQL BOOLEAN type is 23c-only — the DDL above/below fails on
            older servers and leaves the schema object missing */
-        SKIP_UNLESS(GetTestCaps().client_ver >= OCI_VER_MAKE(23, 1, 0) &&
-                    GetTestCaps().server_ver >= OCI_VER_MAKE(23, 1, 0),
-                    "SQL BOOLEAN type requires client+server >= 23c");
+        SKIP_IF_FEATURE_UNSUPPORTED(OCI_FEATURE_SQL_BOOLEAN);
 
         ExecDML(OTEXT("create or replace type TestObject_BoolT as object(b boolean)"));
 

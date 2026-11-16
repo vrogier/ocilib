@@ -124,6 +124,46 @@ OCI_UInt32 OcilibStringBinaryToString
 }
 
 /* --------------------------------------------------------------------------------------------- *
+ * OcilibStringCharsToBytes
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibStringCharsToBytes
+(
+    OCI_Environment * env,
+    OCI_UInt32        chars,
+    OCI_UInt32      * bytes
+)
+{
+    /* converts a character count (excluding NUL terminator) into the buffer
+       size in bytes needed to hold it, applying the UTF-8 worst-case factor
+       for MBCS/UTF-8 environments */
+
+    if (NULL == bytes || NULL == env)
+    {
+        return FALSE;
+    }
+
+    const OCI_Size char_size = (TRUE == env->nls_utf8)
+        ? (OCI_Size)OCI_UTF8_BYTES_PER_CHAR
+        : sizeof(otext);
+
+    /* Computed in OCI_Size: doing this in OCI_UInt32 wrapped for large requests
+       and produced a buffer far smaller than *buffer_size claimed, which the
+       callers then overran. */
+
+    const OCI_Size needed = ((OCI_Size)chars + 1) * char_size;
+
+    if (needed > (OCI_Size)UINT_MAX)
+    {
+        return FALSE;
+    }
+
+    *bytes = (OCI_UInt32)needed;
+
+    return TRUE;
+}
+
+/* --------------------------------------------------------------------------------------------- *
  * OcilibStringRequestBuffer
  * --------------------------------------------------------------------------------------------- */
 
@@ -135,29 +175,16 @@ OCI_Boolean OcilibStringRequestBuffer
     OCI_UInt32       request_size
 )
 {
+    /* request_size is a BYTE count; *buffer_size tracks the allocated
+       capacity in bytes. Callers compute the byte size (see
+       OcilibStringCharsToBytes for char-based requests). */
+
     OCI_Boolean res = FALSE;
 
-    if (!buffer || !buffer_size)
+    if (!buffer || !buffer_size || !env)
     {
         return FALSE;
     }
-
-    const OCI_Size char_size = (env && (TRUE == env->charset))
-        ? (OCI_Size)OCI_UTF8_BYTES_PER_CHAR
-        : sizeof(otext);
-
-    /* Computed in OCI_Size: doing this in OCI_UInt32 wrapped for large requests
-       and produced a buffer far smaller than *buffer_size claimed, which the
-       callers then overran. */
-
-    const OCI_Size needed = ((OCI_Size)request_size + 1) * char_size;
-
-    if (needed > (OCI_Size)UINT_MAX)
-    {
-        return FALSE;
-    }
-
-    request_size = (OCI_UInt32)needed;
 
     if (!*buffer)
     {
@@ -866,7 +893,11 @@ OCI_Boolean OcilibStringGetAttribute
             len = (OCI_Int32) dbcharcount(dbsize);
         }
 
-        if (OcilibStringRequestBuffer(con->env, str, size, (OCI_UInt32) len))
+        OCI_UInt32 bufsize = 0;
+
+        CHECK(OcilibStringCharsToBytes(con->env, (OCI_UInt32) len, &bufsize));
+
+        if (OcilibStringRequestBuffer(con->env, str, size, bufsize))
         {
             if (is_ansi)
             {

@@ -87,6 +87,7 @@
 #define OCI_21_12                           OCI_VER_MAKE(21, 12,  0)
 #define OCI_21_14                           OCI_VER_MAKE(21, 14,  0)
 #define OCI_21_15                           OCI_VER_MAKE(21, 15,  0)
+#define OCI_23_1                            OCI_VER_MAKE(23,  1,  0)
 #define OCI_23_3                            OCI_VER_MAKE(23,  3,  0)
 #define OCI_23_4                            OCI_VER_MAKE(23,  4,  0)
 #define OCI_23_5                            OCI_VER_MAKE(23,  5,  0)
@@ -561,6 +562,15 @@
 #define OCI_COLL_VARRAY                     1
 #define OCI_COLL_NESTED_TABLE               2
 #define OCI_COLL_INDEXED_TABLE              3
+
+/**
+ * @brief
+ * Associative array (index-by table) key types returned by OCI_CollectionGetKeyType()
+ *
+ */
+#define OCI_CKT_UNKNOWN                     0
+#define OCI_CKT_STRING                      1   /* Oracle 23ai+ only */
+#define OCI_CKT_NUMBER                      2
 
 /* pool types */
 

@@ -684,6 +684,7 @@ typedef OCI_UInt32 OCI_SubType;               /* OCI_NUM_*, OCI_LOB_*, OCI_FILE_
                                                  * OCI_TIMESTAMP_*, OCI_INTERVAL_* subtypes */
 typedef OCI_UInt32 OCI_ObjectType;            /* OCI_OBJ_*                            */
 typedef OCI_UInt32 OCI_CollType;              /* OCI_COLL_*                           */
+typedef OCI_UInt32 OCI_CollKeyType;           /* OCI_CKT_*                            */
 typedef OCI_UInt32 OCI_MsgState;              /* OCI_AMS_*                            */
 typedef OCI_UInt32 OCI_DirPathResult;         /* OCI_DPR_*                            */
 typedef OCI_UInt32 OCI_EventType;             /* OCI_ENT_*                            */

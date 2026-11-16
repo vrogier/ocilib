@@ -201,6 +201,7 @@ namespace ocilib
         else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_ResultsetGetUInt32(*this, index)); }
         else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_ResultsetGetInt64(*this, index)); }
         else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_ResultsetGetUInt64(*this, index)); }
+        else if constexpr (std::is_same_v<T, bool>)       { return core::Check(OCI_ResultsetGetBoolean(*this, index)) != FALSE; }
         else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_ResultsetGetFloat(*this, index)); }
         else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_ResultsetGetDouble(*this, index)); }
         else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_ResultsetGetNumber(*this, index)), GetHandle()); }
@@ -254,6 +255,7 @@ namespace ocilib
         else if constexpr (std::is_same_v<T, UInt32>) { return core::Check(OCI_ResultsetGetUInt32ByName(*this, name.c_str())); }
         else if constexpr (std::is_same_v<T, Int64>)  { return core::Check(OCI_ResultsetGetInt64ByName(*this, name.c_str())); }
         else if constexpr (std::is_same_v<T, UInt64>) { return core::Check(OCI_ResultsetGetUInt64ByName(*this, name.c_str())); }
+        else if constexpr (std::is_same_v<T, bool>)       { return core::Check(OCI_ResultsetGetBooleanByName(*this, name.c_str())) != FALSE; }
         else if constexpr (std::is_same_v<T, Float>)      { return core::Check(OCI_ResultsetGetFloatByName(*this, name.c_str())); }
         else if constexpr (std::is_same_v<T, Double>)     { return core::Check(OCI_ResultsetGetDoubleByName(*this, name.c_str())); }
         else if constexpr (std::is_same_v<T, Number>)     { return Number(core::Check(OCI_ResultsetGetNumberByName(*this, name.c_str())), GetHandle()); }

@@ -21,6 +21,7 @@
 #include "collection.h"
 
 #include "array.h"
+#include "connection.h"
 #include "element.h"
 #include "macros.h"
 #include "stringutils.h"
@@ -137,6 +138,7 @@ OCI_Boolean OcilibCollectionFree
 
         coll->elem = NULL;
     }
+
 
     /* free collection for local object */
 
@@ -379,10 +381,10 @@ OCI_Boolean OcilibCollectionTrim
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibCollectionGetElement
+ * OcilibCollectionGetElementByIndex
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Element * OcilibCollectionGetElement
+OCI_Element * OcilibCollectionGetElementByIndex
 (
     OCI_Collection *coll,
     OCI_UInt32      index
@@ -395,6 +397,12 @@ OCI_Element * OcilibCollectionGetElement
     );
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll);
+
+
+    /* reject string-indexed associative arrays: index semantics are
+       undefined for them (use the ByKey API instead) */
+
+    CHECK_COMPAT(OCI_CKT_STRING != OcilibCollectionGetKeyType(coll));
 
     OCI_Boolean exists = FALSE;
     void      * data   = NULL;
@@ -423,10 +431,10 @@ OCI_Element * OcilibCollectionGetElement
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibCollectionSetElement
+ * OcilibCollectionSetElementByIndex
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibCollectionSetElement
+OCI_Boolean OcilibCollectionSetElementByIndex
 (
     OCI_Collection *coll,
     OCI_UInt32      index,
@@ -440,6 +448,12 @@ OCI_Boolean OcilibCollectionSetElement
     );
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll);
+
+
+    /* reject string-indexed associative arrays: index semantics are
+       undefined for them (use the ByKey API instead) */
+
+    CHECK_COMPAT(OCI_CKT_STRING != OcilibCollectionGetKeyType(coll));
     CHECK_PTR(OCI_IPC_ELEMENT,    elem);
     CHECK_COMPAT(elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype);
 
@@ -532,10 +546,10 @@ OCI_Boolean OcilibCollectionClear
 }
 
 /* --------------------------------------------------------------------------------------------- *
- * OcilibCollectionDeleteElement
+ * OcilibCollectionDeleteElementByIndex
  * --------------------------------------------------------------------------------------------- */
 
-OCI_Boolean OcilibCollectionDeleteElement
+OCI_Boolean OcilibCollectionDeleteElementByIndex
 (
     OCI_Collection *coll,
     OCI_UInt32      index
@@ -548,6 +562,12 @@ OCI_Boolean OcilibCollectionDeleteElement
     );
 
     CHECK_PTR(OCI_IPC_COLLECTION, coll);
+
+
+    /* reject string-indexed associative arrays: index semantics are
+       undefined for them (use the ByKey API instead) */
+
+    CHECK_COMPAT(OCI_CKT_STRING != OcilibCollectionGetKeyType(coll));
 
     if (OCI_TYPECODE_TABLE == coll->typinf->colcode)
     {
@@ -564,6 +584,253 @@ OCI_Boolean OcilibCollectionDeleteElement
 
     EXIT_FUNC();
 }
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibCollectionGetKeyType
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_CollKeyType OcilibCollectionGetKeyType
+(
+    OCI_Collection *coll
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_CollKeyType, OCI_CKT_UNKNOWN,
+        /* context */ OCI_IPC_COLLECTION, coll
+    );
+
+    CHECK_PTR(OCI_IPC_COLLECTION, coll);
+
+    OCI_CollKeyType result = OCI_CKT_UNKNOWN;
+
+    if (OCI_TYPECODE_ITABLE == coll->typinf->colcode)
+    {
+        /* Numeric-indexed associative arrays are the only index-by tables
+           pre-23.6 clients can manipulate; and on 23.6+ clients,
+           OCICollGetKeytype() errors on numeric-indexed tables anyway */
+
+        result = OCI_CKT_NUMBER;
+
+        if (OcilibConnectionIsVersionSupported(coll->con, OCI_23_6))
+        {
+            ub2   keytype = 0;
+            sword ret     = OCI_ERROR;
+
+            OCI_CALL
+            (
+                ret,
+                OCICollGetKeytype,
+                coll->con->env->handle, coll->con->err,
+                coll->handle, &keytype
+            );
+
+            if (OCI_SUCCESSFUL(ret))
+            {
+                /* OCI_KEYTYPE_* values map 1:1 to OCI_CKT_* (STRING=1, SB4=2) —
+                   a direct cast avoids referencing constants that may be
+                   absent when compiling against older Oracle SDKs */
+
+                result = (OCI_CollKeyType) keytype;
+            }
+            else
+            {
+                /* drain the expected OCI-21560 on numeric-indexed tables so
+                   OCI_GetLastError() does not report a spurious error */
+
+                sb4 errcode = 0;
+
+                OCI_ERROR_GET(coll->con->err, &errcode, NULL, 0);
+            }
+        }
+    }
+
+    SET_RETVAL(result);
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibCollectionKeyExists
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibCollectionKeyExists
+(
+    OCI_Collection *coll,
+    const otext    *key
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_COLLECTION, coll
+    );
+
+    OCI_Boolean exists = FALSE;
+
+    CHECK_PTR(OCI_IPC_COLLECTION, coll);
+    CHECK_PTR(OCI_IPC_STRING,     key);
+    CHECK_ENV_FEATURE(OCI_FEATURE_COLL_KEY, OCI_23_6);
+
+    /* string-keyed access only valid on INDEX BY VARCHAR2 collections */
+
+    CHECK_COMPAT(OCI_CKT_STRING == OcilibCollectionGetKeyType(coll));
+
+    CHECK_OCI
+    (
+        coll->con->err,
+        OCITableKeyExists,
+        coll->con->env->handle, coll->con->err,
+        (const dbtext*) key, (ub4) OcilibStringDBSize(key),
+        coll->handle, (boolean*) &exists
+    );
+
+    SET_RETVAL(exists);
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibCollectionGetElementByKey
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Element * OcilibCollectionGetElementByKey
+(
+    OCI_Collection *coll,
+    const otext    *key
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Element*, NULL,
+        /* context */ OCI_IPC_COLLECTION, coll
+    );
+
+    void   *data  = NULL;
+    OCIInd  ind   = OCI_IND_NULL;
+    void   *pind  = &ind;
+
+    CHECK_PTR(OCI_IPC_COLLECTION, coll);
+    CHECK_PTR(OCI_IPC_STRING,     key);
+    CHECK_ENV_FEATURE(OCI_FEATURE_COLL_KEY, OCI_23_6);
+
+    /* string-keyed access only valid on INDEX BY VARCHAR2 collections */
+
+    CHECK_COMPAT(OCI_CKT_STRING == OcilibCollectionGetKeyType(coll));
+
+    /* OCICollKeyGetElem() requires 'elemind' to point to caller-provided
+       OCIInd storage: it writes through the pointer (unlike OCICollGetElem()
+       which returns a pointer to OCI-owned indicator storage) */
+
+    CHECK_OCI
+    (
+        coll->con->err,
+        OCICollKeyGetElem,
+        coll->con->env->handle, coll->con->err,
+        coll->handle, (const dbtext*) key,
+        (ub4) OcilibStringDBSize(key), &data, &pind
+    );
+
+    OCI_Element* elem = NULL;
+
+    if (NULL != data)
+    {
+        elem = coll->elem = OcilibElementInitialize(coll->elem, data, NULL, coll->typinf);
+        CHECK_NULL(elem);
+
+        *elem->pind = *((OCIInd *) pind);
+    }
+
+    SET_RETVAL(elem);
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibCollectionSetElementByKey
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibCollectionSetElementByKey
+(
+    OCI_Collection *coll,
+    const otext    *key,
+    OCI_Element    *elem
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_COLLECTION, coll
+    );
+
+    CHECK_PTR(OCI_IPC_COLLECTION, coll);
+    CHECK_PTR(OCI_IPC_STRING,     key);
+    CHECK_PTR(OCI_IPC_ELEMENT,    elem);
+    CHECK_ENV_FEATURE(OCI_FEATURE_COLL_KEY, OCI_23_6);
+
+    /* string-keyed access only valid on INDEX BY VARCHAR2 collections */
+
+    CHECK_COMPAT(OCI_CKT_STRING == OcilibCollectionGetKeyType(coll));
+    CHECK_COMPAT(elem->typinf->cols[0].datatype == coll->typinf->cols[0].datatype);
+
+    CHECK_OCI
+    (
+        coll->con->err,
+        OCICollKeyAssignElem,
+        coll->con->env->handle, coll->con->err,
+        (const dbtext*) key, (ub4) OcilibStringDBSize(key),
+        elem->handle, elem->pind, coll->handle
+    );
+
+    SET_SUCCESS();
+
+    EXIT_FUNC();
+}
+
+/* --------------------------------------------------------------------------------------------- *
+ * OcilibCollectionDeleteElementByKey
+ * --------------------------------------------------------------------------------------------- */
+
+OCI_Boolean OcilibCollectionDeleteElementByKey
+(
+    OCI_Collection *coll,
+    const otext    *key
+)
+{
+    ENTER_FUNC
+    (
+        /* returns */ OCI_Boolean, FALSE,
+        /* context */ OCI_IPC_COLLECTION, coll
+    );
+
+    CHECK_PTR(OCI_IPC_COLLECTION, coll);
+    CHECK_PTR(OCI_IPC_STRING,     key);
+    CHECK_ENV_FEATURE(OCI_FEATURE_COLL_KEY, OCI_23_6);
+
+    /* string-keyed access only valid on INDEX BY VARCHAR2 collections */
+
+    CHECK_COMPAT(OCI_CKT_STRING == OcilibCollectionGetKeyType(coll));
+
+    CHECK_OCI
+    (
+        coll->con->err,
+        OCITableKeyDelete,
+        coll->con->env->handle, coll->con->err,
+        (const dbtext*) key, (ub4) OcilibStringDBSize(key),
+        coll->handle
+    );
+
+    SET_SUCCESS();
+
+    EXIT_FUNC();
+}
+
+
+
+
+
+
+
 
 /* --------------------------------------------------------------------------------------------- *
  * OcilibCollectionGetCount
@@ -652,7 +919,7 @@ OCI_Boolean OcilibCollectionToText
 
     for (OCI_UInt32 i = 0; i < count; i++)
     {
-        OCI_Element* elem = OcilibCollectionGetElement(coll, i);
+        OCI_Element* elem = OcilibCollectionGetElementByIndex(coll, i);
 
         quote = TRUE;
 

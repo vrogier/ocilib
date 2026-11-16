@@ -204,6 +204,18 @@ OCI_SYM_LOCAL OCI_UInt64 OcilibResultsetGetUInt64ByName
     const otext  * name
 );
 
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetGetBoolean
+(
+    OCI_Resultset* rs,
+    OCI_UInt32     index
+);
+
+OCI_SYM_LOCAL OCI_Boolean OcilibResultsetGetBooleanByName
+(
+    OCI_Resultset* rs,
+    const otext  * name
+);
+
 OCI_SYM_LOCAL const otext * OcilibResultsetGetString
 (
     OCI_Resultset* rs,

@@ -50,6 +50,8 @@ specialized Oracle services and advanced data types such as SODA and the VECTOR 
 | Oracle SODA (Simple Oracle Document Access; NoSQL API) | 18c |
 | Oracle JSON data type support, including DOM and serialized JSON operations | 21c |
 | Oracle VECTOR data type support | 23ai |
+| Oracle SQL BOOLEAN data type support | 23ai |
+| String-indexed PL/SQL associative arrays (INDEX BY VARCHAR2) | 23ai / client 23.6 |
 
 Feature availability also depends on the Oracle client version used by the application.
 

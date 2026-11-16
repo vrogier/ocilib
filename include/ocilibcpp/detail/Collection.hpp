@@ -111,19 +111,19 @@ namespace ocilib
     template<class T>
     bool Collection<T>::IsElementNull(UInt32 index) const
     {
-        return (core::Check(OCI_ElementIsNull(core::Check(OCI_CollectionGetElement(*this, index)))) == TRUE);
+        return (core::Check(OCI_ElementIsNull(core::Check(OCI_CollectionGetElementByIndex(*this, index)))) == TRUE);
     }
 
     template<class T>
     void Collection<T>::SetElementNull(UInt32 index)
     {
-        core::Check(OCI_ElementSetNull(core::Check(OCI_CollectionGetElement(*this, index))));
+        core::Check(OCI_ElementSetNull(core::Check(OCI_CollectionGetElementByIndex(*this, index))));
     }
 
     template<class T>
     bool Collection<T>::Delete(UInt32 index) const
     {
-        return (core::Check(OCI_CollectionDeleteElement(*this, index)) == TRUE);
+        return (core::Check(OCI_CollectionDeleteElementByIndex(*this, index)) == TRUE);
     }
 
     template<class T>
@@ -153,17 +153,17 @@ namespace ocilib
     template<class T>
     T Collection<T>::Get(UInt32 index) const
     {
-        return GetElem(core::Check(OCI_CollectionGetElement(*this, index)), GetHandle());
+        return GetElem(core::Check(OCI_CollectionGetElementByIndex(*this, index)), GetHandle());
     }
 
     template<class T>
     void Collection<T>::Set(UInt32 index, const T & value)
     {
-        OCI_Element * elem = core::Check(OCI_CollectionGetElement(*this, index));
+        OCI_Element * elem = core::Check(OCI_CollectionGetElementByIndex(*this, index));
 
         SetElem(elem, value, GetHandle());
 
-        core::Check(OCI_CollectionSetElement(*this, index, elem));
+        core::Check(OCI_CollectionSetElementByIndex(*this, index, elem));
     }
 
     template<class T>
@@ -175,6 +175,70 @@ namespace ocilib
 
         core::Check(OCI_CollectionAppend(*this, elem));
         core::Check(OCI_ElementFree(elem));
+    }
+
+    template<class T>
+    typename Collection<T>::KeyType Collection<T>::GetKeyType() const
+    {
+        return KeyType(static_cast<KeyTypeValues>(core::Check(OCI_CollectionGetKeyType(*this))));
+    }
+
+    template<class T>
+    bool Collection<T>::IsElementNull(const String &key) const
+    {
+        return (core::Check(OCI_ElementIsNull(core::Check(OCI_CollectionGetElementByKey(*this, key.c_str())))) == TRUE);
+    }
+
+    template<class T>
+    void Collection<T>::SetElementNull(const String &key)
+    {
+        core::Check(OCI_ElementSetNull(core::Check(OCI_CollectionGetElementByKey(*this, key.c_str()))));
+    }
+
+    template<class T>
+    bool Collection<T>::KeyExists(const String &key) const
+    {
+        return (core::Check(OCI_CollectionKeyExists(*this, key.c_str())) == TRUE);
+    }
+
+    template<class T>
+    std::vector<String> Collection<T>::Keys() const
+    {
+        std::vector<String> keys;
+
+        OCI_Iterator *iter = core::Check(OCI_IteratorCreate(*this));
+
+        while (OCI_IteratorGetNext(iter))
+        {
+            keys.emplace_back(OCI_IteratorGetCurrentKey(iter));
+        }
+
+        core::Check(OCI_IteratorFree(iter));
+
+        return keys;
+    }
+
+    template<class T>
+    T Collection<T>::Get(const String &key) const
+    {
+        return GetElem(core::Check(OCI_CollectionGetElementByKey(*this, key.c_str())), GetHandle());
+    }
+
+    template<class T>
+    void Collection<T>::Set(const String &key, const T & value)
+    {
+        OCI_Element * elem = core::Check(OCI_ElementCreate(OCI_CollectionGetTypeInfo(*this)));
+
+        SetElem(elem, value, GetHandle());
+
+        core::Check(OCI_CollectionSetElementByKey(*this, key.c_str(), elem));
+        core::Check(OCI_ElementFree(elem));
+    }
+
+    template<class T>
+    bool Collection<T>::Delete(const String &key) const
+    {
+        return (core::Check(OCI_CollectionDeleteElementByKey(*this, key.c_str())) == TRUE);
     }
 
     template<class T>

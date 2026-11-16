@@ -1065,6 +1065,12 @@ typedef ub2 OCIDuration;
 #define OCI_TYPECODE_VARRAY         247      /* SQL VARRAY  OTS PAGED VARRAY */
 #define OCI_TYPECODE_TABLE          248           /* SQL TABLE  OTS MULTISET */
 #define OCI_TYPECODE_ITABLE         251               /* PLSQL indexed table */
+
+/* index-by table (associative array) key types, OCI 23ai+ */
+
+#define OCIKeyType                  ub2                          /* OCIKeyType */
+#define OCI_KEYTYPE_STRING          1                /* index by string */
+#define OCI_KEYTYPE_SB4             2                /* index by signed int32 */
 #define OCI_TYPECODE_PLS_INTEGER    266         /* type code for PLS_INTEGER */
 
 /*------------------------Piece Information----------------------------------*/

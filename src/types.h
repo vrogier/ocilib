@@ -770,6 +770,8 @@ struct OCI_Iterator
     OCI_Boolean     eoc;             /* end of collection */
     OCI_Boolean     boc;             /* beginning of collection */
     OCI_Boolean     dirty;           /* indicate if elem is dirty, e.g. not fetched yet */
+    otext          *keybuf;          /* reusable buffer for associative array keys */
+    OCI_UInt32      keysize;         /* size in bytes of keybuf */
 };
 
 /*

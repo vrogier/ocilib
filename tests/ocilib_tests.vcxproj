@@ -229,8 +229,12 @@
     </ClCompile>
     <ClCompile Include="TestCursor.cpp" />
     <ClCompile Include="TestArray.cpp" />
+    <ClCompile Include="TestBoolean.cpp" />
+    <ClCompile Include="TestBooleanCpp.cpp" />
     <ClCompile Include="TestCollection.cpp" />
     <ClCompile Include="TestCollectionCpp.cpp" />
+    <ClCompile Include="TestCollectionKey.cpp" />
+    <ClCompile Include="TestCollectionKeyCpp.cpp" />
     <ClCompile Include="TestConnection.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>

@@ -687,6 +687,10 @@ namespace ocilib
         {
             core::Check(OCI_StatementRegisterInt64(*this, name.c_str()));
         }
+        else if constexpr (std::is_same_v<T, bool>)
+        {
+            core::Check(OCI_StatementRegisterBoolean(*this, name.c_str()));
+        }
         else if constexpr (std::is_same_v<T, Float>)
         {
             core::Check(OCI_StatementRegisterFloat(*this, name.c_str()));

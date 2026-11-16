@@ -1289,7 +1289,10 @@ const otext * OcilibObjectGetString
 
             if (len > 0)
             {
-                CHECK(OcilibStringRequestBuffer(obj->con->env, &obj->tmpbufs[index], &obj->tmpsizes[index], len));
+                OCI_UInt32 tmpbufsize = 0;
+
+                CHECK(OcilibStringCharsToBytes(obj->con->env, len, &tmpbufsize));
+                CHECK(OcilibStringRequestBuffer(obj->con->env, &obj->tmpbufs[index], &obj->tmpsizes[index], tmpbufsize));
 
                 const OCI_UInt32 real_tmpsize = OcilibStringGetFromType
                                                 (

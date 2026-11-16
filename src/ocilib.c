@@ -413,23 +413,23 @@ OCI_Boolean OCI_API OCI_CollectionTrim
     CALL_IMPL(OcilibCollectionTrim, coll, nb_elem);
 }
 
-OCI_Element * OCI_API OCI_CollectionGetElement
+OCI_Element * OCI_API OCI_CollectionGetElementByIndex
 (
     OCI_Collection *coll,
     OCI_UInt32      index
 )
 {
-    CALL_IMPL(OcilibCollectionGetElement, coll, index);
+    CALL_IMPL(OcilibCollectionGetElementByIndex, coll, index);
 }
 
-OCI_Boolean OCI_API OCI_CollectionSetElement
+OCI_Boolean OCI_API OCI_CollectionSetElementByIndex
 (
     OCI_Collection *coll,
     OCI_UInt32      index,
     OCI_Element    *elem
 )
 {
-    CALL_IMPL(OcilibCollectionSetElement, coll, index, elem);
+    CALL_IMPL(OcilibCollectionSetElementByIndex, coll, index, elem);
 }
 
 OCI_Boolean OCI_API OCI_CollectionAppend
@@ -457,14 +457,60 @@ OCI_Boolean OCI_API OCI_CollectionClear
     CALL_IMPL(OcilibCollectionClear, coll);
 }
 
-OCI_Boolean OCI_API OCI_CollectionDeleteElement
+OCI_Boolean OCI_API OCI_CollectionDeleteElementByIndex
 (
     OCI_Collection *coll,
     OCI_UInt32      index
 )
 {
-    CALL_IMPL(OcilibCollectionDeleteElement, coll, index);
+    CALL_IMPL(OcilibCollectionDeleteElementByIndex, coll, index);
 }
+
+OCI_CollKeyType OCI_API OCI_CollectionGetKeyType
+(
+    OCI_Collection* coll
+)
+{
+    CALL_IMPL(OcilibCollectionGetKeyType, coll);
+}
+
+OCI_Boolean OCI_API OCI_CollectionKeyExists
+(
+    OCI_Collection* coll,
+    const otext   * key
+)
+{
+    CALL_IMPL(OcilibCollectionKeyExists, coll, key);
+}
+
+OCI_Element* OCI_API OCI_CollectionGetElementByKey
+(
+    OCI_Collection* coll,
+    const otext   * key
+)
+{
+    CALL_IMPL(OcilibCollectionGetElementByKey, coll, key);
+}
+
+OCI_Boolean OCI_API OCI_CollectionSetElementByKey
+(
+    OCI_Collection* coll,
+    const otext   * key,
+    OCI_Element   * elem
+)
+{
+    CALL_IMPL(OcilibCollectionSetElementByKey, coll, key, elem);
+}
+
+OCI_Boolean OCI_API OCI_CollectionDeleteElementByKey
+(
+    OCI_Collection* coll,
+    const otext   * key
+)
+{
+    CALL_IMPL(OcilibCollectionDeleteElementByKey, coll, key);
+}
+
 
 OCI_UInt32 OCI_API OCI_CollectionGetCount
 (
@@ -2911,6 +2957,15 @@ OCI_Element* OCI_API OCI_IteratorGetCurrent
     CALL_IMPL(OcilibIteratorGetCurrent, iter);
 }
 
+
+const otext* OCI_API OCI_IteratorGetCurrentKey
+(
+    OCI_Iterator* iter
+)
+{
+    CALL_IMPL(OcilibIteratorGetCurrentKey, iter);
+}
+
 /* --------------------------------------------------------------------------------------------- *
  * library
  * --------------------------------------------------------------------------------------------- */
@@ -5083,6 +5138,24 @@ OCI_UInt64 OCI_API OCI_ResultsetGetUInt64ByName
     CALL_IMPL(OcilibResultsetGetUInt64ByName, rs, name);
 }
 
+OCI_Boolean OCI_API OCI_ResultsetGetBoolean
+(
+    OCI_Resultset* rs,
+    OCI_UInt32     index
+)
+{
+    CALL_IMPL(OcilibResultsetGetBoolean, rs, index);
+}
+
+OCI_Boolean OCI_API OCI_ResultsetGetBooleanByName
+(
+    OCI_Resultset* rs,
+    const otext  * name
+)
+{
+    CALL_IMPL(OcilibResultsetGetBooleanByName, rs, name);
+}
+
 const otext* OCI_API OCI_ResultsetGetString
 (
     OCI_Resultset* rs,
@@ -6191,6 +6264,15 @@ OCI_Boolean OCI_API OCI_StatementRegisterString
 )
 {
     CALL_IMPL(OcilibStatementRegisterString, stmt, name, len);
+}
+
+OCI_Boolean OCI_API OCI_StatementRegisterBoolean
+(
+    OCI_Statement* stmt,
+    const otext  * name
+)
+{
+    CALL_IMPL(OcilibStatementRegisterBoolean, stmt, name);
 }
 
 OCI_Boolean OCI_API OCI_StatementRegisterRaw
