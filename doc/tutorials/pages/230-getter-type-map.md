@@ -26,7 +26,7 @@ level: beginner
 | `NUMBER` (float) | `OCI_ResultsetGetFloat` | `Get<Float>` |
 | `NUMBER` / `FLOAT` | `OCI_ResultsetGetDouble` | `Get<Double>` |
 | `NUMBER` (exact) | `OCI_ResultsetGetNumber` | `Get<Number>` |
-| `BOOLEAN` (23ai) | `OCI_ResultsetGetInt32` | `Get<Int32>` |
+| `BOOLEAN` (23ai) | `OCI_ResultsetGetBoolean` | `Get<bool>` |
 | `CHAR/VARCHAR2/NCHAR` | `OCI_ResultsetGetString` | `Get<String>` |
 | `RAW` | `OCI_ResultsetGetRaw` | `Get<Raw>` (`std::vector<unsigned char>`) |
 
@@ -83,7 +83,7 @@ Choosing the right getter is a two-step lookup:
    you ask for; `Get<Int32>(0)` is the same call as `OCI_ResultsetGetInt32`.
 
 Hints: `GetString` is the universal fallback — it converts any column to text;
-BOOLEAN columns are `GetInt32`, there is no `GetBoolean` on a resultset; and
+BOOLEAN columns (23ai) have their own `OCI_ResultsetGetBoolean` / `Get<bool>`; and
 the C++ `Get<T>` accepts the same set of types as the C getters — `Raw`,
 `Date`, `Timestamp`, `Lob`, `Json`, `Number`, `XmlType`, `Object`, `Interval`,
 `Vector`, `Long` all work.

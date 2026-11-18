@@ -102,7 +102,7 @@ Your choice is remembered across all pages.
 |------|---------------------|
 | 0 — Getting started | Install Oracle client + OCILIB on Windows/Linux, MBCS vs wide charset builds, first program, first connection, error handling, diagnostics logging |
 | 1 — Connections & environments | Connection strings, session modes, ping/break, introspection |
-| 2 — Oracle data types | Charsets, dates, timestamps, intervals, numbers, RAW, vectors, LOBs, BFILEs, XML, JSON, PL/SQL BOOLEAN & RECORD, user-defined types |
+| 2 — Oracle data types | Charsets, dates, timestamps, intervals, numbers, RAW, vectors, LOBs, BFILEs, XML, JSON, BOOLEAN (SQL 23ai & PL/SQL) & RECORD, user-defined types |
 | 3 — SQL, fetching & binding | Statements, resultsets, every getter, bind variables, scrollable cursors, bulk fetch |
 | 4 — PL/SQL | Blocks, OUT parameters, ref cursors, index-by tables, `DBMS_OUTPUT` |
 | 5 — Transactions, pooling & threads | Commit/rollback, transaction objects, connection/session pools, multithreading |

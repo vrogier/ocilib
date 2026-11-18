@@ -1,11 +1,11 @@
 ---
-title: PL/SQL-only types — BOOLEAN and RECORD
+title: PL/SQL types — BOOLEAN and RECORD
 navtitle: PL/SQL types
 part: 2
 level: intermediate
 ---
 
-# PL/SQL-only types — `BOOLEAN` and `RECORD`
+# PL/SQL types — `BOOLEAN` and `RECORD`
 
 **Objectives** — by the end of this page you will be able to:
 
@@ -13,7 +13,7 @@ level: intermediate
 - describe, fill and bind a PL/SQL `RECORD`
 - know where user-defined types (UDT) fit in the picture
 
-## In context — types that only exist inside PL/SQL
+## In context — types rooted in PL/SQL
 
 PL/SQL has its own type system layered on top of SQL's. Two of its types are
 worth singling out because they behave *differently* from everything else in
@@ -24,31 +24,31 @@ of it inside `BEGIN…END` blocks and package specs.
 
 That distinction explains the OCILIB story for both: a `BOOLEAN` **parameter**
 binds through the scalar bind path, while a `BOOLEAN` **column** (23ai+) fetches
-through the integer resultset getters — there is no `OCI_ResultsetGetBoolean`
-because the wire representation is `OCI_Boolean` (an int). And a `RECORD` is not
+through `OCI_ResultsetGetBoolean` / `Get<bool>` — the wire representation is
+`OCI_Boolean`, so it maps straight onto `bool`. And a `RECORD` is not
 a column type at all — it rides on the *object* machinery OCILIB uses for UDTs:
 you describe the record type via `TypeInfo` and it arrives as `OCI_Object`, with
 `Get`/`Set` accessors on its named fields.
 
 ## The PL/SQL types
 
-Two Oracle types exist **only inside PL/SQL** — no SQL column can hold them, so
-no `OCI_ResultsetGet*` is needed: they flow through binds and objects only.
-
-- `BOOLEAN` — a PL/SQL parameter type (and since 23ai, a *SQL* column type too)
-- `RECORD` — a package-level composite type (`type t is record(a …, b …)`)
+- `BOOLEAN` — originally a PL/SQL parameter type; since 23ai also a real **SQL**
+  column type (`create table t (b boolean)`), fetchable like any scalar column
+- `RECORD` — a package-level composite type (`type t is record(a …, b …)`),
+  still PL/SQL-only: no SQL column can hold it, so it flows through binds
+  and objects only
 
 ## BOOLEAN
 
 `BOOLEAN` is bound like any scalar — the *same* bind carries `IN`, `OUT` and
 `IN OUT` traffic: assign to the placeholder in PL/SQL and the host variable
-comes back updated. For `BOOLEAN` **columns** (23ai), use the integer getter
-(`OCI_CDT_BOOLEAN` values are `OCI_Boolean` in the row buffer).
+comes back updated. For `BOOLEAN` **columns** (23ai), there is a dedicated
+getter (`OCI_CDT_BOOLEAN` values are `OCI_Boolean` in the row buffer).
 
 | C function | C++ method | purpose |
 |------------|------------|---------|
 | `OCI_StatementBindBoolean` | `Bind(":b", v)` | bool param, any direction |
-| `OCI_ResultsetGetInt32` | `Get<Int32>` | read a `BOOLEAN` column (0/1) |
+| `OCI_ResultsetGetBoolean` | `Get<bool>` | read a `BOOLEAN` column (23ai) |
 
 :::sample
 ```c
@@ -130,9 +130,10 @@ PL/SQL types follow the bind path, not the fetch path:
 1. **BOOLEAN parameter**: `StatementBindBoolean` — the *same* bind carries IN,
    OUT, and IN OUT traffic. Set the variable before `Execute` for IN, read it
    after for OUT.
-2. **BOOLEAN column (23ai)**: fetch with the *integer* getters —
-   `GetInt32`/`Get<Int32>` — because the wire value is `OCI_Boolean` (an int).
-   There is no `GetBoolean` on a resultset.
+2. **BOOLEAN column (23ai)**: fetch with the dedicated getter —
+   `OCI_ResultsetGetBoolean` / `Get<bool>`. Requires client *and* server
+   ≥ 23ai (`OCI_FEATURE_SQL_BOOLEAN`); a `RETURNING` boolean uses
+   `OCI_StatementRegisterBoolean` / `Register<bool>`.
 3. **RECORD parameter**: describe the package type with `TypeInfoGet` —
    *fully qualified* (`schema.pkg.t_rec`) — create an `Object`, `Set` its
    fields by name, bind it with `BindObject`. Records never appear as
@@ -156,14 +157,14 @@ that's a *record* is a UDT, and belongs to the next page.
 - **Describing `pkg.type` without the schema** — `OCI_TypeInfoGet` resolves
   `schema.object`, so `"pkg.t_rec"` misses; pass `"schema.pkg.t_rec"`.
 - **`OCI_StatementBindBoolean` in plain SQL** — `BOOLEAN` binds are for PL/SQL
-  parameters; a `BOOLEAN` *column* in a SELECT needs `OCI_ResultsetGetInt32`.
+  parameters; a `BOOLEAN` *column* in a SELECT needs `OCI_ResultsetGetBoolean`.
 - **Expecting `OCI_ResultsetGetRecord`** — records never appear as columns;
   they arrive as `OCI_Object` via binds, ref-cursor attrs, or OUT params.
 
 ## Recap
 
 - PL/SQL `BOOLEAN` = scalar bind (`OCI_StatementBindBoolean`); `BOOLEAN` columns
-  (23ai) read via `OCI_ResultsetGetInt32`.
+  (23ai) read via `OCI_ResultsetGetBoolean` / `Get<bool>`.
 - PL/SQL `RECORD` = an `OCI_Object` described by `OCI_TypeInfoGet` on
   `schema.pkg.type`, filled by attribute, bound with `OCI_StatementBindObject`.
 - UDTs share the same object machinery — covered in Part 6.

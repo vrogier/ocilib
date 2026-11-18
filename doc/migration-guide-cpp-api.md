@@ -587,6 +587,21 @@ is no longer supported through OCILIB.
 
   `Vector::Float16` is also new — a client-side descriptor format only, not a
   valid column format (and not usable with `SetSparse`).
+- **SQL `BOOLEAN` additions** (pure additions, require Oracle 23ai client *and*
+  server): `Resultset::Get<bool>(index)` and `Resultset::Get<bool>(name)` now
+  fetch SQL `BOOLEAN` columns, and `Statement::Register<bool>(name)` registers
+  a `BOOLEAN` `RETURNING` output.
+- **String-indexed associative arrays** (pure additions, `INDEX BY VARCHAR2`,
+  require Oracle client ≥ 23.6) — `Collection<T>` gains a key API:
+
+  ```cpp
+  Collection<int>::KeyType kt = coll.GetKeyType();   // KeyTypeString / KeyTypeNumber / KeyTypeUnknown
+  bool ok = coll.KeyExists(key);
+  coll.Set(key, value);
+  T v = coll.Get(key);
+  coll.Delete(key);
+  coll.IsElementNull(key); coll.SetElementNull(key);
+  ```
 - **`Environment::CharsetAnsi` → `Environment::CharsetMbcs`** — the `OCI_CHARSET_ANSI`
   build flag is now `OCI_CHARSET_MBCS` (multibyte: ANSI codepages *or* UTF-8).
   `OCI_CHAR_ANSI` maps to `OCI_CHAR_MBCS` via `compat.h`. Windows binaries are

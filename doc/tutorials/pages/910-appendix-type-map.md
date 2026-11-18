@@ -14,7 +14,7 @@ The cheat sheet for picking a getter, a bind, and a `Get<T>`.
 | `NUMBER` big | `OCI_ResultsetGetInt64`/`GetUInt64` | `OCI_StatementBindInt64`/`…UInt64` | `Get<Int64>`/`Get<UInt64>` |
 | `NUMBER`/`FLOAT` | `OCI_ResultsetGetFloat`/`GetDouble` | `OCI_StatementBindFloat`/`BindDouble` | `Get<Float>`/`Get<Double>` |
 | `NUMBER` exact | `OCI_ResultsetGetNumber` | `OCI_StatementBindNumber` | `Get<Number>` |
-| `BOOLEAN` (23ai) | `OCI_ResultsetGetInt32` | `OCI_StatementBindBoolean` | `Get<Int32>` |
+| `BOOLEAN` (23ai) | `OCI_ResultsetGetBoolean` | `OCI_StatementBindBoolean` | `Get<bool>` |
 | `CHAR`/`VARCHAR2`/`NCHAR`/`NVARCHAR2`/`CLOB`-as-text | `OCI_ResultsetGetString` | `OCI_StatementBindString` | `Get<String>` |
 | `RAW` | `OCI_ResultsetGetRaw` | `OCI_StatementBindRaw` | `Get<Raw>` |
 | `DATE` | `OCI_ResultsetGetDate` | `OCI_StatementBindDate` | `Get<Date>` |

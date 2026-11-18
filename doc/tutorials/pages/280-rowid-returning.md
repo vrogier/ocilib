@@ -85,7 +85,9 @@ One `OCI_StatementRegister*` call per type — the same coverage as the bind fam
 declaring an **output** placeholder:
 
 `OCI_StatementRegister{Int16,Int32,UInt16,UInt32,Int64,UInt64,Float,Double,
-String,Raw,Number,Date,Timestamp,Interval,Lob,File,Object,Ref,Coll,Json,Vector}`
+String,Raw,Number,Date,Timestamp,Interval,Lob,File,Object,Ref,Coll,Json,Vector,
+Boolean}` — `RegisterBoolean` / `Register<bool>` covers `BOOLEAN` output
+placeholders on 23ai.
 
 In C++ a single `st.Register(":name")` covers them — the returned `BindInfo` marks
 the target.

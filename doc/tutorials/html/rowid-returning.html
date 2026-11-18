@@ -96,7 +96,9 @@ string and binding it back is the fastest possible "find this exact row again":<
 <p>One <code>OCI_StatementRegister*</code> call per type — the same coverage as the bind family, but
 declaring an <strong>output</strong> placeholder:</p>
 <p><code>OCI_StatementRegister{Int16,Int32,UInt16,UInt32,Int64,UInt64,Float,Double,
-String,Raw,Number,Date,Timestamp,Interval,Lob,File,Object,Ref,Coll,Json,Vector}</code></p>
+String,Raw,Number,Date,Timestamp,Interval,Lob,File,Object,Ref,Coll,Json,Vector,
+Boolean}</code> — <code>RegisterBoolean</code> / <code>Register&lt;bool&gt;</code> covers <code>BOOLEAN</code> output
+placeholders on 23ai.</p>
 <p>In C++ a single <code>st.Register(":name")</code> covers them — the returned <code>BindInfo</code> marks
 the target.</p>
 <p>Why not just an OUT bind? Because <code>RETURNING</code> can produce <strong>multiple rows</strong>

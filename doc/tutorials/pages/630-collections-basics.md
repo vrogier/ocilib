@@ -90,11 +90,11 @@ coll.Append(e);
 | `OCI_CollectionGetCount` | `GetCount()` | same as size for most cases |
 | `OCI_CollectionGetType` | `GetType()` | element/collection type info |
 | `OCI_CollectionGetTypeInfo` | `GetTypeInfo()` | describing TypeInfo |
-| `OCI_CollectionGetElement` | `Get<Elem>(i)` / typed `Get(i)` | element at index `i` (0-based) |
-| `OCI_CollectionSetElement` | `Set` | replace element `i` |
+| `OCI_CollectionGetElementByIndex` | `Get<Elem>(i)` / typed `Get(i)` | element at index `i` (0-based) |
+| `OCI_CollectionSetElementByIndex` | `Set` | replace element `i` |
 | `OCI_CollectionClear` | `Clear()` | empty it |
 | `OCI_CollectionTrim` | `Trim(n)` | drop trailing elements |
-| `OCI_CollectionDeleteElement` | `DeleteElem(i)` | remove element `i` |
+| `OCI_CollectionDeleteElementByIndex` | `DeleteElem(i)` | remove element `i` |
 | `OCI_CollectionAssign` | `Assign` | copy |
 | `OCI_CollectionToText` | `ToText()` | debug dump |
 
@@ -105,7 +105,7 @@ coll.Append(e);
 OCI_Collection *c = OCI_ResultsetGetColl(rs, 0);                 /* borrowed */
 for (OCI_UInt32 i = 0; i < OCI_CollectionGetSize(c); ++i)
 {
-    OCI_Element *e = OCI_CollectionGetElement(c, i);
+    OCI_Element *e = OCI_CollectionGetElementByIndex(c, i);
     printf("%s\n", OCI_ElementGetString(e));
     OCI_ElementFree(e);
 }

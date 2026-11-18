@@ -3,17 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PL/SQL-only types — BOOLEAN and RECORD — OCILIB Tutorials</title>
+<title>PL/SQL types — BOOLEAN and RECORD — OCILIB Tutorials</title>
 <meta name="description" content="Learn OCILIB, the open-source C and C++ driver for Oracle — hands-on tutorials from first connection to JSON, SODA and advanced features.">
 <link rel="canonical" href="https://ocilib.net/doc/tutorials/plsql-types.html">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="OCILIB Tutorials">
-<meta property="og:title" content="PL/SQL-only types — BOOLEAN and RECORD — OCILIB Tutorials">
+<meta property="og:title" content="PL/SQL types — BOOLEAN and RECORD — OCILIB Tutorials">
 <meta property="og:description" content="Learn OCILIB, the open-source C and C++ driver for Oracle — hands-on tutorials from first connection to JSON, SODA and advanced features.">
 <meta property="og:url" content="https://ocilib.net/doc/tutorials/plsql-types.html">
 <meta property="og:image" content="https://raw.githubusercontent.com/vrogier/ocilib/develop-v5.0.0/images/ocilib-logo-with-text-details.png">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="PL/SQL-only types — BOOLEAN and RECORD — OCILIB Tutorials">
+<meta name="twitter:title" content="PL/SQL types — BOOLEAN and RECORD — OCILIB Tutorials">
 <meta name="twitter:description" content="Learn OCILIB, the open-source C and C++ driver for Oracle — hands-on tutorials from first connection to JSON, SODA and advanced features.">
 <meta name="twitter:image" content="https://raw.githubusercontent.com/vrogier/ocilib/develop-v5.0.0/images/ocilib-logo-with-text-details.png">
 <link rel="stylesheet" href="assets/tutorials.css">
@@ -35,14 +35,14 @@
   <div class="sidebar-scrim" id="sidebar-scrim"></div>
   <main class="content">
     <div class="badges"><span class="badge badge-level badge-intermediate">Intermediate</span></div>
-    <h1 id="plsql-only-types-boolean-and-record">PL/SQL-only types — <code>BOOLEAN</code> and <code>RECORD</code></h1>
+    <h1 id="plsql-types-boolean-and-record">PL/SQL types — <code>BOOLEAN</code> and <code>RECORD</code></h1>
 <p><strong>Objectives</strong> — by the end of this page you will be able to:</p>
 <ul>
 <li>pass booleans in and out of PL/SQL calls</li>
 <li>describe, fill and bind a PL/SQL <code>RECORD</code></li>
 <li>know where user-defined types (UDT) fit in the picture</li>
 </ul>
-<h2 id="in-context-types-that-only-exist-inside-plsql">In context — types that only exist inside PL/SQL</h2>
+<h2 id="in-context-types-rooted-in-plsql">In context — types rooted in PL/SQL</h2>
 <p>PL/SQL has its own type system layered on top of SQL's. Two of its types are
 worth singling out because they behave <em>differently</em> from everything else in
 this part: <code>BOOLEAN</code> exists as a PL/SQL parameter type long before it became a
@@ -51,23 +51,24 @@ inside PL/SQL — you cannot <code>CREATE TABLE … (r RECORD)</code>, only decl
 of it inside <code>BEGIN…END</code> blocks and package specs.</p>
 <p>That distinction explains the OCILIB story for both: a <code>BOOLEAN</code> <strong>parameter</strong>
 binds through the scalar bind path, while a <code>BOOLEAN</code> <strong>column</strong> (23ai+) fetches
-through the integer resultset getters — there is no <code>OCI_ResultsetGetBoolean</code>
-because the wire representation is <code>OCI_Boolean</code> (an int). And a <code>RECORD</code> is not
+through <code>OCI_ResultsetGetBoolean</code> / <code>Get&lt;bool&gt;</code> — the wire representation is
+<code>OCI_Boolean</code>, so it maps straight onto <code>bool</code>. And a <code>RECORD</code> is not
 a column type at all — it rides on the <em>object</em> machinery OCILIB uses for UDTs:
 you describe the record type via <code>TypeInfo</code> and it arrives as <code>OCI_Object</code>, with
 <code>Get</code>/<code>Set</code> accessors on its named fields.</p>
 <h2 id="the-plsql-types">The PL/SQL types</h2>
-<p>Two Oracle types exist <strong>only inside PL/SQL</strong> — no SQL column can hold them, so
-no <code>OCI_ResultsetGet*</code> is needed: they flow through binds and objects only.</p>
 <ul>
-<li><code>BOOLEAN</code> — a PL/SQL parameter type (and since 23ai, a <em>SQL</em> column type too)</li>
-<li><code>RECORD</code> — a package-level composite type (<code>type t is record(a …, b …)</code>)</li>
+<li><code>BOOLEAN</code> — originally a PL/SQL parameter type; since 23ai also a real <strong>SQL</strong>
+  column type (<code>create table t (b boolean)</code>), fetchable like any scalar column</li>
+<li><code>RECORD</code> — a package-level composite type (<code>type t is record(a …, b …)</code>),
+  still PL/SQL-only: no SQL column can hold it, so it flows through binds
+  and objects only</li>
 </ul>
 <h2 id="boolean">BOOLEAN</h2>
 <p><code>BOOLEAN</code> is bound like any scalar — the <em>same</em> bind carries <code>IN</code>, <code>OUT</code> and
 <code>IN OUT</code> traffic: assign to the placeholder in PL/SQL and the host variable
-comes back updated. For <code>BOOLEAN</code> <strong>columns</strong> (23ai), use the integer getter
-(<code>OCI_CDT_BOOLEAN</code> values are <code>OCI_Boolean</code> in the row buffer).</p>
+comes back updated. For <code>BOOLEAN</code> <strong>columns</strong> (23ai), there is a dedicated
+getter (<code>OCI_CDT_BOOLEAN</code> values are <code>OCI_Boolean</code> in the row buffer).</p>
 <table>
 <thead>
 <tr>
@@ -83,9 +84,9 @@ comes back updated. For <code>BOOLEAN</code> <strong>columns</strong> (23ai), us
 <td>bool param, any direction</td>
 </tr>
 <tr>
-<td><code>OCI_ResultsetGetInt32</code></td>
-<td><code>Get&lt;Int32&gt;</code></td>
-<td>read a <code>BOOLEAN</code> column (0/1)</td>
+<td><code>OCI_ResultsetGetBoolean</code></td>
+<td><code>Get&lt;bool&gt;</code></td>
+<td>read a <code>BOOLEAN</code> column (23ai)</td>
 </tr>
 </tbody>
 </table>
@@ -177,9 +178,10 @@ collections and REFs.</p>
 <li><strong>BOOLEAN parameter</strong>: <code>StatementBindBoolean</code> — the <em>same</em> bind carries IN,
    OUT, and IN OUT traffic. Set the variable before <code>Execute</code> for IN, read it
    after for OUT.</li>
-<li><strong>BOOLEAN column (23ai)</strong>: fetch with the <em>integer</em> getters —
-   <code>GetInt32</code>/<code>Get&lt;Int32&gt;</code> — because the wire value is <code>OCI_Boolean</code> (an int).
-   There is no <code>GetBoolean</code> on a resultset.</li>
+<li><strong>BOOLEAN column (23ai)</strong>: fetch with the dedicated getter —
+   <code>OCI_ResultsetGetBoolean</code> / <code>Get&lt;bool&gt;</code>. Requires client <em>and</em> server
+   ≥ 23ai (<code>OCI_FEATURE_SQL_BOOLEAN</code>); a <code>RETURNING</code> boolean uses
+   <code>OCI_StatementRegisterBoolean</code> / <code>Register&lt;bool&gt;</code>.</li>
 <li><strong>RECORD parameter</strong>: describe the package type with <code>TypeInfoGet</code> —
    <em>fully qualified</em> (<code>schema.pkg.t_rec</code>) — create an <code>Object</code>, <code>Set</code> its
    fields by name, bind it with <code>BindObject</code>. Records never appear as
@@ -202,14 +204,14 @@ that's a <em>record</em> is a UDT, and belongs to the next page.</p>
 <li><strong>Describing <code>pkg.type</code> without the schema</strong> — <code>OCI_TypeInfoGet</code> resolves
   <code>schema.object</code>, so <code>"pkg.t_rec"</code> misses; pass <code>"schema.pkg.t_rec"</code>.</li>
 <li><strong><code>OCI_StatementBindBoolean</code> in plain SQL</strong> — <code>BOOLEAN</code> binds are for PL/SQL
-  parameters; a <code>BOOLEAN</code> <em>column</em> in a SELECT needs <code>OCI_ResultsetGetInt32</code>.</li>
+  parameters; a <code>BOOLEAN</code> <em>column</em> in a SELECT needs <code>OCI_ResultsetGetBoolean</code>.</li>
 <li><strong>Expecting <code>OCI_ResultsetGetRecord</code></strong> — records never appear as columns;
   they arrive as <code>OCI_Object</code> via binds, ref-cursor attrs, or OUT params.</li>
 </ul>
 <h2 id="recap">Recap</h2>
 <ul>
 <li>PL/SQL <code>BOOLEAN</code> = scalar bind (<code>OCI_StatementBindBoolean</code>); <code>BOOLEAN</code> columns
-  (23ai) read via <code>OCI_ResultsetGetInt32</code>.</li>
+  (23ai) read via <code>OCI_ResultsetGetBoolean</code> / <code>Get&lt;bool&gt;</code>.</li>
 <li>PL/SQL <code>RECORD</code> = an <code>OCI_Object</code> described by <code>OCI_TypeInfoGet</code> on
   <code>schema.pkg.type</code>, filled by attribute, bound with <code>OCI_StatementBindObject</code>.</li>
 <li>UDTs share the same object machinery — covered in Part 6.</li>

@@ -24,7 +24,7 @@ Gate version-dependent features with `OCI_VER_MAJ(OCI_EnvironmentGetOCIRuntimeVe
 | `VECTOR` type (`OCI_Vector`) | 23ai | 540 |
 | `OCI_JsonValidate` schema validation | 23ai | 575 |
 | `OCI_ColumnHasJsonSchema` constraint | 23ai | 240 |
-| SQL `BOOLEAN` binds/getters | 23ai | 230/245 |
+| SQL `BOOLEAN` column type (23ai) — binds/getters/`RETURNING` | 23ai | 230/245/280/578 |
 | Admin session modes `SYSRAC` etc. | 11gR1–12cR2 | 110 |
 | `OCISoda*` multi-key fast path | 21c+ client | 860 |
 

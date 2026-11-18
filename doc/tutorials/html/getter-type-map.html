@@ -99,8 +99,8 @@
 </tr>
 <tr>
 <td><code>BOOLEAN</code> (23ai)</td>
-<td><code>OCI_ResultsetGetInt32</code></td>
-<td><code>Get&lt;Int32&gt;</code></td>
+<td><code>OCI_ResultsetGetBoolean</code></td>
+<td><code>Get&lt;bool&gt;</code></td>
 </tr>
 <tr>
 <td><code>CHAR/VARCHAR2/NCHAR</code></td>
@@ -237,7 +237,7 @@
    you ask for; <code>Get&lt;Int32&gt;(0)</code> is the same call as <code>OCI_ResultsetGetInt32</code>.</li>
 </ol>
 <p>Hints: <code>GetString</code> is the universal fallback — it converts any column to text;
-BOOLEAN columns are <code>GetInt32</code>, there is no <code>GetBoolean</code> on a resultset; and
+BOOLEAN columns (23ai) have their own <code>OCI_ResultsetGetBoolean</code> / <code>Get&lt;bool&gt;</code>; and
 the C++ <code>Get&lt;T&gt;</code> accepts the same set of types as the C getters — <code>Raw</code>,
 <code>Date</code>, <code>Timestamp</code>, <code>Lob</code>, <code>Json</code>, <code>Number</code>, <code>XmlType</code>, <code>Object</code>, <code>Interval</code>,
 <code>Vector</code>, <code>Long</code> all work.</p>

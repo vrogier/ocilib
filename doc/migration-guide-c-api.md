@@ -771,6 +771,37 @@ The OCI-client-side figure is no longer exposed.
   valid column format even on 26ai (Oracle rejects `VECTOR(…, FLOAT16)` with
   `ORA-51802`). Not usable with the sparse APIs.
 
+- **SQL `BOOLEAN` support** (pure additions; requires Oracle client **and**
+  server ≥ 23ai — `FALSE`/error on older versions):
+
+  ```c
+  OCI_Boolean OCI_ResultsetGetBoolean(OCI_Resultset *rs, OCI_UInt32 index);
+  OCI_Boolean OCI_ResultsetGetBooleanByName(OCI_Resultset *rs, const otext *name);
+  OCI_Boolean OCI_StatementRegisterBoolean(OCI_Statement *stmt, const otext *name);
+  ```
+
+  `OCI_StatementBindBoolean`, `OCI_ElementGet/SetBoolean` and
+  `OCI_ObjectGet/SetBoolean` now also apply to SQL `BOOLEAN` columns/attributes
+  (they were documented "PL/SQL only" in v4 — same `SQLT_BOL` code path).
+
+- **String-indexed associative arrays** (pure additions; `INDEX BY VARCHAR2`
+  collections, requires Oracle client ≥ 23.6 — `FALSE`/error on older clients):
+
+  ```c
+  OCI_CollKeyType  OCI_CollectionGetKeyType(OCI_Collection *coll);
+  OCI_Boolean      OCI_CollectionKeyExists(OCI_Collection *coll, const otext *key);
+  OCI_Element    * OCI_CollectionGetElementByKey(OCI_Collection *coll, const otext *key);
+  OCI_Boolean      OCI_CollectionSetElementByKey(OCI_Collection *coll, const otext *key, OCI_Element *elem);
+  OCI_Boolean      OCI_CollectionDeleteElementByKey(OCI_Collection *coll, const otext *key);
+  const otext   * OCI_IteratorGetCurrentKey(OCI_Iterator *it);
+  ```
+
+  `OCI_CollectionGetKeyType` itself works on **any** client version: it returns
+  `OCI_CKT_NUMBER` for numeric index-by tables even pre-23.6 (detecting
+  `OCI_CKT_STRING` is what needs 23.6+). Note: OCI does not preserve null
+  indicators of elements stored under a string key — a null-assigned key reads
+  back as NOT NULL.
+
 ---
 
 ## 17. Migration checklist (agent-friendly order)
@@ -941,15 +972,15 @@ grouped by the family the function belongs to.
 | `OCI_CollAssign` | `OCI_CollectionAssign` |
 | `OCI_CollClear` | `OCI_CollectionClear` |
 | `OCI_CollCreate` | `OCI_CollectionCreate` |
-| `OCI_CollDeleteElem` | `OCI_CollectionDeleteElement` |
+| `OCI_CollDeleteElem` | `OCI_CollectionDeleteElementByIndex` |
 | `OCI_CollFree` | `OCI_CollectionFree` |
 | `OCI_CollGetCount` | `OCI_CollectionGetCount` |
-| `OCI_CollGetElem` | `OCI_CollectionGetElement` |
+| `OCI_CollGetElem` | `OCI_CollectionGetElementByIndex` |
 | `OCI_CollGetMax` | `OCI_CollectionGetMax` |
 | `OCI_CollGetSize` | `OCI_CollectionGetSize` |
 | `OCI_CollGetType` | `OCI_CollectionGetType` |
 | `OCI_CollGetTypeInfo` | `OCI_CollectionGetTypeInfo` |
-| `OCI_CollSetElem` | `OCI_CollectionSetElement` |
+| `OCI_CollSetElem` | `OCI_CollectionSetElementByIndex` |
 | `OCI_CollToText` | `OCI_CollectionToText` |
 | `OCI_CollTrim` | `OCI_CollectionTrim` |
 
